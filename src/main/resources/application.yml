@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: Troublog
+  profiles:
+    active: local
+
+  ai:
+    openai:
+      api-key: ${OPEN_AI_API_KEY}
+      chat:
+        options:
+          model: gpt-4.1-mini
+          max-tokens: ${OPEN_AI_MAX_TOKENS}
