@@ -1,7 +1,10 @@
 branchName: '${issue.number}'
 branches:
+  - label: '🚨 critical'
+    prefix: 'hotfix/'
+
   - label: '*'
-    prefix: feature/
+    prefix: 'feature/'
 commentMessage: '🌱 브랜치 ${branchName} 생성 완료! 이슈: ${issue.title}'
 openDraftPR: false
 autoCloseIssue: true
