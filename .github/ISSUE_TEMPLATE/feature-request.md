@@ -2,7 +2,7 @@
 name: ✨ Feature Request
 about: 새로운 기능 제안
 title: '[Feat] '
-labels: '✨ feat, 📋 medium'
+labels: '✨ feat, P1'
 assignees: ''
 
 ---
