@@ -10,4 +10,5 @@ spring:
       chat:
         options:
           model: gpt-4.1-mini
-          max-tokens: ${OPEN_AI_MAX_TOKENS}
+  mvc:
+    log-resolved-exception: false
