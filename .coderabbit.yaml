@@ -1,0 +1,46 @@
+language: "ko"        # 2글자 코드
+early_access: false
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+
+  path_instructions:
+    - path: "src/main/java/**/*.java"
+      instructions: "Focus on SOLID principles, Spring annotations, DI patterns, exception handling"
+    - path: "src/test/**/*.java"
+      instructions: "Check test coverage, Spring test annotations, mock usage, naming conventions"
+    - path: "**/*.{yml,yaml,properties}"
+      instructions: "Validate Spring config, security settings, DB connections, env configs"
+
+path_filters:
+  - "!**/build/**"
+  - "!**/.gradle/**"
+  - "!**/gradle/wrapper/**"
+  - "!**/gradlew*"
+  - "!**/out/**"
+  - "!**/*.class"
+  - "!**/*.jar"
+  - "!**/*.war"
+  - "!**/node_modules/**"
+
+chat:
+  auto_reply: true
+
+tone_instructions: "Emphasize Spring best practices, SOLID principles, performance optimization, security implications, proper JPA usage, Java coding standards"
+
+knowledge_base:
+  opt_out: false
+  learnings:
+    scope: auto
+    enabled: true
+    max_days: 60
+  issues:
+    scope: auto
