@@ -4,7 +4,7 @@ early_access: false
 reviews:
   profile: "chill"
   request_changes_workflow: false
-  high_level_summary: true
+  high_level_summary: false
   poem: false
   review_status: true
   collapse_walkthrough: false
@@ -14,33 +14,31 @@ reviews:
 
   path_instructions:
     - path: "src/main/java/**/*.java"
-      instructions: "Focus on SOLID principles, Spring annotations, DI patterns, exception handling"
+      instructions: "SOLID 원칙, 스프링 어노테이션, 의존성 주입 패턴, 예외 처리에 중점을 둔다"
     - path: "src/test/**/*.java"
-      instructions: "Check test coverage, Spring test annotations, mock usage, naming conventions"
+      instructions: "테스트 커버리지, 스프링 테스트 어노테이션, mock 사용법, 네이밍 규칙을 확인한다"
     - path: "**/*.{yml,yaml,properties}"
-      instructions: "Validate Spring config, security settings, DB connections, env configs"
+      instructions: "스프링 설정, 보안 설정, DB 연결, 환경 설정을 검증한다"
 
-path_filters:
-  - "!**/build/**"
-  - "!**/.gradle/**"
-  - "!**/gradle/wrapper/**"
-  - "!**/gradlew*"
-  - "!**/out/**"
-  - "!**/*.class"
-  - "!**/*.jar"
-  - "!**/*.war"
-  - "!**/node_modules/**"
+  path_filters:
+    - "!**/build/**"
+    - "!**/.gradle/**"
+    - "!**/gradle/wrapper/**"
+    - "!**/gradlew*"
+    - "!**/out/**"
+    - "!**/*.class"
+    - "!**/*.jar"
+    - "!**/*.war"
+    - "!**/node_modules/**"
 
 chat:
   auto_reply: true
 
-tone_instructions: "Emphasize Spring best practices, SOLID principles, performance optimization, security implications, proper JPA usage, Java coding standards"
+tone_instructions: "스프링 모범 사례, SOLID 원칙, 성능 최적화, 보안 관련 사항, 적절한 JPA 사용법, 자바 코딩 표준을 강조한다"
 
 knowledge_base:
   opt_out: false
   learnings:
     scope: auto
-    enabled: true
-    max_days: 60
   issues:
     scope: auto
