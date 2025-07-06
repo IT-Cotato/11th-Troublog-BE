@@ -17,6 +17,23 @@ public enum ErrorCode {
 	INVALID_INPUT(HttpStatus.BAD_REQUEST,"C-003", "유효하지 않은 입력값입니다."),
 
 	/**
+	 * Auth Error
+	 */
+	INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "a-001", "secret key가 위조되거나 잘못된 토큰입니다."),
+	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "a-002", "토큰이 만료되었습니다."),
+	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "a-003", "유효하지 않은 토큰입니다."),
+	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "a-004", "인증이 필요합니다."),
+	WRONG_ENVIRONMENT(HttpStatus.UNAUTHORIZED, "a-005", "잘못된 환경으로 접근했습니다."),
+	TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "a-006", "토큰을 찾을 수 없습니다."),
+	TOKEN_NOT_EXPIRED(HttpStatus.CONFLICT, "a-007", "만료되지 않은 토큰입니다."),
+
+	/**
+	 * User Error
+	 */
+	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "u-001", "유저를 찾을 수 없습니다"),
+	INVALID_USER(HttpStatus.NOT_FOUND, "u-002", "아이디 또는 비밀번호가 일치하지 않습니다."),
+
+	/**
 	 * Server Error
 	 */
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S-001", "서버 오류가 발생했습니다.");
