@@ -24,6 +24,7 @@ import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.AuthException;
 import troublog.backend.global.common.error.exception.UserException;
+import troublog.backend.global.common.util.DataUtil;
 import troublog.backend.global.common.util.JwtProvider;
 
 @Service
@@ -34,6 +35,7 @@ public class AuthService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtProvider jwtProvider;
+	private final DataUtil dataUtil;
 
 	@Value("${spring.profiles.active}")
 	private String profilesActive;
@@ -44,7 +46,7 @@ public class AuthService {
 		String clientEnvType = request.getHeader("EnvType");
 
 		// 프론트 환경변수 체크
-		checkEnvType(clientEnvType);
+		dataUtil.checkEnvType(clientEnvType);
 
 		// 비밀번호 인코딩
 		String encodedPassword = passwordEncoder.encode(registerDto.getPassword());
@@ -60,7 +62,7 @@ public class AuthService {
 		String clientEnvType = request.getHeader("EnvType");
 
 		// 프론트 환경변수 체크
-		checkEnvType(clientEnvType);
+		dataUtil.checkEnvType(clientEnvType);
 
 		// 유저 확인
 		User user = userRepository.findByEmail(loginReqDto.getEmail())
@@ -108,7 +110,7 @@ public class AuthService {
 		String clientEnvType = request.getHeader("EnvType");
 
 		// 프론트 환경변수 체크
-		checkEnvType(clientEnvType);
+		dataUtil.checkEnvType(clientEnvType);
 
 		// jwtProvider 에서 액세스토큰의 만료시간, 리프레시토큰의 유효성 검증
 		Long userId = jwtProvider.reissueAccessToken(request);
@@ -132,24 +134,12 @@ public class AuthService {
 		return jwtProvider.createAuthToken(authentication);
 	}
 
-	private void checkEnvType(String clientEnvHeader) {
-
-		EnvType serverEnvType = EnvType.valueOfEnvType(profilesActive);
-		EnvType clientEnvType = EnvType.valueOfEnvType(clientEnvHeader);
-
-		if(serverEnvType != null && !serverEnvType.isTestOrLocal() &&
-			!EnvType.isEqualEnvType(serverEnvType, clientEnvType)) {
-
-			throw new AuthException(ErrorCode.WRONG_ENVIRONMENT);
-		}
-	}
-
 	@Transactional
 	public void logout(HttpServletRequest request, HttpServletResponse response) {
 		String clientEnvType = request.getHeader("EnvType");
 
 		// 프론트 환경변수 체크
-		checkEnvType(clientEnvType);
+		dataUtil.checkEnvType(clientEnvType);
 
 		// 로그아웃
 		jwtProvider.logout(request);

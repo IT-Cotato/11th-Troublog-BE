@@ -29,7 +29,11 @@ public enum EnvType {
 		return Objects.equals(serverEnvType, clientEnvType);
 	}
 
-	public boolean isTestOrLocal() {
-		return this == TEST || this == LOCAL;
+	public boolean isLocal() {
+		return this == LOCAL;
+	}
+
+	public boolean isDev() {
+		return this == DEV;
 	}
 }

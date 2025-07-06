@@ -25,7 +25,7 @@ import troublog.backend.global.common.util.JwtProvider;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
-
+	private final DataUtil dataUtil;
 	private final String ENVTYPE = "EnvType";
 
 	@Value("${spring.profiles.active}")
@@ -40,25 +40,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		if (accessToken != null && jwtProvider.validateToken(accessToken) && jwtProvider.isNotExpired(accessToken)) {
 
-			checkEnvType(clientEnvType);
+			dataUtil.checkEnvType(clientEnvType);
 
 			Authentication authentication = jwtProvider.getAuthentication(accessToken);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
 
 		filterChain.doFilter(request, response);
-	}
-
-	private void checkEnvType(String clientEnvType) {
-
-		EnvType serverEnvType = EnvType.valueOfEnvType(profilesActive);
-		EnvType frontEnvType = EnvType.valueOfEnvType(clientEnvType);
-
-		if(serverEnvType != null && !serverEnvType.isTestOrLocal() &&
-			!EnvType.isEqualEnvType(serverEnvType, frontEnvType)) {
-
-			throw new AuthException(ErrorCode.WRONG_ENVIRONMENT);
-		}
 	}
 
 	@Override
