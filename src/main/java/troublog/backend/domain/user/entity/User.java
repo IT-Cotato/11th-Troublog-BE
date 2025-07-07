@@ -43,6 +43,13 @@ public class User extends BaseEntity {
 	@Column(name = "githubUrl")
 	private String githubUrl;
 
+	/**
+	 * Creates a new User entity from the provided registration data and encoded password.
+	 *
+	 * @param registerDto the registration data containing user details
+	 * @param encodedPassword the user's password after encoding
+	 * @return a new User instance populated with the provided information
+	 */
 	public static User registerUser(RegisterDto registerDto, String encodedPassword) {
 		return User.builder()
 			.email(registerDto.getEmail())

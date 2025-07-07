@@ -32,6 +32,15 @@ public class SecurityConfig {
 	private final CorsFilter corsFilter;
 
 
+	/**
+	 * Configures the application's security filter chain with stateless JWT-based authentication.
+	 *
+	 * Disables CSRF protection, HTTP Basic authentication, form login, and logout. Sets session management to stateless mode and adds a CORS filter. Permits unrestricted access to actuator endpoints, authentication endpoints, Swagger UI, API documentation, error pages, and the root path. All other requests require authentication. Integrates custom JWT authentication and exception handler filters into the filter chain.
+	 *
+	 * @param http the HttpSecurity to configure
+	 * @return the configured SecurityFilterChain
+	 * @throws Exception if an error occurs during configuration
+	 */
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
@@ -56,12 +65,24 @@ public class SecurityConfig {
 
 		return http.build();
 	}
+	/**
+	 * Configures and returns an {@link AuthenticationManager} that uses the custom JWT authentication provider.
+	 *
+	 * @param http the {@link HttpSecurity} context used to retrieve and configure the authentication manager
+	 * @return the configured {@link AuthenticationManager} instance
+	 * @throws Exception if an error occurs during authentication manager setup
+	 */
 	@Bean
 	public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
 		AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
 		builder.authenticationProvider(jwtAuthenticationProvider);
 		return builder.build();
 	}
+	/**
+	 * Creates a password encoder bean that uses the BCrypt hashing algorithm.
+	 *
+	 * @return a PasswordEncoder instance for securely hashing passwords
+	 */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();

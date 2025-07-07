@@ -17,6 +17,14 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @RequiredArgsConstructor
 public class SwaggerConfig {
+	/**
+	 * Configures and returns the OpenAPI specification for the Troublog API.
+	 *
+	 * Defines API metadata, security schemes for access and refresh tokens as well as environment type, 
+	 * applies these security requirements globally, and sets up a local server for API documentation.
+	 *
+	 * @return the configured OpenAPI specification for Swagger UI and API documentation.
+	 */
 	@Bean
 	public OpenAPI customOpenAPI() {
 

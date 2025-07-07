@@ -52,11 +52,22 @@ public class JwtProvider {
 	private static final long ENDLESS_TIME = 999999999; // local 개발 용 토큰 무한 사용 (11574일)
     private SecretKey key;
 
+    /**
+     * Initializes the secret key for JWT signing after dependency injection is complete.
+     *
+     * Generates an HMAC SHA key from the configured secret string for use in token operations.
+     */
     @PostConstruct
     public void init() {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
+    /**
+     * Generates a JWT access token for the given authentication, using an endless expiration for local environments and a configured expiration for others.
+     *
+     * @param authentication the authentication object containing user details and environment type
+     * @return the generated JWT access token as a string
+     */
     public String createAuthToken(Authentication authentication) {
         String envType = (authentication instanceof CustomAuthenticationToken cat)
             ? cat.getEnvType()
@@ -70,6 +81,13 @@ public class JwtProvider {
         }
     }
 
+    /**
+     * Generates a JWT access token containing user ID, environment type, and nickname claims, signed with the configured secret key and set to expire after the specified duration.
+     *
+     * @param authentication the authentication object containing user details
+     * @param expireTime the token's validity period in seconds
+     * @return a signed JWT access token as a string
+     */
     private String createToken(Authentication authentication, long expireTime) {
         long now = (new Date()).getTime();
         Date validity = new Date(now + expireTime * 1000);
@@ -87,6 +105,14 @@ public class JwtProvider {
             .compact();
     }
 
+    /**
+     * Creates and persists a refresh token for the given authentication, returning a signed JWT containing the refresh token ID and environment type.
+     *
+     * The refresh token is stored in the repository and associated with the user. The resulting JWT includes claims for the environment type and the refresh token's unique identifier.
+     *
+     * @param authentication the authentication object representing the user for whom the refresh token is created
+     * @return a signed JWT string representing the refresh token
+     */
     public String createRefreshToken(Authentication authentication) {
         long now = (new Date()).getTime();
         Date validity = new Date(now + this.refreshTokenValidityInSeconds * 1000);
@@ -112,6 +138,14 @@ public class JwtProvider {
             .compact();
     }
 
+    /**
+     * Validates the provided access and refresh tokens from the HTTP request and returns the user ID if the tokens are valid and not revoked.
+     *
+     * This method checks that the access token is expired, validates the refresh token, parses claims from both tokens, verifies the refresh token's existence and expiration, and ensures the token belongs to the correct user and is not revoked. Throws an {@code AuthException} with an appropriate error code if any validation fails.
+     *
+     * @param request the HTTP request containing the access and refresh tokens
+     * @return the user ID associated with the validated tokens
+     */
     public Long reissueAccessToken(HttpServletRequest request) {
 
         String accessToken = DataUtil.getValueFromRequest(request, AUTHORIZATION);
@@ -152,9 +186,12 @@ public class JwtProvider {
     }
 
     /**
-     * 토큰을 받아 Authentication 객체를 반환
-     * @param accessToken
-     * @return
+     * Extracts authentication details from a JWT access token and returns a populated Authentication object.
+     *
+     * The returned Authentication contains the username, user ID, environment type, and nickname as parsed from the token claims.
+     *
+     * @param accessToken the JWT access token to parse
+     * @return an Authentication object representing the user described by the token
      */
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken);
@@ -168,10 +205,11 @@ public class JwtProvider {
     }
 
     /**
-     * 토큰의 유효성을 검증
-     * @param token
-     * @return
-     */
+	 * Validates the structure and signature of a JWT token.
+	 *
+	 * @param token the JWT token to validate
+	 * @return true if the token is valid; otherwise, throws an AuthException for invalid signature or token structure
+	 */
     public boolean validateToken(String token) {
         try {
             parseClaims(token);
@@ -189,9 +227,10 @@ public class JwtProvider {
 	}
 
     /**
-     * 토큰에서 Claims 정보를 추출
-     * @param accessToken
-     * @return
+     * Extracts and returns the claims from the provided JWT access token.
+     *
+     * @param accessToken the JWT access token to parse
+     * @return the claims contained within the token
      */
     private Claims parseClaims(String accessToken) {
         return Jwts.parser()
@@ -201,6 +240,13 @@ public class JwtProvider {
             .getPayload();
     }
 
+    /**
+     * Checks whether the provided JWT token is not expired.
+     *
+     * @param token the JWT token to check
+     * @return true if the token is not expired
+     * @throws AuthException if the token is expired
+     */
     public boolean isNotExpired(String token) {
         try{
             parseClaims(token);
@@ -210,6 +256,13 @@ public class JwtProvider {
         }
     }
 
+    /**
+     * Checks if the provided JWT token is expired.
+     *
+     * @param token the JWT token to check
+     * @return true if the token is expired
+     * @throws AuthException if the token is not expired
+     */
     private boolean isExpired(String token) {
         try {
             parseClaims(token);
@@ -220,7 +273,13 @@ public class JwtProvider {
 
     }
 
-    // TODO : 실제 운영 시 사용
+    /**
+     * Extracts the refresh token value from the cookies in the given HTTP request.
+     *
+     * @param request the HTTP request containing cookies
+     * @return the value of the "refreshToken" cookie
+     * @throws AuthException if the "refreshToken" cookie is not found
+     */
     private String extractRefreshTokenFromCookie(HttpServletRequest request) {
         if (request.getCookies() == null) {
             throw new AuthException(ErrorCode.TOKEN_NOT_FOUND);
@@ -233,6 +292,15 @@ public class JwtProvider {
             .getValue();
     }
 
+    /**
+     * Revokes the refresh token associated with the current user, effectively logging the user out.
+     *
+     * Extracts the refresh token from the request, parses its claims to identify the token entity,
+     * and marks the corresponding refresh token as revoked in the repository.
+     *
+     * @param request the HTTP request containing the refresh token
+     * @throws AuthException if the refresh token is not found or invalid
+     */
     public void logout(HttpServletRequest request) {
 
         // TODO : 임시로 헤더에서 받음

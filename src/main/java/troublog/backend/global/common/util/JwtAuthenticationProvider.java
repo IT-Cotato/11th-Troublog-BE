@@ -12,6 +12,13 @@ import troublog.backend.global.common.custom.CustomAuthenticationToken;
 @RequiredArgsConstructor
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
+	/**
+	 * Authenticates a {@link CustomAuthenticationToken} and returns a new authenticated token instance.
+	 *
+	 * @param authentication the authentication request object, expected to be a {@link CustomAuthenticationToken}
+	 * @return an authenticated {@link CustomAuthenticationToken} with user details set
+	 * @throws AuthenticationException if authentication fails
+	 */
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		CustomAuthenticationToken token = (CustomAuthenticationToken) authentication;
@@ -25,6 +32,12 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		);
 	}
 
+	/**
+	 * Determines whether this authentication provider supports the specified authentication type.
+	 *
+	 * @param authentication the class of the authentication object
+	 * @return true if the authentication type is assignable from CustomAuthenticationToken; false otherwise
+	 */
 	@Override
 	public boolean supports(Class<?> authentication) {
 		return CustomAuthenticationToken.class.isAssignableFrom(authentication);

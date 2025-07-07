@@ -31,6 +31,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Value("${spring.profiles.active}")
 	private String profilesActive;
 
+	/**
+	 * Processes incoming HTTP requests to authenticate users based on a JWT access token.
+	 *
+	 * Extracts the JWT token and environment type from request headers, validates the token, checks the environment type,
+	 * and sets the authentication in the security context if valid. Continues the filter chain regardless of authentication outcome.
+	 *
+	 * @param request  the incoming HTTP request
+	 * @param response the HTTP response
+	 * @param filterChain the filter chain to proceed with
+	 * @throws ServletException if an error occurs during filtering
+	 * @throws IOException if an I/O error occurs during filtering
+	 */
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws
 		ServletException, IOException {
@@ -49,6 +61,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		filterChain.doFilter(request, response);
 	}
 
+	/**
+	 * Determines whether the filter should be skipped for the given request based on its URI.
+	 *
+	 * The filter is not applied to requests whose paths match authentication endpoints, Swagger UI, or API documentation routes.
+	 *
+	 * @param request the current HTTP request
+	 * @return {@code true} if the request should bypass the filter; {@code false} otherwise
+	 * @throws ServletException if an error occurs during request processing
+	 */
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String[] excludePath = {"/auth/**", "/swagger-ui/**", "/v3/api-docs/**"};

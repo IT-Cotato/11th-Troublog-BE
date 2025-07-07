@@ -27,6 +27,13 @@ public class AuthController {
 
 	private final AuthService authService;
 
+	/**
+	 * Handles user registration and returns the newly created user's ID.
+	 *
+	 * @param registerDto the registration details for the new user
+	 * @param request the HTTP request associated with the registration
+	 * @return a ResponseEntity containing an ApiResponse with the new user's ID and HTTP 201 Created status
+	 */
 	@PostMapping("/register")
 	@Operation(summary = "회원가입 API", description = "깃헙 주소는 선택, 나머지는 필수입력")
 	@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공",
@@ -40,6 +47,12 @@ public class AuthController {
 		return ResponseUtils.created(userId);
 	}
 
+	/**
+	 * Authenticates a user with the provided login credentials and returns login response data.
+	 *
+	 * @param loginReqDto the login request data containing user credentials
+	 * @return a response entity containing the login result, including authentication tokens and user information
+	 */
 	@Operation(summary = "로그인 API", description = "이메일과 비밀번호로 로그인")
 	@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공",
 		content = @Content(schema = @Schema(implementation = LoginResDto.class)))
@@ -54,6 +67,14 @@ public class AuthController {
 		return ResponseUtils.ok(loginResDto);
 	}
 
+	/**
+	 * Issues a new access token using expired access and refresh tokens provided in the request.
+	 *
+	 * The refresh token is temporarily expected in the request header during development.
+	 *
+	 * @param request the HTTP request containing expired tokens
+	 * @return a response entity containing the new access token wrapped in an ApiResponse
+	 */
 	@Operation(summary = "Access Token 재발급 API", description = "만료된 accessToken과 refreshToken을 통해 재발급"
 		+ ", 개발단계에서 refreshToken은 임시로 header에 담아 전달")
 	@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공",
@@ -66,6 +87,14 @@ public class AuthController {
 		return ResponseUtils.ok(accessToken);
 	}
 
+	/**
+	 * Logs out the user by invalidating the refresh token.
+	 *
+	 * This endpoint expects the refresh token to be provided in the request header (temporarily during development).
+	 * Returns a 204 No Content response upon successful logout.
+	 *
+	 * @return a response entity with no content indicating successful logout
+	 */
 	@Operation(summary = "로그아웃 API", description = "refreshToken을 전달해 로그아웃"
 		+ ", 개발단계에서 refreshToken은 임시로 header에 담아 전달")
 	@PostMapping("/logout")

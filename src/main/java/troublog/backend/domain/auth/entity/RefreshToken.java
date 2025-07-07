@@ -40,6 +40,13 @@ public class RefreshToken extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
+	/**
+	 * Creates a new RefreshToken instance for the specified user with the given expiration date.
+	 *
+	 * @param user the user to associate with the refresh token
+	 * @param ttl the expiration date and time for the refresh token
+	 * @return a new RefreshToken instance with the specified user and expiration date
+	 */
 	public static RefreshToken of(User user, Date ttl) {
 		return RefreshToken.builder()
 			.expiredAt(ttl)
@@ -47,7 +54,9 @@ public class RefreshToken extends BaseEntity {
 			.build();
 	}
 
-	// 리프레시 토큰 철회 (논리삭제) 메서드
+	/**
+	 * Marks this refresh token as revoked by setting its revoked status to true.
+	 */
 	public void revokeRefreshToken() {
 		this.isRevoked=true;
 	}

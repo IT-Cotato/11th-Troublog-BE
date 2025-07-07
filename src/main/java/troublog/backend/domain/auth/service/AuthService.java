@@ -40,6 +40,15 @@ public class AuthService {
 	@Value("${spring.profiles.active}")
 	private String profilesActive;
 
+	/**
+	 * Registers a new user with the provided registration data and client environment type.
+	 *
+	 * Validates the client environment type from the request header, encodes the user's password, creates a new user entity, and saves it to the repository.
+	 *
+	 * @param registerDto the registration data for the new user
+	 * @param request the HTTP request containing the client environment type header
+	 * @return the ID of the newly registered user
+	 */
 	@Transactional
 	public Long register(RegisterDto registerDto, HttpServletRequest request) {
 
@@ -56,6 +65,20 @@ public class AuthService {
 		return userRepository.save(user).getId();
 	}
 
+	/**
+	 * Authenticates a user with the provided login credentials and issues authentication tokens.
+	 *
+	 * Validates the client environment type from the request header, verifies user credentials,
+	 * and generates JWT access, local, and refresh tokens. The refresh token is set as a secure,
+	 * HTTP-only cookie in the response. Returns a response DTO containing user ID and tokens.
+	 *
+	 * @param loginReqDto the login request data containing user credentials
+	 * @param request the HTTP servlet request containing headers for environment validation
+	 * @param response the HTTP servlet response used to set the refresh token cookie
+	 * @return a LoginResDto containing the user ID, access token, refresh token, and local token
+	 * @throws UserException if the user is not found
+	 * @throws AuthException if the password is invalid
+	 */
 	@Transactional
 	public LoginResDto login(LoginReqDto loginReqDto, HttpServletRequest request, HttpServletResponse response) {
 
@@ -92,6 +115,11 @@ public class AuthService {
 		return LoginResDto.of(user.getId(), accessToken, refreshToken, localToken);
 	}
 
+	/**
+	 * Sets a secure, HTTP-only "refreshToken" cookie with a 24-hour expiration in the HTTP response.
+	 *
+	 * The cookie is configured with the "Strict" SameSite policy and is accessible only via HTTPS.
+	 */
 	private void setCookieRefreshToken(String refreshToken, HttpServletResponse response) {
 		ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
 			.httpOnly(true)
@@ -104,6 +132,15 @@ public class AuthService {
 		response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 	}
 
+	/**
+	 * Reissues a new JWT access token using a valid refresh token from the request.
+	 *
+	 * Validates the client environment type from the request header and the refresh token.
+	 * Authenticates the user and generates a new access token with updated authentication details.
+	 *
+	 * @param request the HTTP request containing the refresh token and environment type header
+	 * @return a newly generated JWT access token
+	 */
 	@Transactional
 	public String reissueAccessToken(HttpServletRequest request) {
 
@@ -134,6 +171,12 @@ public class AuthService {
 		return jwtProvider.createAuthToken(authentication);
 	}
 
+	/**
+	 * Logs out the current user by invalidating the JWT session and removing the refresh token cookie.
+	 *
+	 * This method checks the client environment type from the request header, performs logout logic via the JWT provider,
+	 * and deletes the "refreshToken" cookie from the response.
+	 */
 	@Transactional
 	public void logout(HttpServletRequest request, HttpServletResponse response) {
 		String clientEnvType = request.getHeader("EnvType");
@@ -148,6 +191,11 @@ public class AuthService {
 		deleteCookieRefreshToken(response);
 	}
 
+	/**
+	 * Deletes the "refreshToken" cookie by setting its value to empty and its max age to zero, effectively expiring it immediately.
+	 *
+	 * The cookie is configured with HttpOnly, Secure, and SameSite=Strict attributes for security.
+	 */
 	private void deleteCookieRefreshToken(HttpServletResponse response) {
 		ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
 			.path("/")

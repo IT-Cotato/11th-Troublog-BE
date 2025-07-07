@@ -34,6 +34,15 @@ public class LoginResDto {
 	@JsonProperty("localToken")
 	private String localToken;
 
+	/**
+	 * Creates a new {@code LoginResDto} instance with the specified user ID, access token, refresh token, and local token.
+	 *
+	 * @param userId the unique identifier of the user
+	 * @param accessToken the access token issued upon successful login
+	 * @param refreshToken the refresh token for obtaining new access tokens
+	 * @param localToken the token used for local operations
+	 * @return a {@code LoginResDto} populated with the provided values
+	 */
 	public static LoginResDto of(Long userId, String accessToken, String refreshToken, String localToken) {
 		return LoginResDto.builder()
 			.userId(userId)

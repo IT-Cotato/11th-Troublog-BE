@@ -19,6 +19,11 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Slf4j
 public class TestController {
 
+	/**
+	 * Handles a GET request to the /test endpoint and returns a standardized success response.
+	 *
+	 * @return a ResponseEntity containing an ApiResponse with the message "성공"
+	 */
 	@GetMapping("")
 	@Operation(summary = "테스트용 메서드")
 	public ResponseEntity<ApiResponse<String>> apiTest(@Authentication CustomAuthenticationToken auth) {

@@ -22,10 +22,26 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
 	private final HandlerExceptionResolver exceptionResolver;
 
+	/**
+	 * Constructs an ExceptionHandlerFilter with the specified HandlerExceptionResolver.
+	 *
+	 * @param resolver the HandlerExceptionResolver used to process exceptions caught during filter execution
+	 */
 	public ExceptionHandlerFilter(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
 		this.exceptionResolver=resolver;
 	}
 
+	/**
+	 * Processes the HTTP request and response through the filter chain, handling any exceptions by delegating to the configured exception resolver.
+	 *
+	 * If an exception occurs during filter chain execution, it is caught and passed to the injected {@link HandlerExceptionResolver} for centralized handling.
+	 *
+	 * @param request the current HTTP request
+	 * @param response the current HTTP response
+	 * @param filterChain the filter chain to execute
+	 * @throws ServletException if a servlet-specific error occurs
+	 * @throws IOException if an I/O error occurs during filtering
+	 */
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 	throws ServletException, IOException {
