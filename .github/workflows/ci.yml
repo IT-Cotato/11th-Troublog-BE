@@ -17,6 +17,11 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - name: Make .env file
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+        shell: bash
+
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
 
