@@ -18,12 +18,12 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      #- name: Make application.yml files
-       # run: |
-        #  mkdir -p src/main/resources
-         # echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
-          #echo "${{ secrets.APPLICATION_PROD_YML }}" > src/main/resources/application-prod.yml
-        #shell: bash
+      - name: Make application.yml files
+        run: |
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION_PROD_YML }}" > src/main/resources/application-prod.yml
+        shell: bash
 
       - name: Make .env file
         run: |
