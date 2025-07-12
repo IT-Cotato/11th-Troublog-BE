@@ -37,7 +37,7 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
@@ -52,4 +52,9 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// plain jar 파일 생성되지 않도록
+jar {
+    enabled = false
 }
