@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
-import troublog.backend.global.common.response.ApiResponse;
+import troublog.backend.global.common.response.BaseResponse;
 import troublog.backend.global.common.util.ResponseUtils;
 
 @RestController
@@ -21,7 +21,7 @@ public class TestController {
 
 	@GetMapping("")
 	@Operation(summary = "테스트용 메서드")
-	public ResponseEntity<ApiResponse<String>> apiTest(@Authentication CustomAuthenticationToken auth) {
+	public ResponseEntity<BaseResponse<String>> apiTest(@Authentication CustomAuthenticationToken auth) {
 		return ResponseUtils.ok("성공");
 	}
 }

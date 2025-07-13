@@ -1,45 +1,31 @@
 package troublog.backend.domain.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class LoginResDto {
+public record LoginResDto(
 
 	@Schema(description = "유저아이디")
 	@JsonProperty("userId")
-	private Long userId;
+	Long userId,
 
 	@Schema(description = "액세스토큰")
 	@JsonProperty("accessToken")
 	@NotNull
-	private String accessToken;
+	String accessToken,
 
 	@Schema(description = "리프레시토큰")
 	@JsonProperty("refreshToken")
 	@NotNull
-	private String refreshToken;
+	String refreshToken,
 
 	@Schema(description = "로컬작업용토큰")
 	@JsonProperty("localToken")
-	private String localToken;
+	String localToken
 
+) {
 	public static LoginResDto of(Long userId, String accessToken, String refreshToken, String localToken) {
-		return LoginResDto.builder()
-			.userId(userId)
-			.accessToken(accessToken)
-			.refreshToken(refreshToken)
-			.localToken(localToken)
-			.build();
+		return new LoginResDto(userId, accessToken, refreshToken, localToken);
 	}
 }

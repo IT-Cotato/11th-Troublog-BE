@@ -49,6 +49,6 @@ public class RefreshToken extends BaseEntity {
 
 	// 리프레시 토큰 철회 (논리삭제) 메서드
 	public void revokeRefreshToken() {
-		this.isRevoked=true;
+		this.isRevoked = true;
 	}
 }

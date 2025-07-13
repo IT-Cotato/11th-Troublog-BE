@@ -31,6 +31,15 @@ public class SecurityConfig {
 	private final ExceptionHandlerFilter exceptionHandlerFilter;
 	private final CorsFilter corsFilter;
 
+	private static final String[] WHITELIST = {
+		"/auth/register",
+		"/auth/login",
+		"/auth/refresh",
+		"/swagger-ui/**",
+		"/v3/api-docs/**",
+		"/error",
+		"/"
+	};
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -45,7 +54,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers(EndpointRequest.toAnyEndpoint())
 				.permitAll()
-				.requestMatchers("/auth/**", "/swagger-ui/**", "v3/api-docs/**", "/error", "/")
+				.requestMatchers(WHITELIST)
 				.permitAll()
 				.anyRequest()
 				.authenticated()

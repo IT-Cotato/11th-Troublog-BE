@@ -28,11 +28,11 @@ public class SwaggerConfig {
 			.in(SecurityScheme.In.HEADER)
 			.name("Authorization");
 
-		 // TODO : 스웨거에서 임시로 리프레시토큰을 헤더로 받음
-		 SecurityScheme refreshTokenAuth = new SecurityScheme()
-			 .type(SecurityScheme.Type.APIKEY)
-			 .in(SecurityScheme.In.HEADER)
-			 .name("refreshToken");
+		 // // TODO : 스웨거에서 임시로 리프레시토큰을 헤더로 받음
+		 // SecurityScheme refreshTokenAuth = new SecurityScheme()
+			//  .type(SecurityScheme.Type.APIKEY)
+			//  .in(SecurityScheme.In.HEADER)
+			//  .name("refreshToken");
 
 		 SecurityScheme securitySchemeEnvType = new SecurityScheme()
 			 .type(SecurityScheme.Type.APIKEY)
@@ -54,7 +54,6 @@ public class SwaggerConfig {
 				.version("v1.0"))
 			.components(new Components()
 				.addSecuritySchemes("accessTokenAuth", accessTokenAuth)
-				.addSecuritySchemes("refreshTokenAuth", refreshTokenAuth)
 				.addSecuritySchemes("EnvType", securitySchemeEnvType))
 			.security(Collections.singletonList(securityRequirement))
 			.servers(List.of(localServer));

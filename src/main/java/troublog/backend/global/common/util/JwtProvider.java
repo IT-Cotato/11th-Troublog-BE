@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 import troublog.backend.domain.auth.entity.RefreshToken;
 import troublog.backend.domain.auth.repository.RefreshTokenRepository;
 import troublog.backend.domain.user.entity.User;
+import troublog.backend.global.common.constant.EnvType;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.AuthException;
@@ -97,7 +98,7 @@ public class JwtProvider {
             .id(customAuthenticationToken.getUserId())
             .build();
 
-		// TODO: Refresh Token 저장 로직 (Redis? DB?)
+		// TODO: Refresh Token 저장 로직 (Redis? DB?) 현재는 DB
         RefreshToken refreshToken = RefreshToken.of(user, validity);
 
         Long refreshTokenid = refreshTokenRepository.save(refreshToken).getId();
@@ -117,10 +118,10 @@ public class JwtProvider {
         String accessToken = DataUtil.getValueFromRequest(request, AUTHORIZATION);
 
         // TODO : 임시로 헤더에서 받음
-        String clientRefreshToken = DataUtil.getValueFromRequest(request, "refreshToken");
+        // String clientRefreshToken = DataUtil.getValueFromRequest(request, "refreshToken");
 
         // TODO : 개발단계에서 사용
-        // String clientRefreshToken = extractRefreshTokenFromCookie(request);
+        String clientRefreshToken = extractRefreshTokenFromCookie(request);
 
         // 액세스토큰이 만료되었는지 확인
         isExpired(accessToken);
@@ -138,13 +139,13 @@ public class JwtProvider {
             .orElseThrow(() -> new AuthException(ErrorCode.TOKEN_NOT_FOUND));
 
         // 리프레시 토큰이 만료된 경우 토큰 만료 처리 후 에러 리턴
-        if(refreshToken.getExpiredAt().toInstant().isAfter(Instant.now())) {
+        if(refreshToken.getExpiredAt().toInstant().isBefore(Instant.now())) {
             refreshToken.revokeRefreshToken();
             throw new AuthException(ErrorCode.TOKEN_EXPIRED);
         }
 
         // 토큰이 철회되거나 다른 유저의 토큰으로 접근하는 경우 에러 리턴
-        if(refreshToken.isRevoked() && !refreshToken.getUser().getId().equals(userId)) {
+        if(refreshToken.isRevoked() || !refreshToken.getUser().getId().equals(userId)) {
            throw new AuthException(ErrorCode.INVALID_TOKEN);
         }
 
@@ -220,6 +221,20 @@ public class JwtProvider {
 
     }
 
+    public void checkEnvType(String clientEnvType) {
+
+        EnvType serverEnvType = EnvType.valueOfEnvType(profilesActive);
+        EnvType frontEnvType = EnvType.valueOfEnvType(clientEnvType);
+
+        if(serverEnvType != null &&
+            !serverEnvType.isLocal() &&
+            !(frontEnvType.isLocal() && serverEnvType.isDev()) &&
+            !EnvType.isEqualEnvType(serverEnvType, frontEnvType)) {
+
+            throw new AuthException(ErrorCode.WRONG_ENVIRONMENT);
+        }
+    }
+
     // TODO : 실제 운영 시 사용
     private String extractRefreshTokenFromCookie(HttpServletRequest request) {
         if (request.getCookies() == null) {
@@ -236,10 +251,10 @@ public class JwtProvider {
     public void logout(HttpServletRequest request) {
 
         // TODO : 임시로 헤더에서 받음
-        String clientRefreshToken = DataUtil.getValueFromRequest(request, "refreshToken");
+        // String clientRefreshToken = DataUtil.getValueFromRequest(request, "refreshToken");
 
         // TODO : 개발단계에서 사용
-        // String clientRefreshToken = extractRefreshTokenFromCookie(request);
+        String clientRefreshToken = extractRefreshTokenFromCookie(request);
 
         Claims claims = parseClaims(clientRefreshToken);
         Long refreshTokenId = claims.get("refreshTokenId", Long.class);

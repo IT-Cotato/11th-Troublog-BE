@@ -25,11 +25,7 @@ import troublog.backend.global.common.util.JwtProvider;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
-	private final DataUtil dataUtil;
-	private final String ENVTYPE = "EnvType";
-
-	@Value("${spring.profiles.active}")
-	private String profilesActive;
+	private static final String ENVTYPE = "EnvType";
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws
@@ -40,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		if (accessToken != null && jwtProvider.validateToken(accessToken) && jwtProvider.isNotExpired(accessToken)) {
 
-			dataUtil.checkEnvType(clientEnvType);
+			jwtProvider.checkEnvType(clientEnvType);
 
 			Authentication authentication = jwtProvider.getAuthentication(accessToken);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -51,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		String[] excludePath = {"/auth/**", "/swagger-ui/**", "/v3/api-docs/**"};
+		String[] excludePath = {"/auth/register","/auth/login","/auth/refresh", "/swagger-ui/**", "/v3/api-docs/**"};
 		String path = request.getRequestURI();
 		return Arrays.stream(excludePath)
 			.anyMatch(ep -> ep.endsWith("/**")

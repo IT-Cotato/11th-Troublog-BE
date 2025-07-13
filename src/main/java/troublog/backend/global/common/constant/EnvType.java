@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.AuthException;
 
 @Getter
 @RequiredArgsConstructor
@@ -18,11 +20,11 @@ public enum EnvType {
 
 	private final String envType;
 
-	public static EnvType valueOfEnvType(String clientEnvType) {
+	public static EnvType valueOfEnvType(String inputEnvType) {
 		return Arrays.stream(values())
-			.filter(et -> et.envType.equals(clientEnvType))
+			.filter(et -> et.envType.equals(inputEnvType))
 			.findFirst()
-			.orElse(null);
+			.orElseThrow(() -> new AuthException(ErrorCode.WRONG_ENVIRONMENT));
 	}
 
 	public static boolean isEqualEnvType(EnvType serverEnvType, EnvType clientEnvType) {
