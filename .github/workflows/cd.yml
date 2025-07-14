@@ -38,17 +38,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Write SSH private key to file
-        run: |
-          echo "${{ secrets.SSH_KEY }}" > private_key.pem
-          chmod 600 private_key.pem
-
       - name: Copy docker-compose.yml to EC2
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
-          key_path: private_key.pem
+          key: ${{ secrets.SSH_KEY }}
           port: 22
           source: "docker-compose.yml"
           target: "/home/ubuntu/troublog/"
@@ -58,7 +53,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
-          key_path: private_key.pem
+          key: ${{ secrets.SSH_KEY }}
           port: 22
           source: ".env"
           target: "/home/ubuntu/troublog/"
@@ -68,7 +63,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }} # EC2 퍼블릭 IPv4
           username: ${{ secrets.SSH_USERNAME }} # ubuntu
-          key_path: private_key.pem
+          key: ${{ secrets.SSH_KEY }}
           port: 22
           # docker-compose가 있는 디렉토리로 이동
           script: |
