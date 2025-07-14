@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,7 +45,7 @@ public class AuthController {
 
 	@PostMapping("/email-check")
 	@Operation(summary = "이메일 중복체크 API", description = "회원가입 첫번째 화면")
-	public ResponseEntity<BaseResponse<Void>> checkDuplicateEmail(String email, HttpServletRequest request) {
+	public ResponseEntity<BaseResponse<Void>> checkDuplicateEmail(@RequestParam String email, HttpServletRequest request) {
 
 		authService.checkDuplicateEmail(email, request);
 

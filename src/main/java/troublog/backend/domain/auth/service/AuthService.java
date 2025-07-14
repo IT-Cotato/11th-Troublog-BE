@@ -159,6 +159,7 @@ public class AuthService {
 		response.setHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
 	}
 
+	@Transactional(readOnly = true)
 	public void checkDuplicateEmail(String email, HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader("EnvType");
