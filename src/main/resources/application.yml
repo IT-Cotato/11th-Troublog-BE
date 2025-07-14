@@ -12,3 +12,7 @@ spring:
           model: gpt-4.1-mini
   mvc:
     log-resolved-exception: false
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  access-token-validity-in-seconds: 1800
+  refresh-token-validity-in-seconds: 86400

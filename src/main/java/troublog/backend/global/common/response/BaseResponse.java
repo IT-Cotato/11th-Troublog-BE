@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 
 @Builder
-public record ApiResponse<T> (
+public record BaseResponse<T> (
     @JsonIgnore
     HttpStatus httpStatus,
     boolean success,
@@ -24,8 +24,8 @@ public record ApiResponse<T> (
     /**
      * HTTP 200 OK
      */
-    public static <T> ApiResponse<T> ok(@Nullable final T data) {
-        return ApiResponse.<T>builder()
+    public static <T> BaseResponse<T> ok(@Nullable final T data) {
+        return BaseResponse.<T>builder()
             .httpStatus(HttpStatus.OK)
             .success(true)
             .data(data)
@@ -37,8 +37,8 @@ public record ApiResponse<T> (
     /**
      * HTTP 201 Created
      */
-    public static <T> ApiResponse<T> created(@Nullable final T data) {
-        return ApiResponse.<T>builder()
+    public static <T> BaseResponse<T> created(@Nullable final T data) {
+        return BaseResponse.<T>builder()
             .httpStatus(HttpStatus.CREATED)
             .success(true)
             .data(data)
@@ -50,8 +50,8 @@ public record ApiResponse<T> (
     /**
      * HTTP 204 No Content
      */
-    public static <T> ApiResponse<T> noContent() {
-        return ApiResponse.<T>builder()
+    public static <T> BaseResponse<T> noContent() {
+        return BaseResponse.<T>builder()
             .httpStatus(HttpStatus.NO_CONTENT)
             .success(true)
             .data(null)
@@ -63,8 +63,8 @@ public record ApiResponse<T> (
     /**
      * Error Response
      */
-    public static <T> ApiResponse<T> fail(ErrorResponse error) {
-        return ApiResponse.<T>builder()
+    public static <T> BaseResponse<T> fail(ErrorResponse error) {
+        return BaseResponse.<T>builder()
             .httpStatus(error.status())
             .success(false)
             .data(null)
