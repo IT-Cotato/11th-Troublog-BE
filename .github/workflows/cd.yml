@@ -18,25 +18,31 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Make application.yml files
-        run: |
-          mkdir -p src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
-          echo "${{ secrets.APPLICATION_PROD_YML }}" > src/main/resources/application-prod.yml
-        shell: bash
-
       - name: Make .env file
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
         shell: bash
 
-      - name: Upload .env and docker-compose.yml
+      - name: Debug - check .env exists
+        run: |
+          echo "[Build job] ls -al:"
+          ls -al
+          echo "--- .env preview ---"
+          cat .env || echo "No .env found"
+
+      - name: Archive .env and docker-compose.yml
+        run: |
+          mkdir deploy
+          mv .env deploy/
+          cp docker-compose.yml deploy/
+          tar -czvf deploy.tar.gz -C deploy .
+        shell: bash
+
+      - name: Upload deployment artifact
         uses: actions/upload-artifact@v4
         with:
           name: deployment-files
-          path: |
-            .env
-            docker-compose.yml
+          path: deploy.tar.gz
 
   deploy:
     needs: build
@@ -54,6 +60,13 @@ jobs:
 
       - name: Debug - list files
         run: ls -al
+
+      - name: Extract deployment files
+        run: |
+          echo "=== Extracting tar.gz ==="
+          tar -xzvf deploy.tar.gz
+          echo "=== After extraction ==="
+          ls -al
 
       - name: Copy docker-compose.yml to EC2
         uses: appleboy/scp-action@master
