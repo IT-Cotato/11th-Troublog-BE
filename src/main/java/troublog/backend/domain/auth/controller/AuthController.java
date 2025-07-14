@@ -42,6 +42,15 @@ public class AuthController {
 		return ResponseUtils.created(userId);
 	}
 
+	@PostMapping("/email-check")
+	@Operation(summary = "이메일 중복체크 API", description = "회원가입 첫번째 화면")
+	public ResponseEntity<BaseResponse<Void>> checkDuplicateEmail(String email, HttpServletRequest request) {
+
+		authService.checkDuplicateEmail(email, request);
+
+		return ResponseUtils.noContent();
+	}
+
 	@Operation(summary = "로그인 API", description = "이메일과 비밀번호로 로그인")
 	@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공",
 		content = @Content(schema = @Schema(implementation = LoginResDto.class)))

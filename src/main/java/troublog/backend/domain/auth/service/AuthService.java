@@ -43,6 +43,12 @@ public class AuthService {
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
 
+		// 닉네임 중복 체크
+		boolean isDuplicatedNickname = userQueryService.existsByNickname(registerDto.nickname());
+		if (isDuplicatedNickname) {
+			throw new UserException(ErrorCode.DUPLICATED_NICKNAME);
+		}
+
 		// 비밀번호 인코딩
 		String encodedPassword = passwordEncoder.encode(registerDto.password());
 
@@ -151,5 +157,18 @@ public class AuthService {
 			.build();
 
 		response.setHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+	}
+
+	public void checkDuplicateEmail(String email, HttpServletRequest request) {
+
+		String clientEnvType = request.getHeader("EnvType");
+
+		// 프론트 환경변수 체크
+		jwtProvider.checkEnvType(clientEnvType);
+
+		boolean isDuplicated = userQueryService.existsByEmail(email);
+		if(isDuplicated) {
+			throw new UserException(ErrorCode.DUPLICATED_EMAIL);
+		}
 	}
 }

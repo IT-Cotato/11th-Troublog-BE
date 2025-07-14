@@ -27,4 +27,14 @@ public class UserQueryService {
 		return userRepository.findByEmail(email)
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 	}
+
+	public boolean existsByEmail(String email) {
+
+		return userRepository.existsByEmail(email);
+	}
+
+	public boolean existsByNickname(String nickname) {
+
+		return userRepository.existsByNickname(nickname);
+	}
 }
