@@ -38,9 +38,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Decode private key
+      - name: Write SSH private key to file
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | base64 -d > private_key.pem
+          echo "${{ secrets.SSH_KEY }}" > private_key.pem
           chmod 600 private_key.pem
 
       - name: Copy docker-compose.yml to EC2
