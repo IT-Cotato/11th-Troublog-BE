@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +41,15 @@ public class AuthController {
 		Long userId = authService.register(registerDto, request);
 
 		return ResponseUtils.created(userId);
+	}
+
+	@PostMapping("/email-check")
+	@Operation(summary = "이메일 중복체크 API", description = "회원가입 첫번째 화면")
+	public ResponseEntity<BaseResponse<Void>> checkDuplicateEmail(@RequestParam String email, HttpServletRequest request) {
+
+		authService.checkDuplicateEmail(email, request);
+
+		return ResponseUtils.noContent();
 	}
 
 	@Operation(summary = "로그인 API", description = "이메일과 비밀번호로 로그인")
