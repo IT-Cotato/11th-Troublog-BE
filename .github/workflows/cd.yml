@@ -50,6 +50,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: deployment-files
+          path: .
+
+      - name: Debug - list files
+        run: ls -al
 
       - name: Copy docker-compose.yml to EC2
         uses: appleboy/scp-action@master
