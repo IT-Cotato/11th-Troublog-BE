@@ -1,10 +1,14 @@
 package troublog.backend.domain.user.entity;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -13,6 +17,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import troublog.backend.domain.auth.dto.RegisterDto;
+import troublog.backend.domain.project.entity.Project;
+import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.global.common.entity.BaseEntity;
 
 @Entity
@@ -50,6 +56,12 @@ public class User extends BaseEntity {
 
 	@Column(name = "githubUrl")
 	private String githubUrl;
+
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+	List<Project> projects;
+
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	List<Post> posts;
 
 	public static User registerUser(RegisterDto registerDto, String encodedPassword) {
 		return User.builder()

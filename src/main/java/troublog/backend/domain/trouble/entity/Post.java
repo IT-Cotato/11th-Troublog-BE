@@ -28,6 +28,7 @@ import troublog.backend.domain.image.entity.ThumbnailImage;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
+import troublog.backend.domain.user.entity.User;
 import troublog.backend.global.common.entity.BaseEntity;
 
 @Entity
@@ -67,6 +68,10 @@ public class Post extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_id")
 	private Project project;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	@Enumerated
 	private PostStatus status;
