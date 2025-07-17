@@ -41,9 +41,9 @@ public enum ErrorCode {
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S-001", "서버 오류가 발생했습니다."),
 
 	/**
-	 * Trouble error
+	 * Post error
 	 */
-	TROUBLE_NOT_FOUND(HttpStatus.NOT_FOUND,"T-001" , "트러블슈팅 문서를 찾지 못했습니다.");
+	POST_NOT_FOUND(HttpStatus.NOT_FOUND,"P-001" , "트러블슈팅 문서를 찾지 못했습니다.");
 	private final HttpStatus httpStatus;
 	private final String code;
 	private final String message;
