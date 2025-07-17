@@ -43,12 +43,16 @@ public class Post extends BaseEntity {
 	private String title;
 
 	@NonNull
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Content> content;
-
-	@NonNull
 	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private ErrorTag errorTag;
+
+	@NonNull
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Content> contents;
+
+	@NonNull
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<PostTag> postTags;
 
 	@Enumerated
 	private PostStatus status;
