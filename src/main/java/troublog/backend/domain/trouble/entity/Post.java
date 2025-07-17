@@ -13,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -44,6 +45,10 @@ public class Post extends BaseEntity {
 	@NonNull
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Content> content;
+
+	@NonNull
+	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private ErrorTag errorTag;
 
 	@Enumerated
 	private PostStatus status;
