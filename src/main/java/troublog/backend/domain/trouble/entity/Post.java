@@ -1,6 +1,7 @@
 package troublog.backend.domain.trouble.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -41,8 +42,8 @@ public class Post extends BaseEntity {
 	private String title;
 
 	@NonNull
-	@OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Content content;
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Content> content;
 
 	@Enumerated
 	private PostStatus status;
