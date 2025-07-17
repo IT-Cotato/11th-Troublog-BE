@@ -24,6 +24,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import troublog.backend.domain.image.entity.ThumbnailImage;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
@@ -51,6 +52,10 @@ public class Post extends BaseEntity {
 	private ErrorTag errorTag;
 
 	@NonNull
+	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private ThumbnailImage thumbnailImage;
+
+	@NonNull
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Content> contents;
 
@@ -60,7 +65,7 @@ public class Post extends BaseEntity {
 
 	@NonNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "post_id")
+	@JoinColumn(name = "project_id")
 	private Project project;
 
 	@Enumerated

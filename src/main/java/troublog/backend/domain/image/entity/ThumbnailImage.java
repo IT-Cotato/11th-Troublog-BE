@@ -1,15 +1,13 @@
-package troublog.backend.domain.project.entity;
+package troublog.backend.domain.image.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -18,7 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import troublog.backend.domain.image.entity.ThumbnailImage;
+import troublog.backend.domain.image.enums.ThumbnailDomainType;
+import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.global.common.entity.BaseEntity;
 
@@ -27,25 +26,22 @@ import troublog.backend.global.common.entity.BaseEntity;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "project")
-public class Project extends BaseEntity {
+@Table(name = "thumbnail_image")
+public class ThumbnailImage extends BaseEntity {
 
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "post_id")  // 외래키 설정
+	Post post;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "project_id")  // 외래키 설정
+	Project project;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "project_id")
+	@Column(name = "thumbnail_image_id")
 	private Long id;
-
 	@NonNull
-	@Column(name = "name")
-	private String name;
+	private String url;
 
-	@Column(name = "description")
-	private String description;
-
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-	private List<Post> posts = new ArrayList<>();
-
-	@NonNull
-	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private ThumbnailImage thumbnailImage;
+	@Enumerated
+	private ThumbnailDomainType thumbnailDomainType;
 }
