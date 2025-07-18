@@ -57,10 +57,10 @@ public class User extends BaseEntity {
 	@Column(name = "githubUrl")
 	private String githubUrl;
 
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<Project> projects;
 
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<Post> posts;
 
 	public static User registerUser(RegisterDto registerDto, String encodedPassword) {

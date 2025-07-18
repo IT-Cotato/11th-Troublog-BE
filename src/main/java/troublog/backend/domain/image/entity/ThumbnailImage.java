@@ -29,16 +29,21 @@ import troublog.backend.global.common.entity.BaseEntity;
 @Table(name = "thumbnail_image")
 public class ThumbnailImage extends BaseEntity {
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "post_id")  // 외래키 설정
-	Post post;
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "project_id")  // 외래키 설정
-	Project project;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "thumbnail_image_id")
 	private Long id;
+
+	//TODO N+1 문제 발생 가능성 O 조회시 FETCH JOIN 이용
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "post_id")
+	private Post post;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "project_id")
+	private Project project;
+
+
 	@NonNull
 	private String url;
 

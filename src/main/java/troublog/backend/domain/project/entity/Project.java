@@ -54,6 +54,6 @@ public class Project extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	User user;
 
-	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
 	private ThumbnailImage thumbnailImage;
 }

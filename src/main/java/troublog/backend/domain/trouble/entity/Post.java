@@ -52,7 +52,6 @@ public class Post extends BaseEntity {
 	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private ErrorTag errorTag;
 
-	@NonNull
 	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private ThumbnailImage thumbnailImage;
 
@@ -78,6 +77,8 @@ public class Post extends BaseEntity {
 
 	@Enumerated
 	private StarRating starRating;
+
+	private String introduction;
 
 	private int likeCount = 0;
 
