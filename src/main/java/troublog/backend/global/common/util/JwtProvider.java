@@ -129,8 +129,8 @@ public class JwtProvider {
         // 리프레시토큰이 유효한지 확인 (만료검사 X)
         validateToken(clientRefreshToken);
 
-        Claims accessTokenClaims = parseClaims(accessToken);
-        Claims refreshTokenClaims = parseClaims(clientRefreshToken);
+        Claims accessTokenClaims = getClaimsWithoutExp(accessToken);
+        Claims refreshTokenClaims = getClaimsWithoutExp(clientRefreshToken);
 
         Long userId = accessTokenClaims.get("userId", Long.class);
         Long refreshTokenId = refreshTokenClaims.get("refreshTokenId", Long.class);
@@ -177,6 +177,8 @@ public class JwtProvider {
         try {
             parseClaims(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            return true;
         } catch (SignatureException e) {
             throw new AuthException(ErrorCode.INVALID_SIGNATURE);
 		} catch (MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
@@ -200,6 +202,24 @@ public class JwtProvider {
             .build()
             .parseSignedClaims(accessToken)
             .getPayload();
+    }
+
+    /**
+     * 토큰에서 Claims 정보를 추출 (만료여부 체크하지 않는 로직)
+     * @param accessToken
+     * @return
+     */
+    private Claims getClaimsWithoutExp(String accessToken) {
+        try {
+            return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(accessToken)
+                .getPayload();
+        } catch (ExpiredJwtException e) {
+            // 토큰이 만료됐더라도 payload는 추출 가능
+            return e.getClaims();
+        }
     }
 
     public boolean isNotExpired(String token) {
