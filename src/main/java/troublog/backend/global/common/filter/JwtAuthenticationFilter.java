@@ -27,6 +27,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtProvider jwtProvider;
 	private static final String ENVTYPE = "EnvType";
 
+	private static final String[] EXCLUDE_PATHS = {
+		"/auth/register",
+		"/auth/login",
+		"/auth/refresh",
+		"/auth/email-check",
+		"/swagger-ui/**",
+		"/v3/api-docs/**"
+	};
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws
 		ServletException, IOException {
@@ -44,12 +53,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		filterChain.doFilter(request, response);
 	}
-
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		String[] excludePath = {"/auth/register","/auth/login","/auth/refresh", "/swagger-ui/**", "/v3/api-docs/**"};
 		String path = request.getRequestURI();
-		return Arrays.stream(excludePath)
+		return Arrays.stream(EXCLUDE_PATHS)
 			.anyMatch(ep -> ep.endsWith("/**")
 				? path.startsWith(ep.replace("/**", ""))
 				: path.equals(ep));
