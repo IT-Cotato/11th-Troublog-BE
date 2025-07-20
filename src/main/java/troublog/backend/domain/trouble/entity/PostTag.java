@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,11 +31,13 @@ public class PostTag extends BaseEntity {
 	@Column(name = "post_tag_id")
 	private Long id;
 
+	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "post_id", nullable = false)
+	@JoinColumn(name = "post_id")
 	private Post post;
 
+	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category_tag_id", nullable = false)
+	@JoinColumn(name = "category_tag_id")
 	private CategoryTag categoryTag;
 }

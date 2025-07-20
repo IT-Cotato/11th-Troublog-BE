@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,15 +26,19 @@ import troublog.backend.global.common.entity.BaseEntity;
 @Table(name = "category_tag")
 public class CategoryTag extends BaseEntity {
 
-	@OneToMany(mappedBy = "post_tag", cascade = CascadeType.ALL, orphanRemoval = true)
-	List<PostTag> postTags;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "category_tag_id")
 	private Long id;
-	@Column(name = "name", nullable = false, length = 100)
+
+	@NotNull
+	@Column(name = "name", length = 100)
 	private String name;
 
-	@Column(name = "description", nullable = false, columnDefinition = "TEXT")
+	@NotNull
+	@Column(name = "description", columnDefinition = "TEXT")
 	private String description;
+
+	@OneToMany(mappedBy = "categoryTag", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<PostTag> postTags;
 }

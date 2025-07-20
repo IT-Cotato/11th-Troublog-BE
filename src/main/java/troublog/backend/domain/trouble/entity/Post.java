@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -18,12 +19,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import troublog.backend.domain.image.entity.ThumbnailImage;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.enums.PostStatus;
@@ -44,26 +45,35 @@ public class Post extends BaseEntity {
 	@Column(name = "post_id")
 	private Long id;
 
-	@NonNull
+	@NotNull
 	@Column(name = "title")
 	private String title;
 
-	@NonNull
-	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private ErrorTag errorTag;
+	@Column(name = "introduction")
+	private String introduction;
 
-	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private ThumbnailImage thumbnailImage;
+	@Column(name = "like_count")
+	private int likeCount = 0;
 
-	@NonNull
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Content> contents;
+	@Column(name = "visible")
+	private boolean isVisible = false;
 
-	@NonNull
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<PostTag> postTags;
+	@Column(name = "summary_created")
+	private boolean isSummaryCreated = false;
 
-	@NonNull
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private PostStatus status;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "star_rating")
+	private StarRating starRating;
+
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@Column(name = "completed_at")
+	private LocalDateTime completedAt;
+
+	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_id")
 	private Project project;
@@ -72,22 +82,20 @@ public class Post extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@Enumerated
-	private PostStatus status;
+	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private ErrorTag errorTag;
 
-	@Enumerated
-	private StarRating starRating;
+	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private ThumbnailImage thumbnailImage;
 
-	private String introduction;
+	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Feed feed;
 
-	private int likeCount = 0;
+	@NotNull
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Content> contents;
 
-	@Column(name = "visible")
-	private boolean isVisible = false;
-
-	@Column(name = "summary_created")
-	private boolean isSummaryCreated;
-
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private LocalDateTime completedAt;
+	@NotNull
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<PostTag> postTags;
 }
