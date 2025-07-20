@@ -25,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import troublog.backend.domain.community.entity.Feed;
 import troublog.backend.domain.image.entity.ThumbnailImage;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.enums.PostStatus;
