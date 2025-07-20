@@ -31,14 +31,13 @@ public class ErrorTag extends BaseEntity {
 	private Long id;
 
 	@NotNull
-	@Column(name = "name", length = 100)
+	@Column(name = "name")
 	private String name;
 
 	@NotNull
-	@Column(name = "description", columnDefinition = "TEXT")
+	@Column(name = "description")
 	private String description;
 
-	@NotNull
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id", unique = true)
 	private Post post;

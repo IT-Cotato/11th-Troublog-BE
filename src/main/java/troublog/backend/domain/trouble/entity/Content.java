@@ -34,14 +34,13 @@ public class Content extends BaseEntity {
 	@Column(name = "content_id")
 	private Long id;
 
-	@NotNull
 	@Column(name = "sub_title")
 	private String subTitle;
 
-	@NotNull
 	@Column(columnDefinition = "TEXT")
 	private String body;
 
+	@NotNull
 	@Column(name = "sequence")
 	private int sequence;
 

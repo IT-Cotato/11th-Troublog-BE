@@ -32,11 +32,11 @@ public class CategoryTag extends BaseEntity {
 	private Long id;
 
 	@NotNull
-	@Column(name = "name", length = 100)
+	@Column(name = "name")
 	private String name;
 
 	@NotNull
-	@Column(name = "description", columnDefinition = "TEXT")
+	@Column(name = "description")
 	private String description;
 
 	@OneToMany(mappedBy = "categoryTag", cascade = CascadeType.ALL, orphanRemoval = true)
