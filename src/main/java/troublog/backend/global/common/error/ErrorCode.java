@@ -43,7 +43,13 @@ public enum ErrorCode {
 	/**
 	 * Post error
 	 */
-	POST_NOT_FOUND(HttpStatus.NOT_FOUND,"P-001" , "트러블슈팅 문서를 찾지 못했습니다.");
+	POST_NOT_FOUND(HttpStatus.NOT_FOUND,"P-001" , "트러블슈팅 문서를 찾지 못했습니다."),
+	INVALID_VALUE(HttpStatus.NOT_FOUND,"P-002" , "잘못된 상태값입니다."),
+
+	/**
+	 * Project error
+	 */
+	PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND,"PR-001" ,"프로젝트를 찾지 못했습니다.");
 	private final HttpStatus httpStatus;
 	private final String code;
 	private final String message;

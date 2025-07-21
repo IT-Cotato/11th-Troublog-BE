@@ -1,5 +1,6 @@
 package troublog.backend.domain.user.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -58,10 +59,10 @@ public class User extends BaseEntity {
 	private String githubUrl;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	List<Project> projects;
+	List<Project> projects = new ArrayList<>();
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	List<Post> posts;
+	List<Post> posts = new ArrayList<>();
 
 	public static User registerUser(RegisterDto registerDto, String encodedPassword) {
 		return User.builder()

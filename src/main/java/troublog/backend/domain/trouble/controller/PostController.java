@@ -16,7 +16,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
-import troublog.backend.domain.trouble.dto.resquest.PostReqDto;
+import troublog.backend.domain.trouble.dto.resquest.PostCreateReqDto;
 import troublog.backend.domain.trouble.service.command.PostCommandService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.global.common.annotation.Authentication;
@@ -30,8 +30,8 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "트러블슈팅", description = "트러블슈팅 문서 관련 엔드포인트")
 public class PostController {
 
-	private final PostCommandService commandService;
-	private final PostQueryService queryService;
+	private final PostCommandService postCommandService;
+	private final PostQueryService postQueryService;
 
 	@PostMapping
 	@Operation(summary = "트러블슈팅 문서 생성 API", description = "")
@@ -39,11 +39,9 @@ public class PostController {
 		content = @Content(schema = @Schema(implementation = Long.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> register(
 		@Authentication CustomAuthenticationToken token,
-		@Valid @RequestBody PostReqDto reqDto,
+		@Valid @RequestBody PostCreateReqDto reqDto,
 		HttpServletRequest request) {
-
-		PostResDto response = commandService.createTroubleDoc();
-
+		PostResDto response = postCommandService.createPost(reqDto, token.getNickname());
 		return ResponseUtils.created(response);
 	}
 }

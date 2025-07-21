@@ -1,8 +1,6 @@
 package troublog.backend.domain.trouble.dto.resquest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import troublog.backend.domain.trouble.enums.ContentAuthorType;
-import troublog.backend.domain.trouble.enums.ContentSummaryType;
 
 public record ContentDto(
 
@@ -29,13 +27,13 @@ public record ContentDto(
 		example = "USER",
 		allowableValues = {"USER_WRITTEN", "AI_GENERATED"}
 	)
-	ContentAuthorType authorType,
+	String authorType,
 
 	@Schema(
 		description = "컨텐츠 요약 유형",
 		example = "USER_WRITTEN",
 		allowableValues = {"ISSUE_MANAGEMENT", "BLOG", "INTERVIEW", "RESUME"}
 	)
-	ContentSummaryType summaryType
+	String summaryType
 ) {
 }

@@ -1,7 +1,8 @@
 package troublog.backend.domain.trouble.dto.resquest;
 
-import java.time.LocalDateTime;
 import java.util.List;
+
+import org.hibernate.validator.constraints.URL;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -9,7 +10,7 @@ import lombok.Builder;
 
 @Builder
 @Schema(description = "트러블로그 게시글 생성 요청 DTO")
-public record PostReqDto(
+public record PostCreateReqDto(
 	@Schema(
 		description = "게시글 제목",
 		example = "Spring Boot 환경설정 트러블슈팅"
@@ -19,21 +20,9 @@ public record PostReqDto(
 
 	@Schema(
 		description = "에러 태그",
-		example = "ConfigurationError",
-		allowableValues = {
-			"Build/Compile Error",
-			"Runtime Error",
-			"Dependency/Version Error",
-			"Network/API Error",
-			"Authentication/Authorization Error",
-			"Database Error",
-			"UI/Rendering Error",
-			"Configuration Error",
-			"Timeout/Error Handling",
-			"Third‑party Library Error"
-		}
+		example = "Configuration Error"
 	)
-	String errorTag,
+	int errorTagId,
 
 	@Schema(
 		description = "게시글 태그 목록",
@@ -63,12 +52,6 @@ public record PostReqDto(
 	boolean isSummaryCreated,
 
 	@Schema(
-		description = "완료 일시",
-		example = "2024-01-15T10:30:00"
-	)
-	LocalDateTime completedAt,
-
-	@Schema(
 		description = "작성 상태",
 		example = "COMPLETED",
 		allowableValues = {"WRITING", "COMPLETED", "SUMMARIZED"}
@@ -80,12 +63,19 @@ public record PostReqDto(
 		example = "5",
 		allowableValues = {"1", "2", "3", "4", "5"}
 	)
-	String starRating,
+	int starRating,
 
 	@Schema(
 		description = "프로젝트 ID",
 		example = "1"
 	)
-	int projectId
+	int projectId,
+
+	@Schema(
+		description = "썸네일 이미지 URL",
+		example = "https://example.com/thumbnails/trouble-post-image.jpg"
+	)
+	@URL(message = "지정된 URL 형식이 아닙니다.")
+	String thumbnailImageUrl
 ) {
 }
