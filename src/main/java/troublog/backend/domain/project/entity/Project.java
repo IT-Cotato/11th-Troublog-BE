@@ -13,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,7 +20,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import troublog.backend.domain.image.entity.ThumbnailImage;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.global.common.entity.BaseEntity;
@@ -54,6 +52,6 @@ public class Project extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	User user;
 
-	@OneToOne(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-	private ThumbnailImage thumbnailImage;
+	@Column(name = "thumbnail_image_url")
+	String thumbnailImageUrl;
 }
