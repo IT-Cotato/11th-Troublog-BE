@@ -3,6 +3,8 @@ package troublog.backend.domain.trouble.enums;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.PostException;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -13,4 +15,13 @@ public enum ContentSummaryType {
 	ISSUE_MANAGEMENT("이슈관리");
 
 	private final String description;
+
+	public static ContentSummaryType from(String type) {
+		for (ContentSummaryType contentSummaryType : values()) {
+			if (contentSummaryType.description.equals(type)) {
+				return contentSummaryType;
+			}
+		}
+		throw new PostException(ErrorCode.INVALID_VALUE);
+	}
 }
