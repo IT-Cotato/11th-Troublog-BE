@@ -26,7 +26,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import troublog.backend.domain.community.entity.Feed;
-import troublog.backend.domain.image.entity.ThumbnailImage;
+import troublog.backend.domain.image.entity.PostImage;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
@@ -54,13 +54,16 @@ public class Post extends BaseEntity {
 	private String introduction;
 
 	@Column(name = "like_count")
-	private int likeCount = 0;
+	private int likeCount;
+
+	@Column(name = "comment_count")
+	private int commentCount;
 
 	@Column(name = "visible")
-	private boolean isVisible = false;
+	private boolean isVisible;
 
 	@Column(name = "summary_created")
-	private boolean isSummaryCreated = false;
+	private boolean isSummaryCreated;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
@@ -79,6 +82,7 @@ public class Post extends BaseEntity {
 	@JoinColumn(name = "project_id")
 	private Project project;
 
+	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
@@ -87,16 +91,15 @@ public class Post extends BaseEntity {
 	private ErrorTag errorTag;
 
 	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private ThumbnailImage thumbnailImage;
-
-	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Feed feed;
 
-	@NotNull
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Content> contents;
 
-	@NotNull
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PostTag> postTags;
+
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<PostImage> postImages;
+
 }

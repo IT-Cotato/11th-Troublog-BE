@@ -8,8 +8,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import troublog.backend.domain.image.enums.ThumbnailDomainType;
-import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.global.common.entity.BaseEntity;
 
@@ -26,23 +26,19 @@ import troublog.backend.global.common.entity.BaseEntity;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "thumbnail_image")
-public class ThumbnailImage extends BaseEntity {
+@Table(name = "post_image")
+public class PostImage extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "thumbnail_image_id")
+	@Column(name = "post_image_id")
 	private Long id;
 
 	//TODO N+1 문제 발생 가능성 O 조회시 FETCH JOIN 이용
-	@OneToOne(fetch = FetchType.LAZY)
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id")
 	private Post post;
-
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "project_id")
-	private Project project;
-
 
 	@NonNull
 	private String url;
