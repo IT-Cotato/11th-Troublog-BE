@@ -23,8 +23,8 @@ import troublog.backend.global.common.entity.BaseEntity;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "category_tag")
-public class CategoryTag extends BaseEntity {
+@Table(name = "tech_stack")
+public class TechStack extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +39,6 @@ public class CategoryTag extends BaseEntity {
 	@Column(name = "description")
 	private String description;
 
-	@OneToMany(mappedBy = "categoryTag", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "techStack", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PostTag> postTags;
 }

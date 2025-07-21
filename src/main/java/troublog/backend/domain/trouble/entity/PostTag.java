@@ -39,5 +39,5 @@ public class PostTag extends BaseEntity {
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_tag_id")
-	private CategoryTag categoryTag;
+	private TechStack techStack;
 }
