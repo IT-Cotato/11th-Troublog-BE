@@ -58,9 +58,11 @@ public class User extends BaseEntity {
 	@Column(name = "githubUrl")
 	private String githubUrl;
 
+	@Builder.Default
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<Project> projects = new ArrayList<>();
 
+	@Builder.Default
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<Post> posts = new ArrayList<>();
 

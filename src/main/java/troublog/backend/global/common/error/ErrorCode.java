@@ -63,14 +63,14 @@ public enum ErrorCode {
 	MISSING_POST_TAG(HttpStatus.BAD_REQUEST, "PT-002", "포스트 태그 정보가 누락되었습니다."),
 
 	/**
-	 * ErrorTag Error
+	 * Tag Error
 	 */
-	MISSING_ERROR_TAG(HttpStatus.BAD_REQUEST, "ET-001", "에러 태그 정보가 누락되었습니다."),
-
-	/**
-	 * TechStack Error
-	 */
-	MISSING_TECH_STACK(HttpStatus.BAD_REQUEST, "TS-001", "기술 스택 정보가 누락되었습니다."),
+	MISSING_ERROR_TAG(HttpStatus.BAD_REQUEST, "T-001", "에러 태그 정보가 누락되었습니다."),
+	MISSING_TECH_STACK_INFORMATION(HttpStatus.BAD_REQUEST, "T-002", "필수 기술 스택 정보가 누락되었습니다."),
+	MISSING_TAG(HttpStatus.BAD_REQUEST, "T-003", "필수 태그 정보가 누락되었습니다."),
+	TECH_STACK_NOT_FOUND(HttpStatus.NOT_FOUND, "T-004", "기술 스택을 찾을 수 없습니다."),
+	TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "T-005", "태그를 찾을 수 없습니다."),
+	INVALID_TAG_TYPE(HttpStatus.BAD_REQUEST, "T-006", "유효하지 않은 태그 타입입니다."),
 
 	/**
 	 * Image Error

@@ -16,10 +16,10 @@ import troublog.backend.global.common.error.exception.PostException;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostQueryService {
-	private final PostRepository PostRepository;
+	private final PostRepository postRepository;
 
 	public Post findTroubleById(long id) {
-		return PostRepository.findById(id)
+		return postRepository.findById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
 }

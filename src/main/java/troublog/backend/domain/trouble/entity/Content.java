@@ -28,7 +28,7 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "content")
+@Table(name = "contents")
 public class Content extends BaseEntity {
 
 	@Id

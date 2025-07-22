@@ -17,7 +17,6 @@ import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.repository.PostRepository;
-import troublog.backend.domain.trouble.service.query.ErrorTagQueryService;
 import troublog.backend.domain.user.service.UserQueryService;
 
 @Slf4j
@@ -30,7 +29,6 @@ public class PostCommandService {
 	private final UserQueryService userQueryService;
 	private final ProjectQueryService projectQueryService;
 	private final ContentCommandService contentCommandService;
-	private final ErrorTagQueryService errorTagQueryService;
 	private final PostTagCommandService postTagCommandService;
 
 	public PostResDto createPost(PostCreateReqDto reqDto, String email) {
@@ -39,7 +37,8 @@ public class PostCommandService {
 		Post savedPost = postRepository.save(newPost);
 
 		setContentRelations(savedPost, reqDto.contentDtoList());
-		setPostTagRelations(savedPost, reqDto.postTags());
+		setTechStackTagRelations(savedPost, reqDto.postTags());
+
 		//TODO Image URL(String) -> PostImage 변환후 연관관계 메서드 호출 필요
 
 		return PostConverter.toResponse(savedPost);
@@ -48,7 +47,7 @@ public class PostCommandService {
 	private void setRequiredRelations(Post post, PostCreateReqDto reqDto, String email) {
 		post.assignUser(userQueryService.findUserByEmail(email));
 		post.assignProject(projectQueryService.findProjectById(reqDto.projectId()));
-		post.assignErrorTag(errorTagQueryService.findErrorTagById(reqDto.errorTagId()));
+		post.addPostTag(postTagCommandService.saveErrorPostTag(reqDto.errorTagName(), post));
 	}
 
 	private void setContentRelations(Post post, List<ContentDto> contentDtoList) {
@@ -58,10 +57,10 @@ public class PostCommandService {
 		}
 	}
 
-	private void setPostTagRelations(Post post, List<String> reqPostTags) {
-		if (hasPostTags(reqPostTags)) {
-			List<PostTag> postTags = postTagCommandService.savePostTags(reqPostTags, post);
-			post.addPostTags(postTags);
+	private void setTechStackTagRelations(Post post, List<String> reqTechStackTags) {
+		if (hasTechStackTag(reqTechStackTags)) {
+			List<PostTag> techStackPostTags = postTagCommandService.saveTechStackPostTags(reqTechStackTags, post);
+			post.addPostTags(techStackPostTags);
 		}
 	}
 
@@ -76,12 +75,11 @@ public class PostCommandService {
 		return contentDtoList != null && !contentDtoList.isEmpty();
 	}
 
-	private boolean hasPostTags(List<String> postTags) {
+	private boolean hasTechStackTag(List<String> postTags) {
 		return postTags != null && !postTags.isEmpty();
 	}
 
 	private boolean hasPostImages(List<String> postImages) {
 		return postImages != null && !postImages.isEmpty();
 	}
-
 }

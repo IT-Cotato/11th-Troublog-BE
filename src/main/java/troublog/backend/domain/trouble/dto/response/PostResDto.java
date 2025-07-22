@@ -36,9 +36,6 @@ public record PostResDto(
 	@Schema(description = "별점", example = "1")
 	String starRating,
 
-	@Schema(description = "완료 시간", example = "2024-01-15T14:30:00")
-	LocalDateTime completedAt,
-
 	@Schema(description = "작성 시간", example = "2024-01-15T10:00:00")
 	LocalDateTime createdAt,
 
@@ -52,7 +49,7 @@ public record PostResDto(
 	long projectId,
 
 	@Schema(description = "에러 태그 정보")
-	long errorTagId,
+	String errorTag,
 
 	@Schema(description = "게시글 태그 목록")
 	List<String> postTags,

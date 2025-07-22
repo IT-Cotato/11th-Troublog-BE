@@ -23,7 +23,7 @@ public record PostCreateReqDto(
 		description = "에러 태그",
 		example = "1"
 	)
-	int errorTagId,
+	String errorTagName,
 
 	@Schema(
 		description = "게시글 태그 목록",

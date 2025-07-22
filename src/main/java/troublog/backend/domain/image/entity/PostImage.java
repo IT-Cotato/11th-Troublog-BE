@@ -24,7 +24,7 @@ import troublog.backend.global.common.entity.BaseEntity;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "post_image")
+@Table(name = "post_images")
 public class PostImage extends BaseEntity {
 
 	@Id

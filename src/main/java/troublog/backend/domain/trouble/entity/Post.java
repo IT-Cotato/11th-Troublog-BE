@@ -17,7 +17,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -39,7 +38,7 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "post")
+@Table(name = "posts")
 public class Post extends BaseEntity {
 
 	@Id
@@ -87,9 +86,6 @@ public class Post extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
-
-	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private ErrorTag errorTag;
 
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Content> contents;
@@ -141,13 +137,6 @@ public class Post extends BaseEntity {
 			throw new PostException(ErrorCode.MISSING_POST_TAG);
 		}
 		postTag.assignPost(this);
-	}
-
-	public void assignErrorTag(ErrorTag errorTag) {
-		if (errorTag == null) {
-			throw new PostException(ErrorCode.MISSING_ERROR_TAG);
-		}
-		errorTag.assignPost(this);
 	}
 
 	public void addPostImages(List<PostImage> postImages) {

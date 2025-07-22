@@ -29,7 +29,7 @@ import troublog.backend.global.common.entity.BaseEntity;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "project")
+@Table(name = "projects")
 public class Project extends BaseEntity {
 
 	@Id
@@ -44,6 +44,7 @@ public class Project extends BaseEntity {
 	@Column(name = "description")
 	private String description;
 
+	@Builder.Default
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
 	private List<Post> posts = new ArrayList<>();
 

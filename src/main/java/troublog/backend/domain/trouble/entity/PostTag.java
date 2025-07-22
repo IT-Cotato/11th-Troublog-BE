@@ -1,6 +1,5 @@
 package troublog.backend.domain.trouble.entity;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +23,7 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "post_tag")
+@Table(name = "post_tags")
 public class PostTag extends BaseEntity {
 
 	@Id
@@ -33,15 +31,13 @@ public class PostTag extends BaseEntity {
 	@Column(name = "post_tag_id")
 	private Long id;
 
-	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id")
 	private Post post;
 
-	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category_tag_id")
-	private TechStack techStack;
+	@JoinColumn(name = "tag_id")
+	private Tag tag;
 
 	// 연관관계 편의 메서드
 	public void assignPost(Post post) {
@@ -51,9 +47,10 @@ public class PostTag extends BaseEntity {
 		this.post = post;
 	}
 
-	public void assignTechStack(TechStack techStack) {
-		if (techStack == null) {
-			throw new PostException(ErrorCode.MISSING_TECH_STACK);
+	public void assignTag(Tag tag) {
+		if (tag == null) {
+			throw new PostException(ErrorCode.MISSING_TAG);
 		}
+		this.tag = tag;
 	}
 }
