@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.experimental.UtilityClass;
+import troublog.backend.domain.trouble.dto.request.PostCreateReqDto;
 import troublog.backend.domain.trouble.dto.response.ContentInfoDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
-import troublog.backend.domain.trouble.dto.resquest.PostCreateReqDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;

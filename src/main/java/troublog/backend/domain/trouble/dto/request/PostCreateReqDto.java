@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.dto.resquest;
+package troublog.backend.domain.trouble.dto.request;
 
 import java.util.List;
 

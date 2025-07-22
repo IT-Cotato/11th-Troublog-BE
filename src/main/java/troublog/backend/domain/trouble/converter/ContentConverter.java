@@ -1,8 +1,8 @@
 package troublog.backend.domain.trouble.converter;
 
 import lombok.experimental.UtilityClass;
+import troublog.backend.domain.trouble.dto.request.ContentDto;
 import troublog.backend.domain.trouble.dto.response.ContentInfoDto;
-import troublog.backend.domain.trouble.dto.resquest.ContentDto;
 import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.enums.ContentAuthorType;
 import troublog.backend.domain.trouble.enums.ContentSummaryType;
