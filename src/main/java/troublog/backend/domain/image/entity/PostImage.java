@@ -2,7 +2,6 @@ package troublog.backend.domain.image.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,7 +16,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import troublog.backend.domain.image.enums.ThumbnailDomainType;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.global.common.entity.BaseEntity;
 
@@ -41,8 +39,13 @@ public class PostImage extends BaseEntity {
 	private Post post;
 
 	@NonNull
-	private String url;
+	@Column(name = "image_url")
+	private String imageUrl;
 
-	@Enumerated
-	private ThumbnailDomainType thumbnailDomainType;
+	@Column(name = "is_thumbnail")
+	private boolean IsThumbnail;
+
+	public void assignPost(Post post) {
+		this.post = post;
+	}
 }

@@ -31,6 +31,8 @@ import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.global.common.entity.BaseEntity;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.PostException;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -65,7 +67,7 @@ public class Post extends BaseEntity {
 	private boolean isSummaryCreated;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status")
+	@Column(name = "postStatus")
 	private PostStatus status;
 
 	@Enumerated(EnumType.STRING)
@@ -98,4 +100,67 @@ public class Post extends BaseEntity {
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PostImage> postImages;
 
+	// 연관관계 편의 메서드들
+	public void assignUser(User user) {
+		if (user == null) {
+			throw new PostException(ErrorCode.MISSING_USER);
+		}
+		this.user = user;
+	}
+
+	public void assignProject(Project project) {
+		if (project == null) {
+			throw new PostException(ErrorCode.MISSING_PROJECT);
+		}
+		this.project = project;
+	}
+
+	public void addContents(List<Content> contents) {
+		if (contents == null || contents.isEmpty()) {
+			throw new PostException(ErrorCode.MISSING_CONTENT_LIST);
+		}
+		contents.forEach(this::addContent);
+	}
+
+	public void addContent(Content content) {
+		if (content == null) {
+			throw new PostException(ErrorCode.MISSING_CONTENT);
+		}
+		content.assignPost(this);
+	}
+
+	public void addPostTags(List<PostTag> postTags) {
+		if (postTags == null || postTags.isEmpty()) {
+			throw new PostException(ErrorCode.MISSING_POST_TAG_LIST);
+		}
+		postTags.forEach(this::addPostTag);
+	}
+
+	public void addPostTag(PostTag postTag) {
+		if (postTag == null) {
+			throw new PostException(ErrorCode.MISSING_POST_TAG);
+		}
+		postTag.assignPost(this);
+	}
+
+	public void assignErrorTag(ErrorTag errorTag) {
+		if (errorTag == null) {
+			throw new PostException(ErrorCode.MISSING_ERROR_TAG);
+		}
+		errorTag.assignPost(this);
+	}
+
+	public void addPostImages(List<PostImage> postImages) {
+		if (postImages == null || postImages.isEmpty()) {
+			throw new PostException(ErrorCode.MISSING_IMAGE_LIST);
+		}
+		postImages.forEach(this::addPostImage);
+	}
+
+	public void addPostImage(PostImage postImage) {
+		if (postImage == null) {
+			throw new PostException(ErrorCode.MISSING_IMAGE);
+		}
+		postImage.assignPost(this);
+	}
 }

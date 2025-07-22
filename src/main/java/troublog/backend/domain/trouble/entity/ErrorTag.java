@@ -16,6 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import troublog.backend.global.common.entity.BaseEntity;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.PostException;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -41,4 +43,12 @@ public class ErrorTag extends BaseEntity {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id", unique = true)
 	private Post post;
+
+	// 연관관계 편의 메서드
+	public void assignPost(Post post) {
+		if (post == null) {
+			throw new PostException(ErrorCode.MISSING_POST);
+		}
+		this.post = post;
+	}
 }
