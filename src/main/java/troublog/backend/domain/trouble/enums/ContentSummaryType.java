@@ -18,7 +18,7 @@ public enum ContentSummaryType {
 
 	public static ContentSummaryType from(String type) {
 		for (ContentSummaryType contentSummaryType : values()) {
-			if (contentSummaryType.description.equals(type)) {
+			if (contentSummaryType.name().equals(type)) {
 				return contentSummaryType;
 			}
 		}

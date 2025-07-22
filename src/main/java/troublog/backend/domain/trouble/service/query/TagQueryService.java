@@ -22,8 +22,8 @@ public class TagQueryService {
 
 	private final TagRepository tagRepository;
 
-	public List<Tag> findErrorTagsByNames(String tagName) {
-		return tagRepository.findByNameInAndTagType(List.of(tagName), TagType.ERROR)
+	public Tag findErrorTagsByNames(String tagName) {
+		return tagRepository.findByName(tagName)
 			.orElseThrow(() -> new PostException(ErrorCode.TAG_NOT_FOUND));
 	}
 

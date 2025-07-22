@@ -12,6 +12,11 @@ spring:
           model: gpt-4.1-mini
   mvc:
     log-resolved-exception: false
+
+springdoc:
+  swagger-ui:
+    display-request-duration: true
+
 jwt:
   secret: ${JWT_SECRET_KEY}
   access-token-validity-in-seconds: 1800

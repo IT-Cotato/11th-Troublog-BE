@@ -15,9 +15,9 @@ public enum ContentAuthorType {
 	private final String description;
 
 	public static ContentAuthorType from(String type) {
-		for (ContentAuthorType contentSummaryType : values()) {
-			if (contentSummaryType.description.equals(type)) {
-				return contentSummaryType;
+		for (ContentAuthorType contentAuthorType : values()) {
+			if (contentAuthorType.name().equals(type)) {
+				return contentAuthorType;
 			}
 		}
 		throw new PostException(ErrorCode.INVALID_VALUE);

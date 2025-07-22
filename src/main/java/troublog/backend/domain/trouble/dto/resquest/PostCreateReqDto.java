@@ -21,13 +21,25 @@ public record PostCreateReqDto(
 
 	@Schema(
 		description = "에러 태그",
-		example = "1"
+		example = "Runtime Error",
+		allowableValues = {
+			"Build/Compile Error",
+			"Runtime Error",
+			"Dependency/Version Error",
+			"Network/API Error",
+			"Authentication/Authorization Error",
+			"Database Error",
+			"UI/Rendering Error",
+			"Configuration Error",
+			"Timeout/Error Handling",
+			"Third-party Library Error"
+		}
 	)
 	String errorTagName,
 
 	@Schema(
 		description = "게시글 태그 목록",
-		example = "[\"Spring Boot\"]"
+		example = "[\"Spring Boot\", \"Java\"]"
 	)
 	List<String> postTags,
 
@@ -70,7 +82,7 @@ public record PostCreateReqDto(
 		description = "프로젝트 ID",
 		example = "1"
 	)
-	@NotNull(message = "Project ID는 ")
+	@NotNull(message = "Project ID는 null 일 수 없습니다.")
 	int projectId,
 
 	@Schema(

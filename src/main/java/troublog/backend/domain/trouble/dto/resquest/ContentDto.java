@@ -30,15 +30,15 @@ public record ContentDto(
 
 	@Schema(
 		description = "컨텐츠 작성자 유형",
-		example = "USER",
+		example = "USER_WRITTEN",
 		allowableValues = {"USER_WRITTEN", "AI_GENERATED"}
 	)
 	@NotBlank(message = "컨텐츠 작성자 유형은 빈칸일 수 없습니다.")
 	String authorType,
 
 	@Schema(
-		description = "컨텐츠 요약 유형",
-		example = "USER_WRITTEN",
+		description = "컨텐츠 요약 유형 - AI_GENERATED 일때",
+		example = "",
 		allowableValues = {"ISSUE_MANAGEMENT", "BLOG", "INTERVIEW", "RESUME"}
 	)
 	String summaryType
