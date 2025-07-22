@@ -6,10 +6,11 @@ import org.hibernate.validator.constraints.URL;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-@Schema(description = "트러블로그 게시글 생성 요청 DTO")
+@Schema(description = "트러블로그 문서 생성 요청 DTO")
 public record PostCreateReqDto(
 	@Schema(
 		description = "게시글 제목",
@@ -20,13 +21,13 @@ public record PostCreateReqDto(
 
 	@Schema(
 		description = "에러 태그",
-		example = "Configuration Error"
+		example = "1"
 	)
 	int errorTagId,
 
 	@Schema(
 		description = "게시글 태그 목록",
-		example = "[\"Spring Boot\", \"Configuration\", \"Error\"]"
+		example = "[\"Spring Boot\"]"
 	)
 	List<String> postTags,
 
@@ -53,8 +54,8 @@ public record PostCreateReqDto(
 
 	@Schema(
 		description = "작성 상태",
-		example = "COMPLETED",
-		allowableValues = {"WRITING", "COMPLETED", "SUMMARIZED"}
+		example = "작성 중",
+		allowableValues = {"작성 중", "작성 완료", "요약 완료"}
 	)
 	String postStatus,
 
@@ -69,6 +70,7 @@ public record PostCreateReqDto(
 		description = "프로젝트 ID",
 		example = "1"
 	)
+	@NotNull(message = "Project ID는 ")
 	int projectId,
 
 	@Schema(

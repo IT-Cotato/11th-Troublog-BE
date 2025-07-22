@@ -1,7 +1,12 @@
 package troublog.backend.domain.trouble.dto.resquest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
+@Builder
+@Schema(description = "트러블로그 문서 본문 내용 DTO")
 public record ContentDto(
 
 	@Schema(
@@ -20,6 +25,7 @@ public record ContentDto(
 		description = "컨텐츠 순서",
 		example = "1"
 	)
+	@NotNull(message = "컨텐츠 순서는 null 값일 수 없습니다.")
 	int sequence,
 
 	@Schema(
@@ -27,6 +33,7 @@ public record ContentDto(
 		example = "USER",
 		allowableValues = {"USER_WRITTEN", "AI_GENERATED"}
 	)
+	@NotBlank(message = "컨텐츠 작성자 유형은 빈칸일 수 없습니다.")
 	String authorType,
 
 	@Schema(

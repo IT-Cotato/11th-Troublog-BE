@@ -34,14 +34,14 @@ public class PostController {
 	private final PostQueryService postQueryService;
 
 	@PostMapping
-	@Operation(summary = "트러블슈팅 문서 생성 API", description = "")
+	@Operation(summary = "트러블슈팅 문서 생성 API", description = "트러블슈팅 문서를 새롭게 생성한다.")
 	@ApiResponse(responseCode = "200", description = "성공",
 		content = @Content(schema = @Schema(implementation = Long.class)))
-	public ResponseEntity<BaseResponse<PostResDto>> register(
+	public ResponseEntity<BaseResponse<PostResDto>> createPost(
 		@Authentication CustomAuthenticationToken token,
 		@Valid @RequestBody PostCreateReqDto reqDto,
 		HttpServletRequest request) {
-		PostResDto response = postCommandService.createPost(reqDto, token.getNickname());
+		PostResDto response = postCommandService.createPost(reqDto, token.getName());
 		return ResponseUtils.created(response);
 	}
 }

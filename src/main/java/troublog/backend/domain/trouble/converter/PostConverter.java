@@ -27,6 +27,17 @@ public class PostConverter {
 	}
 
 	public PostResDto toResponse(Post post) {
-		return PostResDto.builder().build();
+		return PostResDto.builder()
+			.id(post.getId())
+			.title(post.getTitle())
+			.introduction(post.getIntroduction())
+			.isVisible(post.isVisible())
+			.isSummaryCreated(post.isSummaryCreated())
+			.postStatus(post.getStatus().getMessage())
+			.starRating(post.getStarRating().name())
+			.commentCount(post.getCommentCount())
+			.likeCount(post.getLikeCount())
+			.completedAt(post.getCompletedAt())
+			.build();
 	}
 }
