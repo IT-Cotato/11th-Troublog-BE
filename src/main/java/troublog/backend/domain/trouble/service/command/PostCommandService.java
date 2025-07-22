@@ -52,14 +52,14 @@ public class PostCommandService {
 	private void setContentRelations(Post post, List<ContentDto> contentDtoList) {
 		if (hasContents(contentDtoList)) {
 			List<Content> contents = contentCommandService.saveAllContent(contentDtoList);
-			post.addContents(contents);
+			contents.forEach(post::addContent);
 		}
 	}
 
 	private void setTechStackTagRelations(Post post, List<String> reqTechStackTags) {
 		if (hasTechStackTag(reqTechStackTags)) {
 			List<PostTag> techStackPostTags = postTagCommandService.saveTechStackPostTags(reqTechStackTags, post);
-			post.addPostTags(techStackPostTags);
+			techStackPostTags.forEach(post::addPostTag);
 		}
 	}
 

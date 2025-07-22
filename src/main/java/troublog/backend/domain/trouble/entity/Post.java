@@ -1,6 +1,7 @@
 package troublog.backend.domain.trouble.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -87,14 +88,17 @@ public class Post extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
+	@Builder.Default
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Content> contents;
+	private List<Content> contents = new ArrayList<>();
 
+	@Builder.Default
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<PostTag> postTags;
+	private List<PostTag> postTags = new ArrayList<>();
 
+	@Builder.Default
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<PostImage> postImages;
+	private List<PostImage> postImages = new ArrayList<>();
 
 	// 연관관계 편의 메서드들
 	public void assignUser(User user) {
@@ -111,45 +115,27 @@ public class Post extends BaseEntity {
 		this.project = project;
 	}
 
-	public void addContents(List<Content> contents) {
-		if (contents == null || contents.isEmpty()) {
-			throw new PostException(ErrorCode.MISSING_CONTENT_LIST);
-		}
-		contents.forEach(this::addContent);
-	}
-
 	public void addContent(Content content) {
 		if (content == null) {
 			throw new PostException(ErrorCode.MISSING_CONTENT);
 		}
+		this.contents.add(content);
 		content.assignPost(this);
-	}
-
-	public void addPostTags(List<PostTag> postTags) {
-		if (postTags == null || postTags.isEmpty()) {
-			throw new PostException(ErrorCode.MISSING_POST_TAG_LIST);
-		}
-		postTags.forEach(this::addPostTag);
 	}
 
 	public void addPostTag(PostTag postTag) {
 		if (postTag == null) {
 			throw new PostException(ErrorCode.MISSING_POST_TAG);
 		}
+		this.postTags.add(postTag);
 		postTag.assignPost(this);
-	}
-
-	public void addPostImages(List<PostImage> postImages) {
-		if (postImages == null || postImages.isEmpty()) {
-			throw new PostException(ErrorCode.MISSING_IMAGE_LIST);
-		}
-		postImages.forEach(this::addPostImage);
 	}
 
 	public void addPostImage(PostImage postImage) {
 		if (postImage == null) {
 			throw new PostException(ErrorCode.MISSING_IMAGE);
 		}
+		this.postImages.add(postImage);
 		postImage.assignPost(this);
 	}
 }
