@@ -43,7 +43,7 @@ public class PostImage extends BaseEntity {
 	private String imageUrl;
 
 	@Column(name = "is_thumbnail")
-	private boolean IsThumbnail;
+	private boolean isThumbnail;
 
 	public void assignPost(Post post) {
 		this.post = post;
