@@ -38,6 +38,14 @@ public class PostConverter {
 			.commentCount(post.getCommentCount())
 			.likeCount(post.getLikeCount())
 			.completedAt(post.getCompletedAt())
+			.createdAt(post.getCreated_at())
+			.updatedAt(post.getUpdated_at())
+			.userId(post.getUser().getId())
+			.projectId(post.getProject().getId())
+			.errorTagId(post.getErrorTag().getId())
+			.postTags(post.getPostTags().stream().map(PostTagConverter::toTechStackList).toList())
+			.contents(post.getContents().stream().map(ContentConverter::toResponse).toList())
 			.build();
 	}
+
 }

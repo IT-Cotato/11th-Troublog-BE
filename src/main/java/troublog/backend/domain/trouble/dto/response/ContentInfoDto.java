@@ -5,7 +5,7 @@ import lombok.Builder;
 
 @Builder
 @Schema(description = "콘텐츠 정보")
-public record ContentInfo(
+public record ContentInfoDto(
 	@Schema(description = "콘텐츠 ID", example = "1")
 	Long id,
 

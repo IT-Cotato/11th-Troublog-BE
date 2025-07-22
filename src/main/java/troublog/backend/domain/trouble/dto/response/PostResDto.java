@@ -46,19 +46,19 @@ public record PostResDto(
 	LocalDateTime updatedAt,
 
 	@Schema(description = "작성자 정보")
-	int userId,
+	long userId,
 
 	@Schema(description = "프로젝트 정보")
-	int projectId,
+	long projectId,
 
 	@Schema(description = "에러 태그 정보")
-	int errorTagId,
+	long errorTagId,
 
 	@Schema(description = "게시글 태그 목록")
 	List<String> postTags,
 
 	@Schema(description = "게시글 내용 목록")
-	List<ContentInfo> contents
+	List<ContentInfoDto> contents
 ) {
 
 }
