@@ -67,7 +67,7 @@ public class Post extends BaseEntity {
 	private boolean isSummaryCreated;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "postStatus")
+	@Column(name = "post_Status")
 	private PostStatus status;
 
 	@Enumerated(EnumType.STRING)

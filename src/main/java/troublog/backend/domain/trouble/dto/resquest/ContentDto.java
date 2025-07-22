@@ -38,7 +38,6 @@ public record ContentDto(
 
 	@Schema(
 		description = "컨텐츠 요약 유형 - AI_GENERATED 일때",
-		example = "",
 		allowableValues = {"ISSUE_MANAGEMENT", "BLOG", "INTERVIEW", "RESUME"}
 	)
 	String summaryType
