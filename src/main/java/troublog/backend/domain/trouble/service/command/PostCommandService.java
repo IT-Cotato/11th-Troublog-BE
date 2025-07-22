@@ -38,7 +38,6 @@ public class PostCommandService {
 
 		setContentRelations(savedPost, reqDto.contentDtoList());
 		setTechStackTagRelations(savedPost, reqDto.postTags());
-
 		//TODO Image URL(String) -> PostImage 변환후 연관관계 메서드 호출 필요
 
 		return PostConverter.toResponse(savedPost);
