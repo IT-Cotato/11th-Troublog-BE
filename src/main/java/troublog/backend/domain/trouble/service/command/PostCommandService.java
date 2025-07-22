@@ -35,13 +35,13 @@ public class PostCommandService {
 
 	public PostResDto createPost(PostCreateReqDto reqDto, String email) {
 		Post newPost = PostConverter.toEntity(reqDto);
-
 		setRequiredRelations(newPost, reqDto, email);
-		setContentRelations(newPost, reqDto.contentDtoList());
-		setPostTagRelations(newPost, reqDto.postTags());
+		Post savedPost = postRepository.save(newPost);
+
+		setContentRelations(savedPost, reqDto.contentDtoList());
+		setPostTagRelations(savedPost, reqDto.postTags());
 		//TODO Image URL(String) -> PostImage 변환후 연관관계 메서드 호출 필요
 
-		Post savedPost = postRepository.save(newPost);
 		return PostConverter.toResponse(savedPost);
 	}
 

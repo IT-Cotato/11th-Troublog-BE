@@ -55,7 +55,6 @@ public class Content extends BaseEntity {
 	@Column(name = "summary_type")
 	private ContentSummaryType summaryType;
 
-	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id")
 	private Post post;
