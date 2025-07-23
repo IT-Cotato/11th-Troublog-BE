@@ -33,9 +33,9 @@ public class PostCommandService {
 	private final ContentCommandService contentCommandService;
 	private final PostTagCommandService postTagCommandService;
 
-	public PostResDto createPost(PostCreateReqDto reqDto, String email) {
+	public PostResDto createPost(PostCreateReqDto reqDto, long userId) {
 		Post newPost = PostConverter.toEntity(reqDto);
-		setUserRelations(newPost, email);
+		setUserRelations(newPost, userId);
 		setProjectRelations(newPost, reqDto.projectId());
 		setErrorTagRelations(newPost, reqDto.errorTagName());
 		Post savedPost = postRepository.save(newPost);
@@ -52,8 +52,8 @@ public class PostCommandService {
 		project.addPost(post);
 	}
 
-	private void setUserRelations(Post post, String email) {
-		User user = userQueryService.findUserByEmail(email);
+	private void setUserRelations(Post post, long userId) {
+		User user = userQueryService.findUserById(userId);
 		user.addPost(post);
 	}
 

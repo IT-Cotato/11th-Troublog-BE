@@ -10,7 +10,7 @@ import troublog.backend.domain.trouble.enums.TagType;
 
 public interface TagRepository extends JpaRepository<Tag, Long> {
 
-	Optional<Tag> findByName(String name);
+	Optional<Tag> findTagByNameAndTagType(String name, TagType tagType);
 
 	List<Tag> findByNameInAndTagType(List<String> names, TagType tagType);
 }

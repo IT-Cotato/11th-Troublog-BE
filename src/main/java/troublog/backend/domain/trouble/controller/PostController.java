@@ -39,7 +39,7 @@ public class PostController {
 	public ResponseEntity<BaseResponse<PostResDto>> createPost(
 		@Authentication CustomAuthenticationToken token,
 		@Valid @RequestBody PostCreateReqDto reqDto) {
-		PostResDto response = postCommandService.createPost(reqDto, token.getName());
+		PostResDto response = postCommandService.createPost(reqDto, token.getUserId());
 		return ResponseUtils.created(response);
 	}
 }
