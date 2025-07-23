@@ -76,4 +76,14 @@ public class User extends BaseEntity {
 			.githubUrl(registerDto.githubUrl())
 			.build();
 	}
+
+	public void addProject(Project project) {
+		this.projects.add(project);
+		project.assignUser(this);
+	}
+
+	public void addPost(Post post) {
+		this.posts.add(post);
+		post.assignUser(this);
+	}
 }

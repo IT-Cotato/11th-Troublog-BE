@@ -119,6 +119,9 @@ public class Post extends BaseEntity {
 		if (content == null) {
 			throw new PostException(ErrorCode.MISSING_CONTENT);
 		}
+		if (this.contents.contains(content)) {
+			return;
+		}
 		this.contents.add(content);
 		content.assignPost(this);
 	}
@@ -127,6 +130,9 @@ public class Post extends BaseEntity {
 		if (postTag == null) {
 			throw new PostException(ErrorCode.MISSING_POST_TAG);
 		}
+		if (this.postTags.contains(postTag)) {
+			return;
+		}
 		this.postTags.add(postTag);
 		postTag.assignPost(this);
 	}
@@ -134,6 +140,9 @@ public class Post extends BaseEntity {
 	public void addPostImage(PostImage postImage) {
 		if (postImage == null) {
 			throw new PostException(ErrorCode.MISSING_IMAGE);
+		}
+		if (this.postImages.contains(postImage)) {
+			return;
 		}
 		this.postImages.add(postImage);
 		postImage.assignPost(this);

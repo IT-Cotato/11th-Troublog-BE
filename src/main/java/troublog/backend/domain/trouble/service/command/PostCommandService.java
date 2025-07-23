@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.project.service.query.ProjectQueryService;
 import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.dto.request.ContentDto;
@@ -17,6 +18,7 @@ import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.repository.PostRepository;
+import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.UserQueryService;
 
 @Slf4j
@@ -33,7 +35,9 @@ public class PostCommandService {
 
 	public PostResDto createPost(PostCreateReqDto reqDto, String email) {
 		Post newPost = PostConverter.toEntity(reqDto);
-		setRequiredRelations(newPost, reqDto, email);
+		setUserRelations(newPost, email);
+		setProjectRelations(newPost, reqDto.projectId());
+		setErrorTagRelations(newPost, reqDto.errorTagName());
 		Post savedPost = postRepository.save(newPost);
 
 		setContentRelations(savedPost, reqDto.contentDtoList());
@@ -43,10 +47,19 @@ public class PostCommandService {
 		return PostConverter.toResponse(savedPost);
 	}
 
-	private void setRequiredRelations(Post post, PostCreateReqDto reqDto, String email) {
-		post.assignUser(userQueryService.findUserByEmail(email));
-		post.assignProject(projectQueryService.findProjectById(reqDto.projectId()));
-		post.addPostTag(postTagCommandService.saveErrorPostTag(reqDto.errorTagName(), post));
+	private void setProjectRelations(Post post, int projectId) {
+		Project project = projectQueryService.findProjectById(projectId);
+		project.addPost(post);
+	}
+
+	private void setUserRelations(Post post, String email) {
+		User user = userQueryService.findUserByEmail(email);
+		user.addPost(post);
+	}
+
+	private void setErrorTagRelations(Post post, String tagName) {
+		PostTag postTag = postTagCommandService.saveErrorPostTag(tagName, post);
+		post.addPostTag(postTag);
 	}
 
 	private void setContentRelations(Post post, List<ContentDto> contentDtoList) {

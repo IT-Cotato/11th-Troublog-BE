@@ -64,6 +64,12 @@ public class Content extends BaseEntity {
 		if (post == null) {
 			throw new PostException(ErrorCode.MISSING_POST);
 		}
+		if (this.post != null) {
+			this.post.getContents().remove(this);
+		}
 		this.post = post;
+		if (!post.getContents().contains(this)) {
+			post.getContents().add(this);
+		}
 	}
 }

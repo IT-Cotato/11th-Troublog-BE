@@ -44,13 +44,25 @@ public class PostTag extends BaseEntity {
 		if (post == null) {
 			throw new PostException(ErrorCode.MISSING_POST);
 		}
+		if (this.post != null) {
+			this.post.getPostTags().remove(this);
+		}
 		this.post = post;
+		if (!post.getPostTags().contains(this)) {
+			post.getPostTags().add(this);
+		}
 	}
 
 	public void assignTag(Tag tag) {
 		if (tag == null) {
 			throw new PostException(ErrorCode.MISSING_TAG);
 		}
+		if (this.tag != null) {
+			this.tag.getPostTags().remove(this);
+		}
 		this.tag = tag;
+		if (!tag.getPostTags().contains(this)) {
+			tag.getPostTags().add(this);
+		}
 	}
 }

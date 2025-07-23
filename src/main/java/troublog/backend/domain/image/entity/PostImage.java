@@ -18,6 +18,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.global.common.entity.BaseEntity;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.PostException;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -46,6 +48,9 @@ public class PostImage extends BaseEntity {
 	private boolean isThumbnail;
 
 	public void assignPost(Post post) {
+		if (post == null) {
+			throw new PostException(ErrorCode.MISSING_POST);
+		}
 		this.post = post;
 	}
 }
