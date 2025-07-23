@@ -1,6 +1,7 @@
 package troublog.backend.domain.trouble.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -25,8 +26,9 @@ public record ContentDto(
 		description = "컨텐츠 순서",
 		example = "1"
 	)
+	@Min(value = 1, message = "시퀸스 값은 최소 1 이상이여야 합니다.")
 	@NotNull(message = "컨텐츠 순서는 null 값일 수 없습니다.")
-	int sequence,
+	Integer sequence,
 
 	@Schema(
 		description = "컨텐츠 작성자 유형",
@@ -37,7 +39,8 @@ public record ContentDto(
 	String authorType,
 
 	@Schema(
-		description = "컨텐츠 요약 유형 - AI_GENERATED 일때",
+		description =  "컨텐츠 요약 유형 - AI_GENERATED 일때만 필수",
+		defaultValue = "NONE",
 		allowableValues = {"ISSUE_MANAGEMENT", "BLOG", "INTERVIEW", "RESUME"}
 	)
 	String summaryType

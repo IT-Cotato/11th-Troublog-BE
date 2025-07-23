@@ -27,7 +27,7 @@ public class PostConverter {
 			.starRating(StarRating.from(request.starRating()))
 			.commentCount(0)
 			.likeCount(0)
-			.completedAt(LocalDateTime.now())
+			.completedAt(PostStatus.from(request.postStatus()) == PostStatus.COMPLETED ? LocalDateTime.now() : null)
 			.build();
 	}
 

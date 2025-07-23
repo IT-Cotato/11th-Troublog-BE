@@ -2,6 +2,8 @@ package troublog.backend.domain.trouble.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
+import troublog.backend.domain.trouble.enums.ContentAuthorType;
+import troublog.backend.domain.trouble.enums.ContentSummaryType;
 
 @Builder
 @Schema(description = "콘텐츠 정보")
@@ -16,12 +18,12 @@ public record ContentInfoDto(
 	String body,
 
 	@Schema(description = "순서", example = "1")
-	int sequence,
+	Integer sequence,
 
 	@Schema(description = "작성자 유형", example = "USER_WRITTEN")
-	String authorType,
+	ContentAuthorType authorType,
 
 	@Schema(description = "요약 유형", example = "BLOG")
-	String summaryType
+	ContentSummaryType summaryType
 ) {
 }

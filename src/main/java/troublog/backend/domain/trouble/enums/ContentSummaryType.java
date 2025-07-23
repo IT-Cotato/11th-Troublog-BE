@@ -9,6 +9,7 @@ import troublog.backend.global.common.error.exception.PostException;
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public enum ContentSummaryType {
+	NONE("없음"),
 	RESUME("이력서"),
 	INTERVIEW("면접"),
 	BLOG("블로그"),
@@ -17,6 +18,10 @@ public enum ContentSummaryType {
 	private final String description;
 
 	public static ContentSummaryType from(String type) {
+		if (type == null) {
+			return NONE;
+		}
+
 		for (ContentSummaryType contentSummaryType : values()) {
 			if (contentSummaryType.name().equals(type)) {
 				return contentSummaryType;

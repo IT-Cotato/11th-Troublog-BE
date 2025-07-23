@@ -54,14 +54,16 @@ public record PostCreateReqDto(
 
 	@Schema(
 		description = "게시글 공개 여부",
-		example = "true"
+		defaultValue = "false"
 	)
+	@NotNull(message = "공개 여부는 필수 값입니다.")
 	boolean isVisible,
 
 	@Schema(
 		description = "요약 생성 여부",
-		example = "false"
+		defaultValue = "false"
 	)
+	@NotNull
 	boolean isSummaryCreated,
 
 	@Schema(
@@ -69,6 +71,7 @@ public record PostCreateReqDto(
 		example = "작성 중",
 		allowableValues = {"작성 중", "작성 완료", "요약 완료"}
 	)
+	@NotBlank(message = "작성 상태는 필수 입력값입니다.")
 	String postStatus,
 
 	@Schema(
@@ -76,14 +79,14 @@ public record PostCreateReqDto(
 		example = "5",
 		allowableValues = {"1", "2", "3", "4", "5"}
 	)
-	int starRating,
+	Integer starRating,
 
 	@Schema(
 		description = "프로젝트 ID",
 		example = "1"
 	)
 	@NotNull(message = "Project ID는 null 일 수 없습니다.")
-	int projectId,
+	Integer projectId,
 
 	@Schema(
 		description = "썸네일 이미지 URL",

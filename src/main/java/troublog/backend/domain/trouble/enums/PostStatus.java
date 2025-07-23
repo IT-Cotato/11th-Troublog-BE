@@ -17,7 +17,7 @@ public enum PostStatus {
 
 	public static PostStatus from(String status) {
 		for (PostStatus postStatus : values()) {
-			if (postStatus.message.equals(status)) {
+			if (postStatus.name().equals(status)) {
 				return postStatus;
 			}
 		}

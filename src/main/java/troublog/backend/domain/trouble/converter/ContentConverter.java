@@ -25,8 +25,8 @@ public class ContentConverter {
 			.subTitle(content.getSubTitle())
 			.body(content.getBody())
 			.sequence(content.getSequence())
-			.authorType(content.getAuthorType().getDescription())
-			.summaryType(content.getSummaryType().getDescription())
+			.authorType(content.getAuthorType())
+			.summaryType(content.getSummaryType())
 			.build();
 	}
 }
