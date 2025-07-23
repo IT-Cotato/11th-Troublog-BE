@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -35,12 +34,11 @@ public class PostController {
 
 	@PostMapping
 	@Operation(summary = "트러블슈팅 문서 생성 API", description = "트러블슈팅 문서를 새롭게 생성한다.")
-	@ApiResponse(responseCode = "200", description = "성공",
+	@ApiResponse(responseCode = "201", description = "성공",
 		content = @Content(schema = @Schema(implementation = Long.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> createPost(
 		@Authentication CustomAuthenticationToken token,
-		@Valid @RequestBody PostCreateReqDto reqDto,
-		HttpServletRequest request) {
+		@Valid @RequestBody PostCreateReqDto reqDto) {
 		PostResDto response = postCommandService.createPost(reqDto, token.getName());
 		return ResponseUtils.created(response);
 	}
