@@ -24,7 +24,7 @@ public class PostTagCommandService {
 	private final PostTagRepository postTagRepository;
 
 	public PostTag saveErrorPostTag(String tagName, Post post) {
-		Tag errorTag = tagQueryService.findErrorTagsByNames(tagName);
+		Tag errorTag = tagQueryService.findErrorTagsByName(tagName);
 		PostTag postTag = createPostTag(errorTag, post);
 		return postTagRepository.save(postTag);
 	}
@@ -38,14 +38,9 @@ public class PostTagCommandService {
 	}
 
 	private PostTag createPostTag(Tag tag, Post post) {
-		PostTag postTag = PostTag.builder()
-			.post(post)
-			.tag(tag)
-			.build();
-
+		PostTag postTag = PostTag.builder().build();
 		postTag.assignPost(post);
 		postTag.assignTag(tag);
-
 		return postTag;
 	}
 }
