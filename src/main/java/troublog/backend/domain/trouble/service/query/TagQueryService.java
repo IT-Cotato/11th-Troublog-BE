@@ -22,13 +22,12 @@ public class TagQueryService {
 
 	private final TagRepository tagRepository;
 
-	public Tag findErrorTagsByNames(String tagName) {
+	public Tag findErrorTagsByName(String tagName) {
 		return tagRepository.findByName(tagName)
 			.orElseThrow(() -> new PostException(ErrorCode.TAG_NOT_FOUND));
 	}
 
 	public List<Tag> findTechStackTagsByNames(List<String> tagNames) {
-		return tagRepository.findByNameInAndTagType(tagNames, TagType.TECH_STACK)
-			.orElseThrow(() -> new PostException(ErrorCode.TAG_NOT_FOUND));
+		return tagRepository.findByNameInAndTagType(tagNames, TagType.TECH_STACK);
 	}
 }
