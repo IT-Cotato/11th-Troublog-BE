@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface LikeRepository extends JpaRepository<Like, Long> {
-    List<Like> findLikesByUserId(Long userId);
+    List<Like> findByUserIdOrderByLikedAtDesc(Long userId);
 }

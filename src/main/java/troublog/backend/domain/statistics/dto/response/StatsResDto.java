@@ -11,6 +11,6 @@ public record StatsResDto (
         String name,
 
         @Schema(description = "개수")
-        Long count
+        long count
 ){
 }

@@ -16,7 +16,7 @@ public class LikeService {
     private final LikeRepository likeRepository;
 
     public List<LikePostResDto> getLikedPostsByUser(Long userId) {
-        List<Like> likes = likeRepository.findLikesByUserId(userId);
+        List<Like> likes = likeRepository.findByUserIdOrderByLikedAtDesc(userId);
         return likes.stream()
                 .map(like -> LikePostConverter.toResponse(like.getPost()))
                 .collect(Collectors.toList());

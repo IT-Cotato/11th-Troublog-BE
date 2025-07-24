@@ -19,18 +19,17 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-@Tag(name = "Likes", description = "유저가 좋아요한 포스트")
+@Tag(name = "마이페이지", description = "사용자 통계")
 public class LikeController {
 
     private final LikeService likeService;
 
     @GetMapping("/likes")
-    @Operation(summary = "최신순으로 좋아요한 포스트 불러오는 API")
+    @Operation(summary = "좋아요한 포스트 API", description = "최근에 좋아요한 순으로 포스트를 불러온다.")
     public ResponseEntity<BaseResponse<List<LikePostResDto>>> getUserLikedPosts(
             @AuthenticationPrincipal CustomAuthenticationToken auth) {
         Long userId = auth.getUserId();
         List<LikePostResDto> likedPosts = likeService.getLikedPostsByUser(userId);
         return ResponseUtils.created(likedPosts);
     }
-
 }

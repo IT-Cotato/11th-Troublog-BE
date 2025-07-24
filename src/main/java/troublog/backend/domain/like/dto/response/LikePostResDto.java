@@ -16,13 +16,13 @@ public record LikePostResDto(
         String title,
 
         @Schema(description = "에러 태그")
-        String errorTag,
+        String errorTags,
 
-        @Schema(description = "게시글 태그 목록")
-        List<String> postTags,
+        @Schema(description = "기술 태그 목록")
+        List<String> techTags,
 
         @Schema(description = "게시글 내용")
-        String contents,
+        List<String> contents,
 
         @Schema(description = "좋아요 수")
         int likeCount,
@@ -31,8 +31,9 @@ public record LikePostResDto(
         int commentCount,
 
         @Schema(description = "작성 날짜")
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
 
-        //@Schema(description = "첨부 이미지")
+        @Schema(description = "첨부 이미지")
+        List<String> images
 ) {
 }

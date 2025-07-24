@@ -20,49 +20,45 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/statistics")
-@Tag(name = "통계 시각화", description = "마이페이지의 사용자 통계")
+@Tag(name = "마이페이지", description = "사용자 통계")
 public class StatisticsController {
 
     private final StatisticsService statisticsService;
 
-    // 트러블로그 활동 통계
     @GetMapping("/daily")
-    @Operation(summary = "일일 트러블로그 활동 통계")
+    @Operation(summary = "일일 트러블로그 활동 통계 API", description = "1회 이상일 때만 반환한다.")
     public ResponseEntity<BaseResponse<List<DailyCountResDto>>> getUserDailyStats(
             @AuthenticationPrincipal CustomAuthenticationToken auth) {
         Long userId = auth.getUserId();
-        List<DailyCountResDto> dailyList = statisticsService.getDailyPostStats(userId);
-        return ResponseUtils.created(dailyList);
+        List<DailyCountResDto> dailyList = statisticsService.getDailyPostCountByUser(userId);
+        return ResponseUtils.ok(dailyList);
     }
 
-    // 태그별 통계(상위 5개)
     @GetMapping("/tags")
-    @Operation(summary = "태그별 통계")
-    public ResponseEntity<BaseResponse<List<StatsResDto>>> getTopTags(
+    @Operation(summary = "기술 태그별 통계 API", description = "가장 많이 사용한 기술 태그 상위 5개를 반환한다.")
+    public ResponseEntity<BaseResponse<List<StatsResDto>>> getTopTech(
             @AuthenticationPrincipal CustomAuthenticationToken auth){
         Long userId = auth.getUserId();
-        List<StatsResDto> tags = statisticsService.getTopTagStats(userId);
-        return ResponseUtils.created(tags);
+        List<StatsResDto> tags = statisticsService.getTopTechStats(userId);
+        return ResponseUtils.ok(tags);
     }
 
-    // 에러 종류별 통계(상위 3개)
     @GetMapping("/errors")
-    @Operation(summary = "에러 종류별 통계")
-    public ResponseEntity<BaseResponse<List<StatsResDto>>> getTopErrors(
+    @Operation(summary = "에러 태그별 통계 API", description = "가장 많이 사용한 에러 태그 상위 3개를 반환한다.")
+    public ResponseEntity<BaseResponse<List<StatsResDto>>> getTopError(
             @AuthenticationPrincipal CustomAuthenticationToken auth){
         Long userId = auth.getUserId();
         List<StatsResDto> errors = statisticsService.getTopErrorStats(userId);
-        return ResponseUtils.created(errors);
+        return ResponseUtils.ok(errors);
     }
 
-    // 요약본 종류 통계
     @GetMapping("/summary")
-    @Operation(summary = "요약본 종류 통계")
+    @Operation(summary = "요약본 종류 통계 API", description = "요약본의 종류와 해당 개수를 반환한다.")
     public ResponseEntity<BaseResponse<List<StatsResDto>>> getTopSummary(
             @AuthenticationPrincipal CustomAuthenticationToken auth){
         Long userId = auth.getUserId();
         List<StatsResDto> summaries = statisticsService.getSummaryStats(userId);
-        return ResponseUtils.created(summaries);
+        return ResponseUtils.ok(summaries);
     }
 
 }
