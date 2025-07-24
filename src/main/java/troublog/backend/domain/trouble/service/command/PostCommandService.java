@@ -18,6 +18,7 @@ import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.repository.PostRepository;
+import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.UserQueryService;
 
@@ -32,6 +33,7 @@ public class PostCommandService {
 	private final ProjectQueryService projectQueryService;
 	private final ContentCommandService contentCommandService;
 	private final PostTagCommandService postTagCommandService;
+	private final PostQueryService postQueryService;
 
 	public PostResDto createPost(PostCreateReqDto reqDto, long userId) {
 		Post newPost = PostConverter.toEntity(reqDto);
@@ -45,6 +47,11 @@ public class PostCommandService {
 		//TODO Image URL(String) -> PostImage 변환후 연관관계 메서드 호출 필요
 
 		return PostConverter.toResponse(savedPost);
+	}
+
+	public void deletePost(long postId) {
+		Post foundPost = postQueryService.findPostById(postId);
+		postRepository.delete(foundPost);
 	}
 
 	private void setProjectRelations(Post post, int projectId) {

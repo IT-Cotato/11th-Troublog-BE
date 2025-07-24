@@ -18,7 +18,7 @@ import troublog.backend.global.common.error.exception.PostException;
 public class PostQueryService {
 	private final PostRepository postRepository;
 
-	public Post findTroubleById(long id) {
+	public Post findPostById(long id) {
 		return postRepository.findById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
