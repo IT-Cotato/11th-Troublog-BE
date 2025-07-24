@@ -2,6 +2,7 @@ package troublog.backend.domain.trouble.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,9 +35,19 @@ public class PostController {
 	private final PostCommandService postCommandService;
 	private final PostQueryService postQueryService;
 
+	@GetMapping("/{postId}")
+	@Operation(summary = "트러블슈팅 문서 상세 조회", description = "ID 값 기반 트러블슈팅 문서 상세 조회")
+	@ApiResponse(responseCode = "200", description = "OK", content = @Content)
+	public ResponseEntity<BaseResponse<PostResDto>> findPostDetails(
+		@Authentication CustomAuthenticationToken token,
+		@PathVariable long postId) {
+		PostResDto response = postQueryService.findPostDetailsById(postId);
+		return ResponseUtils.ok(response);
+	}
+
 	@PostMapping
 	@Operation(summary = "트러블슈팅 문서 생성 API", description = "트러블슈팅 문서를 새롭게 생성한다.")
-	@ApiResponse(responseCode = "201", description = "",
+	@ApiResponse(responseCode = "201", description = "CREATED",
 		content = @Content(schema = @Schema(implementation = Long.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> createPost(
 		@Authentication CustomAuthenticationToken token,

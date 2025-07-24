@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import troublog.backend.domain.trouble.converter.PostConverter;
+import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.global.common.error.ErrorCode;
@@ -21,5 +23,11 @@ public class PostQueryService {
 	public Post findPostById(long id) {
 		return postRepository.findById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
+	}
+
+	public PostResDto findPostDetailsById(long id) {
+		//TODO N+1 Query 해결 필요
+		Post post = findPostById(id);
+		return PostConverter.toResponse(post);
 	}
 }
