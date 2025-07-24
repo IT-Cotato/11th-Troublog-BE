@@ -17,17 +17,43 @@ import troublog.backend.domain.trouble.enums.TagType;
 @UtilityClass
 public class PostConverter {
 
-	public Post toEntity(PostCreateReqDto request) {
+	public Post createWritingPost(PostCreateReqDto requestDto) {
 		return Post.builder()
-			.title(request.title())
-			.introduction(request.introduction())
-			.isVisible(request.isVisible())
-			.isSummaryCreated(request.isSummaryCreated())
-			.status(PostStatus.from(request.postStatus()))
-			.starRating(StarRating.from(request.starRating()))
+			.title(requestDto.title())
+			.isVisible(false)
+			.isSummaryCreated(false)
+			.status(PostStatus.WRITING)
 			.commentCount(0)
 			.likeCount(0)
-			.completedAt(PostStatus.from(request.postStatus()) == PostStatus.COMPLETED ? LocalDateTime.now() : null)
+			.build();
+	}
+
+	public Post createCompletedPost(PostCreateReqDto requestDto) {
+		return Post.builder()
+			.title(requestDto.title())
+			.introduction(requestDto.introduction())
+			.isVisible(requestDto.isVisible())
+			.isSummaryCreated(false)
+			.status(PostStatus.COMPLETED)
+			.starRating(StarRating.from(requestDto.starRating()))
+			.commentCount(0)
+			.likeCount(0)
+			.completedAt(LocalDateTime.now())
+			.build();
+	}
+
+	public Post createSummarizedPost(PostCreateReqDto requestDto) {
+		//TODO 이후 AI 서비스 개발시 AI 서비스 요청과 함께 전송
+		return Post.builder()
+			.title(requestDto.title())
+			.introduction(requestDto.introduction())
+			.isVisible(requestDto.isVisible())
+			.isSummaryCreated(true)
+			.status(PostStatus.SUMMARIZED)
+			.starRating(StarRating.from(requestDto.starRating()))
+			.commentCount(0)
+			.likeCount(0)
+			.completedAt(LocalDateTime.now())
 			.build();
 	}
 
@@ -41,7 +67,7 @@ public class PostConverter {
 			.isVisible(post.isVisible())
 			.isSummaryCreated(post.isSummaryCreated())
 			.postStatus(post.getStatus().getMessage())
-			.starRating(post.getStarRating().name())
+			.starRating(post.getStarRating() != null ? post.getStarRating().name() : null)
 			.createdAt(post.getCreated_at())
 			.updatedAt(post.getUpdated_at())
 			.userId(post.getUser().getId())

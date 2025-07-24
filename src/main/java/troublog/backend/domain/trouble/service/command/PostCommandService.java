@@ -18,6 +18,7 @@ import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.repository.PostRepository;
+import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.UserQueryService;
@@ -34,9 +35,10 @@ public class PostCommandService {
 	private final ContentCommandService contentCommandService;
 	private final PostTagCommandService postTagCommandService;
 	private final PostQueryService postQueryService;
+	private final PostFactory postFactory;
 
 	public PostResDto createPost(PostCreateReqDto reqDto, long userId) {
-		Post newPost = PostConverter.toEntity(reqDto);
+		Post newPost = postFactory.createPost(reqDto);
 		setUserRelations(newPost, userId);
 		setProjectRelations(newPost, reqDto.projectId());
 		setErrorTagRelations(newPost, reqDto.errorTagName());

@@ -63,7 +63,7 @@ public record PostCreateReqDto(
 		description = "요약 생성 여부",
 		defaultValue = "false"
 	)
-	@NotNull
+	@NotNull(message = "요약 생성 여부는 필수 값입니다.")
 	boolean isSummaryCreated,
 
 	@Schema(
