@@ -68,8 +68,8 @@ public record PostCreateReqDto(
 
 	@Schema(
 		description = "작성 상태",
-		example = "작성 중",
-		allowableValues = {"작성 중", "작성 완료", "요약 완료"}
+		example = "WRITING",
+		allowableValues = {"WRITING", "COMPLETED", "SUMMARIZED"}
 	)
 	@NotBlank(message = "작성 상태는 필수 입력값입니다.")
 	String postStatus,
