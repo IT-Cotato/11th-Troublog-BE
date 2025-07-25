@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.request.PostCreateReqDto;
+import troublog.backend.domain.trouble.dto.request.PostUpdateReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.service.command.PostCommandService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
@@ -54,6 +56,18 @@ public class PostController {
 		@Valid @RequestBody PostCreateReqDto reqDto) {
 		PostResDto response = postCommandService.createPost(reqDto, token.getUserId());
 		return ResponseUtils.created(response);
+	}
+
+	@PutMapping("/{postId}")
+	@Operation(summary = "트러블슈팅 문서 업데이트 API", description = "기존 트러블슈팅 문서를 업데이트한다.")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = PostResDto.class)))
+	public ResponseEntity<BaseResponse<PostResDto>> updatePost(
+		@Authentication CustomAuthenticationToken token,
+		@PathVariable long postId,
+		@Valid @RequestBody PostUpdateReqDto reqDto) {
+		PostResDto response = postCommandService.updatePost(postId, reqDto);
+		return ResponseUtils.ok(response);
 	}
 
 	@DeleteMapping("/{postId}")

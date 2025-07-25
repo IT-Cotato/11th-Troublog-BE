@@ -12,6 +12,7 @@ import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;
 import troublog.backend.domain.trouble.repository.PostTagRepository;
+import troublog.backend.domain.trouble.service.query.PostTagQueryService;
 import troublog.backend.domain.trouble.service.query.TagQueryService;
 
 @Slf4j
@@ -22,6 +23,7 @@ public class PostTagCommandService {
 
 	private final TagQueryService tagQueryService;
 	private final PostTagRepository postTagRepository;
+	private final PostTagQueryService postTagQueryService;
 
 	public PostTag saveErrorPostTag(String tagName, Post post) {
 		Tag errorTag = tagQueryService.findErrorTagByName(tagName);
@@ -35,6 +37,11 @@ public class PostTagCommandService {
 			.map(tag -> createPostTag(tag, post))
 			.toList();
 		return postTagRepository.saveAll(postTags);
+	}
+
+	public void deleteAllTagByPostId(Long postId) {
+		List<PostTag> postTags = postTagQueryService.findPostTagsByPostId(postId);
+		postTagRepository.deleteAll(postTags);
 	}
 
 	private PostTag createPostTag(Tag tag, Post post) {

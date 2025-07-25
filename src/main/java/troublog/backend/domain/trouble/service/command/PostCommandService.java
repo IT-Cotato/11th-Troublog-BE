@@ -13,10 +13,13 @@ import troublog.backend.domain.project.service.query.ProjectQueryService;
 import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.dto.request.ContentDto;
 import troublog.backend.domain.trouble.dto.request.PostCreateReqDto;
+import troublog.backend.domain.trouble.dto.request.PostUpdateReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
+import troublog.backend.domain.trouble.enums.PostStatus;
+import troublog.backend.domain.trouble.enums.StarRating;
 import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
@@ -48,6 +51,18 @@ public class PostCommandService {
 		setTechStackTagRelations(savedPost, reqDto.postTags());
 		//TODO Image URL(String) -> PostImage 변환후 연관관계 메서드 호출 필요
 
+		return PostConverter.toResponse(savedPost);
+	}
+
+	public PostResDto updatePost(long postId, PostUpdateReqDto reqDto) {
+		Post foundPost = postQueryService.findPostById(postId);
+		updateCommonInfo(reqDto, foundPost);
+		updateProjectRelations(foundPost, reqDto.projectId());
+		updateContentRelations(foundPost, reqDto.contentDtoList());
+		updatePostTagRelations(foundPost, reqDto.errorTagName(), reqDto.postTags());
+		//TODO Image URL(String) -> PostImage 변환후 연관관계 메서드 호출 필요
+
+		Post savedPost = postRepository.save(foundPost);
 		return PostConverter.toResponse(savedPost);
 	}
 
@@ -102,5 +117,59 @@ public class PostCommandService {
 
 	private boolean hasPostImages(List<String> postImages) {
 		return postImages != null && !postImages.isEmpty();
+	}
+
+	public PostResDto updatePost(long postId, PostUpdateReqDto reqDto) {
+		Post foundPost = postQueryService.findPostById(postId);
+		updateCommonInfo(reqDto, foundPost);
+		updateProjectRelations(foundPost, reqDto.projectId());
+		updateContentRelations(foundPost, reqDto.contentDtoList());
+		updatePostTagRelations(foundPost, reqDto.errorTagName(), reqDto.postTags());
+		//TODO Image URL(String) -> PostImage 변환후 연관관계 메서드 호출 필요
+
+		Post savedPost = postRepository.save(foundPost);
+		return PostConverter.toResponse(savedPost);
+	}	public PostResDto updatePost(long postId, PostUpdateReqDto reqDto) {
+		Post foundPost = postQueryService.findPostById(postId);
+		updateCommonInfo(reqDto, foundPost);
+		updateProjectRelations(foundPost, reqDto.projectId());
+		updateContentRelations(foundPost, reqDto.contentDtoList());
+		updatePostTagRelations(foundPost, reqDto.errorTagName(), reqDto.postTags());
+		//TODO Image URL(String) -> PostImage 변환후 연관관계 메서드 호출 필요
+
+		Post savedPost = postRepository.save(foundPost);
+		return PostConverter.toResponse(savedPost);
+	}private static void updateCommonInfo(PostUpdateReqDto reqDto, Post foundPost) {
+		foundPost.updateTitle(reqDto.title());
+		foundPost.updateIntroduction(reqDto.introduction());
+		foundPost.updateVisibility(reqDto.isVisible());
+		foundPost.updateStatus(PostStatus.from(reqDto.postStatus()));
+		foundPost.updateStarRating(StarRating.from(reqDto.starRating()));
+	}
+
+	private void updateProjectRelations(Post post, int newProjectId) {
+		if (post.getProject().getId() == newProjectId) {
+			return;
+		}
+		setProjectRelations(post, newProjectId);
+	}
+
+	private void updateContentRelations(Post post, List<ContentDto> contentDtoList) {
+		post.getContents().clear();
+		setContentRelations(post, contentDtoList);
+	}
+
+	private void updatePostTagRelations(Post post, String errorTagName, List<String> techStackTags) {
+		post.getPostTags().clear();
+		postTagCommandService.deleteAllTagByPostId(post.getId());
+		setErrorTagRelations(post, errorTagName);
+		setTechStackTagRelations(post, techStackTags);
+	}
+
+	private void updatePostImageRelations(Post post, List<String> postImages) {
+		// 기존 이미지 관계 정리
+		post.getPostImages().clear();
+		// 새로운 이미지 관계 설정 (기존 메서드 재사용)
+		setPostImageRelations(post, postImages);
 	}
 }

@@ -147,4 +147,30 @@ public class Post extends BaseEntity {
 		this.postImages.add(postImage);
 		postImage.assignPost(this);
 	}
+
+	public void updateTitle(String title) {
+		this.title = title;
+	}
+
+	public void updateIntroduction(String introduction) {
+		this.introduction = introduction;
+	}
+
+	public void updateVisibility(boolean isVisible) {
+		this.isVisible = isVisible;
+	}
+
+	public void updateStatus(PostStatus status) {
+		this.status = status;
+		if (status == PostStatus.COMPLETED) {
+			this.completedAt = LocalDateTime.now();
+		}
+	}
+
+	public void updateStarRating(StarRating starRating) {
+		if (starRating == null) {
+			return;
+		}
+		this.starRating = starRating;
+	}
 }
