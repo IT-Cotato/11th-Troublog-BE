@@ -38,7 +38,7 @@ public class PostController {
 	private final PostQueryService postQueryService;
 
 	@GetMapping("/{postId}")
-	@Operation(summary = "트러블슈팅 문서 상세 조회", description = "ID 값 기반 트러블슈팅 문서 상세 조회")
+	@Operation(summary = "트러블슈팅 문서 상세 조회 API", description = "ID 값 기반 트러블슈팅 문서 상세 조회")
 	@ApiResponse(responseCode = "200", description = "OK", content = @Content)
 	public ResponseEntity<BaseResponse<PostResDto>> findPostDetails(
 		@Authentication CustomAuthenticationToken token,
@@ -59,7 +59,7 @@ public class PostController {
 	}
 
 	@PutMapping("/{postId}")
-	@Operation(summary = "트러블슈팅 문서 업데이트 API", description = "기존 트러블슈팅 문서를 업데이트한다.")
+	@Operation(summary = "트러블슈팅 문서 수정 API", description = "트러블슈팅 문서를 수정한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> updatePost(
