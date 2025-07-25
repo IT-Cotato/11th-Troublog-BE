@@ -119,27 +119,7 @@ public class PostCommandService {
 		return postImages != null && !postImages.isEmpty();
 	}
 
-	public PostResDto updatePost(long postId, PostUpdateReqDto reqDto) {
-		Post foundPost = postQueryService.findPostById(postId);
-		updateCommonInfo(reqDto, foundPost);
-		updateProjectRelations(foundPost, reqDto.projectId());
-		updateContentRelations(foundPost, reqDto.contentDtoList());
-		updatePostTagRelations(foundPost, reqDto.errorTagName(), reqDto.postTags());
-		//TODO Image URL(String) -> PostImage 변환후 연관관계 메서드 호출 필요
-
-		Post savedPost = postRepository.save(foundPost);
-		return PostConverter.toResponse(savedPost);
-	}	public PostResDto updatePost(long postId, PostUpdateReqDto reqDto) {
-		Post foundPost = postQueryService.findPostById(postId);
-		updateCommonInfo(reqDto, foundPost);
-		updateProjectRelations(foundPost, reqDto.projectId());
-		updateContentRelations(foundPost, reqDto.contentDtoList());
-		updatePostTagRelations(foundPost, reqDto.errorTagName(), reqDto.postTags());
-		//TODO Image URL(String) -> PostImage 변환후 연관관계 메서드 호출 필요
-
-		Post savedPost = postRepository.save(foundPost);
-		return PostConverter.toResponse(savedPost);
-	}private static void updateCommonInfo(PostUpdateReqDto reqDto, Post foundPost) {
+	private static void updateCommonInfo(PostUpdateReqDto reqDto, Post foundPost) {
 		foundPost.updateTitle(reqDto.title());
 		foundPost.updateIntroduction(reqDto.introduction());
 		foundPost.updateVisibility(reqDto.isVisible());
