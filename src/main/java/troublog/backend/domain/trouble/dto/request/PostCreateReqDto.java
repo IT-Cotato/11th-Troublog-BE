@@ -77,7 +77,8 @@ public record PostCreateReqDto(
 	@Schema(
 		description = "중요도",
 		example = "5",
-		allowableValues = {"1", "2", "3", "4", "5"}
+		defaultValue = "0",
+		allowableValues = {"0", "1", "2", "3", "4", "5"}
 	)
 	Integer starRating,
 

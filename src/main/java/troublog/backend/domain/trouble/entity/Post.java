@@ -168,9 +168,6 @@ public class Post extends BaseEntity {
 	}
 
 	public void updateStarRating(StarRating starRating) {
-		if (starRating == null) {
-			return;
-		}
 		this.starRating = starRating;
 	}
 }
