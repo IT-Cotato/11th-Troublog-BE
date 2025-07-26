@@ -38,7 +38,7 @@ public enum ErrorCode {
 	DUPLICATED_FOLLOWED(HttpStatus.CONFLICT, "u-006", "이미 팔로우한 유저입니다."),
 	USER_NOT_FOLLOWED(HttpStatus.BAD_REQUEST, "u-007", "팔로우하지 않은 유저입니다."),
 
-	MISSING_USER(HttpStatus.BAD_REQUEST, "u-005", "사용자 정보가 누락되었습니다."),
+	MISSING_USER(HttpStatus.BAD_REQUEST, "u-008", "사용자 정보가 누락되었습니다."),
 
 	/**
 	 * Project Error
