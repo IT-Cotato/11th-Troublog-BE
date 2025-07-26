@@ -47,7 +47,8 @@ public enum ErrorCode {
 	 */
 	POST_NOT_FOUND(HttpStatus.NOT_FOUND, "P-001", "트러블슈팅 문서를 찾지 못했습니다."),
 	INVALID_VALUE(HttpStatus.NOT_FOUND, "P-002", "잘못된 상태값입니다."),
-	MISSING_POST(HttpStatus.BAD_REQUEST, "P-003", "포스트 정보가 누락되었습니다."),
+	MISSING_POST(HttpStatus.BAD_REQUEST, "P-003", "트러블 슈팅 문서가 누락되었습니다."),
+	POST_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "P-004", "접근 불가능한 트러블슈팅 문서입니다."),
 
 	/**
 	 * Content Error

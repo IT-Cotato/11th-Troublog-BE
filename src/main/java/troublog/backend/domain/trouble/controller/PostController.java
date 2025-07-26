@@ -54,7 +54,7 @@ public class PostController {
 	public ResponseEntity<BaseResponse<PostResDto>> createPost(
 		@Authentication CustomAuthenticationToken token,
 		@Valid @RequestBody PostCreateReqDto reqDto) {
-		PostResDto response = postCommandService.createPost(reqDto, token.getUserId());
+		PostResDto response = postCommandService.createPost(token.getUserId(), reqDto);
 		return ResponseUtils.created(response);
 	}
 
@@ -66,7 +66,7 @@ public class PostController {
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId,
 		@Valid @RequestBody PostUpdateReqDto reqDto) {
-		PostResDto response = postCommandService.updatePost(postId, reqDto);
+		PostResDto response = postCommandService.updatePost(token.getUserId(), postId, reqDto);
 		return ResponseUtils.ok(response);
 	}
 
@@ -76,7 +76,7 @@ public class PostController {
 	public ResponseEntity<BaseResponse<Void>> deletePost(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId) {
-		postCommandService.deletePost(postId);
+		postCommandService.deletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
 	}
 }

@@ -25,22 +25,24 @@ public class PostCommandService {
 	private final PostQueryService postQueryService;
 	private final PostFactory postFactory;
 
-	public PostResDto createPost(PostCreateReqDto reqDto, long userId) {
+	public PostResDto createPost(Long userId, PostCreateReqDto reqDto) {
 		Post newPost = postFactory.createPostWithRequireRelations(reqDto, userId);
 		Post savedPost = postRepository.save(newPost);
 		postFactory.establishSecondaryRelations(savedPost, reqDto);
 		return PostConverter.toResponse(savedPost);
 	}
 
-	public PostResDto updatePost(long postId, PostUpdateReqDto reqDto) {
+	public PostResDto updatePost(Long userId, Long postId, PostUpdateReqDto reqDto) {
 		Post foundPost = postQueryService.findPostById(postId);
+		PostFactory.validateAuthorized(userId, foundPost);
 		postFactory.updateRelationsIfChanged(reqDto, foundPost);
 		Post savedPost = postRepository.save(foundPost);
 		return PostConverter.toResponse(savedPost);
 	}
 
-	public void deletePost(long postId) {
+	public void deletePost(Long userId, Long postId) {
 		Post foundPost = postQueryService.findPostById(postId);
+		PostFactory.validateAuthorized(userId, foundPost);
 		postRepository.delete(foundPost);
 	}
 }

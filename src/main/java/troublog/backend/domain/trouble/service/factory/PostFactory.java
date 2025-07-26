@@ -21,6 +21,8 @@ import troublog.backend.domain.trouble.service.command.ContentCommandService;
 import troublog.backend.domain.trouble.service.command.PostTagCommandService;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.UserQueryService;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.PostException;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,7 +33,7 @@ public class PostFactory {
 	private final PostTagCommandService postTagCommandService;
 	private final ContentCommandService contentCommandService;
 
-	private static void updateCommonInfo(PostUpdateReqDto reqDto, Post foundPost) {
+	private void updateCommonInfo(PostUpdateReqDto reqDto, Post foundPost) {
 		foundPost.updateTitle(reqDto.title());
 		foundPost.updateIntroduction(reqDto.introduction());
 		foundPost.updateVisibility(reqDto.isVisible());
@@ -139,6 +141,14 @@ public class PostFactory {
 	}
 
 	private boolean hasPostImages(List<String> postImages) {
+
 		return postImages != null && !postImages.isEmpty();
+	}
+
+	public static void validateAuthorized(Long requestUserID, Post post) {
+		Long registeredUserID = post.getUser().getId();
+		if (!registeredUserID.equals(requestUserID)) {
+			throw new PostException(ErrorCode.POST_ACCESS_DENIED);
+		}
 	}
 }
