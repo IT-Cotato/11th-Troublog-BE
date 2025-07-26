@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.user.dto.FollowDto;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.repository.UserRepository;
 import troublog.backend.global.common.error.ErrorCode;
@@ -37,4 +38,17 @@ public class UserQueryService {
 
 		return userRepository.existsByNickname(nickname);
 	}
+
+	public FollowDto getFollows(Long followerId, Long followingId) {
+		// 자기 자신 팔로우/언팔로우 불가
+		if(followerId.equals(followingId)) {
+			throw new UserException(ErrorCode.USER_FOLLOW_SELF);
+		}
+
+		User follower = findUserById(followerId);
+		User following = findUserById(followingId);
+
+		return new FollowDto(follower, following);
+	}
+
 }
