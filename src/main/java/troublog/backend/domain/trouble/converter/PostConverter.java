@@ -16,45 +16,46 @@ import troublog.backend.domain.trouble.enums.TagType;
 
 @UtilityClass
 public class PostConverter {
+	private static final int DEFAULT_COUNT = 0;
+	private static final boolean DEFAULT_VISIBLE = false;
+	private static final boolean DEFAULT_SUMMARY_CREATED = false;
 
 	public Post createWritingPost(PostCreateReqDto requestDto) {
-		return Post.builder()
-			.title(requestDto.title())
-			.isVisible(false)
-			.isSummaryCreated(false)
+		return createBasePost(requestDto)
 			.status(PostStatus.WRITING)
-			.commentCount(0)
-			.likeCount(0)
+			.isVisible(DEFAULT_VISIBLE)
+			.isSummaryCreated(DEFAULT_SUMMARY_CREATED)
 			.build();
 	}
 
 	public Post createCompletedPost(PostCreateReqDto requestDto) {
-		return Post.builder()
-			.title(requestDto.title())
+		return createBasePost(requestDto)
 			.introduction(requestDto.introduction())
 			.isVisible(requestDto.isVisible())
-			.isSummaryCreated(false)
+			.isSummaryCreated(DEFAULT_SUMMARY_CREATED)
 			.status(PostStatus.COMPLETED)
 			.starRating(StarRating.from(requestDto.starRating()))
-			.commentCount(0)
-			.likeCount(0)
 			.completedAt(LocalDateTime.now())
 			.build();
 	}
 
 	public Post createSummarizedPost(PostCreateReqDto requestDto) {
 		//TODO 이후 AI 서비스 개발시 AI 서비스 요청과 함께 전송
-		return Post.builder()
-			.title(requestDto.title())
+		return createBasePost(requestDto)
 			.introduction(requestDto.introduction())
 			.isVisible(requestDto.isVisible())
 			.isSummaryCreated(true)
 			.status(PostStatus.SUMMARIZED)
 			.starRating(StarRating.from(requestDto.starRating()))
-			.commentCount(0)
-			.likeCount(0)
 			.completedAt(LocalDateTime.now())
 			.build();
+	}
+
+	private Post.PostBuilder createBasePost(PostCreateReqDto requestDto) {
+		return Post.builder()
+			.title(requestDto.title())
+			.commentCount(DEFAULT_COUNT)
+			.likeCount(DEFAULT_COUNT);
 	}
 
 	public PostResDto toResponse(Post post) {
@@ -78,6 +79,9 @@ public class PostConverter {
 			.build();
 	}
 
+	/**
+	 * Post에서 에러 태그 추출
+	 */
 	private String findErrorTag(Post post) {
 		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
 			return null;
@@ -90,6 +94,9 @@ public class PostConverter {
 			.orElse(null);
 	}
 
+	/**
+	 * Post에서 기술 스택 태그 목록 추출
+	 */
 	private List<String> findTechStackTags(Post post) {
 		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
 			return List.of();
@@ -101,6 +108,9 @@ public class PostConverter {
 			.toList();
 	}
 
+	/**
+	 * Post에서 콘텐츠 정보 목록 추출
+	 */
 	private List<ContentInfoDto> findContents(Post post) {
 		if (post.getContents() == null || post.getContents().isEmpty()) {
 			return List.of();
