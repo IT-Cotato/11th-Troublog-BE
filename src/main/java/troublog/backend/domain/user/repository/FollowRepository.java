@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import troublog.backend.domain.user.dto.UserDto;
 import troublog.backend.domain.user.entity.Follow;
 import troublog.backend.domain.user.entity.User;
 
@@ -19,16 +18,17 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 	Optional<Follow> findByFollowerAndFollowing(User follower, User following);
 
 	@Query("""
-    SELECT f.following FROM Follow f
-    WHERE f.follower.id = :targetUserId
-    ORDER BY f.following.id DESC
-""")
+		    SELECT f.following FROM Follow f
+		    WHERE f.follower.id = :targetUserId
+		    ORDER BY f.following.id DESC
+		""")
 	List<User> findFollowers(@Param("targetUserId") Long targetUserId);
 
+	// TODO : 추후 페이징 적용하기
 	@Query("""
-    SELECT f.follower FROM Follow f
-    WHERE f.following.id = :viewerUserId
-    ORDER BY f.follower.id DESC
-""")
-	List<User> findFollowings(@Param("viewerUserId") Long viewerUserId);
+		    SELECT f.follower FROM Follow f
+		    WHERE f.following.id = :userId
+		    ORDER BY f.follower.id DESC
+		""")
+	List<User> findFollowings(@Param("userId") Long userId);
 }

@@ -1,14 +1,11 @@
-package troublog.backend.domain.user.service;
+package troublog.backend.domain.user.service.query;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import troublog.backend.domain.user.dto.UserDto;
 import troublog.backend.domain.user.entity.Follow;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.repository.FollowRepository;
@@ -24,7 +21,7 @@ public class FollowQueryService {
 
 	public void existsByFollowerAndFollowing(User follower, User following) {
 
-		if(followRepository.existsByFollowerAndFollowing(follower, following)) {
+		if (followRepository.existsByFollowerAndFollowing(follower, following)) {
 			throw new UserException(ErrorCode.DUPLICATED_FOLLOWED);
 		}
 	}
@@ -39,7 +36,7 @@ public class FollowQueryService {
 		return followRepository.findFollowers(targetUser.getId());
 	}
 
-	public List<User> findFollowings(User viewer) {
-		return followRepository.findFollowings(viewer.getId());
+	public List<User> findFollowings(User user) {
+		return followRepository.findFollowings(user.getId());
 	}
 }

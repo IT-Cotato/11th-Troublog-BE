@@ -2,7 +2,6 @@ package troublog.backend.domain.user.service;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,10 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.user.converter.FollowConverter;
 import troublog.backend.domain.user.converter.UserConverter;
-import troublog.backend.domain.user.dto.FollowDto;
-import troublog.backend.domain.user.dto.UserDto;
+import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.entity.Follow;
 import troublog.backend.domain.user.entity.User;
+import troublog.backend.domain.user.service.command.FollowCommandService;
+import troublog.backend.domain.user.service.query.FollowQueryService;
+import troublog.backend.domain.user.service.query.UserQueryService;
 
 @Service
 @RequiredArgsConstructor
@@ -26,14 +27,15 @@ public class UserFacade {
 	@Transactional
 	public void followUser(Long followerId, Long followingId) {
 
-		// 유저 조회
-		FollowDto followDto = userQueryService.getFollows(followerId, followingId);
+		// 유저 존재 확인
+		User follower = userQueryService.findUserById(followerId);
+		User following = userQueryService.findUserById(followingId);
 
 		// 이미 존재하는 팔로우 관계인지 확인
-		followQueryService.existsByFollowerAndFollowing(followDto.follower(), followDto.following());
+		followQueryService.existsByFollowerAndFollowing(follower, following);
 
 		// 팔로우 관계 생성 (단방향)
-		Follow follow = FollowConverter.toEntity(followDto.follower(), followDto.following());
+		Follow follow = FollowConverter.toEntity(follower, following);
 
 		followCommandService.save(follow);
 	}
@@ -41,18 +43,19 @@ public class UserFacade {
 	@Transactional
 	public void unfollowUser(Long followerId, Long followingId) {
 
-		// 유저 조회
-		FollowDto followDto = userQueryService.getFollows(followerId, followingId);
+		// 유저 존재 확인
+		User follower = userQueryService.findUserById(followerId);
+		User following = userQueryService.findUserById(followingId);
 
 		// 팔로우 관계인지 확인
-		Follow follow = followQueryService.findByFollowerAndFollowing(followDto.follower(), followDto.following());
+		Follow follow = followQueryService.findByFollowerAndFollowing(follower, following);
 
 		// TODO : 이건 hard delete가 맞겠져?
 		followCommandService.delete(follow);
 	}
 
 	@Transactional(readOnly = true)
-	public List<UserDto.UserFollowsDto> getFollowers(Long userId, Long targetUserId) {
+	public List<UserFollowsResDto> getFollowers(Long userId, Long targetUserId) {
 
 		// 사용자 (본인) 조회
 		User viewer = userQueryService.findUserById(userId);
@@ -75,7 +78,7 @@ public class UserFacade {
 	}
 
 	@Transactional(readOnly = true)
-	public List<UserDto.UserFollowsDto> getFollowings(Long userId, Long targetUserId) {
+	public List<UserFollowsResDto> getFollowings(Long userId, Long targetUserId) {
 
 		// 사용자 (본인) 조회
 		User viewer = userQueryService.findUserById(userId);

@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.auth.dto.RegisterDto;
-import troublog.backend.domain.user.dto.UserDto;
+import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.entity.User;
 
 @UtilityClass
@@ -29,14 +29,14 @@ public class UserConverter {
 			.collect(Collectors.toSet());
 	}
 
-	public List<UserDto.UserFollowsDto> toUserFollowsDtoList(List<User> users, Set<Long> viewerFollowingIds) {
+	public List<UserFollowsResDto> toUserFollowsDtoList(List<User> users, Set<Long> viewerFollowingIds) {
 		return users.stream()
 			.map(user -> toUserFollowsDto(user, viewerFollowingIds))
 			.toList();
 	}
 
-	public UserDto.UserFollowsDto toUserFollowsDto(User user, Set<Long> viewerFollowingIds) {
-		return new UserDto.UserFollowsDto(
+	public UserFollowsResDto toUserFollowsDto(User user, Set<Long> viewerFollowingIds) {
+		return new UserFollowsResDto(
 			user.getId(),
 			user.getNickname(),
 			user.getEmail(),

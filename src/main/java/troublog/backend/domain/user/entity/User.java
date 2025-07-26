@@ -79,6 +79,10 @@ public class User extends BaseEntity {
 	@Column(name = "social_id")
 	private String socialId;
 
+	@NotNull
+	@Column(name = "is_deleted")
+	private Boolean isDeleted;
+
 	public void addProject(Project project) {
 		this.projects.add(project);
 		project.assignUser(this);
