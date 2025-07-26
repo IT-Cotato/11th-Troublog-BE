@@ -15,7 +15,7 @@ import java.util.List;
 public interface StatisticsRepository extends JpaRepository<Post, Long> {
 
     @Query(value = "SELECT DATE(p.completed_at) AS date, COUNT(*) AS count " +
-            "FROM post p " +
+            "FROM posts p " +
             "WHERE p.user_id = :userId AND p.completed_at BETWEEN :start AND :end " +
             "GROUP BY DATE(p.completed_at) " +
             "ORDER BY DATE(p.completed_at)", nativeQuery = true)
