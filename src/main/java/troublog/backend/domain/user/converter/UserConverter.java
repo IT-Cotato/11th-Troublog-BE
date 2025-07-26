@@ -5,11 +5,23 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.experimental.UtilityClass;
+import troublog.backend.domain.auth.dto.RegisterDto;
 import troublog.backend.domain.user.dto.UserDto;
 import troublog.backend.domain.user.entity.User;
 
 @UtilityClass
 public class UserConverter {
+
+	public User toEntity(RegisterDto registerDto, String encodedPassword) {
+		return User.builder()
+			.email(registerDto.email())
+			.password(encodedPassword)
+			.nickname(registerDto.nickname())
+			.field(registerDto.field())
+			.bio(registerDto.bio())
+			.githubUrl(registerDto.githubUrl())
+			.build();
+	}
 
 	public Set<Long> extractUserIds(List<User> users) {
 		return users.stream()
