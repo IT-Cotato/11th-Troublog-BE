@@ -5,20 +5,18 @@ import java.util.List;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.trouble.dto.request.PostCreateReqDto;
-import troublog.backend.domain.trouble.dto.response.ContentInfoDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
-import troublog.backend.domain.trouble.entity.PostTag;
-import troublog.backend.domain.trouble.entity.Tag;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
-import troublog.backend.domain.trouble.enums.TagType;
+import troublog.backend.domain.trouble.service.facade.PostQueryFasade;
 
 @UtilityClass
 public class PostConverter {
 	private static final int DEFAULT_COUNT = 0;
 	private static final boolean DEFAULT_VISIBLE = false;
 	private static final boolean DEFAULT_SUMMARY_CREATED = false;
+	private static final boolean DEFAULT_DELETE_STATUS = false;
 
 	public Post createWritingPost(PostCreateReqDto requestDto) {
 		return createBasePost(requestDto)
@@ -56,7 +54,7 @@ public class PostConverter {
 			.title(requestDto.title())
 			.commentCount(DEFAULT_COUNT)
 			.likeCount(DEFAULT_COUNT)
-			.isDeleted(false);
+			.isDeleted(DEFAULT_DELETE_STATUS);
 	}
 
 	public PostResDto toResponse(Post post) {
@@ -74,9 +72,9 @@ public class PostConverter {
 			.updatedAt(post.getUpdated_at())
 			.userId(post.getUser().getId())
 			.projectId(post.getProject().getId())
-			.errorTag(findErrorTag(post))
-			.postTags(findTechStackTags(post))
-			.contents(findContents(post))
+			.errorTag(PostQueryFasade.findErrorTag(post))
+			.postTags(PostQueryFasade.findTechStackTags(post))
+			.contents(PostQueryFasade.findContents(post))
 			.build();
 	}
 
@@ -85,46 +83,4 @@ public class PostConverter {
 			.map(PostConverter::toResponse)
 			.toList();
 	}
-
-	/**
-	 * Post에서 에러 태그 추출
-	 */
-	private String findErrorTag(Post post) {
-		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
-			return null;
-		}
-		return post.getPostTags().stream()
-			.map(PostTag::getTag)
-			.filter(tag -> tag != null && tag.getTagType() == TagType.ERROR)
-			.map(Tag::getName)
-			.findFirst()
-			.orElse(null);
-	}
-
-	/**
-	 * Post에서 기술 스택 태그 목록 추출
-	 */
-	private List<String> findTechStackTags(Post post) {
-		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
-			return List.of();
-		}
-		return post.getPostTags().stream()
-			.map(PostTag::getTag)
-			.filter(tag -> tag != null && tag.getTagType() == TagType.TECH_STACK)
-			.map(Tag::getName)
-			.toList();
-	}
-
-	/**
-	 * Post에서 콘텐츠 정보 목록 추출
-	 */
-	private List<ContentInfoDto> findContents(Post post) {
-		if (post.getContents() == null || post.getContents().isEmpty()) {
-			return List.of();
-		}
-		return post.getContents().stream()
-			.map(ContentConverter::toResponse)
-			.toList();
-	}
-
 }

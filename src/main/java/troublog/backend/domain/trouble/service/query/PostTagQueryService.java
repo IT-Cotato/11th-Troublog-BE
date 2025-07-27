@@ -18,7 +18,7 @@ import troublog.backend.domain.trouble.repository.PostTagRepository;
 public class PostTagQueryService {
 	private final PostTagRepository postTagRepository;
 
-	public List<PostTag> findPostTagsByPostId(Long postId) {
+	public List<PostTag> findAllByPostId(Long postId) {
 		return postTagRepository.findAllByPostId(postId);
 	}
 }

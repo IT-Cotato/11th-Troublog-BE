@@ -17,8 +17,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
-import troublog.backend.domain.trouble.service.command.PostCommandService;
-import troublog.backend.domain.trouble.service.query.PostQueryService;
+import troublog.backend.domain.trouble.service.facade.PostCommandFacade;
+import troublog.backend.domain.trouble.service.facade.PostQueryFasade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -30,8 +30,8 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "트러블슈팅 (관리자)", description = "관리자용 트러블슈팅 문서 관련 엔드포인트")
 public class PostAdminController {
 
-	private final PostQueryService postQueryService;
-	private final PostCommandService postCommandService;
+	private final PostCommandFacade postCommandFacade;
+	private final PostQueryFasade postQueryFasade;
 
 	@DeleteMapping("/{postId}/hard")
 	@Operation(summary = "트러블슈팅 문서 영구 삭제 API", description = "트러블슈팅 문서를 영구적으로 삭제한다. (관리자용)")
@@ -39,7 +39,7 @@ public class PostAdminController {
 	public ResponseEntity<BaseResponse<Void>> hardDeletePost(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId) {
-		postCommandService.hardDeletePost(token.getUserId(), postId);
+		postCommandFacade.hardDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
 	}
 
@@ -48,7 +48,7 @@ public class PostAdminController {
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<List<PostResDto>>> findDeletedPosts() {
-		List<PostResDto> response = postQueryService.findDeletedPosts();
+		List<PostResDto> response = postQueryFasade.findDeletedPosts();
 		return ResponseUtils.ok(response);
 	}
 
@@ -57,7 +57,8 @@ public class PostAdminController {
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<List<PostResDto>>> findActivePosts() {
-		List<PostResDto> response = postQueryService.findAllNotDeletedPosts();
+		List<PostResDto> response = postQueryFasade.findAllNotDeletedPosts();
 		return ResponseUtils.ok(response);
 	}
+
 }

@@ -8,11 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.trouble.converter.PostConverter;
-import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.repository.PostRepository;
-import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
 
@@ -23,16 +20,9 @@ import troublog.backend.global.common.error.exception.PostException;
 public class PostQueryService {
 	private final PostRepository postRepository;
 
-	public Post findPostById(Long id) {
+	public Post findById(Long id) {
 		return postRepository.findById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
-	}
-
-	public PostResDto findPostDetailsById(Long userId, Long id) {
-		//TODO N+1 Query 해결 필요
-		Post post = findPostById(id);
-		PostFactory.validateAuthorized(userId, post);
-		return PostConverter.toResponse(post);
 	}
 
 	public Post findNotDeletedPost(Long id) {
@@ -40,14 +30,11 @@ public class PostQueryService {
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
 
-	public List<PostResDto> findAllNotDeletedPosts() {
-		List<Post> posts = postRepository.findByIsDeletedFalse();
-		return PostConverter.toResponseList(posts);
+	public List<Post> findAllNotDeletedPosts() {
+		return postRepository.findByIsDeletedFalse();
 	}
 
-	public List<PostResDto> findDeletedPosts() {
-		List<Post> posts = postRepository.findByIsDeletedTrue();
-		return PostConverter.toResponseList(posts);
-
+	public List<Post> findAllDeletedPosts() {
+		return postRepository.findByIsDeletedTrue();
 	}
 }

@@ -19,7 +19,7 @@ public class ProjectQueryService {
 
 	private final ProjectRepository projectRepository;
 
-	public Project findProjectById(long id) {
+	public Project findById(long id) {
 		return projectRepository.findById(id)
 			.orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND));
 	}

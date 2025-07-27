@@ -21,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.request.PostCreateReqDto;
 import troublog.backend.domain.trouble.dto.request.PostUpdateReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
-import troublog.backend.domain.trouble.service.command.PostCommandService;
-import troublog.backend.domain.trouble.service.query.PostQueryService;
+import troublog.backend.domain.trouble.service.facade.PostCommandFacade;
+import troublog.backend.domain.trouble.service.facade.PostQueryFasade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -34,8 +34,8 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "트러블슈팅", description = "트러블슈팅 문서 관련 엔드포인트")
 public class PostController {
 
-	private final PostCommandService postCommandService;
-	private final PostQueryService postQueryService;
+	private final PostCommandFacade postCommandFacade;
+	private final PostQueryFasade postQueryFasade;
 
 	@GetMapping("/{postId}")
 	@Operation(summary = "트러블슈팅 문서 상세 조회 API", description = "ID 값 기반 트러블슈팅 문서 상세 조회")
@@ -43,7 +43,7 @@ public class PostController {
 	public ResponseEntity<BaseResponse<PostResDto>> findPostDetails(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId) {
-		PostResDto response = postQueryService.findPostDetailsById(token.getUserId(), postId);
+		PostResDto response = postQueryFasade.findPostDetailsById(token.getUserId(), postId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -54,7 +54,7 @@ public class PostController {
 	public ResponseEntity<BaseResponse<PostResDto>> createPost(
 		@Authentication CustomAuthenticationToken token,
 		@Valid @RequestBody PostCreateReqDto reqDto) {
-		PostResDto response = postCommandService.createPost(token.getUserId(), reqDto);
+		PostResDto response = postCommandFacade.createPost(token.getUserId(), reqDto);
 		return ResponseUtils.created(response);
 	}
 
@@ -66,7 +66,7 @@ public class PostController {
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId,
 		@Valid @RequestBody PostUpdateReqDto reqDto) {
-		PostResDto response = postCommandService.updatePost(token.getUserId(), postId, reqDto);
+		PostResDto response = postCommandFacade.updatePost(token.getUserId(), postId, reqDto);
 		return ResponseUtils.ok(response);
 	}
 
@@ -76,7 +76,7 @@ public class PostController {
 	public ResponseEntity<BaseResponse<Void>> deletePost(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId) {
-		postCommandService.softDeletePost(token.getUserId(), postId);
+		postCommandFacade.softDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
 	}
 
@@ -87,7 +87,7 @@ public class PostController {
 	public ResponseEntity<BaseResponse<PostResDto>> restorePost(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId) {
-		PostResDto response = postCommandService.restorePost(token.getUserId(), postId);
+		PostResDto response = postCommandFacade.restorePost(token.getUserId(), postId);
 		return ResponseUtils.ok(response);
 	}
 }
