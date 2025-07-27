@@ -19,7 +19,7 @@ import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.domain.user.entity.User;
-import troublog.backend.domain.user.service.UserQueryService;
+import troublog.backend.domain.user.service.query.UserQueryService;
 
 @Slf4j
 @Service
