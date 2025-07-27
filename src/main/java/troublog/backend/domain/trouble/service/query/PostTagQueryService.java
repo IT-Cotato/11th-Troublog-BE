@@ -19,6 +19,8 @@ public class PostTagQueryService {
 	private final PostTagRepository postTagRepository;
 
 	public List<PostTag> findAllByPostId(Long postId) {
-		return postTagRepository.findAllByPostId(postId);
+		List<PostTag> postTags = postTagRepository.findAllByPostId(postId);
+		log.info("[PostTag] 게시글별 태그 조회 결과: postId={}, tagCount={}", postId, postTags.size());
+		return postTags;
 	}
 }

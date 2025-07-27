@@ -20,6 +20,7 @@ public class ContentCommandService {
 	private final ContentRepository contentRepository;
 
 	public List<Content> saveAll(List<Content> contents) {
+		log.info("[Content] 트러블슈팅 문서 콘텐츠 일괄 저장: contentSize={}", contents.size());
 		return contentRepository.saveAll(contents);
 	}
 }

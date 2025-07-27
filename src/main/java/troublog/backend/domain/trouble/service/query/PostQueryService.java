@@ -21,20 +21,26 @@ public class PostQueryService {
 	private final PostRepository postRepository;
 
 	public Post findById(Long id) {
+		log.info("[Post] 트러블슈팅 문서 조회: postId={}", id);
 		return postRepository.findById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
 
 	public Post findNotDeletedPost(Long id) {
+		log.info("[Post] 삭제되지 않은 트러블슈팅 문서 조회: postId={}", id);
 		return postRepository.findByIdAndIsDeletedFalse(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
 
 	public List<Post> findAllNotDeletedPosts() {
-		return postRepository.findByIsDeletedFalse();
+		List<Post> posts = postRepository.findByIsDeletedFalse();
+		log.info("[Post] 삭제되지 않은 게시글 조회: postCount={}", posts.size());
+		return posts;
 	}
 
 	public List<Post> findAllDeletedPosts() {
-		return postRepository.findByIsDeletedTrue();
+		List<Post> posts = postRepository.findByIsDeletedTrue();
+		log.info("[Post] 삭제된 게시글 조회: postCount={}", posts.size());
+		return posts;
 	}
 }

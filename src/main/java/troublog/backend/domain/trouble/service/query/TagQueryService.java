@@ -23,11 +23,14 @@ public class TagQueryService {
 	private final TagRepository tagRepository;
 
 	public Tag findErrorTagByName(String tagName) {
+		log.info("[Tag] 에러 태그 조회: tagName={}", tagName);
 		return tagRepository.findTagByNameAndTagType(tagName, TagType.ERROR)
 			.orElseThrow(() -> new PostException(ErrorCode.TAG_NOT_FOUND));
 	}
 
 	public List<Tag> findTechStackTagsByNames(List<String> tagNames) {
-		return tagRepository.findByNameInAndTagType(tagNames, TagType.TECH_STACK);
+		List<Tag> tags = tagRepository.findByNameInAndTagType(tagNames, TagType.TECH_STACK);
+		log.info("[Tag] 기술 스택 태그 조회 결과: requestedCount={}, foundCount={}", tagNames.size(), tags.size());
+		return tags;
 	}
 }
