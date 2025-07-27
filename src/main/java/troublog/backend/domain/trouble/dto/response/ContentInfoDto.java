@@ -23,7 +23,7 @@ public record ContentInfoDto(
 	@Schema(description = "작성자 유형", example = "USER_WRITTEN")
 	ContentAuthorType authorType,
 
-	@Schema(description = "요약 유형", example = "BLOG")
+	@Schema(description = "요약 유형", example = "NONE")
 	ContentSummaryType summaryType
 ) {
 }

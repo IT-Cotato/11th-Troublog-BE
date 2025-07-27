@@ -40,9 +40,23 @@ public class PostCommandService {
 		return PostConverter.toResponse(savedPost);
 	}
 
-	public void deletePost(Long userId, Long postId) {
+	public void softDeletePost(Long userId, Long postId) {
+		Post foundPost = postQueryService.findPostById(postId);
+		PostFactory.validateAuthorized(userId, foundPost);
+		foundPost.markAsDeleted();
+	}
+
+	public void hardDeletePost(Long userId, Long postId) {
 		Post foundPost = postQueryService.findPostById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
 		postRepository.delete(foundPost);
+	}
+
+	public PostResDto restorePost(Long userId, Long postId) {
+		Post foundPost = postQueryService.findPostById(postId);
+		PostFactory.validateAuthorized(userId, foundPost);
+		PostFactory.validateIsDeleted(foundPost);
+		foundPost.restoreFromDeleted();
+		return PostConverter.toResponse(foundPost);
 	}
 }

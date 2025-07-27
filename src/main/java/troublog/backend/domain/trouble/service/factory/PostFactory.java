@@ -151,4 +151,10 @@ public class PostFactory {
 			throw new PostException(ErrorCode.POST_ACCESS_DENIED);
 		}
 	}
+
+	public static void validateIsDeleted(Post foundPost) {
+		if (Boolean.FALSE.equals(foundPost.getIsDeleted())) {
+			throw new PostException(ErrorCode.POST_NOT_DELETED);
+		}
+	}
 }

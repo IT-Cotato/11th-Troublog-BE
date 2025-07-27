@@ -43,7 +43,7 @@ public class PostController {
 	public ResponseEntity<BaseResponse<PostResDto>> findPostDetails(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId) {
-		PostResDto response = postQueryService.findPostDetailsById(postId);
+		PostResDto response = postQueryService.findPostDetailsById(token.getUserId(), postId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -71,12 +71,23 @@ public class PostController {
 	}
 
 	@DeleteMapping("/{postId}")
-	@Operation(summary = "트러블슈팅 문서 삭제 API", description = "트러블슈팅 문서를 삭제한다.")
+	@Operation(summary = "트러블슈팅 문서 임시 삭제 API", description = "트러블슈팅 문서를 임시 삭제한다.")
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> deletePost(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId) {
-		postCommandService.deletePost(token.getUserId(), postId);
+		postCommandService.softDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
+	}
+
+	@PostMapping("/{postId}/restore")
+	@Operation(summary = "트러블슈팅 문서 복구 API", description = "임시 삭제된 트러블슈팅 문서를 복구한다.")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = PostResDto.class)))
+	public ResponseEntity<BaseResponse<PostResDto>> restorePost(
+		@Authentication CustomAuthenticationToken token,
+		@PathVariable long postId) {
+		PostResDto response = postCommandService.restorePost(token.getUserId(), postId);
+		return ResponseUtils.ok(response);
 	}
 }

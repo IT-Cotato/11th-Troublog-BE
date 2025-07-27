@@ -55,7 +55,8 @@ public class PostConverter {
 		return Post.builder()
 			.title(requestDto.title())
 			.commentCount(DEFAULT_COUNT)
-			.likeCount(DEFAULT_COUNT);
+			.likeCount(DEFAULT_COUNT)
+			.isDeleted(false);
 	}
 
 	public PostResDto toResponse(Post post) {
@@ -65,8 +66,8 @@ public class PostConverter {
 			.introduction(post.getIntroduction())
 			.likeCount(post.getLikeCount())
 			.commentCount(post.getCommentCount())
-			.isVisible(post.isVisible())
-			.isSummaryCreated(post.isSummaryCreated())
+			.isVisible(post.getIsVisible())
+			.isSummaryCreated(post.getIsSummaryCreated())
 			.postStatus(post.getStatus().getMessage())
 			.starRating(post.getStarRating() != null ? post.getStarRating().name() : null)
 			.createdAt(post.getCreated_at())
@@ -77,6 +78,12 @@ public class PostConverter {
 			.postTags(findTechStackTags(post))
 			.contents(findContents(post))
 			.build();
+	}
+
+	public List<PostResDto> toResponseList(List<Post> posts) {
+		return posts.stream()
+			.map(PostConverter::toResponse)
+			.toList();
 	}
 
 	/**

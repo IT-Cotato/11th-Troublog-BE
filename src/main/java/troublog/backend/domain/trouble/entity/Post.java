@@ -61,10 +61,16 @@ public class Post extends BaseEntity {
 	private int commentCount;
 
 	@Column(name = "visible")
-	private boolean isVisible;
+	private Boolean isVisible;
 
 	@Column(name = "summary_created")
-	private boolean isSummaryCreated;
+	private Boolean isSummaryCreated;
+
+	@Column(name = "is_deleted")
+	private Boolean isDeleted;
+
+	@Column(name = "deleted_at")
+	private LocalDateTime deletedAt;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "post_Status")
@@ -169,5 +175,15 @@ public class Post extends BaseEntity {
 
 	public void updateStarRating(StarRating starRating) {
 		this.starRating = starRating;
+	}
+
+	public void markAsDeleted() {
+		this.isDeleted = true;
+		this.deletedAt = LocalDateTime.now();
+	}
+
+	public void restoreFromDeleted() {
+		this.isDeleted = false;
+		this.deletedAt = null;
 	}
 }
