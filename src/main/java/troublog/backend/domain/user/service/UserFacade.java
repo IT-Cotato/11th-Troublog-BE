@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.user.converter.FollowConverter;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
@@ -15,17 +16,23 @@ import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.command.FollowCommandService;
 import troublog.backend.domain.user.service.query.FollowQueryService;
 import troublog.backend.domain.user.service.query.UserQueryService;
+import troublog.backend.domain.user.validator.FollowValidator;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserFacade {
 
+	private final FollowValidator followValidator;
 	private final UserQueryService userQueryService;
 	private final FollowCommandService followCommandService;
 	private final FollowQueryService followQueryService;
 
 	@Transactional
 	public void followUser(Long followerId, Long followingId) {
+
+		// 자기 자신은 팔로우 불가
+		followValidator.validateNotSelfFollow(followerId, followingId);
 
 		// 유저 존재 확인
 		User follower = userQueryService.findUserById(followerId);
@@ -43,6 +50,9 @@ public class UserFacade {
 	@Transactional
 	public void unfollowUser(Long followerId, Long followingId) {
 
+		// 자기 자신은 언팔로우 불가
+		followValidator.validateNotSelfFollow(followerId, followingId);
+
 		// 유저 존재 확인
 		User follower = userQueryService.findUserById(followerId);
 		User following = userQueryService.findUserById(followingId);
@@ -50,7 +60,7 @@ public class UserFacade {
 		// 팔로우 관계인지 확인
 		Follow follow = followQueryService.findByFollowerAndFollowing(follower, following);
 
-		// TODO : 이건 hard delete가 맞겠져?
+		// 팔로우 관계 삭제
 		followCommandService.delete(follow);
 	}
 
