@@ -29,7 +29,7 @@ import troublog.backend.domain.user.service.UserQueryService;
 
 @Service
 @Transactional
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostRelationFacade {
 
 	private final ProjectQueryService projectQueryService;

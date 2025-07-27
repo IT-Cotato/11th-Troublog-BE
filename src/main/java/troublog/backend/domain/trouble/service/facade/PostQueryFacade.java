@@ -20,7 +20,7 @@ import troublog.backend.domain.trouble.service.query.PostQueryService;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostQueryFacade {
 
 	private final PostQueryService postQueryService;
