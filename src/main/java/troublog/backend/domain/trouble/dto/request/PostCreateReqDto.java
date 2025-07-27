@@ -87,7 +87,7 @@ public record PostCreateReqDto(
 		example = "1"
 	)
 	@NotNull(message = "Project ID는 null 일 수 없습니다.")
-	Integer projectId,
+	Long projectId,
 
 	@Schema(
 		description = "썸네일 이미지 URL",

@@ -50,12 +50,12 @@ public class PostRelationFacade {
 		//TODO Image URL(String) -> PostImage 변환후 연관관계 메서드 호출 필요
 	}
 
-	public void setProjectRelations(Post post, int projectId) {
+	public void setProjectRelations(Post post, Long projectId) {
 		Project project = projectQueryService.findById(projectId);
 		project.addPost(post);
 	}
 
-	public void setUserRelations(Post post, long userId) {
+	public void setUserRelations(Post post, Long userId) {
 		User user = userQueryService.findUserById(userId);
 		user.addPost(post);
 	}
@@ -123,8 +123,8 @@ public class PostRelationFacade {
 		foundPost.updateStarRating(StarRating.from(reqDto.starRating()));
 	}
 
-	private void updateProjectRelations(Post post, int newProjectId) {
-		if (post.getProject().getId() == newProjectId) {
+	private void updateProjectRelations(Post post, Long newProjectId) {
+		if (post.getProject().getId().equals(newProjectId)) {
 			return;
 		}
 		setProjectRelations(post, newProjectId);
