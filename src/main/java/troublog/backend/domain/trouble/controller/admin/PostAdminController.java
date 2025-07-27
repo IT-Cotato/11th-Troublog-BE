@@ -18,7 +18,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.service.facade.PostCommandFacade;
-import troublog.backend.domain.trouble.service.facade.PostQueryFasade;
+import troublog.backend.domain.trouble.service.facade.PostQueryFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -31,7 +31,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 public class PostAdminController {
 
 	private final PostCommandFacade postCommandFacade;
-	private final PostQueryFasade postQueryFasade;
+	private final PostQueryFacade postQueryFacade;
 
 	@DeleteMapping("/{postId}/hard")
 	@Operation(summary = "트러블슈팅 문서 영구 삭제 API", description = "트러블슈팅 문서를 영구적으로 삭제한다. (관리자용)")
@@ -48,7 +48,7 @@ public class PostAdminController {
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<List<PostResDto>>> findDeletedPosts() {
-		List<PostResDto> response = postQueryFasade.findDeletedPosts();
+		List<PostResDto> response = postQueryFacade.findDeletedPosts();
 		return ResponseUtils.ok(response);
 	}
 
@@ -57,7 +57,7 @@ public class PostAdminController {
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<List<PostResDto>>> findActivePosts() {
-		List<PostResDto> response = postQueryFasade.findAllNotDeletedPosts();
+		List<PostResDto> response = postQueryFacade.findAllNotDeletedPosts();
 		return ResponseUtils.ok(response);
 	}
 

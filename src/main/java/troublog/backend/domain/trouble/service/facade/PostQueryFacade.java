@@ -21,7 +21,7 @@ import troublog.backend.domain.trouble.service.query.PostQueryService;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-public class PostQueryFasade {
+public class PostQueryFacade {
 
 	private final PostQueryService postQueryService;
 

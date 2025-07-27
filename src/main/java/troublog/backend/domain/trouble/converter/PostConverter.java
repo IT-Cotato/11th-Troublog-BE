@@ -9,7 +9,7 @@ import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
-import troublog.backend.domain.trouble.service.facade.PostQueryFasade;
+import troublog.backend.domain.trouble.service.facade.PostQueryFacade;
 
 @UtilityClass
 public class PostConverter {
@@ -72,9 +72,9 @@ public class PostConverter {
 			.updatedAt(post.getUpdated_at())
 			.userId(post.getUser().getId())
 			.projectId(post.getProject().getId())
-			.errorTag(PostQueryFasade.findErrorTag(post))
-			.postTags(PostQueryFasade.findTechStackTags(post))
-			.contents(PostQueryFasade.findContents(post))
+			.errorTag(PostQueryFacade.findErrorTag(post))
+			.postTags(PostQueryFacade.findTechStackTags(post))
+			.contents(PostQueryFacade.findContents(post))
 			.build();
 	}
 

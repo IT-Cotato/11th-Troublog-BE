@@ -22,7 +22,7 @@ import troublog.backend.domain.trouble.dto.request.PostCreateReqDto;
 import troublog.backend.domain.trouble.dto.request.PostUpdateReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.service.facade.PostCommandFacade;
-import troublog.backend.domain.trouble.service.facade.PostQueryFasade;
+import troublog.backend.domain.trouble.service.facade.PostQueryFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -35,7 +35,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 public class PostController {
 
 	private final PostCommandFacade postCommandFacade;
-	private final PostQueryFasade postQueryFasade;
+	private final PostQueryFacade postQueryFacade;
 
 	@GetMapping("/{postId}")
 	@Operation(summary = "트러블슈팅 문서 상세 조회 API", description = "ID 값 기반 트러블슈팅 문서 상세 조회")
@@ -43,7 +43,7 @@ public class PostController {
 	public ResponseEntity<BaseResponse<PostResDto>> findPostDetails(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId) {
-		PostResDto response = postQueryFasade.findPostDetailsById(token.getUserId(), postId);
+		PostResDto response = postQueryFacade.findPostDetailsById(token.getUserId(), postId);
 		return ResponseUtils.ok(response);
 	}
 
