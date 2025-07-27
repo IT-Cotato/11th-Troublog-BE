@@ -17,9 +17,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import troublog.backend.domain.auth.dto.RegisterDto;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
 import troublog.backend.global.common.entity.BaseEntity;
 
 @Entity
@@ -91,5 +91,17 @@ public class User extends BaseEntity {
 	public void addPost(Post post) {
 		this.posts.add(post);
 		post.assignUser(this);
+	}
+
+	public void updateUserProfile(UserProfileUpdateReqDto userProfileUpdateReqDto) {
+		this.nickname = userProfileUpdateReqDto.nickname();
+		this.field = userProfileUpdateReqDto.field();
+		this.bio = userProfileUpdateReqDto.bio();
+		this.githubUrl = userProfileUpdateReqDto.githubUrl();
+		this.profileUrl = userProfileUpdateReqDto.profileUrl();
+	}
+
+	public void deleteUser() {
+		this.isDeleted = true;
 	}
 }
