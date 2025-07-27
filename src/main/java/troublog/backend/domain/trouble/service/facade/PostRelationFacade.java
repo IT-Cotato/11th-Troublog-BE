@@ -3,6 +3,7 @@ package troublog.backend.domain.trouble.service.facade;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.UserQueryService;
 
 @Service
+@Transactional
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class PostRelationFacade {
 
