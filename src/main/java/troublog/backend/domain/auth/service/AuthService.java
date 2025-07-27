@@ -16,10 +16,10 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.RegisterDto;
+import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
-import troublog.backend.domain.user.repository.UserRepository;
-import troublog.backend.domain.user.service.UserCommandService;
-import troublog.backend.domain.user.service.UserQueryService;
+import troublog.backend.domain.user.service.command.UserCommandService;
+import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.UserException;
@@ -52,7 +52,7 @@ public class AuthService {
 		// 비밀번호 인코딩
 		String encodedPassword = passwordEncoder.encode(registerDto.password());
 
-		User user = User.registerUser(registerDto, encodedPassword);
+		User user = UserConverter.toEntity(registerDto, encodedPassword);
 
 		return userCommandService.save(user);
 	}
