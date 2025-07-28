@@ -8,8 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.trouble.converter.ContentConverter;
-import troublog.backend.domain.trouble.dto.request.ContentDto;
 import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.repository.ContentRepository;
 
@@ -21,10 +19,8 @@ public class ContentCommandService {
 
 	private final ContentRepository contentRepository;
 
-	public List<Content> saveAllContent(List<ContentDto> contentDtoList) {
-		List<Content> newContentList = contentDtoList.stream()
-			.map(ContentConverter::toEntity)
-			.toList();
-		return contentRepository.saveAll(newContentList);
+	public List<Content> saveAll(List<Content> contents) {
+		log.info("[Content] 트러블슈팅 문서 콘텐츠 일괄 저장: contentSize={}", contents.size());
+		return contentRepository.saveAll(contents);
 	}
 }

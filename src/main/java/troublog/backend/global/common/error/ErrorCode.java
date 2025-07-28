@@ -34,11 +34,7 @@ public enum ErrorCode {
 	INVALID_USER(HttpStatus.NOT_FOUND, "u-002", "아이디 또는 비밀번호가 일치하지 않습니다."),
 	DUPLICATED_EMAIL(HttpStatus.CONFLICT, "u-003", "중복된 이메일입니다."),
 	DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "u-004", "중복된 닉네임입니다."),
-	USER_FOLLOW_SELF(HttpStatus.BAD_REQUEST, "u-005", "자기자신을 팔로우/언팔로우 할 수 없습니다."),
-	DUPLICATED_FOLLOWED(HttpStatus.CONFLICT, "u-006", "이미 팔로우한 유저입니다."),
-	USER_NOT_FOLLOWED(HttpStatus.BAD_REQUEST, "u-007", "팔로우하지 않은 유저입니다."),
-
-	MISSING_USER(HttpStatus.BAD_REQUEST, "u-008", "사용자 정보가 누락되었습니다."),
+	MISSING_USER(HttpStatus.BAD_REQUEST, "u-005", "사용자 정보가 누락되었습니다."),
 
 	/**
 	 * Project Error
@@ -51,7 +47,9 @@ public enum ErrorCode {
 	 */
 	POST_NOT_FOUND(HttpStatus.NOT_FOUND, "P-001", "트러블슈팅 문서를 찾지 못했습니다."),
 	INVALID_VALUE(HttpStatus.NOT_FOUND, "P-002", "잘못된 상태값입니다."),
-	MISSING_POST(HttpStatus.BAD_REQUEST, "P-003", "포스트 정보가 누락되었습니다."),
+	MISSING_POST(HttpStatus.BAD_REQUEST, "P-003", "트러블 슈팅 문서가 누락되었습니다."),
+	POST_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "P-004", "접근 불가능한 트러블슈팅 문서입니다."),
+	POST_NOT_DELETED(HttpStatus.BAD_GATEWAY,"P-005" , "삭제되지 않은 트러블슈팅 문서입니다."),
 
 	/**
 	 * Content Error
