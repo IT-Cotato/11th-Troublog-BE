@@ -21,6 +21,7 @@ public class UserConverter {
 			.field(registerDto.field())
 			.bio(registerDto.bio())
 			.githubUrl(registerDto.githubUrl())
+			.isDeleted(true)
 			.build();
 	}
 

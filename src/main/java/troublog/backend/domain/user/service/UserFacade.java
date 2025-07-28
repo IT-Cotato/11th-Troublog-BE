@@ -29,7 +29,6 @@ import troublog.backend.domain.user.validator.UserValidator;
 public class UserFacade {
 
 	private final FollowValidator followValidator;
-	private final UserValidator userValidator;
 
 	private final UserCommandService userCommandService;
 	private final UserQueryService userQueryService;
@@ -43,8 +42,8 @@ public class UserFacade {
 		followValidator.validateNotSelfFollow(followerId, followingId);
 
 		// 유저 존재 확인
-		User follower = userQueryService.findUserById(followerId);
-		User following = userQueryService.findUserById(followingId);
+		User follower = userQueryService.findUserByIdAndIsDeletedFalse(followerId);
+		User following = userQueryService.findUserByIdAndIsDeletedFalse(followingId);
 
 		// 이미 존재하는 팔로우 관계인지 확인
 		followQueryService.existsByFollowerAndFollowing(follower, following);
@@ -62,8 +61,8 @@ public class UserFacade {
 		followValidator.validateNotSelfFollow(followerId, followingId);
 
 		// 유저 존재 확인
-		User follower = userQueryService.findUserById(followerId);
-		User following = userQueryService.findUserById(followingId);
+		User follower = userQueryService.findUserByIdAndIsDeletedFalse(followerId);
+		User following = userQueryService.findUserByIdAndIsDeletedFalse(followingId);
 
 		// 팔로우 관계인지 확인
 		Follow follow = followQueryService.findByFollowerAndFollowing(follower, following);
@@ -76,12 +75,12 @@ public class UserFacade {
 	public List<UserFollowsResDto> getFollowers(Long userId, Long targetUserId) {
 
 		// 사용자 (본인) 조회
-		User viewer = userQueryService.findUserById(userId);
+		User viewer = userQueryService.findUserByIdAndIsDeletedFalse(userId);
 
 		// 커뮤니티 - 다른 사용자 조회 (본인 or 타인)
 		User targetUser = userId.equals(targetUserId)
 			? viewer
-			: userQueryService.findUserById(targetUserId);
+			: userQueryService.findUserByIdAndIsDeletedFalse(targetUserId);
 
 		// 다른 사용자의 팔로워 리스트 조회
 		List<User> followers = followQueryService.findFollowers(targetUser);
@@ -99,12 +98,12 @@ public class UserFacade {
 	public List<UserFollowsResDto> getFollowings(Long userId, Long targetUserId) {
 
 		// 사용자 (본인) 조회
-		User viewer = userQueryService.findUserById(userId);
+		User viewer = userQueryService.findUserByIdAndIsDeletedFalse(userId);
 
 		// 커뮤니티의 경우 - 다른 사용자 조회 (본인 or 타인)
 		User targetUser = userId.equals(targetUserId)
 			? viewer
-			: userQueryService.findUserById(targetUserId);
+			: userQueryService.findUserByIdAndIsDeletedFalse(targetUserId);
 
 		// 다른 사용자의 팔로잉 리스트 조회
 		List<User> followings = followQueryService.findFollowings(targetUser);
@@ -122,7 +121,7 @@ public class UserFacade {
 	public UserInfoResDto getUserInfo(Long userId) {
 
 		// 사용자 조회
-		User user = userQueryService.findUserById(userId);
+		User user = userQueryService.findUserByIdAndIsDeletedFalse(userId);
 
 		// 사용자의 팔로잉 목록 조회
 		long followingNum = followQueryService.findFollowings(user).size();
@@ -138,7 +137,7 @@ public class UserFacade {
 	public UserProfileResDto getMyProfile(Long userId) {
 
 		// 사용자 (본인) 조회
-		User user = userQueryService.findUserById(userId);
+		User user = userQueryService.findUserByIdAndIsDeletedFalse(userId);
 
 		// DTO 변환
 		return UserProfileResDto.builder()
@@ -153,10 +152,10 @@ public class UserFacade {
 	public void updateMyProfile(Long userId, UserProfileUpdateReqDto userProfileUpdateReqDto) {
 
 		// 프로필 수정 요청 유효성 검사
-		userValidator.validateProfileUpdateRequest(userId, userProfileUpdateReqDto.userId());
+		UserValidator.validateProfileUpdateRequest(userId, userProfileUpdateReqDto.userId());
 
 		// 사용자 (본인) 조회
-		User user = userQueryService.findUserById(userId);
+		User user = userQueryService.findUserByIdAndIsDeletedFalse(userId);
 
 		// 프로필 수정
 		userCommandService.updateUserProfile(user, userProfileUpdateReqDto);
@@ -166,7 +165,7 @@ public class UserFacade {
 	public void deleteMyProfile(Long userId) {
 
 		// 사용자 (본인) 조회
-		User user = userQueryService.findUserById(userId);
+		User user = userQueryService.findUserByIdAndIsDeletedFalse(userId);
 
 		// 사용자 삭제
 		userCommandService.deleteUser(user);

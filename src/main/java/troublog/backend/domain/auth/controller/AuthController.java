@@ -15,8 +15,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.LoginReqDto;
+import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.RegisterDto;
 import troublog.backend.domain.auth.service.AuthService;
 import troublog.backend.global.common.response.BaseResponse;
@@ -45,7 +45,8 @@ public class AuthController {
 
 	@PostMapping("/email-check")
 	@Operation(summary = "이메일 중복체크 API", description = "회원가입 첫번째 화면")
-	public ResponseEntity<BaseResponse<Void>> checkDuplicateEmail(@RequestParam String email, HttpServletRequest request) {
+	public ResponseEntity<BaseResponse<Void>> checkDuplicateEmail(@RequestParam String email,
+		HttpServletRequest request) {
 
 		authService.checkDuplicateEmail(email, request);
 

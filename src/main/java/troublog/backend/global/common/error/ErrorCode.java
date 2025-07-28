@@ -34,12 +34,13 @@ public enum ErrorCode {
 	INVALID_USER(HttpStatus.NOT_FOUND, "u-002", "아이디 또는 비밀번호가 일치하지 않습니다."),
 	DUPLICATED_EMAIL(HttpStatus.CONFLICT, "u-003", "중복된 이메일입니다."),
 	DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "u-004", "중복된 닉네임입니다."),
-	USER_FOLLOW_SELF(HttpStatus.BAD_REQUEST, "u-005", "자기자신을 팔로우/언팔로우 할 수 없습니다."),
-	USER_UPDATE_SELF(HttpStatus.BAD_REQUEST, "u-006", "자기자신의 정보만 수정할 수 있습니다."),
-	DUPLICATED_FOLLOWED(HttpStatus.CONFLICT, "u-007", "이미 팔로우한 유저입니다."),
-	USER_NOT_FOLLOWED(HttpStatus.BAD_REQUEST, "u-008", "팔로우하지 않은 유저입니다."),
+	USER_DELETED(HttpStatus.BAD_REQUEST, "u-005", "삭제된 유저입니다."),
+	USER_FOLLOW_SELF(HttpStatus.BAD_REQUEST, "u-006", "자기자신을 팔로우/언팔로우 할 수 없습니다."),
+	USER_UPDATE_SELF(HttpStatus.BAD_REQUEST, "u-007", "자기자신의 정보만 수정할 수 있습니다."),
+	DUPLICATED_FOLLOWED(HttpStatus.CONFLICT, "u-008", "이미 팔로우한 유저입니다."),
+	USER_NOT_FOLLOWED(HttpStatus.BAD_REQUEST, "u-009", "팔로우하지 않은 유저입니다."),
 
-	MISSING_USER(HttpStatus.BAD_REQUEST, "u-009", "사용자 정보가 누락되었습니다."),
+	MISSING_USER(HttpStatus.BAD_REQUEST, "u-0010", "사용자 정보가 누락되었습니다."),
 
 	/**
 	 * Project Error
