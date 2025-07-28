@@ -25,7 +25,7 @@ import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostTagQueryService;
 import troublog.backend.domain.trouble.service.query.TagQueryService;
 import troublog.backend.domain.user.entity.User;
-import troublog.backend.domain.user.service.UserQueryService;
+import troublog.backend.domain.user.service.query.UserQueryService;
 
 @Service
 @Transactional
