@@ -140,12 +140,7 @@ public class UserFacade {
 		User user = userQueryService.findUserByIdAndIsDeletedFalse(userId);
 
 		// DTO 변환
-		return UserProfileResDto.builder()
-			.userId(user.getId())
-			.nickname(user.getNickname())
-			.githubUrl(user.getGithubUrl())
-			.bio(user.getBio())
-			.build();
+		return UserConverter.toUserProfileResDto(user);
 	}
 
 	@Transactional

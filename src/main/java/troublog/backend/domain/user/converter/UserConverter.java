@@ -8,6 +8,7 @@ import lombok.experimental.UtilityClass;
 import troublog.backend.domain.auth.dto.RegisterDto;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
+import troublog.backend.domain.user.dto.response.UserProfileResDto;
 import troublog.backend.domain.user.entity.User;
 
 @UtilityClass
@@ -55,6 +56,15 @@ public class UserConverter {
 			.bio(user.getBio())
 			.followerNum(followerNum)
 			.followingNum(followingNum)
+			.build();
+	}
+
+	public static UserProfileResDto toUserProfileResDto(User user) {
+		return UserProfileResDto.builder()
+			.userId(user.getId())
+			.nickname(user.getNickname())
+			.githubUrl(user.getGithubUrl())
+			.bio(user.getBio())
 			.build();
 	}
 }
