@@ -17,7 +17,6 @@ import io.awspring.cloud.s3.S3Template;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.image.validator.ImageValidator;
-import troublog.backend.global.common.config.property.AwsProperties;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.ImageException;
 
@@ -29,11 +28,11 @@ public class S3Uploader {
 	private static final String AWS_S3_DOMAIN = "amazonaws.com/";
 	private static final String PATH_SEPARATOR = "/";
 
+	private final Executor imageUploadExecutor;
 	private final S3Template s3Template;
+
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucketName;
-	private final AwsProperties awsProperties;
-	private final Executor imageUploadExecutor;
 
 	/**
 	 * 단일 이미지 파일을 AWS S3에 비동기적으로 업로드합니다.
