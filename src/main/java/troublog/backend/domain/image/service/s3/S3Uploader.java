@@ -27,8 +27,8 @@ import troublog.backend.global.common.error.exception.ImageException;
 public class S3Uploader {
 	private static final long DEFAULT_TIMEOUT_SECONDS = 60;
 	private static final String AWS_S3_DOMAIN = "amazonaws.com/";
-	private static final String FILE_SEPARATOR = "_";
 	private static final String PATH_SEPARATOR = "/";
+
 	private final AmazonS3Client amazonS3;
 	private final AwsProperties awsProperties;
 	private final Executor imageUploadExecutor;
@@ -173,21 +173,20 @@ public class S3Uploader {
 	 * @return 생성된 S3 객체 키
 	 */
 	private String createS3Key(String originalFilename, String dirName) {
-		String uniqueFileName = createUniqueFileName(originalFilename, dirName);
-		return String.format("%s%s%s%s", dirName, PATH_SEPARATOR, PATH_SEPARATOR, uniqueFileName);
+		String uniqueFileName = createUniqueFileName(originalFilename);
+		return String.format("%s%s%s", dirName, PATH_SEPARATOR, uniqueFileName);
 	}
 
 	/**
 	 * 고유한 파일명을 생성합니다.
 	 *
 	 * @param originalFilename 원본 파일명
-	 * @param dirName          디렉토리 이름
 	 * @return UUID를 포함한 고유한 파일명
 	 */
-	private String createUniqueFileName(String originalFilename, String dirName) {
+	private String createUniqueFileName(String originalFilename) {
 		String extension = StringUtils.getFilenameExtension(originalFilename);
 		String uuid = UUID.randomUUID().toString();
-		return dirName + FILE_SEPARATOR + uuid + "." + extension;
+		return uuid + "." + extension;
 	}
 
 	/**
@@ -212,7 +211,9 @@ public class S3Uploader {
 	 */
 	private String extractKeyFromUrl(String s3Url) {
 		if (s3Url.contains(AWS_S3_DOMAIN)) {
-			return s3Url.substring(s3Url.indexOf(AWS_S3_DOMAIN) + AWS_S3_DOMAIN.length());
+			String objectKey = s3Url.substring(s3Url.indexOf(AWS_S3_DOMAIN) + AWS_S3_DOMAIN.length());
+			log.info(objectKey);
+			return objectKey;
 		}
 		throw new ImageException(ErrorCode.URL_NOT_VALID);
 	}
