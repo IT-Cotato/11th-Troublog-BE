@@ -16,7 +16,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.image.service.factory.ImageFactory;
+import troublog.backend.domain.image.validator.ImageValidator;
 import troublog.backend.global.common.config.property.AwsProperties;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.ImageException;
@@ -44,7 +44,7 @@ public class S3Uploader {
 	public CompletableFuture<String> uploadSingleImage(MultipartFile file, String dirName) {
 		return CompletableFuture.supplyAsync(
 				() -> {
-					ImageFactory.validateFile(file);
+					ImageValidator.validate(file);
 					return executeUpload(file, dirName);
 				},
 				imageUploadExecutor
@@ -64,7 +64,7 @@ public class S3Uploader {
 	 * @throws ImageException 파일 목록이 유효하지 않거나 업로드 실패 시 발생
 	 */
 	public CompletableFuture<List<String>> uploadMultipleImages(List<MultipartFile> fileList, String dirName) {
-		ImageFactory.validateFileList(fileList);
+		ImageValidator.validateFileList(fileList);
 
 		List<CompletableFuture<String>> uploadFutures = fileList.stream()
 			.map(file -> uploadSingleFileInternal(file, dirName))
@@ -91,7 +91,7 @@ public class S3Uploader {
 	public CompletableFuture<Void> deleteImage(String s3Url) {
 		return CompletableFuture.runAsync(
 				() -> {
-					ImageFactory.validateS3Url(s3Url);
+					ImageValidator.validateS3Url(s3Url);
 					executeDelete(s3Url);
 				},
 				imageUploadExecutor
@@ -126,7 +126,7 @@ public class S3Uploader {
 	 */
 	private CompletableFuture<String> uploadSingleFileInternal(MultipartFile file, String dirName) {
 		return CompletableFuture.supplyAsync(() -> {
-			ImageFactory.validateFile(file);
+			ImageValidator.validate(file);
 			return executeUpload(file, dirName);
 		}, imageUploadExecutor);
 	}
