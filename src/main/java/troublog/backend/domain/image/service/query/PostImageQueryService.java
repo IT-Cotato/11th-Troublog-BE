@@ -30,7 +30,7 @@ public class PostImageQueryService {
 
 	public List<PostImage> findAllByPostId(Long postId) {
 		List<PostImage> postImages = postImageRepository.findAllByPost_Id(postId);
-		log.info("[Image 모든 이미지 조회 완료: postId={}, imageCount={}", postId, postImages.size());
+		log.info("[Image] 모든 이미지 조회 완료: postId={}, imageCount={}", postId, postImages.size());
 		return postImages;
 	}
 
