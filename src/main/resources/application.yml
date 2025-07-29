@@ -30,7 +30,8 @@ cloud:
     s3:
       bucket: ${BUCKET_ADDRESS}
     stack.auto: false
-    region.static: ap-northeast-2
     credentials:
       accessKey: ${S3_ACCESS_KEY}
-      secretKey: ${S3_ACCESS_PASSWORD}
+      secretKey: ${S3_SECRET_KEY}
+    region:
+      _static: ap-northeast-2
