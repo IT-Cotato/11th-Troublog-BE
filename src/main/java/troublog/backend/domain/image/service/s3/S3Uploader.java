@@ -7,13 +7,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-
+import io.awspring.cloud.s3.S3Resource;
+import io.awspring.cloud.s3.S3Template;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.image.validator.ImageValidator;
@@ -29,7 +29,9 @@ public class S3Uploader {
 	private static final String AWS_S3_DOMAIN = "amazonaws.com/";
 	private static final String PATH_SEPARATOR = "/";
 
-	private final AmazonS3Client amazonS3;
+	private final S3Template s3Template;
+	@Value("${cloud.aws.s3.bucket}")
+	private String bucketName;
 	private final AwsProperties awsProperties;
 	private final Executor imageUploadExecutor;
 
@@ -141,11 +143,10 @@ public class S3Uploader {
 	 */
 	private String executeUpload(MultipartFile file, String dirName) {
 		try {
-			String bucket = getBucket();
 			String s3Key = createS3Key(file.getOriginalFilename(), dirName);
 
-			amazonS3.putObject(bucket, s3Key, file.getInputStream(), createMetadata(file));
-			return amazonS3.getUrl(bucket, s3Key).toString();
+			S3Resource uploaded = s3Template.upload(bucketName, s3Key, file.getInputStream());
+			return uploaded.getURL().toString();
 		} catch (IOException e) {
 			throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
 		}
@@ -159,7 +160,7 @@ public class S3Uploader {
 	 */
 	private void executeDelete(String s3Url) {
 		try {
-			amazonS3.deleteObject(getBucket(), extractKeyFromUrl(s3Url));
+			s3Template.deleteObject(bucketName, extractKeyFromUrl(s3Url));
 		} catch (Exception e) {
 			throw new ImageException(ErrorCode.IMAGE_DELETE_FAILED);
 		}
@@ -190,19 +191,6 @@ public class S3Uploader {
 	}
 
 	/**
-	 * 파일의 메타데이터 객체를 생성합니다.
-	 *
-	 * @param file 메타데이터를 생성할 파일
-	 * @return 파일 크기와 콘텐츠 타입이 설정된 ObjectMetadata
-	 */
-	private ObjectMetadata createMetadata(MultipartFile file) {
-		ObjectMetadata metadata = new ObjectMetadata();
-		metadata.setContentLength(file.getSize());
-		metadata.setContentType(file.getContentType());
-		return metadata;
-	}
-
-	/**
 	 * S3 URL에서 객체 키를 추출합니다.
 	 *
 	 * @param s3Url S3 객체의 URL
@@ -216,14 +204,5 @@ public class S3Uploader {
 			return objectKey;
 		}
 		throw new ImageException(ErrorCode.URL_NOT_VALID);
-	}
-
-	/**
-	 * AWS S3 버킷 이름을 반환합니다.
-	 *
-	 * @return S3 버킷 이름
-	 */
-	private String getBucket() {
-		return awsProperties.s3().bucket();
 	}
 }

@@ -3,12 +3,11 @@ package troublog.backend.global.common.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-
 import lombok.RequiredArgsConstructor;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 import troublog.backend.global.common.config.property.AwsProperties;
 
 @Configuration
@@ -18,15 +17,15 @@ public class S3Config {
 	private final AwsProperties awsProperties;
 
 	@Bean
-	public AmazonS3Client amazonS3Client() {
-		BasicAWSCredentials credentials = new BasicAWSCredentials(
+	public S3Client s3Client() {
+		AwsBasicCredentials credentials = AwsBasicCredentials.create(
 			awsProperties.credentials().accessKey(),
 			awsProperties.credentials().secretKey()
 		);
 
-		return (AmazonS3Client)AmazonS3ClientBuilder.standard()
-			.withRegion(awsProperties.region().staticRegion())
-			.withCredentials(new AWSStaticCredentialsProvider(credentials))
+		return S3Client.builder()
+			.region(Region.of(awsProperties.s3().region()))
+			.credentialsProvider(StaticCredentialsProvider.create(credentials))
 			.build();
 	}
 }

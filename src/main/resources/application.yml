@@ -15,6 +15,13 @@ spring:
           model: gpt-4.1-mini
   mvc:
     log-resolved-exception: false
+  cloud:
+    aws:
+      credentials:
+        access-key: ${S3_ACCESS_KEY}
+        secret-key: ${S3_SECRET_KEY}
+      s3:
+        region: ap-northeast-2
 
 springdoc:
   swagger-ui:
@@ -29,9 +36,3 @@ cloud:
   aws:
     s3:
       bucket: ${BUCKET_ADDRESS}
-    stack.auto: false
-    credentials:
-      accessKey: ${S3_ACCESS_KEY}
-      secretKey: ${S3_SECRET_KEY}
-    region:
-      _static: ap-northeast-2
