@@ -15,6 +15,8 @@ import troublog.backend.domain.image.service.command.PostImageCommandService;
 import troublog.backend.domain.image.service.query.PostImageQueryService;
 import troublog.backend.domain.image.service.s3.S3Uploader;
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.ImageException;
 
 @Slf4j
 @Service
@@ -28,10 +30,16 @@ public class PostImageFacade {
 	private final PostImageQueryService postImageQueryService;
 
 	public PostImage savePostImage(Post post, MultipartFile file) {
+		if (post == null || post.getId() == null) {
+			throw new IllegalArgumentException("Post는 null일 수 없습니다.");
+		}
 		return uploadAndSaveImage(file, false, post.getId());
 	}
 
 	public PostImage savePostImageWithThumbnail(Post post, MultipartFile file) {
+		if (post == null || post.getId() == null) {
+			throw new IllegalArgumentException("Post는 null일 수 없습니다.");
+		}
 		return uploadAndSaveImage(file, true, post.getId());
 	}
 
@@ -40,6 +48,9 @@ public class PostImageFacade {
 			.thenApply(imageUrls -> {
 				List<PostImage> postImages = PostImageConverter.toEntityList(imageUrls);
 				return postImageCommandService.saveAll(postImages);
+			})
+			.exceptionally(throwable -> {
+				throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
 			})
 			.join();
 	}

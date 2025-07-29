@@ -28,11 +28,12 @@ public class ImageValidator {
 
 	private void validateExtension(MultipartFile file) {
 		String filename = file.getOriginalFilename();
-		if (filename != null) {
-			String extension = StringUtils.getFilenameExtension(filename.toLowerCase());
-			if (!ALLOWED_EXTENSIONS.contains(extension)) {
-				throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
-			}
+		if (!StringUtils.hasText(filename)) {
+			throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
+		}
+		String extension = StringUtils.getFilenameExtension(filename.toLowerCase());
+		if (!ALLOWED_EXTENSIONS.contains(extension)) {
+			throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
 		}
 	}
 

@@ -54,7 +54,8 @@ public class S3Uploader {
 			.thenApply(result -> {
 				log.info("[S3] 파일 업로드 완료: {}", file.getOriginalFilename());
 				return result;
-			});
+			})
+			.orTimeout(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 	}
 
 	/**
