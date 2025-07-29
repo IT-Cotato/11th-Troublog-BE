@@ -31,11 +31,11 @@ public class ImageTestController {
 		return ResponseUtils.ok(imageFacade.saveImage(file, "TEST"));
 	}
 
-	@DeleteMapping
-	@Operation(summary = "단일 이미지 삭제", description = "S3 내부 이미지를 URL 값을 기반으로 삭제한다.")
-	public ResponseEntity<BaseResponse<Void>> uploadImage(String imageUrl) {
-		imageFacade.deleteImage(imageUrl);
-		return ResponseUtils.noContent();
-	}
+    @DeleteMapping
+    @Operation(summary = "단일 이미지 삭제", description = "S3 내부 이미지를 URL 값을 기반으로 삭제한다.")
+    public ResponseEntity<BaseResponse<Void>> deleteImage(@RequestParam String imageUrl) {
+        imageFacade.deleteImage(imageUrl);
+        return ResponseUtils.noContent();
+    }
 
 }
