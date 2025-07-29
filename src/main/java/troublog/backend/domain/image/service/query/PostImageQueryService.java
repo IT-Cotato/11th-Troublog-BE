@@ -35,7 +35,7 @@ public class PostImageQueryService {
 	}
 
 	public PostImage findThumbnailsByPostId(Long postId) {
-		PostImage postImage = postImageRepository.findPost_IdAndIsThumbnailTrue(postId)
+		PostImage postImage = postImageRepository.findByPost_IdAndIsThumbnailTrue(postId)
 			.orElseThrow(() -> new ImageException(ErrorCode.IMAGE_NOT_FOUND));
 		log.info("[Image] 썸네일 조회 완료: postId={}, postImageId={}", postId, postImage.getId());
 		return postImage;
