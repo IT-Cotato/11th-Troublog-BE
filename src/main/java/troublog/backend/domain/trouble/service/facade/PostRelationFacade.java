@@ -1,12 +1,9 @@
 package troublog.backend.domain.trouble.service.facade;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.project.service.query.ProjectQueryService;
 import troublog.backend.domain.trouble.converter.ContentConverter;
@@ -26,6 +23,8 @@ import troublog.backend.domain.trouble.service.query.PostTagQueryService;
 import troublog.backend.domain.trouble.service.query.TagQueryService;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
+
+import java.util.List;
 
 @Service
 @Transactional

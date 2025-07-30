@@ -1,12 +1,9 @@
 package troublog.backend.domain.trouble.service.facade;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import troublog.backend.domain.trouble.converter.ContentConverter;
 import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.dto.response.ContentInfoDto;
@@ -18,29 +15,14 @@ import troublog.backend.domain.trouble.enums.TagType;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostQueryFacade {
 
 	private final PostQueryService postQueryService;
-
-	public PostResDto findPostDetailsById(Long userId, Long id) {
-		//TODO N+1 Query 해결 필요
-		Post post = postQueryService.findById(id);
-		PostFactory.validateAuthorized(userId, post);
-		return PostConverter.toResponse(post);
-	}
-
-	public List<PostResDto> findAllNotDeletedPosts() {
-		List<Post> posts = postQueryService.findAllNotDeletedPosts();
-		return PostConverter.toResponseList(posts);
-	}
-
-	public List<PostResDto> findDeletedPosts() {
-		List<Post> posts = postQueryService.findAllDeletedPosts();
-		return PostConverter.toResponseList(posts);
-	}
 
 	public static String findErrorTag(Post post) {
 		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
@@ -72,5 +54,22 @@ public class PostQueryFacade {
 		return post.getContents().stream()
 			.map(ContentConverter::toResponse)
 			.toList();
+	}
+
+	public PostResDto findPostDetailsById(Long userId, Long id) {
+		//TODO N+1 Query 해결 필요
+		Post post = postQueryService.findById(id);
+		PostFactory.validateAuthorized(userId, post);
+		return PostConverter.toResponse(post);
+	}
+
+	public List<PostResDto> findAllNotDeletedPosts() {
+		List<Post> posts = postQueryService.findAllNotDeletedPosts();
+		return PostConverter.toResponseList(posts);
+	}
+
+	public List<PostResDto> findDeletedPosts() {
+		List<Post> posts = postQueryService.findAllDeletedPosts();
+		return PostConverter.toResponseList(posts);
 	}
 }

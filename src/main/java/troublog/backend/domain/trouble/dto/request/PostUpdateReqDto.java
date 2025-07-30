@@ -1,13 +1,12 @@
 package troublog.backend.domain.trouble.dto.request;
 
-import java.util.List;
-
-import org.hibernate.validator.constraints.URL;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import org.hibernate.validator.constraints.URL;
+
+import java.util.List;
 
 @Builder
 @Schema(description = "트러블로그 문서 수정 요청 DTO")

@@ -1,7 +1,8 @@
 package troublog.backend.domain.auth.service;
 
-import java.time.Duration;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,12 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.LoginReqDto;
+import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.RegisterDto;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
@@ -24,6 +21,8 @@ import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.UserException;
 import troublog.backend.global.common.util.JwtProvider;
+
+import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
