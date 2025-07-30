@@ -1,5 +1,6 @@
 package troublog.backend.domain.image.service.facade;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -15,7 +16,7 @@ import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.ImageException;
 
 /**
- * 썸네일 이미지, 유저 프로필 이미지 저장 및 삭제을 위한 클래스
+ * 썸네일 이미지, 유저 프로필 이미지 저장 및 삭제를 위한 클래스
  */
 @Slf4j
 @Component
@@ -35,8 +36,8 @@ public class ImageFacade {
 		}
 	}
 
-	public void deleteImage(String imageUrl) {
-		s3Uploader.deleteImage(imageUrl)
+	public CompletableFuture<Void> deleteImage(String imageUrl) {
+		return s3Uploader.deleteImage(imageUrl)
 			.exceptionally(ex -> {
 				throw new ImageException(ErrorCode.IMAGE_DELETE_FAILED);
 			});

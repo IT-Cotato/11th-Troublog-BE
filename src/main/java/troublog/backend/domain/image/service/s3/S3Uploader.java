@@ -200,7 +200,7 @@ public class S3Uploader {
 	private String extractKeyFromUrl(String s3Url) {
 		if (s3Url.contains(AWS_S3_DOMAIN)) {
 			String objectKey = s3Url.substring(s3Url.indexOf(AWS_S3_DOMAIN) + AWS_S3_DOMAIN.length());
-			log.info(objectKey);
+			log.debug("[S3] 추출된 객체 키: {}", objectKey);
 			return objectKey;
 		}
 		throw new ImageException(ErrorCode.URL_NOT_VALID);
