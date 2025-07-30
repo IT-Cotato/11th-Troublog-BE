@@ -1,16 +1,15 @@
 package troublog.backend.domain.user.service.query;
 
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.user.entity.Follow;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.repository.FollowRepository;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.UserException;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

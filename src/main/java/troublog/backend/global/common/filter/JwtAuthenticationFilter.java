@@ -1,20 +1,21 @@
 package troublog.backend.global.common.filter;
 
-import java.io.IOException;
-import java.util.Arrays;
-import static org.springframework.http.HttpHeaders.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 import troublog.backend.global.common.util.DataUtil;
 import troublog.backend.global.common.util.JwtProvider;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
 @RequiredArgsConstructor
