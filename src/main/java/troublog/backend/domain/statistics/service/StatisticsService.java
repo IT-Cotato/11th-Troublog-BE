@@ -1,6 +1,7 @@
 package troublog.backend.domain.statistics.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import troublog.backend.domain.statistics.dto.response.DailyCountResDto;
 import troublog.backend.domain.statistics.dto.response.StatsResDto;
@@ -18,6 +19,12 @@ public class StatisticsService {
 
     private final StatisticsRepository statisticsRepository;
 
+    @Value("${statistics.top-tech-limit:5}")
+    private int topTechLimit;
+
+    @Value("${statistics.top-error-limit:3}")
+    private int topErrorLimit;
+
     public List<DailyCountResDto> getDailyPostCountByUser(Long userId) {
         LocalDate start = LocalDate.of(LocalDate.now().getYear(), 1, 1);
         LocalDate end = LocalDate.now();
@@ -33,14 +40,14 @@ public class StatisticsService {
     public List<StatsResDto> getTopTechStats(Long userId) {
         return statisticsRepository.findTopTagsByUser(userId, TagType.TECH_STACK)
                 .stream()
-                .limit(5)
+                .limit(topTechLimit)
                 .collect(Collectors.toList());
     }
 
     public List<StatsResDto> getTopErrorStats(Long userId) {
         return statisticsRepository.findTopTagsByUser(userId, TagType.ERROR)
                 .stream()
-                .limit(3)
+                .limit(topErrorLimit)
                 .collect(Collectors.toList());
     }
 

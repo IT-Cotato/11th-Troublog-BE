@@ -7,6 +7,7 @@ import troublog.backend.domain.like.dto.response.LikePostResDto;
 import troublog.backend.domain.like.entity.Like;
 import troublog.backend.domain.like.repository.LikeRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,8 +18,14 @@ public class LikeService {
 
     public List<LikePostResDto> getLikedPostsByUser(Long userId) {
         List<Like> likes = likeRepository.findByUserIdOrderByLikedAtDesc(userId);
+
+        if (likes.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         return likes.stream()
                 .map(like -> LikePostConverter.toResponse(like.getPost()))
                 .collect(Collectors.toList());
     }
+
 }

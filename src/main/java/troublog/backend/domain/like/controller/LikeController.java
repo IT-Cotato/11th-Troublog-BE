@@ -30,6 +30,6 @@ public class LikeController {
             @Authentication CustomAuthenticationToken auth ) {
         Long userId = auth.getUserId();
         List<LikePostResDto> likedPosts = likeService.getLikedPostsByUser(userId);
-        return ResponseUtils.created(likedPosts);
+        return ResponseUtils.ok(likedPosts);
     }
 }

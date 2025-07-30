@@ -5,6 +5,7 @@ import lombok.*;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.user.entity.User;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,7 +29,8 @@ public class Like {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column(name = "liked_at", nullable = false, updatable = false)
+    @NotNull
+    @Column(name = "liked_at", updatable = false)
     private LocalDateTime likedAt;
 
     @PrePersist
