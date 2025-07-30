@@ -1,9 +1,9 @@
 package troublog.backend.domain.image.service.facade;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AccessLevel;
@@ -20,7 +20,6 @@ import troublog.backend.global.common.error.exception.ImageException;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostImageFacade {
 	public static final String POST_DIR = "post/";
@@ -33,14 +32,14 @@ public class PostImageFacade {
 		if (post == null || post.getId() == null) {
 			throw new IllegalArgumentException("Post는 null일 수 없습니다.");
 		}
-		return uploadAndSaveImage(file, false, post.getId());
+		return uploadAndSaveImage(file, false, post.getId()).join();
 	}
 
 	public PostImage savePostImageWithThumbnail(Post post, MultipartFile file) {
 		if (post == null || post.getId() == null) {
 			throw new IllegalArgumentException("Post는 null일 수 없습니다.");
 		}
-		return uploadAndSaveImage(file, true, post.getId());
+		return uploadAndSaveImage(file, true, post.getId()).join();
 	}
 
 	public List<PostImage> savePostImages(Long postId, List<MultipartFile> files) {
@@ -75,12 +74,11 @@ public class PostImageFacade {
 			.join();
 	}
 
-	private PostImage uploadAndSaveImage(MultipartFile file, boolean isThumbnail, Long postId) {
+	private CompletableFuture<PostImage> uploadAndSaveImage(MultipartFile file, boolean isThumbnail, Long postId) {
 		return s3Uploader.uploadSingleImage(file, POST_DIR + postId)
-			.thenApply(imageUrl -> {
+			.thenCompose(imageUrl -> {
 				PostImage postImage = PostImageConverter.toEntity(imageUrl, isThumbnail);
-				return postImageCommandService.save(postImage);
-			})
-			.join();
+				return CompletableFuture.completedFuture(postImageCommandService.save(postImage));
+			});
 	}
 }
