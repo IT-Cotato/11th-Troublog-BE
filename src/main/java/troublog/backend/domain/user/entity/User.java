@@ -3,7 +3,6 @@ package troublog.backend.domain.user.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import troublog.backend.domain.auth.dto.RegisterDto;
 import troublog.backend.domain.like.entity.Like;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.entity.Post;
@@ -37,6 +36,10 @@ public class User extends BaseEntity {
 	@Column(name = "nickname", unique = true)
 	private String nickname;
 
+	// TODO : 소셜로그인시 받아오는 이름?
+	@Column(name = "name")
+	private String name;
+
 	@NotNull
 	@Column(name = "field")
 	private String field;
@@ -45,7 +48,10 @@ public class User extends BaseEntity {
 	@Column(name = "bio")
 	private String bio;
 
-	@Column(name = "githubUrl")
+	@Column(name = "profile_url")
+	private String profileUrl;
+
+	@Column(name = "github_url")
 	private String githubUrl;
 
 	@Builder.Default
@@ -60,16 +66,15 @@ public class User extends BaseEntity {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<Like> likes = new ArrayList<>();
 
-	public static User registerUser(RegisterDto registerDto, String encodedPassword) {
-		return User.builder()
-			.email(registerDto.email())
-			.password(encodedPassword)
-			.nickname(registerDto.nickname())
-			.field(registerDto.field())
-			.bio(registerDto.bio())
-			.githubUrl(registerDto.githubUrl())
-			.build();
-	}
+	@Column(name = "login_type")
+	private String loginType;
+
+	@Column(name = "social_id")
+	private String socialId;
+
+	@NotNull
+	@Column(name = "is_deleted")
+	private Boolean isDeleted;
 
 	public void addProject(Project project) {
 		this.projects.add(project);

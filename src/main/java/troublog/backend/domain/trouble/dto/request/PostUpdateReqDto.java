@@ -9,8 +9,8 @@ import org.hibernate.validator.constraints.URL;
 import java.util.List;
 
 @Builder
-@Schema(description = "트러블로그 문서 생성 요청 DTO")
-public record PostCreateReqDto(
+@Schema(description = "트러블로그 문서 수정 요청 DTO")
+public record PostUpdateReqDto(
 	@Schema(
 		description = "게시글 제목",
 		example = "Spring Boot 환경설정 트러블슈팅"
@@ -76,8 +76,7 @@ public record PostCreateReqDto(
 	@Schema(
 		description = "중요도",
 		example = "5",
-		defaultValue = "0",
-		allowableValues = {"0", "1", "2", "3", "4", "5"}
+		allowableValues = {"1", "2", "3", "4", "5"}
 	)
 	Integer starRating,
 

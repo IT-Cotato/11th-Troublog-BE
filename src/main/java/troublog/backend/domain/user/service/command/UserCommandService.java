@@ -1,9 +1,8 @@
-package troublog.backend.domain.user.service;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+package troublog.backend.domain.user.service.command;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.repository.UserRepository;
 

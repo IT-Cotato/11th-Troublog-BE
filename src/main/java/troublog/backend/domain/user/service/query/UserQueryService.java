@@ -1,9 +1,8 @@
-package troublog.backend.domain.user.service;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+package troublog.backend.domain.user.service.query;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.repository.UserRepository;
 import troublog.backend.global.common.error.ErrorCode;
@@ -26,6 +25,11 @@ public class UserQueryService {
 
 		return userRepository.findByEmail(email)
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+	}
+
+	public boolean existsById(Long userId) {
+
+		return userRepository.existsById(userId);
 	}
 
 	public boolean existsByEmail(String email) {
