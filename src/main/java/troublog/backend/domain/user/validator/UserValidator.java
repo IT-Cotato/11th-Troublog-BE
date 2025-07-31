@@ -1,12 +1,11 @@
 package troublog.backend.domain.user.validator;
 
-import org.springframework.stereotype.Component;
-
+import lombok.experimental.UtilityClass;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.UserException;
 
-@Component
+@UtilityClass
 public class UserValidator {
 
 	public static void validateProfileUpdateRequest(Long userId, Long requestingUserId) {

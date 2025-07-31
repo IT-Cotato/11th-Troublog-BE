@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
@@ -103,7 +104,7 @@ public class UserController {
 	@PatchMapping("")
 	@Operation(summary = "내 프로필 수정", description = "마이페이지 내 프로필 수정")
 	public ResponseEntity<BaseResponse<Void>> updateMyProfile(
-		@RequestBody UserProfileUpdateReqDto userProfileUpdateReqDto,
+		@Valid @RequestBody UserProfileUpdateReqDto userProfileUpdateReqDto,
 		@Authentication CustomAuthenticationToken auth) {
 
 		userFacade.updateMyProfile(auth.getUserId(), userProfileUpdateReqDto);

@@ -19,28 +19,28 @@ public enum ErrorCode {
 	/**
 	 * Auth Error
 	 */
-	INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "a-001", "secret key가 위조되거나 잘못된 토큰입니다."),
-	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "a-002", "토큰이 만료되었습니다."),
-	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "a-003", "유효하지 않은 토큰입니다."),
-	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "a-004", "인증이 필요합니다."),
-	WRONG_ENVIRONMENT(HttpStatus.UNAUTHORIZED, "a-005", "잘못된 환경으로 접근했습니다."),
-	TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "a-006", "토큰을 찾을 수 없습니다."),
-	TOKEN_NOT_EXPIRED(HttpStatus.CONFLICT, "a-007", "만료되지 않은 토큰입니다."),
+	INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "A-001", "secret key가 위조되거나 잘못된 토큰입니다."),
+	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "A-002", "토큰이 만료되었습니다."),
+	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "A-003", "유효하지 않은 토큰입니다."),
+	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "A-004", "인증이 필요합니다."),
+	WRONG_ENVIRONMENT(HttpStatus.UNAUTHORIZED, "A-005", "잘못된 환경으로 접근했습니다."),
+	TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "A-006", "토큰을 찾을 수 없습니다."),
+	TOKEN_NOT_EXPIRED(HttpStatus.CONFLICT, "A-007", "만료되지 않은 토큰입니다."),
 
 	/**
 	 * User Error
 	 */
-	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "u-001", "유저를 찾을 수 없습니다"),
-	INVALID_USER(HttpStatus.NOT_FOUND, "u-002", "아이디 또는 비밀번호가 일치하지 않습니다."),
-	DUPLICATED_EMAIL(HttpStatus.CONFLICT, "u-003", "중복된 이메일입니다."),
-	DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "u-004", "중복된 닉네임입니다."),
-	USER_DELETED(HttpStatus.BAD_REQUEST, "u-005", "삭제된 유저입니다."),
-	USER_FOLLOW_SELF(HttpStatus.BAD_REQUEST, "u-006", "자기자신을 팔로우/언팔로우 할 수 없습니다."),
-	USER_UPDATE_SELF(HttpStatus.BAD_REQUEST, "u-007", "자기자신의 정보만 수정할 수 있습니다."),
-	DUPLICATED_FOLLOWED(HttpStatus.CONFLICT, "u-008", "이미 팔로우한 유저입니다."),
-	USER_NOT_FOLLOWED(HttpStatus.BAD_REQUEST, "u-009", "팔로우하지 않은 유저입니다."),
+	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U-001", "유저를 찾을 수 없습니다"),
+	INVALID_USER(HttpStatus.NOT_FOUND, "U-002", "아이디 또는 비밀번호가 일치하지 않습니다."),
+	DUPLICATED_EMAIL(HttpStatus.CONFLICT, "U-003", "중복된 이메일입니다."),
+	DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "U-004", "중복된 닉네임입니다."),
+	USER_DELETED(HttpStatus.BAD_REQUEST, "U-005", "삭제된 유저입니다."),
+	USER_FOLLOW_SELF(HttpStatus.BAD_REQUEST, "U-006", "자기자신을 팔로우/언팔로우 할 수 없습니다."),
+	USER_UPDATE_SELF(HttpStatus.BAD_REQUEST, "U-007", "자기자신의 정보만 수정할 수 있습니다."),
+	DUPLICATED_FOLLOWED(HttpStatus.CONFLICT, "U-008", "이미 팔로우한 유저입니다."),
+	USER_NOT_FOLLOWED(HttpStatus.BAD_REQUEST, "U-009", "팔로우하지 않은 유저입니다."),
 
-	MISSING_USER(HttpStatus.BAD_REQUEST, "u-0010", "사용자 정보가 누락되었습니다."),
+	MISSING_USER(HttpStatus.BAD_REQUEST, "U-0010", "사용자 정보가 누락되었습니다."),
 
 	/**
 	 * Project Error

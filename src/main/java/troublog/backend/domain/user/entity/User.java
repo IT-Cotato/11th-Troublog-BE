@@ -102,6 +102,6 @@ public class User extends BaseEntity {
 	}
 
 	public void deleteUser() {
-		this.isDeleted = false;
+		this.isDeleted = true;
 	}
 }
