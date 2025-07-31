@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.dto.response;
+package troublog.backend.domain.trouble.dto.response.common;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

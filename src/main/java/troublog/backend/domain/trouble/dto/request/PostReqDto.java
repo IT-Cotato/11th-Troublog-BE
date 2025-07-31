@@ -1,16 +1,18 @@
 package troublog.backend.domain.trouble.dto.request;
 
+import java.util.List;
+
+import org.hibernate.validator.constraints.URL;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import org.hibernate.validator.constraints.URL;
-
-import java.util.List;
+import troublog.backend.domain.trouble.dto.request.common.ContentDto;
 
 @Builder
-@Schema(description = "트러블로그 문서 수정 요청 DTO")
-public record PostUpdateReqDto(
+@Schema(description = "트러블로그 문서 생성/업데이트 DTO")
+public record PostReqDto(
 	@Schema(
 		description = "게시글 제목",
 		example = "Spring Boot 환경설정 트러블슈팅"
@@ -76,7 +78,8 @@ public record PostUpdateReqDto(
 	@Schema(
 		description = "중요도",
 		example = "5",
-		allowableValues = {"1", "2", "3", "4", "5"}
+		defaultValue = "0",
+		allowableValues = {"0", "1", "2", "3", "4", "5"}
 	)
 	Integer starRating,
 

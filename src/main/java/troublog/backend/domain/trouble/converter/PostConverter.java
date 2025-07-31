@@ -1,15 +1,15 @@
 package troublog.backend.domain.trouble.converter;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.experimental.UtilityClass;
-import troublog.backend.domain.trouble.dto.request.PostCreateReqDto;
+import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
 import troublog.backend.domain.trouble.service.facade.PostQueryFacade;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @UtilityClass
 public class PostConverter {
@@ -18,40 +18,40 @@ public class PostConverter {
 	private static final boolean DEFAULT_SUMMARY_CREATED = false;
 	private static final boolean DEFAULT_DELETE_STATUS = false;
 
-	public Post createWritingPost(PostCreateReqDto requestDto) {
-		return createBasePost(requestDto)
+	public Post createWritingPost(PostReqDto postReqDto) {
+		return createBasePost(postReqDto)
 			.status(PostStatus.WRITING)
 			.isVisible(DEFAULT_VISIBLE)
 			.isSummaryCreated(DEFAULT_SUMMARY_CREATED)
 			.build();
 	}
 
-	public Post createCompletedPost(PostCreateReqDto requestDto) {
-		return createBasePost(requestDto)
-			.introduction(requestDto.introduction())
-			.isVisible(requestDto.isVisible())
+	public Post createCompletedPost(PostReqDto postReqDto) {
+		return createBasePost(postReqDto)
+			.introduction(postReqDto.introduction())
+			.isVisible(postReqDto.isVisible())
 			.isSummaryCreated(DEFAULT_SUMMARY_CREATED)
 			.status(PostStatus.COMPLETED)
-			.starRating(StarRating.from(requestDto.starRating()))
+			.starRating(StarRating.from(postReqDto.starRating()))
 			.completedAt(LocalDateTime.now())
 			.build();
 	}
 
-	public Post createSummarizedPost(PostCreateReqDto requestDto) {
+	public Post createSummarizedPost(PostReqDto postReqDto) {
 		//TODO 이후 AI 서비스 개발시 AI 서비스 요청과 함께 전송
-		return createBasePost(requestDto)
-			.introduction(requestDto.introduction())
-			.isVisible(requestDto.isVisible())
+		return createBasePost(postReqDto)
+			.introduction(postReqDto.introduction())
+			.isVisible(postReqDto.isVisible())
 			.isSummaryCreated(true)
 			.status(PostStatus.SUMMARIZED)
-			.starRating(StarRating.from(requestDto.starRating()))
+			.starRating(StarRating.from(postReqDto.starRating()))
 			.completedAt(LocalDateTime.now())
 			.build();
 	}
 
-	private Post.PostBuilder createBasePost(PostCreateReqDto requestDto) {
+	private Post.PostBuilder createBasePost(PostReqDto postReqDto) {
 		return Post.builder()
-			.title(requestDto.title())
+			.title(postReqDto.title())
 			.commentCount(DEFAULT_COUNT)
 			.likeCount(DEFAULT_COUNT)
 			.isDeleted(DEFAULT_DELETE_STATUS);
