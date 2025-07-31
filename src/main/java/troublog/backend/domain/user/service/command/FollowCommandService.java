@@ -1,11 +1,10 @@
 package troublog.backend.domain.user.service.command;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import troublog.backend.domain.user.entity.Follow;
 import troublog.backend.domain.user.repository.FollowRepository;
 

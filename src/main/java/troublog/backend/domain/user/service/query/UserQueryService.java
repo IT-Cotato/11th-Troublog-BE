@@ -1,9 +1,8 @@
 package troublog.backend.domain.user.service.query;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.repository.UserRepository;
 import troublog.backend.domain.user.validator.UserValidator;

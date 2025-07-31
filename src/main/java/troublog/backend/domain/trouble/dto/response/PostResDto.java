@@ -1,10 +1,10 @@
 package troublog.backend.domain.trouble.dto.response;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Schema(description = "트러블로그 문서 응답 DTO")
@@ -30,7 +30,10 @@ public record PostResDto(
 	@Schema(description = "요약 생성 여부", example = "false")
 	boolean isSummaryCreated,
 
-	@Schema(description = "게시글 상태", example = "PUBLISHED")
+	@Schema(description = "삭제 여부", example = "false")
+	boolean isDeleted,
+
+	@Schema(description = "게시글 상태", example = "COMPLETED")
 	String postStatus,
 
 	@Schema(description = "별점", example = "1")
@@ -42,13 +45,16 @@ public record PostResDto(
 	@Schema(description = "수정 시간", example = "2024-01-15T15:00:00")
 	LocalDateTime updatedAt,
 
+	@Schema(description = "삭제 시간", example = "2024-01-15T15:00:00")
+	LocalDateTime deletedAt,
+
 	@Schema(description = "작성자 정보")
 	long userId,
 
 	@Schema(description = "프로젝트 정보")
 	long projectId,
 
-	@Schema(description = "에러 태그 정보")
+	@Schema(description = "에러 태그 정보", example = "RunTime Error")
 	String errorTag,
 
 	@Schema(description = "게시글 태그 목록")

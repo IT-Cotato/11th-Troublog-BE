@@ -1,13 +1,9 @@
 package troublog.backend.domain.user.service;
 
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import troublog.backend.domain.user.converter.FollowConverter;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
@@ -22,6 +18,9 @@ import troublog.backend.domain.user.service.query.FollowQueryService;
 import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.domain.user.validator.FollowValidator;
 import troublog.backend.domain.user.validator.UserValidator;
+
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service

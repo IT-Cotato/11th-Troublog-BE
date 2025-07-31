@@ -9,6 +9,7 @@ import troublog.backend.global.common.error.exception.PostException;
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public enum StarRating {
+	NONE(0),
 	ONE_STAR(1),
 	TWO_STARS(2),
 	THREE_STARS(3),
@@ -18,7 +19,6 @@ public enum StarRating {
 	private final int value;
 
 	public static StarRating from(int value) {
-
 		for (StarRating starRating : values()) {
 			if (starRating.value == value) {
 				return starRating;

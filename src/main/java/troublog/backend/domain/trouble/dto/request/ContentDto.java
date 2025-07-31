@@ -39,7 +39,7 @@ public record ContentDto(
 	String authorType,
 
 	@Schema(
-		description =  "컨텐츠 요약 유형 - AI_GENERATED 일때만 필수",
+		description =  "컨텐츠 요약 유형 - AI_GENERATED 일때만 설정된 값, USER_WRITTEN은 NONE",
 		defaultValue = "NONE",
 		allowableValues = {"ISSUE_MANAGEMENT", "BLOG", "INTERVIEW", "RESUME"}
 	)

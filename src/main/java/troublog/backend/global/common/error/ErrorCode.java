@@ -1,9 +1,8 @@
 package troublog.backend.global.common.error;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
@@ -53,7 +52,9 @@ public enum ErrorCode {
 	 */
 	POST_NOT_FOUND(HttpStatus.NOT_FOUND, "P-001", "트러블슈팅 문서를 찾지 못했습니다."),
 	INVALID_VALUE(HttpStatus.NOT_FOUND, "P-002", "잘못된 상태값입니다."),
-	MISSING_POST(HttpStatus.BAD_REQUEST, "P-003", "포스트 정보가 누락되었습니다."),
+	MISSING_POST(HttpStatus.BAD_REQUEST, "P-003", "트러블 슈팅 문서가 누락되었습니다."),
+	POST_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "P-004", "접근 불가능한 트러블슈팅 문서입니다."),
+	POST_NOT_DELETED(HttpStatus.BAD_GATEWAY,"P-005" , "삭제되지 않은 트러블슈팅 문서입니다."),
 
 	/**
 	 * Content Error
@@ -87,7 +88,17 @@ public enum ErrorCode {
 	/**
 	 * Server Error
 	 */
-	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S-001", "서버 오류가 발생했습니다.");
+	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S-001", "서버 오류가 발생했습니다."),
+
+	/**
+	 * Image  Error
+	 */
+	IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "I-001", "이미지를 찾지 못했습니다."),
+	IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"I-002" , "이미지 업로드에 실패했습니다."),
+	IMAGE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"I-003" , "이미지 삭제에 실패했습니다."),
+	URL_NOT_VALID(HttpStatus.BAD_REQUEST,"I-004" , "잘못된 이미지 URL 입니다."),
+	FILE_SIZE_EXCEEDING(HttpStatus.BAD_REQUEST, "I-005", "지정된 파일크기를 초과했습니다."),
+	FILE_NOT_FOUND(HttpStatus.NOT_FOUND,"I-006" , "파일을 찾을 수 없습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;
