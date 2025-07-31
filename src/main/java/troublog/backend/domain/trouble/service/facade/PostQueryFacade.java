@@ -14,9 +14,11 @@ import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;
+import troublog.backend.domain.trouble.enums.TagCategory;
 import troublog.backend.domain.trouble.enums.TagType;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
+import troublog.backend.domain.trouble.service.query.TagQueryService;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,6 +26,7 @@ import troublog.backend.domain.trouble.service.query.PostQueryService;
 public class PostQueryFacade {
 
 	private final PostQueryService postQueryService;
+	private final TagQueryService tagQueryService;
 
 	public static String findErrorTag(Post post) {
 		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
@@ -72,5 +75,20 @@ public class PostQueryFacade {
 	public List<PostResDto> findDeletedPosts() {
 		List<Post> posts = postQueryService.findAllDeletedPosts();
 		return PostConverter.toResponseList(posts);
+	}
+
+	public List<String> findPostTagsByCategory(String category) {
+		TagCategory tagCategory = TagCategory.from(category);
+		List<Tag> techStacks = tagQueryService.findTechStackTagsByCategory(tagCategory);
+		return techStacks.stream()
+			.map(Tag::getName)
+			.toList();
+	}
+
+	public List<String> findPostTagsByName(String keyword) {
+		List<Tag> techStacks = tagQueryService.findTechStackTagContainsName(keyword);
+		return techStacks.stream()
+			.map(Tag::getName)
+			.toList();
 	}
 }

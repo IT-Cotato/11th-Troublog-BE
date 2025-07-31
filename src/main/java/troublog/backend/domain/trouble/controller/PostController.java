@@ -1,5 +1,7 @@
 package troublog.backend.domain.trouble.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.http.MediaType;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -95,6 +98,39 @@ public class PostController {
 		@PathVariable long postId
 	) {
 		PostResDto response = postCommandFacade.restorePost(token.getUserId(), postId);
+		return ResponseUtils.ok(response);
+	}
+
+	@GetMapping("/tags/category")
+	@Operation(summary = "트러블슈팅 기술 태그 조회 API (카테고리)", description = "태그 카테고리 기반 기술태그를 조회한다.")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = String.class)))
+	public ResponseEntity<BaseResponse<List<String>>> findPostTags(
+		@Schema(
+			defaultValue = "FRONTEND",
+			allowableValues = {
+				"FRONTEND",
+				"BACKEND",
+				"DATABASE",
+				"DEVOPS",
+				"INFRA",
+				"TOOL"
+			}
+		)
+		@RequestParam(defaultValue = "FRONTEND") String tagCategory
+	) {
+		List<String> response = postQueryFacade.findPostTagsByCategory(tagCategory);
+		return ResponseUtils.ok(response);
+	}
+
+	@GetMapping("/tags")
+	@Operation(summary = "트러블슈팅 기술 태그 조회 API (키워드)", description = "키워드 기반 기술태그를 조회한다.")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = String.class)))
+	public ResponseEntity<BaseResponse<List<String>>> findPostTagsByName(
+		@RequestParam String tagName
+	) {
+		List<String> response = postQueryFacade.findPostTagsByName(tagName);
 		return ResponseUtils.ok(response);
 	}
 }
