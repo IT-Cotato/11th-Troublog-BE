@@ -34,7 +34,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		ORDER BY (
 		  MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE) * 2 +
 		  MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
-		)
+		) DESC, p.post_id DESC
 		""",
 		nativeQuery = true)
 	Page<Post> searchUserPostsByKeyword(
@@ -58,7 +58,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		ORDER BY (
 		  MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE) * 2 +
 		  MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
-		)
+		) DESC, p.post_id DESC
 		""",
 		nativeQuery = true)
 	Page<Post> searchPostsByKeyword(
