@@ -37,19 +37,26 @@ public class PostQueryService {
 
 	public List<Post> findAllNotDeletedPosts() {
 		List<Post> posts = postRepository.findByIsDeletedFalse();
-		log.info("[Post] 삭제되지 않은 게시글 조회: postCount={}", posts.size());
+		log.info("[Post] 삭제되지 않은 트러블슈팅 문서 조회: postCount={}", posts.size());
 		return posts;
 	}
 
 	public List<Post> findAllDeletedPosts() {
 		List<Post> posts = postRepository.findByIsDeletedTrue();
-		log.info("[Post] 삭제된 게시글 조회: postCount={}", posts.size());
+		log.info("[Post] 삭제된 트러블슈팅 문서 조회: postCount={}", posts.size());
 		return posts;
 	}
 
 	public Page<Post> searchUserPostByKeyword(Long userId, String keyword, Pageable pageable) {
-		Page<Post> postPage = postRepository.searchPostsByKeyword(userId, keyword, pageable);
-		log.info("[Post] 검색어 기반 게시글 조회 : keyword={}, postCount={}", keyword, postPage.getSize());
+		Page<Post> postPage = postRepository.searchUserPostsByKeyword(userId, keyword, pageable);
+		log.info("[Post] 검색어 기반 사용자 트러블슈팅 문서 조회 : userId={}, keyword={}, postCount={}", userId, keyword,
+			postPage.getSize());
+		return postPage;
+	}
+
+	public Page<Post> searchPostByKeyword(String keyword, Pageable pageable) {
+		Page<Post> postPage = postRepository.searchPostsByKeyword(keyword, pageable);
+		log.info("[Post] 검색어 기반 트러블슈팅 문서 조회 : keyword={}, postCount={}", keyword, postPage.getSize());
 		return postPage;
 	}
 

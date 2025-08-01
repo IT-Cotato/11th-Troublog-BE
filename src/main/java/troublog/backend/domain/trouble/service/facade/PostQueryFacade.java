@@ -100,6 +100,11 @@ public class PostQueryFacade {
 		return posts.map(PostConverter::toResponse);
 	}
 
+	public Page<PostResDto> searchPostByKeyword(Long userId, String keyword, Pageable pageable) {
+		Page<Post> posts = postQueryService.searchUserPostByKeyword(userId, keyword, pageable);
+		return posts.map(PostConverter::toResponse);
+	}
+
 	public PageRequest getPageable(int page, int size) {
 		return PageRequest.of(Math.max(0, page - 1), size);
 	}

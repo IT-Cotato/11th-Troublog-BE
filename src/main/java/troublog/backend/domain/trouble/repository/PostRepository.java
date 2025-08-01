@@ -34,11 +34,34 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		ORDER BY (
 		  MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE) * 2 +
 		  MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
-		) DESC
+		)
+		""",
+		nativeQuery = true)
+	Page<Post> searchUserPostsByKeyword(
+		@Param("userId") Long userId,
+		@Param("keyword") String keyword,
+		Pageable pageable
+	);
+
+	@Query(value = """
+		SELECT DISTINCT p.*
+		FROM posts p
+		LEFT JOIN contents c ON p.post_id = c.post_id
+		LEFT JOIN post_tags pt ON p.post_id = pt.post_id
+		LEFT JOIN tags t ON pt.tag_id = t.tag_id
+		  WHERE p.is_deleted = false
+		  AND (
+		    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
+		    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
+		    OR t.name LIKE CONCAT('%', :keyword, '%')
+		  )
+		ORDER BY (
+		  MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE) * 2 +
+		  MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
+		)
 		""",
 		nativeQuery = true)
 	Page<Post> searchPostsByKeyword(
-		@Param("userId") Long userId,
 		@Param("keyword") String keyword,
 		Pageable pageable
 	);

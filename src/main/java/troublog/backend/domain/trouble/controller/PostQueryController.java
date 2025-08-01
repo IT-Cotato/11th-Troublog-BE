@@ -79,10 +79,10 @@ public class PostQueryController {
 		return ResponseUtils.ok(response);
 	}
 
-	@GetMapping("/search")
-	@Operation(summary = "사용자의 트러블슈팅 문서 기반 검색 API", description = "로그인한 사용자의 모든 트러블 슈팅 문서기반 검색 구현")
+	@GetMapping("/my")
+	@Operation(summary = "사용자의 트러블슈팅 문서 기반 검색 API", description = "로그인한 사용자의 모든 트러블 슈팅 문서를 키워드를 기반으로 검색한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(schema = @Schema(implementation = String.class)))
+		content = @Content(schema = @Schema(implementation = PageResponse.class)))
 	public ResponseEntity<PageResponse<PostResDto>> searchUserPost(
 		@Authentication CustomAuthenticationToken token,
 		@RequestParam String keyword,
@@ -91,6 +91,21 @@ public class PostQueryController {
 	) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
 		Page<PostResDto> response = postQueryFacade.searchUserPostByKeyword(token.getUserId(), keyword, pageable);
+		return ResponseUtils.page(response);
+	}
+
+	@GetMapping("/search")
+	@Operation(summary = "트러블슈팅 문서 검색 API", description = "키워드를 기반으로  트러블 슈팅 문서를 검색한다.")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = PageResponse.class)))
+	public ResponseEntity<PageResponse<PostResDto>> searchPost(
+		@Authentication CustomAuthenticationToken token,
+		@RequestParam String keyword,
+		@RequestParam(defaultValue = "1") int page,
+		@RequestParam(defaultValue = "10") int size
+	) {
+		Pageable pageable = postQueryFacade.getPageable(page, size);
+		Page<PostResDto> response = postQueryFacade.searchPostByKeyword(token.getUserId(), keyword, pageable);
 		return ResponseUtils.page(response);
 	}
 }
