@@ -2,6 +2,9 @@ package troublog.backend.domain.trouble.service.facade;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,9 +95,13 @@ public class PostQueryFacade {
 			.toList();
 	}
 
-	public List<PostResDto> searchUserPostByKeyword(Long userId, String keyword) {
-		List<Post> posts = postQueryService.searchUserPostByKeyword(userId, keyword);
-		return PostConverter.toResponseList(posts);
+	public Page<PostResDto> searchUserPostByKeyword(Long userId, String keyword, Pageable pageable) {
+		Page<Post> posts = postQueryService.searchUserPostByKeyword(userId, keyword, pageable);
+		return posts.map(PostConverter::toResponse);
+	}
+
+	public PageRequest getPageable(int page, int size) {
+		return PageRequest.of(Math.max(0, page - 1), size);
 	}
 
 }

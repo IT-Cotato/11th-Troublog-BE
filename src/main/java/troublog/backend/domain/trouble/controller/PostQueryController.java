@@ -2,6 +2,8 @@ package troublog.backend.domain.trouble.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +23,7 @@ import troublog.backend.domain.trouble.service.facade.PostQueryFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
+import troublog.backend.global.common.response.PageResponse;
 import troublog.backend.global.common.util.ResponseUtils;
 
 @RestController
@@ -74,5 +77,20 @@ public class PostQueryController {
 	) {
 		List<String> response = postQueryFacade.findPostTagsByName(tagName);
 		return ResponseUtils.ok(response);
+	}
+
+	@GetMapping("/search")
+	@Operation(summary = "사용자의 트러블슈팅 문서 기반 검색 API", description = "로그인한 사용자의 모든 트러블 슈팅 문서기반 검색 구현")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = String.class)))
+	public ResponseEntity<PageResponse<PostResDto>> searchUserPost(
+		@Authentication CustomAuthenticationToken token,
+		@RequestParam String keyword,
+		@RequestParam(defaultValue = "1") int page,
+		@RequestParam(defaultValue = "10") int size
+	) {
+		Pageable pageable = postQueryFacade.getPageable(page, size);
+		Page<PostResDto> response = postQueryFacade.searchUserPostByKeyword(token.getUserId(), keyword, pageable);
+		return ResponseUtils.page(response);
 	}
 }

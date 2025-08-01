@@ -2,6 +2,8 @@ package troublog.backend.domain.trouble.service.query;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +20,6 @@ import troublog.backend.global.common.error.exception.PostException;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostQueryService {
-	public static final int DEFAULT_OFFSET = 0;
-	public static final int DEFAULT_LIMIT = 100;
 
 	private final PostRepository postRepository;
 
@@ -47,10 +47,10 @@ public class PostQueryService {
 		return posts;
 	}
 
-	public List<Post> searchUserPostByKeyword(Long userId, String keyword) {
-		List<Post> posts = postRepository.searchPostsByKeyword(userId, keyword, DEFAULT_OFFSET, DEFAULT_LIMIT);
-		log.info("[Post] 검색어 기반 게시글 조회 : keyword={}, postCount={}", keyword, posts.size());
-		return posts;
+	public Page<Post> searchUserPostByKeyword(Long userId, String keyword, Pageable pageable) {
+		Page<Post> postPage = postRepository.searchPostsByKeyword(userId, keyword, pageable);
+		log.info("[Post] 검색어 기반 게시글 조회 : keyword={}, postCount={}", keyword, postPage.getSize());
+		return postPage;
 	}
 
 }

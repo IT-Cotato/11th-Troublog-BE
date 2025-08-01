@@ -11,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -30,7 +31,15 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "tags")
+@Table(
+	name = "tags",
+	indexes = {
+		@Index(
+			name = "idx_tags_name",
+			columnList = "name"
+		)
+	}
+)
 public class Tag extends BaseEntity {
 
 	@Id
