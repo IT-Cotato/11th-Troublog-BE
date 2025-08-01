@@ -85,10 +85,16 @@ public class PostQueryFacade {
 			.toList();
 	}
 
-	public List<String> findPostTagsByName(String keyword) {
-		List<Tag> techStacks = tagQueryService.findTechStackTagContainsName(keyword);
+	public List<String> findPostTagsByName(String name) {
+		List<Tag> techStacks = tagQueryService.findTechStackTagContainsName(name);
 		return techStacks.stream()
 			.map(Tag::getName)
 			.toList();
 	}
+
+	public List<PostResDto> searchUserPostByKeyword(Long userId, String keyword) {
+		List<Post> posts = postQueryService.searchUserPostByKeyword(userId, keyword);
+		return PostConverter.toResponseList(posts);
+	}
+
 }

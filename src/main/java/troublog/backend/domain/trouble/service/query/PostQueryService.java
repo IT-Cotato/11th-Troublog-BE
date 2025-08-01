@@ -18,6 +18,9 @@ import troublog.backend.global.common.error.exception.PostException;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostQueryService {
+	public static final int DEFAULT_OFFSET = 0;
+	public static final int DEFAULT_LIMIT = 100;
+
 	private final PostRepository postRepository;
 
 	public Post findById(Long id) {
@@ -43,4 +46,11 @@ public class PostQueryService {
 		log.info("[Post] 삭제된 게시글 조회: postCount={}", posts.size());
 		return posts;
 	}
+
+	public List<Post> searchUserPostByKeyword(Long userId, String keyword) {
+		List<Post> posts = postRepository.searchPostsByKeyword(userId, keyword, DEFAULT_OFFSET, DEFAULT_LIMIT);
+		log.info("[Post] 검색어 기반 게시글 조회 : keyword={}, postCount={}", keyword, posts.size());
+		return posts;
+	}
+
 }
