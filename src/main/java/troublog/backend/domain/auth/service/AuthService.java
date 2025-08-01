@@ -10,8 +10,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import troublog.backend.domain.auth.dto.LoginReqDto;
+
 import troublog.backend.domain.auth.dto.LoginResDto;
+import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.RegisterDto;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
@@ -65,17 +66,18 @@ public class AuthService {
 		jwtProvider.checkEnvType(clientEnvType);
 
 		// 유저 확인
-		User user = userQueryService.findUserByEmail(loginReqDto.email());
+		User user = userQueryService.findUserByEmailAndIsDeletedFalse(loginReqDto.email());
 
 		// 비밀번호 검증
-		if(!passwordEncoder.matches(loginReqDto.password(), user.getPassword())) {
+		if (!passwordEncoder.matches(loginReqDto.password(), user.getPassword())) {
 			throw new UserException(ErrorCode.INVALID_USER);
 		}
 
 		// Authentication 객체 생성
 		// 유저 이메일(아이디), 비밀번호 외에 유저 아이디, 닉네임, 프론트 쪽 환경변수도 claim 으로 넣어주는 CustomAuthenticationToken
 		CustomAuthenticationToken authenticationToken =
-			CustomAuthenticationToken.unauthenticated(loginReqDto.email(), loginReqDto.password(), user.getId(), clientEnvType,
+			CustomAuthenticationToken.unauthenticated(loginReqDto.email(), loginReqDto.password(), user.getId(),
+				clientEnvType,
 				user.getNickname());
 
 		Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -115,7 +117,7 @@ public class AuthService {
 		Long userId = jwtProvider.reissueAccessToken(request);
 
 		// 새로운 액세스토큰에 넣어 줄 유저 정보 조회
-		User user = userQueryService.findUserById(userId);
+		User user = userQueryService.findUserByIdAndIsDeletedFalse(userId);
 
 		//새로운 CustomAuthenticationToken 객체 생성
 		CustomAuthenticationToken authenticationToken =
@@ -167,7 +169,7 @@ public class AuthService {
 		jwtProvider.checkEnvType(clientEnvType);
 
 		boolean isDuplicated = userQueryService.existsByEmail(email);
-		if(isDuplicated) {
+		if (isDuplicated) {
 			throw new UserException(ErrorCode.DUPLICATED_EMAIL);
 		}
 	}

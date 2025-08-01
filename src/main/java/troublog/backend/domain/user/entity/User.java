@@ -1,15 +1,23 @@
 package troublog.backend.domain.user.entity;
 
-import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import troublog.backend.domain.like.entity.Like;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
 import troublog.backend.global.common.entity.BaseEntity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -84,5 +92,17 @@ public class User extends BaseEntity {
 	public void addPost(Post post) {
 		this.posts.add(post);
 		post.assignUser(this);
+	}
+
+	public void updateUserProfile(UserProfileUpdateReqDto userProfileUpdateReqDto) {
+		this.nickname = userProfileUpdateReqDto.nickname();
+		this.field = userProfileUpdateReqDto.field();
+		this.bio = userProfileUpdateReqDto.bio();
+		this.githubUrl = userProfileUpdateReqDto.githubUrl();
+		this.profileUrl = userProfileUpdateReqDto.profileUrl();
+	}
+
+	public void deleteUser() {
+		this.isDeleted = true;
 	}
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.repository.UserRepository;
+import troublog.backend.domain.user.validator.UserValidator;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.UserException;
 
@@ -27,9 +28,24 @@ public class UserQueryService {
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 	}
 
-	public boolean existsById(Long userId) {
+	public User findUserByIdAndIsDeletedFalse(Long userId) {
 
-		return userRepository.existsById(userId);
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+
+		UserValidator.validateUserDeleted(user);
+
+		return user;
+	}
+
+	public User findUserByEmailAndIsDeletedFalse(String email) {
+
+		User user = userRepository.findByEmail(email)
+			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+
+		UserValidator.validateUserDeleted(user);
+
+		return user;
 	}
 
 	public boolean existsByEmail(String email) {
