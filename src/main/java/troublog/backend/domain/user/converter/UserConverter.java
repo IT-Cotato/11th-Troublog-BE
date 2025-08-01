@@ -1,15 +1,15 @@
 package troublog.backend.domain.user.converter;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.auth.dto.RegisterDto;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserProfileResDto;
 import troublog.backend.domain.user.entity.User;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @UtilityClass
 public class UserConverter {
@@ -22,7 +22,7 @@ public class UserConverter {
 			.field(registerDto.field())
 			.bio(registerDto.bio())
 			.githubUrl(registerDto.githubUrl())
-			.isDeleted(true)
+			.isDeleted(false)
 			.build();
 	}
 
