@@ -1,7 +1,10 @@
 package troublog.backend.domain.project.converter;
 
+import java.util.List;
+
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.project.dto.request.ProjectReqDto;
+import troublog.backend.domain.project.dto.response.ProjectDetailResDto;
 import troublog.backend.domain.project.dto.response.ProjectResDto;
 import troublog.backend.domain.project.entity.Project;
 
@@ -22,6 +25,16 @@ public class ProjectConverter {
 			.name(project.getName())
 			.description(project.getDescription())
 			.thumbnailImageUrl(project.getThumbnailImageUrl())
+			.build();
+	}
+
+	public ProjectDetailResDto toResponseDetail(Project project, List<String> tags) {
+		return ProjectDetailResDto.builder()
+			.id(project.getId())
+			.name(project.getName())
+			.description(project.getDescription())
+			.thumbnailImageUrl(project.getThumbnailImageUrl())
+			.tags(tags)
 			.build();
 	}
 }

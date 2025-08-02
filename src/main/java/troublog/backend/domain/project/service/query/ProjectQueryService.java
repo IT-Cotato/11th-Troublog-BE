@@ -1,12 +1,20 @@
 package troublog.backend.domain.project.service.query;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import troublog.backend.domain.project.converter.ProjectConverter;
+import troublog.backend.domain.project.dto.response.ProjectDetailResDto;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.project.repository.ProjectRepository;
+import troublog.backend.domain.trouble.enums.TagType;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.ProjectException;
 
@@ -23,4 +31,19 @@ public class ProjectQueryService {
 		return projectRepository.findById(id)
 			.orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND));
 	}
+
+	public ProjectDetailResDto getDetails(Project project) {
+		List<String> topTags = projectRepository.findTop2TagsByProjectId(
+			project.getId(), TagType.TECH_STACK, PageRequest.of(0, 2)
+		);
+		return ProjectConverter.toResponseDetail(project, topTags);
+	}
+
+	public List<ProjectDetailResDto> getAllProjects(Long userId) {
+		List<Project> projects = projectRepository.findAllByUserId(userId);
+		return projects.stream()
+			.map(this::getDetails)
+			.collect(Collectors.toList());
+	}
+
 }

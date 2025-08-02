@@ -1,5 +1,7 @@
 package troublog.backend.domain.project.service.facade;
 
+import static troublog.backend.domain.project.service.factory.ProjectFactory.*;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,8 +15,6 @@ import troublog.backend.domain.project.service.command.ProjectCommandService;
 import troublog.backend.domain.project.service.query.ProjectQueryService;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
-import troublog.backend.global.common.error.ErrorCode;
-import troublog.backend.global.common.error.exception.PostException;
 
 @Service
 @Transactional
@@ -24,14 +24,6 @@ public class ProjectCommandFacade {
 	private final UserQueryService userQueryService;
 	private final ProjectCommandService projectCommandService;
 	private final ProjectQueryService projectQueryService;
-
-	// 팩토리로 분리시키기
-	public static void validateAuthorized(Long requestUserID, Project project) {
-		Long registeredUserID = project.getUser().getId();
-		if (!registeredUserID.equals(requestUserID)) {
-			throw new PostException(ErrorCode.POST_ACCESS_DENIED);
-		}
-	}
 
 	public ProjectResDto createProject(Long userId, ProjectReqDto reqDto) {
 		Project project = ProjectConverter.toEntity(reqDto);
