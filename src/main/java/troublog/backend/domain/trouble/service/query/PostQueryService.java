@@ -50,13 +50,13 @@ public class PostQueryService {
 	public Page<Post> searchUserPostByKeyword(Long userId, String keyword, Pageable pageable) {
 		Page<Post> postPage = postRepository.searchUserPostsByKeyword(userId, keyword, pageable);
 		log.info("[Post] 검색어 기반 사용자 트러블슈팅 문서 조회 : userId={}, keyword={}, postCount={}", userId, keyword,
-			postPage.getSize());
+			postPage.getNumberOfElements());
 		return postPage;
 	}
 
 	public Page<Post> searchPostByKeyword(String keyword, Pageable pageable) {
 		Page<Post> postPage = postRepository.searchPostsByKeyword(keyword, pageable);
-		log.info("[Post] 검색어 기반 트러블슈팅 문서 조회 : keyword={}, postCount={}", keyword, postPage.getSize());
+		log.info("[Post] 검색어 기반 트러블슈팅 문서 조회 : keyword={}, postCount={}", keyword, postPage.getNumberOfElements());
 		return postPage;
 	}
 
