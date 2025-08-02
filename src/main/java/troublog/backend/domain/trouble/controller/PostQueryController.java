@@ -105,7 +105,7 @@ public class PostQueryController {
 		@RequestParam(defaultValue = "10") int size
 	) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
-		Page<PostResDto> response = postQueryFacade.searchPostByKeyword(token.getUserId(), keyword, pageable);
+		Page<PostResDto> response = postQueryFacade.searchPostByKeyword(keyword, pageable);
 		return ResponseUtils.page(response);
 	}
 }
