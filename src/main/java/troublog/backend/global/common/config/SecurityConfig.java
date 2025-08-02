@@ -13,13 +13,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.CorsFilter;
 
 import lombok.RequiredArgsConstructor;
 import troublog.backend.global.common.filter.ExceptionHandlerFilter;
 import troublog.backend.global.common.filter.JwtAuthenticationFilter;
 import troublog.backend.global.common.util.JwtAuthenticationProvider;
-import troublog.backend.global.common.util.JwtProvider;
 
 @Configuration
 @EnableWebSecurity(debug = true)
@@ -29,7 +27,7 @@ public class SecurityConfig {
 	private final JwtAuthenticationProvider jwtAuthenticationProvider;
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final ExceptionHandlerFilter exceptionHandlerFilter;
-	private final CorsFilter corsFilter;
+	private final CorsConfig corsConfig;
 
 	private static final String[] WHITELIST = {
 		"/auth/register",
@@ -50,7 +48,7 @@ public class SecurityConfig {
 			.formLogin(AbstractHttpConfigurer::disable)
 			.logout(AbstractHttpConfigurer::disable)
 			.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.addFilter(corsFilter);
+			.addFilter(corsConfig.corsFilter());
 		http
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers(EndpointRequest.toAnyEndpoint())
@@ -66,12 +64,14 @@ public class SecurityConfig {
 
 		return http.build();
 	}
+
 	@Bean
 	public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
 		AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
 		builder.authenticationProvider(jwtAuthenticationProvider);
 		return builder.build();
 	}
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
