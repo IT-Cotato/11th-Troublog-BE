@@ -35,7 +35,9 @@ public class ImageController {
 		@RequestPart("multipartFile") MultipartFile image,
 		@Schema(name = "폴더 이름") String dirName
 	) {
-		return ResponseUtils.ok(imageFacade.saveSingleImage(image, dirName));
+		return imageFacade.saveSingleImage(image, dirName)
+			.thenApply(ResponseUtils::ok)
+			.join();
 	}
 
 	@PostMapping(path = "/multi", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -44,7 +46,9 @@ public class ImageController {
 		@RequestPart("multipartFile") List<MultipartFile> images,
 		@Schema(name = "폴더 이름") String dirName
 	) {
-		return ResponseUtils.ok(imageFacade.saveMultipleImages(images, dirName));
+		return imageFacade.saveMultipleImages(images, dirName)
+			.thenApply(ResponseUtils::ok)
+			.join();
 	}
 
 	@DeleteMapping
@@ -62,4 +66,3 @@ public class ImageController {
 	}
 
 }
-

@@ -26,28 +26,14 @@ public class ImageFacade {
 	public static final int DEFAULT_TIMEOUT_SECONDS = 30;
 	private final S3Uploader s3Uploader;
 
-	public String saveSingleImage(MultipartFile image, String dirName) {
-		try {
-			return s3Uploader.uploadSingleImage(image, dirName)
-				.get(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
-		} catch (ExecutionException | TimeoutException e) {
-			throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
-		}
+	public CompletableFuture<String> saveSingleImage(MultipartFile image, String dirName) {
+		return s3Uploader.uploadSingleImage(image, dirName)
+			.orTimeout(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 	}
 
-	public List<String> saveMultipleImages(List<MultipartFile> images, String dirName) {
-		try {
-			return s3Uploader.uploadMultipleImages(images, dirName)
-				.get(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
-		} catch (ExecutionException | TimeoutException e) {
-			throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
-		}
+	public CompletableFuture<List<String>> saveMultipleImages(List<MultipartFile> images, String dirName) {
+		return s3Uploader.uploadMultipleImages(images, dirName)
+			.orTimeout(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 	}
 
 	public CompletableFuture<Void> deleteSingleImage(String imageUrl) {
