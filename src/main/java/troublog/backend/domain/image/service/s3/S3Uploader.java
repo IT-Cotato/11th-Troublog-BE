@@ -28,7 +28,7 @@ public class S3Uploader {
 	private static final String AWS_S3_DOMAIN = "amazonaws.com/";
 	private static final String PATH_SEPARATOR = "/";
 
-	private final Executor imageUploadExecutor;
+	private final Executor imageExecutor;
 	private final S3Template s3Template;
 
 	@Value("${cloud.aws.s3.bucket}")
@@ -48,7 +48,7 @@ public class S3Uploader {
 					ImageValidator.validate(file);
 					return executeUpload(file, dirName);
 				},
-				imageUploadExecutor
+				imageExecutor
 			)
 			.thenApply(result -> {
 				log.info("[S3] 파일 업로드 완료: {}", file.getOriginalFilename());
@@ -96,7 +96,7 @@ public class S3Uploader {
 					ImageValidator.validateS3Url(s3Url);
 					executeDelete(s3Url);
 				},
-				imageUploadExecutor
+				imageExecutor
 			)
 			.thenRun(() -> log.info("[S3] 파일 삭제 완료"));
 	}
@@ -130,7 +130,7 @@ public class S3Uploader {
 		return CompletableFuture.supplyAsync(() -> {
 			ImageValidator.validate(file);
 			return executeUpload(file, dirName);
-		}, imageUploadExecutor);
+		}, imageExecutor);
 	}
 
 	/**

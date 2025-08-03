@@ -19,11 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 @EnableAsync
 public class AsyncConfig implements AsyncConfigurer {
 
-	private static final String UPLOADING_PREFIX = "Image-Upload";
+	private static final String IMAGE_PREFIX = "Image";
 
-	@Bean(name = "imageUploadExecutor")
-	public Executor imageUploadExecutor() {
-		return createVirtualThreadExecutor(UPLOADING_PREFIX);
+	@Bean(name = "imageExecutor")
+	public Executor imageExecutor() {
+		return createVirtualThreadExecutor(IMAGE_PREFIX);
 	}
 
 	@Override
