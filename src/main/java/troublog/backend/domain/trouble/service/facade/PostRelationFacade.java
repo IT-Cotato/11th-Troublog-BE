@@ -1,15 +1,20 @@
 package troublog.backend.domain.trouble.service.facade;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.image.entity.PostImage;
+import troublog.backend.domain.image.service.facade.PostImageFacade;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.project.service.query.ProjectQueryService;
 import troublog.backend.domain.trouble.converter.ContentConverter;
-import troublog.backend.domain.trouble.dto.request.ContentDto;
-import troublog.backend.domain.trouble.dto.request.PostCreateReqDto;
-import troublog.backend.domain.trouble.dto.request.PostUpdateReqDto;
+import troublog.backend.domain.trouble.dto.request.PostReqDto;
+import troublog.backend.domain.trouble.dto.request.common.ContentDto;
 import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
@@ -24,8 +29,6 @@ import troublog.backend.domain.trouble.service.query.TagQueryService;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
 
-import java.util.List;
-
 @Service
 @Transactional
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,17 +41,17 @@ public class PostRelationFacade {
 	private final TagQueryService tagQueryService;
 	private final PostFactory postFactory;
 	private final ContentCommandService contentCommandService;
+	private final PostImageFacade postImageFacade;
 
-	public void establishRequireRelations(Post createdPost, Long userId, PostCreateReqDto requestDto) {
+	public void establishRequireRelations(Post createdPost, Long userId, PostReqDto postReqDto) {
 		setUserRelations(createdPost, userId);
-		setProjectRelations(createdPost, requestDto.projectId());
-		setErrorTagRelations(createdPost, requestDto.errorTagName());
+		setProjectRelations(createdPost, postReqDto.projectId());
+		setErrorTagRelations(createdPost, postReqDto.errorTagName());
 	}
 
-	public void establishSecondaryRelations(Post post, PostCreateReqDto reqDto) {
-		setContentRelations(post, reqDto.contentDtoList());
-		setTechStackTagRelations(post, reqDto.postTags());
-		//TODO Image URL(String) -> PostImage 변환후 연관관계 메서드 호출 필요
+	public void establishSecondaryRelations(Post post, PostReqDto postReqDto) {
+		setContentRelations(post, postReqDto.contentDtoList());
+		setTechStackTagRelations(post, postReqDto.postTags());
 	}
 
 	public void setProjectRelations(Post post, Long projectId) {
@@ -86,17 +89,16 @@ public class PostRelationFacade {
 		return contentCommandService.saveAll(newContentList);
 	}
 
-	public void updateRelationsIfChanged(PostUpdateReqDto reqDto, Post foundPost) {
-		updateCommonInfo(reqDto, foundPost);
-		updateProjectRelations(foundPost, reqDto.projectId());
-		updateContentRelations(foundPost, reqDto.contentDtoList());
-		updatePostTagRelations(foundPost, reqDto.errorTagName(), reqDto.postTags());
-		//TODO Image URL(String) -> PostImage 변환후 연관관계 메서드 호출 필요
+	public void updateRelationsIfChanged(PostReqDto postReqDto, Post foundPost) {
+		updateCommonInfo(postReqDto, foundPost);
+		updateProjectRelations(foundPost, postReqDto.projectId());
+		updateContentRelations(foundPost, postReqDto.contentDtoList());
+		updatePostTagRelations(foundPost, postReqDto.errorTagName(), postReqDto.postTags());
 	}
 
-	private void setTechStackTagRelations(Post post, List<String> reqTechStackTags) {
-		if (PostFactory.hasTechStackTag(reqTechStackTags)) {
-			List<PostTag> techStackPostTags = saveTechStackPostTags(reqTechStackTags, post);
+	private void setTechStackTagRelations(Post post, List<String> techStackTags) {
+		if (PostFactory.hasTechStackTag(techStackTags)) {
+			List<PostTag> techStackPostTags = saveTechStackPostTags(techStackTags, post);
 			techStackPostTags.forEach(post::addPostTag);
 		}
 	}
@@ -109,19 +111,19 @@ public class PostRelationFacade {
 		return postTagCommandService.saveAll(postTags);
 	}
 
-	private void setPostImageRelations(Post post, List<String> postImages) {
-		if (PostFactory.hasPostImages(postImages)) {
-			//TODO 이미지 저장 로직 구현 필요
-			// post.addPostImages(postImages);
+	private void setPostImageRelations(Post post, List<MultipartFile> images) {
+		if (PostFactory.hasFiles(images)) {
+			List<PostImage> postImages = postImageFacade.savePostImages(post.getId(), images);
+			postImages.forEach(post::addPostImage);
 		}
 	}
 
-	private void updateCommonInfo(PostUpdateReqDto reqDto, Post foundPost) {
-		foundPost.updateTitle(reqDto.title());
-		foundPost.updateIntroduction(reqDto.introduction());
-		foundPost.updateVisibility(reqDto.isVisible());
-		foundPost.updateStatus(PostStatus.from(reqDto.postStatus()));
-		foundPost.updateStarRating(StarRating.from(reqDto.starRating()));
+	private void updateCommonInfo(PostReqDto postReqDto, Post foundPost) {
+		foundPost.updateTitle(postReqDto.title());
+		foundPost.updateIntroduction(postReqDto.introduction());
+		foundPost.updateVisibility(postReqDto.isVisible());
+		foundPost.updateStatus(PostStatus.from(postReqDto.postStatus()));
+		foundPost.updateStarRating(StarRating.from(postReqDto.starRating()));
 	}
 
 	private void updateProjectRelations(Post post, Long newProjectId) {
@@ -148,7 +150,7 @@ public class PostRelationFacade {
 		postTagCommandService.deleteAll(postTags);
 	}
 
-	private void updatePostImageRelations(Post post, List<String> postImages) {
+	private void updatePostImageRelations(Post post, List<MultipartFile> postImages) {
 		post.getPostImages().clear();
 		setPostImageRelations(post, postImages);
 	}

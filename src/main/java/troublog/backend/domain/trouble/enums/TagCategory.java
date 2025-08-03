@@ -3,6 +3,8 @@ package troublog.backend.domain.trouble.enums;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.PostException;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -15,6 +17,15 @@ public enum TagCategory {
 	TOOL("개발 도구 및 공통 기술");
 
 	private final String description;
+
+	public static TagCategory from(String value) {
+		for (TagCategory tagCategory : values()) {
+			if (tagCategory.name().equals(value)) {
+				return tagCategory;
+			}
+		}
+		throw new PostException(ErrorCode.TAG_NOT_FOUND);
+	}
 
 	public static boolean isTechStackCategory(TagCategory tagCategory) {
 		return tagCategory == FRONTEND || tagCategory == BACKEND || tagCategory == DATABASE ||

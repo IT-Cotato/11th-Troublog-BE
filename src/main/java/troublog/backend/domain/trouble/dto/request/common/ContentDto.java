@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.dto.request;
+package troublog.backend.domain.trouble.dto.request.common;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;

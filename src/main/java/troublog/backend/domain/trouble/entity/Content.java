@@ -8,6 +8,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -28,7 +29,15 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "contents")
+@Table(
+	name = "contents",
+	indexes = {
+		@Index(
+			name = "idx_contents_post_id",
+			columnList = "post_id"
+		)
+	}
+)
 public class Content extends BaseEntity {
 
 	@Id

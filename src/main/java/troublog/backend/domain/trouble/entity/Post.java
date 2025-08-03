@@ -3,7 +3,9 @@ package troublog.backend.domain.trouble.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
 import org.springframework.format.annotation.DateTimeFormat;
+
 import troublog.backend.domain.image.entity.PostImage;
 import troublog.backend.domain.like.entity.Like;
 import troublog.backend.domain.project.entity.Project;
@@ -23,7 +25,22 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "posts")
+@Table(name = "posts",
+	indexes = {
+		@Index(
+			name = "idx_posts_user_deleted_title",
+			columnList = "user_id, is_deleted, title"
+		),
+		@Index(
+			name = "idx_posts_user_id",
+			columnList = "user_id"
+		),
+		@Index(
+			name = "idx_posts_is_deleted",
+			columnList = "is_deleted"
+		)
+	}
+)
 public class Post extends BaseEntity {
 
 	@Id

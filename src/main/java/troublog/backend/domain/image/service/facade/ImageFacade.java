@@ -22,12 +22,13 @@ import troublog.backend.global.common.error.exception.ImageException;
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ImageFacade {
+	public static final int DEFAULT_TIMEOUT_SECONDS = 30;
 	private final S3Uploader s3Uploader;
 
 	public String saveImage(MultipartFile file, String dirName) {
 		try {
 			return s3Uploader.uploadSingleImage(file, dirName)
-				.get(30, TimeUnit.SECONDS);
+				.get(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);

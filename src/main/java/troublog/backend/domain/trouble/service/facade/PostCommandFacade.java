@@ -1,12 +1,13 @@
 package troublog.backend.domain.trouble.service.facade;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.image.service.facade.PostImageFacade;
 import troublog.backend.domain.trouble.converter.PostConverter;
-import troublog.backend.domain.trouble.dto.request.PostCreateReqDto;
-import troublog.backend.domain.trouble.dto.request.PostUpdateReqDto;
+import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.service.command.PostCommandService;
@@ -22,16 +23,17 @@ public class PostCommandFacade {
 	private final PostCommandService postCommandService;
 	private final PostQueryService postQueryService;
 	private final PostRelationFacade postRelationFacade;
+	private final PostImageFacade postImageFacade;
 
-	public PostResDto createPost(Long userId, PostCreateReqDto reqDto) {
-		Post newPost = postFactory.createPostWithRequireRelations(reqDto);
-		postRelationFacade.establishRequireRelations(newPost, userId, reqDto);
+	public PostResDto createPost(Long userId, PostReqDto postReqDto) {
+		Post newPost = postFactory.createPostWithRequireRelations(postReqDto);
+		postRelationFacade.establishRequireRelations(newPost, userId, postReqDto);
 		Post savedPost = postCommandService.save(newPost);
-		postRelationFacade.establishSecondaryRelations(savedPost, reqDto);
+		postRelationFacade.establishSecondaryRelations(savedPost, postReqDto);
 		return PostConverter.toResponse(savedPost);
 	}
 
-	public PostResDto updatePost(Long userId, Long postId, PostUpdateReqDto reqDto) {
+	public PostResDto updatePost(Long userId, Long postId, PostReqDto reqDto) {
 		Post foundPost = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
 		postRelationFacade.updateRelationsIfChanged(reqDto, foundPost);
@@ -49,6 +51,7 @@ public class PostCommandFacade {
 		Post foundPost = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
 		postCommandService.delete(foundPost);
+		postImageFacade.deletePostImages(postId);
 	}
 
 	public PostResDto restorePost(Long userId, Long postId) {

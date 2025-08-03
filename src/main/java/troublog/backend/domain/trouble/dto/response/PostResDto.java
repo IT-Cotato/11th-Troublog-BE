@@ -1,10 +1,11 @@
 package troublog.backend.domain.trouble.dto.response;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
+import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
 
 @Builder
 @Schema(description = "트러블로그 문서 응답 DTO")
