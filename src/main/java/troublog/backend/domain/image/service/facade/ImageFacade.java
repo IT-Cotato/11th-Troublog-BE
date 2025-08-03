@@ -1,5 +1,6 @@
 package troublog.backend.domain.image.service.facade;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -25,9 +26,9 @@ public class ImageFacade {
 	public static final int DEFAULT_TIMEOUT_SECONDS = 30;
 	private final S3Uploader s3Uploader;
 
-	public String saveImage(MultipartFile file, String dirName) {
+	public String saveSingleImage(MultipartFile image, String dirName) {
 		try {
-			return s3Uploader.uploadSingleImage(file, dirName)
+			return s3Uploader.uploadSingleImage(image, dirName)
 				.get(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
@@ -37,8 +38,29 @@ public class ImageFacade {
 		}
 	}
 
-	public CompletableFuture<Void> deleteImage(String imageUrl) {
+	public List<String> saveMultipleImages(List<MultipartFile> images, String dirName) {
+		try {
+			return s3Uploader.uploadMultipleImages(images, dirName)
+				.get(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
+		} catch (ExecutionException | TimeoutException e) {
+			throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
+		}
+	}
+
+	public CompletableFuture<Void> deleteSingleImage(String imageUrl) {
 		return s3Uploader.deleteImage(imageUrl)
+			.thenRun(() -> log.info("[Image] S3에서 이미지 제거 완료 | Image 주소: {}", imageUrl))
+			.exceptionally(ex -> {
+				throw new ImageException(ErrorCode.IMAGE_DELETE_FAILED);
+			});
+	}
+
+	public CompletableFuture<Void> deleteMultipleImages(List<String> imageUrls) {
+		return s3Uploader.deleteMultipleImages(imageUrls)
+			.thenRun(() -> log.info("[Image] S3에서 다중 이미지 제거 완료 | 제거된 이미지 개수: {}", imageUrls.size()))
 			.exceptionally(ex -> {
 				throw new ImageException(ErrorCode.IMAGE_DELETE_FAILED);
 			});
