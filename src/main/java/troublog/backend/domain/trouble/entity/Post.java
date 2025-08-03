@@ -6,7 +6,6 @@ import lombok.*;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import troublog.backend.domain.image.entity.PostImage;
 import troublog.backend.domain.like.entity.Like;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.enums.PostStatus;
@@ -105,10 +104,6 @@ public class Post extends BaseEntity {
 
 	@Builder.Default
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<PostImage> postImages = new ArrayList<>();
-
-	@Builder.Default
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Like> likes = new ArrayList<>();
 
 	// 연관관계 편의 메서드들
@@ -146,17 +141,6 @@ public class Post extends BaseEntity {
 		}
 		this.postTags.add(postTag);
 		postTag.assignPost(this);
-	}
-
-	public void addPostImage(PostImage postImage) {
-		if (postImage == null) {
-			throw new PostException(ErrorCode.MISSING_IMAGE);
-		}
-		if (this.postImages.contains(postImage)) {
-			return;
-		}
-		this.postImages.add(postImage);
-		postImage.assignPost(this);
 	}
 
 	public void updateTitle(String title) {

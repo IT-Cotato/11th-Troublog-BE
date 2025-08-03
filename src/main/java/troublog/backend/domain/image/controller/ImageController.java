@@ -21,8 +21,8 @@ import troublog.backend.global.common.util.ResponseUtils;
 @RestController
 @RequestMapping("/image")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@Tag(name = "이미지", description = "이미지 테스트 관련 엔드포인트")
-public class ImageTestController {
+@Tag(name = "이미지", description = "이미지 관련 엔드포인트")
+public class ImageController {
 
 	private final ImageFacade imageFacade;
 

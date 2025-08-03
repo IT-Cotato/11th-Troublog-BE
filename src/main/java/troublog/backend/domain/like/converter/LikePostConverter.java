@@ -1,6 +1,5 @@
 package troublog.backend.domain.like.converter;
 
-import troublog.backend.domain.image.entity.PostImage;
 import troublog.backend.domain.like.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
@@ -17,7 +16,6 @@ public class LikePostConverter {
         String errorTag = null;
         List<String> techTag = new ArrayList<>();
         List<String> contentBodies = new ArrayList<>();
-        List<String> imageList = new ArrayList<>();
 
         for (PostTag pt : post.getPostTags()) {
             Tag tag = pt.getTag();
@@ -32,10 +30,6 @@ public class LikePostConverter {
             contentBodies.add(content.getBody());
         }
 
-        for (PostImage postimage : post.getPostImages()) {
-            imageList.add(postimage.getImageUrl());
-        }
-
         return LikePostResDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -45,7 +39,6 @@ public class LikePostConverter {
                 .likeCount(post.getLikeCount())
                 .commentCount(post.getCommentCount())
                 .createdAt(post.getCompletedAt())
-                .images(imageList)
                 .build();
     }
 }
