@@ -33,14 +33,18 @@ public class ProjectQueryService {
 	}
 
 	public ProjectDetailResDto getDetails(Project project) {
+		log.info("[Project] 상세조회: projectId={}, projectName={}", project.getId(), project.getName());
+
 		List<String> topTags = projectRepository.findTop2TagsByProjectId(
 			project.getId(), TagType.TECH_STACK, PageRequest.of(0, 2)
 		);
+		log.info("[Project] 태그 조회 결과: projectId={}, topTags={}", project.getId(), topTags);
 		return ProjectConverter.toResponseDetail(project, topTags);
 	}
 
 	public List<ProjectDetailResDto> getAllProjects(Long userId) {
 		List<Project> projects = projectRepository.findAllByUserId(userId);
+		log.info("[Project] 전체 프로젝트 조회: userId={}, projectCount={}", userId, projects.size());
 		return projects.stream()
 			.map(this::getDetails)
 			.collect(Collectors.toList());
