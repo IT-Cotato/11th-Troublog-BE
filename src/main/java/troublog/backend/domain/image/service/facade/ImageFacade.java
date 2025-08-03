@@ -2,9 +2,7 @@ package troublog.backend.domain.image.service.facade;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
