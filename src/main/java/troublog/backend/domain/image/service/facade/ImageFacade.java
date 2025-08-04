@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.image.service.s3.S3Uploader;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.ImageException;
-import troublog.backend.global.common.error.exception.PostException;
 import troublog.backend.global.common.response.BaseResponse;
 import troublog.backend.global.common.util.ResponseUtils;
 
@@ -52,7 +51,7 @@ public class ImageFacade {
 
 		DeferredResult<ResponseEntity<BaseResponse<String>>> deferredResult = new DeferredResult<>();
 
-		s3Uploader.uploadSingleImage(userId, image, dirName)
+		uploadSingleImage(userId, image, dirName)
 			.whenComplete((result, throwable) ->
 				handleUploadCompletion(deferredResult, result, throwable));
 
