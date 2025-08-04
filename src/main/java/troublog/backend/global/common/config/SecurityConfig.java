@@ -8,12 +8,13 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import lombok.RequiredArgsConstructor;
 import troublog.backend.global.common.filter.ExceptionHandlerFilter;
@@ -28,7 +29,7 @@ public class SecurityConfig {
 	private final JwtAuthenticationProvider jwtAuthenticationProvider;
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final ExceptionHandlerFilter exceptionHandlerFilter;
-	private final CorsConfigurationSource corsConfigurationSource;
+	private final CorsConfig corsFilter;
 
 	private static final String[] WHITELIST = {
 		"/auth/register",
@@ -45,11 +46,11 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf(AbstractHttpConfigurer::disable)
-			.cors(cors -> cors.configurationSource(corsConfigurationSource))
 			.httpBasic(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
 			.logout(AbstractHttpConfigurer::disable)
-			.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+			.sessionManagement(SecurityConfig::createSessionPolicy);
+		
 		http
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers(EndpointRequest.toAnyEndpoint())
@@ -59,9 +60,11 @@ public class SecurityConfig {
 				.anyRequest()
 				.authenticated()
 			);
+		
 		http
-			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class);
+			.addFilterBefore(exceptionHandlerFilter, CorsFilter.class)
+			.addFilterBefore(corsFilter.corsFilter(), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
@@ -76,5 +79,9 @@ public class SecurityConfig {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	private static void createSessionPolicy(SessionManagementConfigurer<HttpSecurity> session) {
+		session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 }
