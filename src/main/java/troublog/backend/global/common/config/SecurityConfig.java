@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 import troublog.backend.global.common.filter.ExceptionHandlerFilter;
@@ -27,7 +28,7 @@ public class SecurityConfig {
 	private final JwtAuthenticationProvider jwtAuthenticationProvider;
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final ExceptionHandlerFilter exceptionHandlerFilter;
-	private final CorsConfig corsConfig;
+	private final CorsConfigurationSource corsConfigurationSource;
 
 	private static final String[] WHITELIST = {
 		"/auth/register",
@@ -44,11 +45,11 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf(AbstractHttpConfigurer::disable)
+			.cors(cors -> cors.configurationSource(corsConfigurationSource))
 			.httpBasic(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
 			.logout(AbstractHttpConfigurer::disable)
-			.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.addFilter(corsConfig.corsFilter());
+			.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers(EndpointRequest.toAnyEndpoint())
