@@ -54,10 +54,10 @@ public class SwaggerConfig {
 		Server server = new Server();
 		switch (profile) {
 			// TODO : 추후 적용
-			// case "prod" -> {
-			// 	server.setUrl("https://api.troublog.com");
-			// 	server.setDescription("운영 서버");
-			// }
+			case "prod" -> {
+				server.setUrl("http://3.37.163.222:8080");
+				server.setDescription("운영 서버");
+			}
 			// case "dev" -> {
 			// 	server.setUrl("https://dev-api.troublog.com");
 			// 	server.setDescription("개발 서버");
