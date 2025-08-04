@@ -37,12 +37,13 @@ public class S3Uploader {
 	/**
 	 * 단일 이미지 파일을 AWS S3에 비동기적으로 업로드합니다.
 	 *
+	 * @param userId
 	 * @param file    업로드할 MultipartFile 객체
 	 * @param dirName S3에 업로드될 디렉토리 이름
 	 * @return 업로드된 파일의 S3 URL을 포함하는 CompletableFuture
 	 * @throws ImageException 파일이 유효하지 않거나 업로드 실패 시 발생
 	 */
-	public CompletableFuture<String> uploadSingleImage(MultipartFile file, String dirName) {
+	public CompletableFuture<String> uploadSingleImage(Long userId, MultipartFile file, String dirName) {
 		return CompletableFuture.supplyAsync(
 				() -> {
 					ImageValidator.validate(file);
@@ -60,12 +61,13 @@ public class S3Uploader {
 	/**
 	 * 여러 이미지 파일을 AWS S3에 비동기적으로 업로드합니다.
 	 *
+	 * @param userId
 	 * @param fileList 업로드할 MultipartFile 객체 목록
 	 * @param dirName  S3에 업로드될 디렉토리 이름
 	 * @return 업로드된 모든 파일의 S3 URL 목록을 포함하는 CompletableFuture
 	 * @throws ImageException 파일 목록이 유효하지 않거나 업로드 실패 시 발생
 	 */
-	public CompletableFuture<List<String>> uploadMultipleImages(List<MultipartFile> fileList, String dirName) {
+	public CompletableFuture<List<String>> uploadMultipleImages(Long userId, List<MultipartFile> fileList, String dirName) {
 		ImageValidator.validateFileList(fileList);
 
 		List<CompletableFuture<String>> uploadFutures = fileList.stream()
