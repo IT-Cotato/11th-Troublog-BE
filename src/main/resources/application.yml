@@ -22,6 +22,9 @@ spring:
         secret-key: ${S3_SECRET_KEY}
       s3:
         region: ap-northeast-2
+  threads:
+    virtual:
+      enabled: true
 
 springdoc:
   swagger-ui:
