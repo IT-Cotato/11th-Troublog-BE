@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.global.common.filter.ExceptionHandlerFilter;
 import troublog.backend.global.common.filter.JwtAuthenticationFilter;
 import troublog.backend.global.common.util.JwtAuthenticationProvider;
-import troublog.backend.global.common.util.JwtProvider;
 
 @Configuration
 @EnableWebSecurity(debug = true)
@@ -39,7 +38,7 @@ public class SecurityConfig {
 		"/swagger-ui/**",
 		"/v3/api-docs/**",
 		"/error",
-		"/"
+		"/image/**"
 	};
 
 	@Bean

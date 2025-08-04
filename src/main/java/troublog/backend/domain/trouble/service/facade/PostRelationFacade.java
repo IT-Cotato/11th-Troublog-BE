@@ -4,12 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import troublog.backend.domain.image.entity.PostImage;
-import troublog.backend.domain.image.service.facade.PostImageFacade;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.project.service.query.ProjectQueryService;
 import troublog.backend.domain.trouble.converter.ContentConverter;
@@ -41,7 +38,6 @@ public class PostRelationFacade {
 	private final TagQueryService tagQueryService;
 	private final PostFactory postFactory;
 	private final ContentCommandService contentCommandService;
-	private final PostImageFacade postImageFacade;
 
 	public void establishRequireRelations(Post createdPost, Long userId, PostReqDto postReqDto) {
 		setUserRelations(createdPost, userId);
@@ -111,13 +107,6 @@ public class PostRelationFacade {
 		return postTagCommandService.saveAll(postTags);
 	}
 
-	private void setPostImageRelations(Post post, List<MultipartFile> images) {
-		if (PostFactory.hasFiles(images)) {
-			List<PostImage> postImages = postImageFacade.savePostImages(post.getId(), images);
-			postImages.forEach(post::addPostImage);
-		}
-	}
-
 	private void updateCommonInfo(PostReqDto postReqDto, Post foundPost) {
 		foundPost.updateTitle(postReqDto.title());
 		foundPost.updateIntroduction(postReqDto.introduction());
@@ -148,10 +137,5 @@ public class PostRelationFacade {
 	public void deleteAllTagByPostId(Long postId) {
 		List<PostTag> postTags = postTagQueryService.findAllByPostId(postId);
 		postTagCommandService.deleteAll(postTags);
-	}
-
-	private void updatePostImageRelations(Post post, List<MultipartFile> postImages) {
-		post.getPostImages().clear();
-		setPostImageRelations(post, postImages);
 	}
 }

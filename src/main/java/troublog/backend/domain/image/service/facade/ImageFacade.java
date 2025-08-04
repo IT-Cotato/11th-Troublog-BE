@@ -1,46 +1,102 @@
 package troublog.backend.domain.image.service.facade;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.image.service.s3.S3Uploader;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.ImageException;
+import troublog.backend.global.common.response.BaseResponse;
+import troublog.backend.global.common.util.ResponseUtils;
 
-/**
- * 썸네일 이미지, 유저 프로필 이미지 저장 및 삭제를 위한 클래스
- */
-@Slf4j
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ImageFacade {
-	public static final int DEFAULT_TIMEOUT_SECONDS = 30;
+
+	private static final int UPLOAD_TIMEOUT_SECONDS = 30;
+
 	private final S3Uploader s3Uploader;
 
-	public String saveImage(MultipartFile file, String dirName) {
-		try {
-			return s3Uploader.uploadSingleImage(file, dirName)
-				.get(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
-		} catch (ExecutionException | TimeoutException e) {
-			throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
+	public CompletableFuture<String> uploadSingleImage(Long userId, MultipartFile image, String dirName) {
+		return s3Uploader.uploadSingleImage(userId, image, dirName)
+			.orTimeout(UPLOAD_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+	}
+
+	public CompletableFuture<List<String>> uploadMultipleImages(Long userId, List<MultipartFile> images,
+		String dirName) {
+		return s3Uploader.uploadMultipleImages(userId, images, dirName)
+			.orTimeout(UPLOAD_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+	}
+
+	public CompletableFuture<Void> deleteSingleImage(String imageUrl) {
+		return s3Uploader.deleteImage(imageUrl)
+			.exceptionally(this::handleImageDeletionFailure);
+	}
+
+	public CompletableFuture<Void> deleteMultipleImages(List<String> imageUrls) {
+		return s3Uploader.deleteMultipleImages(imageUrls)
+			.exceptionally(this::handleImageDeletionFailure);
+	}
+
+	public DeferredResult<ResponseEntity<BaseResponse<String>>> uploadSingleImageAsync(
+		Long userId, MultipartFile image, String dirName) {
+
+		DeferredResult<ResponseEntity<BaseResponse<String>>> deferredResult = new DeferredResult<>();
+
+		uploadSingleImage(userId, image, dirName)
+			.whenComplete((result, throwable) ->
+				handleUploadCompletion(deferredResult, result, throwable));
+
+		return deferredResult;
+	}
+
+	public DeferredResult<ResponseEntity<BaseResponse<List<String>>>> uploadMultipleImagesAsync(
+		Long userId, List<MultipartFile> images, String dirName) {
+
+		DeferredResult<ResponseEntity<BaseResponse<List<String>>>> deferredResult = new DeferredResult<>();
+
+		uploadMultipleImages(userId, images, dirName)
+			.whenComplete((result, throwable) ->
+				handleMultipleUploadCompletion(deferredResult, result, throwable));
+
+		return deferredResult;
+	}
+
+	private Void handleImageDeletionFailure(Throwable throwable) {
+		throw new ImageException(ErrorCode.IMAGE_DELETE_FAILED);
+	}
+
+	private void handleUploadCompletion(
+		DeferredResult<ResponseEntity<BaseResponse<String>>> deferredResult,
+		String result,
+		Throwable throwable
+	) {
+
+		if (throwable != null) {
+			deferredResult.setErrorResult(throwable);
+		} else {
+			deferredResult.setResult(ResponseUtils.ok(result));
 		}
 	}
 
-	public CompletableFuture<Void> deleteImage(String imageUrl) {
-		return s3Uploader.deleteImage(imageUrl)
-			.exceptionally(ex -> {
-				throw new ImageException(ErrorCode.IMAGE_DELETE_FAILED);
-			});
+	private void handleMultipleUploadCompletion(
+		DeferredResult<ResponseEntity<BaseResponse<List<String>>>> deferredResult,
+		List<String> result,
+		Throwable throwable
+	) {
+
+		if (throwable != null) {
+			deferredResult.setErrorResult(throwable);
+		} else {
+			deferredResult.setResult(ResponseUtils.ok(result));
+		}
 	}
 }

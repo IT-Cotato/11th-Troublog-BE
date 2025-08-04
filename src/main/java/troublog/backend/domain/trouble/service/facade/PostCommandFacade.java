@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import troublog.backend.domain.image.service.facade.PostImageFacade;
 import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
@@ -23,7 +22,6 @@ public class PostCommandFacade {
 	private final PostCommandService postCommandService;
 	private final PostQueryService postQueryService;
 	private final PostRelationFacade postRelationFacade;
-	private final PostImageFacade postImageFacade;
 
 	public PostResDto createPost(Long userId, PostReqDto postReqDto) {
 		Post newPost = postFactory.createPostWithRequireRelations(postReqDto);
@@ -51,7 +49,6 @@ public class PostCommandFacade {
 		Post foundPost = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
 		postCommandService.delete(foundPost);
-		postImageFacade.deletePostImages(postId);
 	}
 
 	public PostResDto restorePost(Long userId, Long postId) {
