@@ -12,6 +12,7 @@ import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.AuthException;
 import troublog.backend.global.common.error.exception.BusinessException;
 import troublog.backend.global.common.error.exception.PostException;
+import troublog.backend.global.common.error.exception.AiTaskException;
 import troublog.backend.global.common.error.exception.UserException;
 import troublog.backend.global.common.response.BaseResponse;
 import troublog.backend.global.common.response.ErrorResponse;
@@ -56,6 +57,14 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<BaseResponse<ErrorResponse>> handlePostException(PostException e,
 		HttpServletRequest request) {
 		LoggingUtil.logException("PostException 발생", e, request);
+		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
+		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
+	}
+
+	@ExceptionHandler(AiTaskException.class)
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleSummaryException(AiTaskException e,
+		HttpServletRequest request) {
+		LoggingUtil.logException("SummaryException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}

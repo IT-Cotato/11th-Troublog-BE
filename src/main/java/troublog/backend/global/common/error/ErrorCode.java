@@ -98,7 +98,15 @@ public enum ErrorCode {
 	IMAGE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"I-003" , "이미지 삭제에 실패했습니다."),
 	URL_NOT_VALID(HttpStatus.BAD_REQUEST,"I-004" , "잘못된 이미지 URL 입니다."),
 	FILE_SIZE_EXCEEDING(HttpStatus.BAD_REQUEST, "I-005", "지정된 파일크기를 초과했습니다."),
-	FILE_NOT_FOUND(HttpStatus.NOT_FOUND,"I-006" , "파일을 찾을 수 없습니다.");
+	FILE_NOT_FOUND(HttpStatus.NOT_FOUND,"I-006" , "파일을 찾을 수 없습니다."),
+
+	/**
+	 * AI  Error
+	 */
+	TASK_NOT_FOUND(HttpStatus.NOT_FOUND,"A-001" , "작업을 찾을 수 없습니다."),
+	TASK_UPDATE_FAILED(HttpStatus.BAD_REQUEST,"A-002" , "잘못된 작업 업데이트 요청입니다."),
+	TASK_ALREADY_COMPLETE(HttpStatus.BAD_REQUEST,"A-003" , "이미 완료된 작업입니다.");
+
 
 	private final HttpStatus httpStatus;
 	private final String code;
