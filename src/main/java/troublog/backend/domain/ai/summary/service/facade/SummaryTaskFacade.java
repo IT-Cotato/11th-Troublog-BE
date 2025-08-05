@@ -1,7 +1,5 @@
 package troublog.backend.domain.ai.summary.service.facade;
 
-import java.util.UUID;
-
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -11,6 +9,7 @@ import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
 import troublog.backend.domain.ai.summary.service.command.SummaryTaskCommandService;
 import troublog.backend.domain.ai.summary.service.query.SummaryTaskQueryService;
+import troublog.backend.domain.ai.validator.TaskValidator;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.AiTaskException;
 
@@ -35,28 +34,17 @@ public class SummaryTaskFacade {
 
 	public void cancelTask(String taskId) {
 		SummaryTask task = summaryTaskQueryService.findTask(taskId);
-		validateTaskCanBeCancelled(task);
-		task.cancelTask();
+		TaskValidator.validateTaskCanBeCancelled(task);
+		updateTaskStatus(task, SummaryStatus.CANCELLED);
 		summaryTaskCommandService.save(task);
 		log.info("작업 취소: taskId={}, status={}, progress={}%", taskId, task.getStatus(), task.getProgress());
 	}
 
 	private void updateTaskStatus(SummaryTask task, SummaryStatus status) {
 		switch (status) {
-			case STARTED -> task.starting();
-			case PREPROCESSING -> task.startPreprocessing();
-			case ANALYZING -> task.startAnalyzing();
-			case POSTPROCESSING -> task.startPostProcessing();
-			case COMPLETED -> task.completeTask();
-			case CANCELLED -> task.cancelTask();
-			case FAILED -> task.failTask();
+			case STARTED, PREPROCESSING, ANALYZING, POSTPROCESSING -> task.updateWorkingOnStatus(status);
+			case COMPLETED, CANCELLED, FAILED -> task.updateCompletedStatus(status);
 			default -> throw new AiTaskException(ErrorCode.TASK_UPDATE_FAILED);
-		}
-	}
-
-	private void validateTaskCanBeCancelled(SummaryTask task) {
-		if (task.isCompleted()) {
-			throw new AiTaskException(ErrorCode.TASK_ALREADY_COMPLETE);
 		}
 	}
 }

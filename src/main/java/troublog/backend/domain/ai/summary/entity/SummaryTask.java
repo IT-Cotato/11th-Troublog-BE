@@ -35,47 +35,17 @@ public class SummaryTask {
 	private LocalDateTime completedAt;
 	private String currentStep;
 
-	public void starting() {
-		this.status = SummaryStatus.STARTED;
-		this.currentStep = status.getMessage();
-		this.progress = status.getProgress();
-		this.startedAt = LocalDateTime.now();
-	}
-
-	public void startPreprocessing() {
-		this.status = SummaryStatus.PREPROCESSING;
-		this.currentStep = status.getMessage();
-		this.progress = status.getProgress();
-	}
-
-	public void startAnalyzing() {
-		this.status = SummaryStatus.ANALYZING;
-		this.currentStep = status.getMessage();
-		this.progress = status.getProgress();
-	}
-
-	public void startPostProcessing() {
-		this.status = SummaryStatus.POSTPROCESSING;
-		this.currentStep = status.getMessage();
-		this.progress = status.getProgress();
-	}
-
-	public void completeTask() {
-		this.status = SummaryStatus.COMPLETED;
+	public void updateWorkingOnStatus(SummaryStatus status) {
+		this.status = status;
 		this.progress = status.getProgress();
 		this.currentStep = status.getMessage();
-		this.completedAt = LocalDateTime.now();
+		if (status == SummaryStatus.STARTED) {
+			this.startedAt = LocalDateTime.now();
+		}
 	}
 
-	public void failTask() {
-		this.status = SummaryStatus.FAILED;
-		this.progress = status.getProgress();
-		this.currentStep = status.getMessage();
-		this.completedAt = LocalDateTime.now();
-	}
-
-	public void cancelTask() {
-		this.status = SummaryStatus.CANCELLED;
+	public void updateCompletedStatus(SummaryStatus status) {
+		this.status = status;
 		this.progress = status.getProgress();
 		this.currentStep = status.getMessage();
 		this.completedAt = LocalDateTime.now();
