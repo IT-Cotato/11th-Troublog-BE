@@ -20,3 +20,7 @@ spring:
           auto: update
         default_batch_fetch_size: 1000
     open-in-view: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
