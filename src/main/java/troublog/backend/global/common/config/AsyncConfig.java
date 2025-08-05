@@ -4,10 +4,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.context.request.RequestAttributes;
@@ -22,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AsyncConfig implements AsyncConfigurer {
 
 	private static final String IMAGE_PREFIX = "Image";
-	private static final String SUMMARY_PREFIX = "AI-Summary";
+	public static final String SUMMARY_PREFIX = "AI-Summary";
 
 	@Bean(name = "summaryExecutor")
 	public Executor summaryExecutor() {
