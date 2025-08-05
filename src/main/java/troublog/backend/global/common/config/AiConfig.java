@@ -8,6 +8,7 @@ import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.support.RetryTemplate;
@@ -26,6 +27,7 @@ import troublog.backend.global.common.util.SimpleLoggingAdvisor;
  * - 메모리 기반 대화 관리 설정
  */
 @Configuration
+@EnableConfigurationProperties({PromptProperties.class})
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class AiConfig {
 

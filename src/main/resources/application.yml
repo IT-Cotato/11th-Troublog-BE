@@ -28,6 +28,14 @@ spring:
     virtual:
       enabled: true
 
+ai:
+  prompts:
+    system: ${AI_PROMPT_SYSTEM}
+    resume: ${AI_PROMPT_RESUME}
+    interview: ${AI_PROMPT_INTERVIEW}
+    blog: ${AI_PROMPT_BLOG}
+    issue-management: ${AI_PROMPT_ISSUE_MANAGEMENT}
+
 springdoc:
   swagger-ui:
     display-request-duration: true
