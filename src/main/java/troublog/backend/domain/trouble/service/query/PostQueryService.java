@@ -74,4 +74,10 @@ public class PostQueryService {
 		return postPage;
 	}
 
+	public List<Post> getAllTroubles(Long userId) {
+		List<Post> posts = postRepository.findAllByUser_Id(userId);
+		log.info("[Post] 전체 트러블슈팅 문서 조회: postCount={}", posts.size());
+		return posts;
+	}
+
 }

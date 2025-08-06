@@ -19,7 +19,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
+import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.service.facade.PostQueryFacade;
+import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -33,6 +35,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 public class PostQueryController {
 
 	private final PostQueryFacade postQueryFacade;
+	private final PostQueryService postQueryService;
 
 	@GetMapping("/{postId}/combine")
 	@Operation(summary = "트러블슈팅 문서 + AI 요약본 상세 조회 API", description = "ID 값 기반 트러블슈팅 문서 + AI 요약본 상세 조회")
@@ -141,4 +144,14 @@ public class PostQueryController {
 		Page<PostResDto> response = postQueryFacade.searchPostByKeyword(keyword, pageable);
 		return ResponseUtils.page(response);
 	}
+
+	@GetMapping("/list")
+	@Operation(summary = "전체 트러블슈팅 목록 조회 API", description = "트러블슈팅 전체를 최신순으로 조회합니다.")
+	public ResponseEntity<BaseResponse<List<TroubleListResDto>>> getAllTroubles(
+		@Authentication CustomAuthenticationToken auth
+	) {
+		List<TroubleListResDto> response = postQueryFacade.getAllTroubles(auth.getUserId());
+		return ResponseUtils.ok(response);
+	}
+
 }

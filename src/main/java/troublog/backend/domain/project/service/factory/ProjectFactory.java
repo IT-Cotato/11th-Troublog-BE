@@ -12,7 +12,7 @@ import troublog.backend.global.common.error.exception.PostException;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProjectFactory {
 
-	public static void validateAuthorized(Long requestUserID, Project project) {
+	public static void validateProjectAuthorized(Long requestUserID, Project project) {
 		Long registeredUserID = project.getUser().getId();
 		if (!registeredUserID.equals(requestUserID)) {
 			throw new PostException(ErrorCode.POST_ACCESS_DENIED);

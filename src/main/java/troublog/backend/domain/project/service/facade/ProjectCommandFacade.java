@@ -35,14 +35,14 @@ public class ProjectCommandFacade {
 
 	public ProjectResDto updateProject(Long userId, ProjectReqDto reqDto, Long projectId) {
 		Project project = projectQueryService.findById(projectId);
-		validateAuthorized(userId, project);
+		validateProjectAuthorized(userId, project);
 		project.update(reqDto.name(), reqDto.description(), reqDto.thumbnailImageUrl());
 		return ProjectConverter.toResponse(project);
 	}
 
 	public void softDeleteProject(Long userId, long projectId) {
 		Project project = projectQueryService.findById(projectId);
-		validateAuthorized(userId, project);
+		validateProjectAuthorized(userId, project);
 		project.softDelete();
 	}
 }

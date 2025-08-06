@@ -15,6 +15,7 @@ import troublog.backend.domain.project.dto.response.ProjectDetailResDto;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.project.repository.ProjectRepository;
 import troublog.backend.domain.trouble.enums.TagType;
+import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.ProjectException;
 
@@ -25,6 +26,7 @@ import troublog.backend.global.common.error.exception.ProjectException;
 public class ProjectQueryService {
 
 	private final ProjectRepository projectRepository;
+	private final PostRepository postRepository;
 
 	public Project findById(long id) {
 		log.info("[Project] 프로젝트 조회: projectId={}", id);
@@ -43,7 +45,7 @@ public class ProjectQueryService {
 	}
 
 	public List<ProjectDetailResDto> getAllProjects(Long userId) {
-		List<Project> projects = projectRepository.findAllByUserId(userId);
+		List<Project> projects = projectRepository.findAllByUserIdAndIsDeletedFalse(userId);
 		log.info("[Project] 전체 프로젝트 조회: userId={}, projectCount={}", userId, projects.size());
 		return projects.stream()
 			.map(this::getDetails)

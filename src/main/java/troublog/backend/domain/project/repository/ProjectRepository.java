@@ -24,6 +24,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 	List<String> findTop2TagsByProjectId(@Param("projectId") Long projectId, @Param("tagType") TagType tagType,
 		Pageable pageable);
 
-	List<Project> findAllByUserId(Long userId);
+	List<Project> findAllByUserIdAndIsDeletedFalse(Long userId);
 
 }

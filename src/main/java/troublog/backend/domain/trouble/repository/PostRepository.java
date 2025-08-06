@@ -72,4 +72,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	@Query("SELECT p FROM Post p JOIN FETCH p.contents c WHERE c.authorType = 'USER_WRITTEN' AND p.id = :id AND p.isDeleted = false")
 	Optional<Post> findPostWithOutSummaryById(@Param("id") Long id);
+
+	List<Post> findAllByUser_Id(Long userId);
 }

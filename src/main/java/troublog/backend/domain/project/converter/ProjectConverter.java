@@ -16,6 +16,7 @@ public class ProjectConverter {
 			.name(reqDto.name())
 			.description(reqDto.description())
 			.thumbnailImageUrl(reqDto.thumbnailImageUrl())
+			.isDeleted(false)
 			.build();
 	}
 

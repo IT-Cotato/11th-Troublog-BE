@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +23,11 @@ import troublog.backend.domain.project.dto.response.ProjectResDto;
 import troublog.backend.domain.project.service.facade.ProjectCommandFacade;
 import troublog.backend.domain.project.service.facade.ProjectQueryFacade;
 import troublog.backend.domain.project.service.query.ProjectQueryService;
+import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
+import troublog.backend.domain.trouble.enums.ContentSummaryType;
+import troublog.backend.domain.trouble.enums.PostStatus;
+import troublog.backend.domain.trouble.enums.SortType;
+import troublog.backend.domain.trouble.enums.VisibilityType;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -38,7 +44,7 @@ public class ProjectController {
 	private final ProjectQueryService projectQueryService;
 
 	// 프로젝트 생성
-	@PostMapping("/create")
+	@PostMapping("/")
 	@Operation(summary = "프로젝트 생성 API", description = "프로젝트를 생성합니다.")
 	public ResponseEntity<BaseResponse<ProjectResDto>> createProject(
 		@Authentication CustomAuthenticationToken auth,
@@ -78,7 +84,7 @@ public class ProjectController {
 		return ResponseUtils.ok(response);
 	}
 
-	// 프로젝트 목록 조회
+	// 전체 프로젝트 목록 조회
 	@GetMapping("/list")
 	@Operation(summary = "프로젝트 전체 목록 조회 API", description = "전체 프로젝트 리스트를 조회합니다.")
 	public ResponseEntity<BaseResponse<List<ProjectDetailResDto>>> getProjects(
@@ -87,8 +93,19 @@ public class ProjectController {
 		return ResponseUtils.ok(response);
 	}
 
-	// 프로젝트 썸네일 업로드
-
-	// 트러블슈팅 목록 조회
-	
+	// 프로젝트 내 트러블슈팅 목록 조회
+	@GetMapping("/{projectId}/troubles")
+	@Operation(summary = "프로젝트 내 트러블슈팅 목록 조회 API", description = "작성/요약 완료 상태를 포함한 다양한 조건을 필터링해 조회합니다.")
+	public ResponseEntity<BaseResponse<List<TroubleListResDto>>> getProjectTroubles(
+		@Authentication CustomAuthenticationToken auth,
+		@PathVariable Long projectId,
+		@RequestParam PostStatus status,
+		@RequestParam(defaultValue = "LATEST") SortType sort,
+		@RequestParam(required = false) VisibilityType visibility,
+		@RequestParam(required = false) ContentSummaryType summaryType
+	) {
+		List<TroubleListResDto> response = projectQueryFacade.getProjectTroubles(auth.getUserId(), projectId, status,
+			sort, visibility, summaryType);
+		return ResponseUtils.ok(response);
+	}
 }

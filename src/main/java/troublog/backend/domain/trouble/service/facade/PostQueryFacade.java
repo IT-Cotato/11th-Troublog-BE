@@ -1,6 +1,8 @@
 package troublog.backend.domain.trouble.service.facade;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,8 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.converter.ContentConverter;
+import troublog.backend.domain.trouble.converter.ListConverter;
 import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
+import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
@@ -52,6 +56,21 @@ public class PostQueryFacade {
 			.map(PostTag::getTag)
 			.filter(tag -> tag != null && tag.getTagType() == TagType.TECH_STACK)
 			.map(Tag::getName)
+			.toList();
+	}
+
+	public static List<String> findTopTechStackTags(Post post) {
+		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
+			return List.of();
+		}
+		return post.getPostTags().stream()
+			.map(PostTag::getTag)
+			.filter(t -> t != null && t.getTagType() == TagType.TECH_STACK)
+			.collect(Collectors.groupingBy(Tag::getName, Collectors.counting()))
+			.entrySet().stream()
+			.sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+			.limit(3)
+			.map(Map.Entry::getKey)
 			.toList();
 	}
 
@@ -125,4 +144,11 @@ public class PostQueryFacade {
 	public Post findPostById(Long id) {
 		return postQueryService.findById(id);
 	}
+	public List<TroubleListResDto> getAllTroubles(Long userId) {
+		List<Post> posts = postQueryService.getAllTroubles(userId);
+		return posts.stream()
+			.map(ListConverter::toAllTroubleListResDto)
+			.toList();
+	}
+
 }
