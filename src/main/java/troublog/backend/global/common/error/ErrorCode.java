@@ -105,7 +105,8 @@ public enum ErrorCode {
 	 */
 	TASK_NOT_FOUND(HttpStatus.NOT_FOUND,"A-001" , "작업을 찾을 수 없습니다."),
 	TASK_UPDATE_FAILED(HttpStatus.BAD_REQUEST,"A-002" , "잘못된 작업 업데이트 요청입니다."),
-	TASK_ALREADY_COMPLETE(HttpStatus.BAD_REQUEST,"A-003" , "이미 완료된 작업입니다.");
+	TASK_ALREADY_COMPLETE(HttpStatus.BAD_REQUEST,"A-003" , "이미 완료된 작업입니다."), 
+	PROMPT_NOT_FOUND(HttpStatus.NOT_FOUND,"A-004" , "프롬프트를 찾을 수 없습니다.");
 
 
 	private final HttpStatus httpStatus;

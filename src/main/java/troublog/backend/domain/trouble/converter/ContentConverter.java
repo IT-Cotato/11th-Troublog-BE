@@ -1,6 +1,7 @@
 package troublog.backend.domain.trouble.converter;
 
 import lombok.experimental.UtilityClass;
+import troublog.backend.domain.ai.summary.dto.ExtractedContentDto;
 import troublog.backend.domain.trouble.dto.request.common.ContentDto;
 import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
 import troublog.backend.domain.trouble.entity.Content;
@@ -27,6 +28,13 @@ public class ContentConverter {
 			.sequence(content.getSequence())
 			.authorType(content.getAuthorType())
 			.summaryType(content.getSummaryType())
+			.build();
+	}
+
+	public ExtractedContentDto extractContent(Content content) {
+		return ExtractedContentDto.builder()
+			.body(content.getBody())
+			.sequence(content.getSequence())
 			.build();
 	}
 }
