@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.RegisterDto;
+import troublog.backend.domain.auth.service.AuthFacade;
 import troublog.backend.domain.auth.service.AuthService;
 import troublog.backend.global.common.response.BaseResponse;
 import troublog.backend.global.common.util.ResponseUtils;
@@ -28,6 +29,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "인증", description = "회원가입 및 로그인")
 public class AuthController {
 
+	private final AuthFacade authFacade;
 	private final AuthService authService;
 
 	@PostMapping("/register")
@@ -38,7 +40,7 @@ public class AuthController {
 		@Valid @RequestBody RegisterDto registerDto,
 		HttpServletRequest request) {
 
-		Long userId = authService.register(registerDto, request);
+		Long userId = authFacade.register(registerDto, request);
 
 		return ResponseUtils.created(userId);
 	}
@@ -48,7 +50,7 @@ public class AuthController {
 	public ResponseEntity<BaseResponse<Void>> checkDuplicateEmail(@RequestParam String email,
 		HttpServletRequest request) {
 
-		authService.checkDuplicateEmail(email, request);
+		authFacade.checkDuplicateEmail(email, request);
 
 		return ResponseUtils.noContent();
 	}
@@ -62,7 +64,7 @@ public class AuthController {
 		HttpServletRequest request,
 		HttpServletResponse response) {
 
-		LoginResDto loginResDto = authService.login(loginReqDto, request, response);
+		LoginResDto loginResDto = authFacade.login(loginReqDto, request, response);
 
 		return ResponseUtils.ok(loginResDto);
 	}
@@ -74,7 +76,7 @@ public class AuthController {
 	@PostMapping("/refresh")
 	public ResponseEntity<BaseResponse<String>> reissueAccessToken(HttpServletRequest request) {
 
-		String accessToken = authService.reissueAccessToken(request);
+		String accessToken = authFacade.reissueAccessToken(request);
 
 		return ResponseUtils.ok(accessToken);
 	}
