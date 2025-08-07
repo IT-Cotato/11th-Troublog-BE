@@ -1,9 +1,14 @@
 package troublog.backend.domain.auth.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record LoginResDto(
 
 	@Schema(description = "유저아이디")
@@ -25,7 +30,20 @@ public record LoginResDto(
 	String localToken
 
 ) {
-	public static LoginResDto of(Long userId, String accessToken, String refreshToken, String localToken) {
-		return new LoginResDto(userId, accessToken, refreshToken, localToken);
+	public static LoginResDto localReturn(Long userId, String accessToken, String refreshToken, String localToken) {
+		return LoginResDto.builder()
+			.userId(userId)
+			.accessToken(accessToken)
+			.refreshToken(refreshToken)
+			.localToken(localToken)
+			.build();
+	}
+
+	public static LoginResDto nonLocalReturn(Long userId, String accessToken, String refreshToken) {
+		return LoginResDto.builder()
+			.userId(userId)
+			.accessToken(accessToken)
+			.refreshToken(refreshToken)
+			.build();
 	}
 }

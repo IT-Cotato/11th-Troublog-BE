@@ -3,6 +3,8 @@ package troublog.backend.domain.auth.service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +20,7 @@ import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.command.UserCommandService;
 import troublog.backend.domain.user.service.query.UserQueryService;
+import troublog.backend.global.common.constant.EnvType;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.UserException;
@@ -34,6 +37,9 @@ public class AuthService {
 	private final UserCommandService userCommandService;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtProvider jwtProvider;
+
+	@Value("${spring.profiles.active}")
+	private String profilesActive;
 
 	@Transactional
 	public Long register(RegisterDto registerDto, HttpServletRequest request) {
@@ -90,7 +96,9 @@ public class AuthService {
 		// 리프레시 토큰 Set-Cookie로 내려줌
 		setCookieRefreshToken(refreshToken, response);
 
-		return LoginResDto.of(user.getId(), accessToken, refreshToken, localToken);
+		return (profilesActive.equals(EnvType.LOCAL.getEnvType()) || clientEnvType.equals(EnvType.LOCAL.getEnvType()))
+			? LoginResDto.localReturn(user.getId(), accessToken, refreshToken, localToken)
+			: LoginResDto.nonLocalReturn(user.getId(), accessToken, refreshToken);
 	}
 
 	private void setCookieRefreshToken(String refreshToken, HttpServletResponse response) {
