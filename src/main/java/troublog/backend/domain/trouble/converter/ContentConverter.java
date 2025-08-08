@@ -1,7 +1,7 @@
 package troublog.backend.domain.trouble.converter;
 
 import lombok.experimental.UtilityClass;
-import troublog.backend.domain.ai.summary.dto.ExtractedContentDto;
+import troublog.backend.domain.ai.summary.dto.common.ExtractedContentDto;
 import troublog.backend.domain.trouble.dto.request.common.ContentDto;
 import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
 import troublog.backend.domain.trouble.entity.Content;

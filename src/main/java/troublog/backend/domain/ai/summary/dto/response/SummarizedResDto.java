@@ -1,4 +1,4 @@
-package troublog.backend.domain.ai.summary.dto;
+package troublog.backend.domain.ai.summary.dto.response;
 
 import java.util.List;
 

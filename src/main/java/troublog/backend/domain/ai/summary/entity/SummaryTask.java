@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import troublog.backend.domain.ai.summary.dto.SummarizedResDto;
+import troublog.backend.domain.ai.summary.dto.response.SummarizedResDto;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
 
 @Getter

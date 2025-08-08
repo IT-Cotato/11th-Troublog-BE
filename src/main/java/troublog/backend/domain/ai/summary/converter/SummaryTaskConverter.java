@@ -3,8 +3,8 @@ package troublog.backend.domain.ai.summary.converter;
 import java.time.LocalDateTime;
 
 import lombok.experimental.UtilityClass;
-import troublog.backend.domain.ai.summary.dto.TaskStartResDto;
-import troublog.backend.domain.ai.summary.dto.TaskStatusResDto;
+import troublog.backend.domain.ai.summary.dto.response.TaskStartResDto;
+import troublog.backend.domain.ai.summary.dto.response.TaskStatusResDto;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
 import troublog.backend.global.common.util.IdGenerator;

@@ -21,8 +21,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.ai.summary.converter.SummaryTaskConverter;
-import troublog.backend.domain.ai.summary.dto.TaskStartResDto;
-import troublog.backend.domain.ai.summary.dto.TaskStatusResDto;
+import troublog.backend.domain.trouble.dto.request.SummaryTypeReqDto;
+import troublog.backend.domain.ai.summary.dto.response.TaskStartResDto;
+import troublog.backend.domain.ai.summary.dto.response.TaskStatusResDto;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
@@ -96,10 +97,11 @@ public class PostCommandController {
 		content = @Content(schema = @Schema(implementation = TaskStartResDto.class)))
 	public ResponseEntity<BaseResponse<TaskStartResDto>> startSummaryTask(
 		@Authentication CustomAuthenticationToken token,
+		@Valid @RequestBody SummaryTypeReqDto summaryTypeReqDto,
 		@PathVariable long postId
 	) {
 		SummaryTask task = summaryTaskFacade.createTask(postId);
-		summaryTaskFacade.startSummaryTask(task);
+		summaryTaskFacade.startSummaryTask(task, summaryTypeReqDto.type());
 		TaskStartResDto response = SummaryTaskConverter.toStartResponseDto(task, token.getUserId());
 		return ResponseUtils.ok(response);
 	}
