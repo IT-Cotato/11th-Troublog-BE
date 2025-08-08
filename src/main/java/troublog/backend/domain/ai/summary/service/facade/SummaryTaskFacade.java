@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.ai.summary.converter.SummaryTaskConverter;
+import troublog.backend.domain.ai.summary.dto.TaskStatusResDto;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
 import troublog.backend.domain.ai.summary.service.command.SummaryTaskCommandService;
@@ -26,18 +27,27 @@ public class SummaryTaskFacade {
 		return summaryTaskCommandService.save(summaryTask);
 	}
 
+	public TaskStatusResDto findTask(String taskId, Long userId, Long postId) {
+		SummaryTask summaryTask = summaryTaskQueryService.findTask(taskId);
+		TaskValidator.validateTaskBelongsToPost(summaryTask, postId);
+		return SummaryTaskConverter.toStatusResponseDto(summaryTask, userId);
+	}
+
 	public void updateTask(String taskId, SummaryStatus status) {
 		SummaryTask task = summaryTaskQueryService.findTask(taskId);
 		updateTaskStatus(task, status);
 		summaryTaskCommandService.save(task);
 	}
 
-	public void cancelTask(String taskId) {
-		SummaryTask task = summaryTaskQueryService.findTask(taskId);
-		TaskValidator.validateTaskCanBeCancelled(task);
-		updateTaskStatus(task, SummaryStatus.CANCELLED);
-		summaryTaskCommandService.save(task);
-		log.info("작업 취소: taskId={}, status={}, progress={}%", taskId, task.getStatus(), task.getProgress());
+	public void cancelTask(String taskId, Long postId) {
+		SummaryTask summaryTask = summaryTaskQueryService.findTask(taskId);
+
+		TaskValidator.validateTaskBelongsToPost(summaryTask, postId);
+		TaskValidator.validateTaskCanBeCancelled(summaryTask);
+
+		updateTaskStatus(summaryTask, SummaryStatus.CANCELLED);
+		summaryTaskCommandService.save(summaryTask);
+		logTaskCancellation(summaryTask);
 	}
 
 	private void updateTaskStatus(SummaryTask task, SummaryStatus status) {
@@ -46,5 +56,14 @@ public class SummaryTaskFacade {
 			case COMPLETED, CANCELLED, FAILED -> task.updateCompletedStatus(status);
 			default -> throw new AiTaskException(ErrorCode.TASK_UPDATE_FAILED);
 		}
+	}
+
+	private void logTaskCancellation(SummaryTask summaryTask) {
+		log.info("작업 취소: taskId={}, status={}, progress={}%", summaryTask.getId(), summaryTask.getStatus(),
+			summaryTask.getProgress());
+	}
+
+	public void startSummaryTask(SummaryTask task) {
+
 	}
 }

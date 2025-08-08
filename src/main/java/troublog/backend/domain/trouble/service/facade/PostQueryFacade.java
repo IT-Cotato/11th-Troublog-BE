@@ -109,7 +109,7 @@ public class PostQueryFacade {
 		return PageRequest.of(Math.max(0, page - 1), size);
 	}
 
-	public Post findPostById(String id) {
-		return postQueryService.findById(Long.parseLong(id));
+	public Post findPostById(Long id) {
+		return postQueryService.findById(id);
 	}
 }

@@ -3,8 +3,10 @@ package troublog.backend.domain.ai.summary.dto;
 import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
 
+@Builder
 @Schema(description = "AI 요약 작업 상태 응답 DTO")
 public record TaskStatusResDto(
 	@Schema(
@@ -14,21 +16,28 @@ public record TaskStatusResDto(
 	String taskId,
 
 	@Schema(
+		description = "사용자 ID",
+		example = "2"
+	)
+	Long userId,
+
+	@Schema(
 		description = "작업 상태",
-		example = "PENDING",
-		allowableValues = {"PENDING", "STARTED", "PREPROCESSING", "ANALYZING", "POSTPROCESSING", "COMPLETED", "FAILED", "CANCELLED"}
+		example = "STARTED",
+		allowableValues = {"PENDING", "STARTED", "PREPROCESSING", "ANALYZING", "POSTPROCESSING", "COMPLETED", "FAILED",
+			"CANCELLED"}
 	)
 	SummaryStatus status,
 
 	@Schema(
 		description = "현재 작업 단계 메시지",
-		example = "요약 작업이 대기열에 등록되었어요! 잠시만 기다려주세요"
+		example = "트러블슈팅 문서 분석을 시작했어요"
 	)
-	String statusMessage,
+	String message,
 
 	@Schema(
 		description = "작업 진행률 (퍼센트)",
-		example = "0",
+		example = "10",
 		minimum = "0",
 		maximum = "100"
 	)
