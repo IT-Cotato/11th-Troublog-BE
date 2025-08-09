@@ -8,7 +8,6 @@ import troublog.backend.domain.ai.summary.converter.SummaryTaskConverter;
 import troublog.backend.domain.ai.summary.dto.response.TaskStatusResDto;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
-import troublog.backend.domain.ai.summary.service.PostSummaryServiceImpl;
 import troublog.backend.domain.ai.summary.service.command.SummaryTaskCommandService;
 import troublog.backend.domain.ai.summary.service.query.SummaryTaskQueryService;
 import troublog.backend.domain.ai.validator.TaskValidator;
@@ -22,7 +21,6 @@ public class SummaryTaskFacade {
 
 	private final SummaryTaskCommandService summaryTaskCommandService;
 	private final SummaryTaskQueryService summaryTaskQueryService;
-	private final PostSummaryServiceImpl postSummaryService;
 
 	public SummaryTask createTask(Long postId) {
 		SummaryTask summaryTask = SummaryTaskConverter.from(postId);
@@ -51,10 +49,10 @@ public class SummaryTaskFacade {
 		logTaskCancellation(summaryTask);
 	}
 
-	private void updateTaskStatus(SummaryTask task, SummaryStatus status) {
+	private void updateTaskStatus(SummaryTask summaryTask, SummaryStatus status) {
 		switch (status) {
-			case STARTED, PREPROCESSING, ANALYZING, POSTPROCESSING -> task.updateWorkingOnStatus(status);
-			case COMPLETED, CANCELLED, FAILED -> task.updateCompletedStatus(status);
+			case STARTED, PREPROCESSING, ANALYZING, POSTPROCESSING -> summaryTask.updateWorkingOnStatus(status);
+			case COMPLETED, CANCELLED, FAILED -> summaryTask.updateCompletedStatus(status);
 			default -> throw new AiTaskException(ErrorCode.TASK_UPDATE_FAILED);
 		}
 	}
@@ -62,15 +60,5 @@ public class SummaryTaskFacade {
 	private void logTaskCancellation(SummaryTask summaryTask) {
 		log.info("작업 취소: taskId={}, status={}, progress={}%", summaryTask.getId(), summaryTask.getStatus(),
 			summaryTask.getProgress());
-	}
-
-	public void startSummaryTask(SummaryTask summaryTask, String type) {
-		postSummaryService.executeAsync(summaryTask, type)
-			.thenAcceptAsync(summaryTask::registerResult)
-			.thenRun(() -> updateTask(summaryTask, SummaryStatus.COMPLETED))
-			.exceptionally(throwable -> {
-				updateTask(summaryTask, SummaryStatus.FAILED);
-				return null;
-			});
 	}
 }

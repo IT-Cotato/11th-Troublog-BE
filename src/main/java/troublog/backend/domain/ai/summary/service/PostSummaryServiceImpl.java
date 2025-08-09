@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.ai.summary.dto.common.ExtractedContentDto;
 import troublog.backend.domain.ai.summary.dto.response.SummarizedResDto;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
+import troublog.backend.domain.ai.summary.enums.SummaryStatus;
+import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.converter.ContentConverter;
 import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
@@ -35,6 +37,7 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 	private final PostTagQueryService postTagQueryService;
 	private final PostQueryFacade postQueryFacade;
 	private final ContentQueryService contentQueryService;
+	private final SummaryTaskFacade summaryTaskFacade;
 
 	@Override
 	public SummarizedResDto execute(SummaryTask summaryTask, String type) {
@@ -44,7 +47,11 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 
 	@Override
 	public CompletableFuture<SummarizedResDto> executeAsync(SummaryTask summaryTask, String type) {
-		return CompletableFuture.supplyAsync(() -> execute(summaryTask, type));
+		return CompletableFuture
+			.supplyAsync(() -> executeAiAnalysis(summaryTask, type))
+			.thenApply(result -> processResult(summaryTask, result))
+			.thenApply(result -> completeTask(summaryTask, result))
+			.exceptionally(throwable -> handleFailure(summaryTask, throwable));
 	}
 
 	@Override
@@ -53,9 +60,11 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 	}
 
 	private SummarizedResDto performAiAnalysis(SummaryTask summaryTask, String type) {
+		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.PREPROCESSING);
 		BeanOutputConverter<SummarizedResDto> converter = new BeanOutputConverter<>(SummarizedResDto.class);
 		Post post = postQueryFacade.findPostById(summaryTask.getPostId());
 		PromptTemplate promptTemplate = generatePromptTemplate(post, type);
+		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.ANALYZING);
 		String aiResponse = callAiService(promptTemplate, converter);
 		return convertAiResponse(aiResponse, converter);
 	}
@@ -64,7 +73,6 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 		PromptTemplate promptTemplate,
 		BeanOutputConverter<SummarizedResDto> converter
 	) {
-		log.info("테스트");
 		String response = chatClient.prompt()
 			.system(promptProperties.system())
 			.user(promptTemplate.render() + converter.getFormat())
@@ -119,5 +127,29 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 		return contents.stream()
 			.map(ContentConverter::extractContent)
 			.toList();
+	}
+
+	private SummarizedResDto executeAiAnalysis(SummaryTask summaryTask, String type) {
+		log.info("AI 분석 작업 시작: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId());
+		return execute(summaryTask, type);
+	}
+
+	private SummarizedResDto processResult(SummaryTask summaryTask, SummarizedResDto result) {
+		summaryTask.registerResult(result);
+		log.info("AI 분석 결과 등록 완료: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId());
+		return result;
+	}
+
+	private SummarizedResDto completeTask(SummaryTask summaryTask, SummarizedResDto result) {
+		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.COMPLETED);
+		log.info("AI 분석 작업 완료: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId());
+		return result;
+	}
+
+	private SummarizedResDto handleFailure(SummaryTask summaryTask, Throwable throwable) {
+		log.error("AI 분석 작업 실패: taskId={}, postId={}, error={}",
+			summaryTask.getId(), summaryTask.getPostId(), throwable.getMessage(), throwable);
+		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.FAILED);
+		throw new AiTaskException(ErrorCode.TASK_UPDATE_FAILED);
 	}
 }
