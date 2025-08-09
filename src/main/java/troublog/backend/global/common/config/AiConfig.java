@@ -85,7 +85,6 @@ public class AiConfig {
 	private OpenAiChatOptions createChatOptions() {
 		return OpenAiChatOptions.builder()
 			.model(openAiProperties.chat().options().model())
-			.maxTokens(openAiProperties.chat().options().maxTokens())
 			.build();
 	}
 

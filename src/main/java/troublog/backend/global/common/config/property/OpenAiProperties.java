@@ -19,8 +19,6 @@ public record OpenAiProperties(
 
 	public record Options(
 		@NotBlank
-		String model,
-		int maxTokens
-	) {
+		String model) {
 	}
 }

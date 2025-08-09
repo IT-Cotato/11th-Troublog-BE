@@ -2,8 +2,6 @@ package troublog.backend.global.common.util;
 
 import java.util.function.Function;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
@@ -13,11 +11,12 @@ import org.springframework.ai.model.ModelOptionsUtils;
 import org.springframework.stereotype.Component;
 
 import io.micrometer.common.lang.Nullable;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class SimpleLoggingAdvisor implements CallAdvisor {
 
-	private static final Logger logger = LoggerFactory.getLogger(SimpleLoggingAdvisor.class);
 	private static final int DEFAULT_ORDER = 0;
 	public static final Function<ChatClientRequest, String> DEFAULT_REQUEST_TO_STRING = ChatClientRequest::toString;
 	public static final Function<ChatResponse, String> DEFAULT_RESPONSE_TO_STRING = ModelOptionsUtils::toJsonStringPrettyPrinter;
@@ -62,8 +61,8 @@ public class SimpleLoggingAdvisor implements CallAdvisor {
 	 * @param request 로깅할 요청 객체
 	 */
 	private void logRequest(ChatClientRequest request) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("ChatClient Request: {}", requestToString.apply(request));
+		if (log.isDebugEnabled()) {
+			log.debug("ChatClient Request: {}", requestToString.apply(request));
 		}
 	}
 
@@ -73,8 +72,8 @@ public class SimpleLoggingAdvisor implements CallAdvisor {
 	 * @param chatClientResponse 로깅할 응답 객체
 	 */
 	private void logResponse(ChatClientResponse chatClientResponse) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("ChatClient Response: {}", responseToString.apply(chatClientResponse.chatResponse()));
+		if (log.isDebugEnabled()) {
+			log.debug("ChatClient Response: {}", responseToString.apply(chatClientResponse.chatResponse()));
 		}
 	}
 
