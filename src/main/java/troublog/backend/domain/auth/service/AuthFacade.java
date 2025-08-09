@@ -1,5 +1,9 @@
 package troublog.backend.domain.auth.service;
 
+import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -7,14 +11,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.RegisterDto;
+import troublog.backend.domain.auth.entity.RefreshToken;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
+import troublog.backend.domain.user.entity.UserStatus;
 import troublog.backend.domain.user.service.command.UserCommandService;
 import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.global.common.constant.EnvType;
@@ -30,6 +37,7 @@ public class AuthFacade {
 	private final AuthService authService;
 	private final UserQueryService userQueryService;
 	private final UserCommandService userCommandService;
+	private final RefreshTokenQueryService refreshTokenQueryService;
 
 	private final AuthenticationManager authenticationManager;
 	private final PasswordEncoder passwordEncoder;
@@ -57,7 +65,7 @@ public class AuthFacade {
 
 		User user = UserConverter.toEntity(registerDto, encodedPassword);
 
-		return userCommandService.save(user);
+		return userCommandService.save(user).getId();
 	}
 
 	@Transactional
@@ -141,4 +149,25 @@ public class AuthFacade {
 		}
 	}
 
+	@Transactional
+	public User findOrCreateUserBySocialId(String nickname, String profileImageUrl, String socialId) {
+		return userQueryService.findUserBySocialId(socialId)
+			.orElseGet(() -> userCommandService.save(
+				User.builder()
+					.nickname(nickname)
+					.profileUrl(profileImageUrl)
+					.status(UserStatus.INCOMPLETE)
+					.loginType("KAKAO")
+					.socialId(socialId)
+					.password(passwordEncoder.encode(UUID.randomUUID().toString()))
+					.build()
+			));
+	}
+
+	@Transactional
+	public void saveRefreshToken(User user, String refreshToken) {
+		RefreshToken latestRefreshToken = refreshTokenQueryService.findLatestTokenByUser(user)
+			.orElseGet(() -> RefreshToken.of(user, jwtProvider.getExpirationFromToken(refreshToken)));
+		latestRefreshToken.updateRefreshToken(latestRefreshToken);
+	}
 }

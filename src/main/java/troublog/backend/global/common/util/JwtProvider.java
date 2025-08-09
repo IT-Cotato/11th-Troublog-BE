@@ -238,7 +238,19 @@ public class JwtProvider {
         } catch (ExpiredJwtException e) {
             return true;
         }
+    }
 
+    /**
+     * 토큰에서 만료일시 추출
+     */
+    public Date getExpirationFromToken(String token) {
+        Claims claims = Jwts.parser()
+            .verifyWith(key) // 서명 검증
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
+
+        return claims.getExpiration();
     }
 
     public void checkEnvType(String clientEnvType) {

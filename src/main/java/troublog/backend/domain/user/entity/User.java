@@ -6,6 +6,8 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -76,6 +78,10 @@ public class User extends BaseEntity {
 
 	@Column(name = "login_type")
 	private String loginType;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private UserStatus status;
 
 	@Column(name = "social_id")
 	private String socialId;

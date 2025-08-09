@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.CorsFilter;
 
 import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.auth.handler.OAuth2LoginSuccessHandler;
 import troublog.backend.global.common.filter.ExceptionHandlerFilter;
 import troublog.backend.global.common.filter.JwtAuthenticationFilter;
 import troublog.backend.global.common.util.JwtAuthenticationProvider;
@@ -26,6 +27,7 @@ import troublog.backend.global.common.util.JwtAuthenticationProvider;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 	private final JwtAuthenticationProvider jwtAuthenticationProvider;
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final ExceptionHandlerFilter exceptionHandlerFilter;
@@ -59,7 +61,9 @@ public class SecurityConfig {
 				.permitAll()
 				.anyRequest()
 				.authenticated()
-			);
+			)
+			.oauth2Login(oauth2 -> oauth2
+				.successHandler(oAuth2LoginSuccessHandler));
 		
 		http
 			.addFilterBefore(exceptionHandlerFilter, CorsFilter.class)
