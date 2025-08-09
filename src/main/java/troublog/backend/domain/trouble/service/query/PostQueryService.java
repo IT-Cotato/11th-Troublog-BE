@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
@@ -28,6 +29,19 @@ public class PostQueryService {
 		return postRepository.findById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
+
+	public Post findSummaryById(Long id, ContentSummaryType summaryType) {
+		log.info("[Post] AI 요약본 조회: postId={}", id);
+		return postRepository.findSummaryById(id, summaryType)
+			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
+	}
+
+	public Post findPostWithoutSummaryById(Long id) {
+		log.info("[Post] 트러블슈팅 문서 + AI 요약본 조회: postId={}", id);
+		return postRepository.findPostWithOutSummaryById(id)
+			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
+	}
+
 
 	public Post findNotDeletedPost(Long id) {
 		log.info("[Post] 삭제되지 않은 트러블슈팅 문서 조회: postId={}", id);

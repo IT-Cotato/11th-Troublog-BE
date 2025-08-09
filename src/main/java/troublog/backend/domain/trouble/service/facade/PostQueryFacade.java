@@ -17,6 +17,7 @@ import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;
+import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.enums.TagCategory;
 import troublog.backend.domain.trouble.enums.TagType;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
@@ -63,9 +64,21 @@ public class PostQueryFacade {
 			.toList();
 	}
 
-	public PostResDto findPostDetailsById(Long userId, Long id) {
-		//TODO N+1 Query 해결 필요
-		Post post = postQueryService.findById(id);
+	public PostResDto findPostDetailsWithSummaryById(Long userId, long postId) {
+		Post post = postQueryService.findById(postId);
+		PostFactory.validateAuthorized(userId, post);
+		return PostConverter.toResponse(post);
+	}
+
+	public PostResDto findPostSummaryById(Long userId, long postId, String type) {
+		ContentSummaryType summaryType = ContentSummaryType.from(type);
+		Post post = postQueryService.findSummaryById(postId, summaryType);
+		PostFactory.validateAuthorized(userId, post);
+		return PostConverter.toResponse(post);
+	}
+
+	public PostResDto findPostDetailsById(Long userId, Long postId) {
+		Post post = postQueryService.findPostWithoutSummaryById(postId);
 		PostFactory.validateAuthorized(userId, post);
 		return PostConverter.toResponse(post);
 	}
