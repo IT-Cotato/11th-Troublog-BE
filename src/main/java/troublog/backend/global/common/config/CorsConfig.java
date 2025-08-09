@@ -12,7 +12,8 @@ import org.springframework.web.filter.CorsFilter;
 public class CorsConfig {
 	private static final List<String> ALLOWED_ORIGINS = List.of(
 		"http://localhost:3000",
-		"http://localhost:8080"
+		"http://localhost:8080",
+		"http://localhost:5173"
 	);
 
 	private static final List<String> ALLOWED_HEADERS = List.of(
