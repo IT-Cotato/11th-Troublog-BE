@@ -1,7 +1,5 @@
 package troublog.backend.domain.auth.service;
 
-import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -11,17 +9,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
-import troublog.backend.domain.auth.dto.RegisterDto;
-import troublog.backend.domain.auth.entity.RefreshToken;
+import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
+import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
-import troublog.backend.domain.user.entity.UserStatus;
 import troublog.backend.domain.user.service.command.UserCommandService;
 import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.global.common.constant.EnvType;
@@ -34,10 +30,8 @@ import troublog.backend.global.common.util.JwtProvider;
 @RequiredArgsConstructor
 public class AuthFacade {
 
-	private final AuthService authService;
 	private final UserQueryService userQueryService;
 	private final UserCommandService userCommandService;
-	private final RefreshTokenQueryService refreshTokenQueryService;
 
 	private final AuthenticationManager authenticationManager;
 	private final PasswordEncoder passwordEncoder;
@@ -47,7 +41,7 @@ public class AuthFacade {
 	private String profilesActive;
 
 	@Transactional
-	public Long register(RegisterDto registerDto, HttpServletRequest request) {
+	public Long register(RegisterReqDto registerReqDto, HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader("EnvType");
 
@@ -55,15 +49,15 @@ public class AuthFacade {
 		jwtProvider.checkEnvType(clientEnvType);
 
 		// 닉네임 중복 체크
-		boolean isDuplicatedNickname = userQueryService.existsByNickname(registerDto.nickname());
+		boolean isDuplicatedNickname = userQueryService.existsByNickname(registerReqDto.nickname());
 		if (isDuplicatedNickname) {
 			throw new UserException(ErrorCode.DUPLICATED_NICKNAME);
 		}
 
 		// 비밀번호 인코딩
-		String encodedPassword = passwordEncoder.encode(registerDto.password());
+		String encodedPassword = passwordEncoder.encode(registerReqDto.password());
 
-		User user = UserConverter.toEntity(registerDto, encodedPassword);
+		User user = UserConverter.toEntity(registerReqDto, encodedPassword);
 
 		return userCommandService.save(user).getId();
 	}
@@ -99,7 +93,7 @@ public class AuthFacade {
 		String refreshToken = jwtProvider.createRefreshToken(authenticationToken);
 
 		// 리프레시 토큰 Set-Cookie로 내려줌
-		authService.setCookieRefreshToken(refreshToken, response);
+		jwtProvider.setCookieRefreshToken(refreshToken, response);
 
 		return (profilesActive.equals(EnvType.LOCAL.getEnvType()) || clientEnvType.equals(EnvType.LOCAL.getEnvType()))
 			? LoginResDto.localReturn(user.getId(), accessToken, refreshToken, localToken)
@@ -135,6 +129,20 @@ public class AuthFacade {
 		return jwtProvider.createAuthToken(authentication);
 	}
 
+	@Transactional
+	public void logout(HttpServletRequest request, HttpServletResponse response) {
+		String clientEnvType = request.getHeader("EnvType");
+
+		// 프론트 환경변수 체크
+		jwtProvider.checkEnvType(clientEnvType);
+
+		// 로그아웃
+		jwtProvider.logout(request);
+
+		// set-cookie 에서 삭제
+		jwtProvider.deleteCookieRefreshToken(response);
+	}
+
 	@Transactional(readOnly = true)
 	public void checkDuplicateEmail(String email, HttpServletRequest request) {
 
@@ -150,24 +158,22 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public User findOrCreateUserBySocialId(String nickname, String profileImageUrl, String socialId) {
-		return userQueryService.findUserBySocialId(socialId)
-			.orElseGet(() -> userCommandService.save(
-				User.builder()
-					.nickname(nickname)
-					.profileUrl(profileImageUrl)
-					.status(UserStatus.INCOMPLETE)
-					.loginType("KAKAO")
-					.socialId(socialId)
-					.password(passwordEncoder.encode(UUID.randomUUID().toString()))
-					.build()
-			));
-	}
+	public Long oAuthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
 
-	@Transactional
-	public void saveRefreshToken(User user, String refreshToken) {
-		RefreshToken latestRefreshToken = refreshTokenQueryService.findLatestTokenByUser(user)
-			.orElseGet(() -> RefreshToken.of(user, jwtProvider.getExpirationFromToken(refreshToken)));
-		latestRefreshToken.updateRefreshToken(latestRefreshToken);
+		String clientEnvType = request.getHeader("EnvType");
+
+		// 프론트 환경변수 체크
+		jwtProvider.checkEnvType(clientEnvType);
+
+		// 닉네임 중복 체크
+		boolean isDuplicatedNickname = userQueryService.existsByNickname(oAuth2RegisterReqDto.nickname());
+		if (isDuplicatedNickname) {
+			throw new UserException(ErrorCode.DUPLICATED_NICKNAME);
+		}
+
+		User user = userQueryService.findUserById(oAuth2RegisterReqDto.userId());
+		user.updateOAuth2Info(oAuth2RegisterReqDto);
+
+		return user.getId();
 	}
 }

@@ -23,7 +23,7 @@ import troublog.backend.global.common.filter.JwtAuthenticationFilter;
 import troublog.backend.global.common.util.JwtAuthenticationProvider;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -38,6 +38,7 @@ public class SecurityConfig {
 		"/auth/login",
 		"/auth/refresh",
 		"/auth/email-check",
+		"/auth/oauth-register",
 		"/swagger-ui/**",
 		"/v3/api-docs/**",
 		"/error",

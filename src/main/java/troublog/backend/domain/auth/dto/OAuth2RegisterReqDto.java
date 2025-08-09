@@ -1,22 +1,17 @@
 package troublog.backend.domain.auth.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public record RegisterDto(
+public record OAuth2RegisterReqDto(
 
-	@NotBlank
-	@Schema(description = "이메일")
-	@JsonProperty("email")
-	String email,
-
-	@NotBlank
-	@Schema(description = "비밀번호")
-	@JsonProperty("password")
-	String password,
+	@NotNull
+	@Schema(description = "사용자 아이디")
+	@JsonProperty("userId")
+	Long userId,
 
 	@NotBlank
 	@Schema(description = "닉네임")
@@ -36,5 +31,5 @@ public record RegisterDto(
 	@Schema(description = "깃허브 주소")
 	@JsonProperty("githubUrl")
 	String githubUrl
-
-) {}
+) {
+}

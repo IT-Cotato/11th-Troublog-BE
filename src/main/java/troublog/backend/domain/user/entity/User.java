@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
 import troublog.backend.domain.like.entity.Like;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.entity.Post;
@@ -24,7 +25,7 @@ import troublog.backend.global.common.entity.BaseEntity;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Table(name = "users")
 public class User extends BaseEntity {
@@ -42,19 +43,12 @@ public class User extends BaseEntity {
 	@Column(name = "password")
 	private String password;
 
-	@NotNull
 	@Column(name = "nickname", unique = true)
 	private String nickname;
 
-	// TODO : 소셜로그인시 받아오는 이름?
-	@Column(name = "name")
-	private String name;
-
-	@NotNull
 	@Column(name = "field")
 	private String field;
 
-	@NotNull
 	@Column(name = "bio")
 	private String bio;
 
@@ -110,5 +104,13 @@ public class User extends BaseEntity {
 
 	public void deleteUser() {
 		this.isDeleted = true;
+	}
+
+	public void updateOAuth2Info(OAuth2RegisterReqDto oAuth2RegisterReqDto) {
+		this.nickname = oAuth2RegisterReqDto.nickname();
+		this.bio = oAuth2RegisterReqDto.bio();
+		this.field = oAuth2RegisterReqDto.field();
+		this.githubUrl = oAuth2RegisterReqDto.githubUrl();
+		this.status = UserStatus.ACTIVE;
 	}
 }
