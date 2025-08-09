@@ -1,0 +1,56 @@
+package troublog.backend.global.common.util;
+
+import java.util.Optional;
+
+import org.springframework.ai.chat.client.ChatClientRequest;
+import org.springframework.ai.chat.client.ChatClientResponse;
+import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
+import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
+import org.springframework.ai.chat.metadata.ChatResponseMetadata;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.stereotype.Component;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * OpenAI 사용량 추적 및 디버깅을 위한 Advisor
+ */
+@Slf4j
+@Component
+public class CustomLoggingAdvisor implements CallAdvisor {
+
+	private static final String AI_TAG = "[AI]";
+	private static final String LOG_FORMAT = "{} {}";
+
+	@Override
+	public String getName() {
+		return "SimpleLoggingAdvisor";
+	}
+
+	@Override
+	public int getOrder() {
+		return 0;
+	}
+
+	@Override
+	public ChatClientResponse adviseCall(ChatClientRequest request, CallAdvisorChain chain) {
+		log.debug("============== Request =============");
+
+		log.debug(LOG_FORMAT, AI_TAG, "Prompt: " + request.prompt().getContents());
+
+		ChatClientResponse advisedResponse = chain.nextCall(request);
+
+		log.info("============ Response ============");
+		Optional.ofNullable(advisedResponse.chatResponse())
+			.map(ChatResponse::getMetadata)
+			.map(ChatResponseMetadata::getUsage)
+			.ifPresent(usage -> {
+				log.info(LOG_FORMAT, AI_TAG, String.format("Input Tokens: %d", usage.getPromptTokens()));
+				log.info(LOG_FORMAT, AI_TAG, String.format("Output Tokens: %d", usage.getCompletionTokens()));
+				log.info(LOG_FORMAT, AI_TAG, String.format("Total Tokens: %d", usage.getTotalTokens()));
+			});
+
+		log.info("==================================");
+		return advisedResponse;
+	}
+}

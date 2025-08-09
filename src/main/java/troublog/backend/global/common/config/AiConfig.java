@@ -17,7 +17,7 @@ import io.micrometer.observation.ObservationRegistry;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.global.common.config.property.OpenAiProperties;
-import troublog.backend.global.common.util.SimpleLoggingAdvisor;
+import troublog.backend.global.common.util.CustomLoggingAdvisor;
 
 /**
  * Spring AI 및 OpenAI ChatClient 설정을 담당하는 구성 클래스
@@ -32,7 +32,7 @@ import troublog.backend.global.common.util.SimpleLoggingAdvisor;
 public class AiConfig {
 
 	private final ToolCallingManager toolCallingManager;
-	private final SimpleLoggingAdvisor loggingAdvisor;
+	private final CustomLoggingAdvisor customLoggingAdvisor;
 	private final OpenAiProperties openAiProperties;
 	private final RetryTemplate retryTemplate;
 
@@ -62,7 +62,7 @@ public class AiConfig {
 		ChatModel chatModel = createChatModel(openAiApi, chatOptions);
 
 		return ChatClient.builder(chatModel)
-			.defaultAdvisors(loggingAdvisor, chatMemoryAdvisor())
+			.defaultAdvisors(customLoggingAdvisor, chatMemoryAdvisor())
 			.build();
 	}
 
