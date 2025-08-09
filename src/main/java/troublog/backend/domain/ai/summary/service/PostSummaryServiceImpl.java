@@ -38,6 +38,7 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 	private final PostQueryFacade postQueryFacade;
 	private final ContentQueryService contentQueryService;
 	private final SummaryTaskFacade summaryTaskFacade;
+	private final PostSummaryCompletionService completionService;
 
 	@Override
 	public SummarizedResDto execute(SummaryTask summaryTask, String type) {
@@ -141,9 +142,7 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 	}
 
 	private SummarizedResDto completeTask(SummaryTask summaryTask, SummarizedResDto result) {
-		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.COMPLETED);
-		log.info("AI 분석 작업 완료: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId());
-		return result;
+		return completionService.completeTask(summaryTask, result);
 	}
 
 	private SummarizedResDto handleFailure(SummaryTask summaryTask, Throwable throwable) {

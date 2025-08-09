@@ -125,9 +125,6 @@ public class Post extends BaseEntity {
 		if (content == null) {
 			throw new PostException(ErrorCode.MISSING_CONTENT);
 		}
-		if (this.contents.contains(content)) {
-			return;
-		}
 		this.contents.add(content);
 		content.assignPost(this);
 	}

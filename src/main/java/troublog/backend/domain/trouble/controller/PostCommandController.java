@@ -20,12 +20,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import troublog.backend.domain.ai.summary.converter.SummaryTaskConverter;
-import troublog.backend.domain.ai.summary.service.PostSummaryServiceImpl;
 import troublog.backend.domain.trouble.dto.request.SummaryTypeReqDto;
 import troublog.backend.domain.ai.summary.dto.response.TaskStartResDto;
 import troublog.backend.domain.ai.summary.dto.response.TaskStatusResDto;
-import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
@@ -43,7 +40,6 @@ public class PostCommandController {
 
 	private final PostCommandFacade postCommandFacade;
 	private final SummaryTaskFacade summaryTaskFacade;
-	private final PostSummaryServiceImpl postSummaryServiceImpl;
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "트러블슈팅 문서 생성 API", description = "트러블슈팅 문서를 새롭게 생성한다.")
@@ -102,10 +98,7 @@ public class PostCommandController {
 		@Valid @RequestBody SummaryTypeReqDto summaryTypeReqDto,
 		@PathVariable long postId
 	) {
-		SummaryTask task = summaryTaskFacade.createTask(postId);
-		postSummaryServiceImpl.executeAsync(task, summaryTypeReqDto.type());
-		TaskStartResDto response = SummaryTaskConverter.toStartResponseDto(task, token.getUserId());
-		return ResponseUtils.ok(response);
+		return ResponseUtils.ok(postCommandFacade.startSummary(token.getUserId(), summaryTypeReqDto, postId));
 	}
 
 	@GetMapping("/{postId}/summary/{taskId}")
