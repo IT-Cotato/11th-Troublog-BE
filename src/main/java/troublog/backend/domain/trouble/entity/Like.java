@@ -20,6 +20,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import troublog.backend.domain.user.entity.User;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.PostException;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -51,4 +53,26 @@ public class Like {
 		this.likedAt = LocalDateTime.now();
 	}
 
+	public static Like createLike(User user, Post post) {
+		Like like = new Like();
+		like.assignUser(user);
+		like.assignPost(post);
+		return like;
+	}
+
+	public void assignUser(User user) {
+		if (user == null) {
+			throw new PostException(ErrorCode.MISSING_USER);
+		}
+		this.user = user;
+		user.addLike(this);
+	}
+
+	public void assignPost(Post post) {
+		if (post == null) {
+			throw new PostException(ErrorCode.MISSING_POST);
+		}
+		this.post = post;
+		post.addLike(this);
+	}
 }

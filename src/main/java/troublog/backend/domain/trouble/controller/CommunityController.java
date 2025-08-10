@@ -23,9 +23,10 @@ import troublog.backend.domain.trouble.dto.request.CommentUpdateReqDto;
 import troublog.backend.domain.trouble.dto.response.CommentDetailResDto;
 import troublog.backend.domain.trouble.dto.response.CommentResDto;
 import troublog.backend.domain.trouble.dto.response.LikePostResDto;
-import troublog.backend.domain.trouble.service.LikeService;
+import troublog.backend.domain.trouble.dto.response.LikeResDto;
 import troublog.backend.domain.trouble.service.facade.CommentCommandFacade;
 import troublog.backend.domain.trouble.service.facade.CommentQueryFacade;
+import troublog.backend.domain.trouble.service.facade.LikeCommandFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -37,9 +38,10 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "커뮤니티", description = "커뮤니티 관련 API")
 public class CommunityController {
 
-	private final LikeService likeService;
+	private final LikeCommandFacade likeService;
 	private final CommentCommandFacade commentCommandFacade;
 	private final CommentQueryFacade commentQueryFacade;
+	private final LikeCommandFacade likeCommandService;
 
 	@PostMapping("{postId}/comment")
 	@Operation(summary = "댓글 생성 API", description = "해당하는 post의 댓글을 생성한다.")
@@ -98,7 +100,13 @@ public class CommunityController {
 		return ResponseUtils.ok(response);
 	}
 
-	// 포스트 좋아요
+	@PostMapping("/{postId}")
+	@Operation(summary = "포스트 좋아요 API", description = "해당하는 포스트에 좋아요한다.")
+	public ResponseEntity<BaseResponse<LikeResDto>> postLike(@PathVariable Long postId,
+		@Authentication CustomAuthenticationToken auth) {
+		LikeResDto response = likeCommandService.postLike(postId, auth.getUserId());
+		return ResponseUtils.created(response);
+	}
 
 	// 포스트 좋아요 취소
 

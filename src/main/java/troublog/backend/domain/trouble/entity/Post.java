@@ -164,6 +164,21 @@ public class Post extends BaseEntity {
 		postTag.assignPost(this);
 	}
 
+	public void addLike(Like like) {
+		if (like == null)
+			return;
+		if (this.likes.contains(like))
+			return;
+		this.likes.add(like);
+		likeCount++;
+	}
+
+	public void removeLike(Like like) {
+		if (like == null)
+			return;
+		this.likes.remove(like);
+	}
+
 	public void updateTitle(String title) {
 		this.title = title;
 	}

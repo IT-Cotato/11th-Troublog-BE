@@ -75,7 +75,7 @@ public class User extends BaseEntity {
 	List<Like> likes = new ArrayList<>();
 
 	@Builder.Default
-	@OneToMany(mappedBy = "commnet", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<Comment> comments = new ArrayList<>();
 
 	@Column(name = "login_type")
@@ -106,7 +106,20 @@ public class User extends BaseEntity {
 	public void addComment(Comment comment) {
 		this.comments.add(comment);
 		comment.assignUser(this);
+	}
 
+	public void addLike(Like like) {
+		if (like == null)
+			return;
+		if (this.likes.contains(like))
+			return; // 중복 방지
+		this.likes.add(like);
+	}
+
+	public void removeLike(Like like) {
+		if (like == null)
+			return;
+		this.likes.remove(like);
 	}
 
 	public void updateUserProfile(UserProfileUpdateReqDto userProfileUpdateReqDto) {

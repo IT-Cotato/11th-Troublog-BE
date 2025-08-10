@@ -88,6 +88,11 @@ public enum ErrorCode {
 	COMMENT_NOT_PARENT(HttpStatus.BAD_REQUEST, "CM-003", "상위 댓글이 아닙니다."),
 
 	/**
+	 * Like Error
+	 */
+	LIKE_ALREADY_EXISTS(HttpStatus.CONFLICT, "L-001", "이미 좋아요가 눌러진 상태입니다."),
+
+	/**
 	 * Image Error
 	 */
 	MISSING_IMAGE_LIST(HttpStatus.BAD_REQUEST, "I-001", "이미지 리스트가 누락되었습니다."),
