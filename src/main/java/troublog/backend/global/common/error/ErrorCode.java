@@ -1,9 +1,9 @@
 package troublog.backend.global.common.error;
 
+import org.springframework.http.HttpStatus;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
@@ -79,6 +79,13 @@ public enum ErrorCode {
 	TECH_STACK_NOT_FOUND(HttpStatus.NOT_FOUND, "T-004", "기술 스택을 찾을 수 없습니다."),
 	TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "T-005", "태그를 찾을 수 없습니다."),
 	INVALID_TAG_TYPE(HttpStatus.BAD_REQUEST, "T-006", "유효하지 않은 태그 타입입니다."),
+
+	/**
+	 * Comment Error
+	 */
+	COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "CM-001", "댓글를 찾지 못했습니다."),
+	COMMENT_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "CM-002", "접근 불가능한 댓글입니다."),
+	COMMENT_NOT_PARENT(HttpStatus.BAD_REQUEST, "CM-003", "상위 댓글이 아닙니다."),
 
 	/**
 	 * Image Error

@@ -14,10 +14,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
-import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
-import troublog.backend.domain.like.entity.Like;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import troublog.backend.domain.project.entity.Project;
+import troublog.backend.domain.trouble.entity.Comment;
+import troublog.backend.domain.trouble.entity.Like;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
 import troublog.backend.global.common.entity.BaseEntity;
@@ -70,6 +74,10 @@ public class User extends BaseEntity {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<Like> likes = new ArrayList<>();
 
+	@Builder.Default
+	@OneToMany(mappedBy = "commnet", cascade = CascadeType.ALL, orphanRemoval = true)
+	List<Comment> comments = new ArrayList<>();
+
 	@Column(name = "login_type")
 	private String loginType;
 
@@ -93,6 +101,12 @@ public class User extends BaseEntity {
 	public void addPost(Post post) {
 		this.posts.add(post);
 		post.assignUser(this);
+	}
+
+	public void addComment(Comment comment) {
+		this.comments.add(comment);
+		comment.assignUser(this);
+
 	}
 
 	public void updateUserProfile(UserProfileUpdateReqDto userProfileUpdateReqDto) {
