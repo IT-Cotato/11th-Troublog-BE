@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import troublog.backend.domain.trouble.dto.request.CommentReqDto;
 import troublog.backend.domain.trouble.entity.Comment;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
@@ -20,9 +19,9 @@ public class CommentRelationFacade {
 	private final PostQueryService postQueryService;
 	private final UserQueryService userQueryService;
 
-	public void establishRelations(Comment createdComment, Long userId, CommentReqDto commentReqDto) {
+	public void establishRelations(Comment createdComment, Long userId, Long postId) {
 		setUserRelations(createdComment, userId);
-		setPostRelations(createdComment, commentReqDto.postId());
+		setPostRelations(createdComment, postId);
 	}
 
 	public void establishChildRelations(Comment parentComment, Comment childComment) {

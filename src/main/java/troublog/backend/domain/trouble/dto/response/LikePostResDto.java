@@ -10,7 +10,7 @@ import lombok.Builder;
 @Schema(description = "좋아요한 포스트 응답 DTO")
 public record LikePostResDto(
 	@Schema(description = "게시글 ID")
-	Long id,
+	Long postId,
 
 	@Schema(description = "게시글 제목")
 	String title,

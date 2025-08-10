@@ -7,7 +7,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.converter.CommentConverter;
 import troublog.backend.domain.trouble.dto.request.CommentReqDto;
-import troublog.backend.domain.trouble.dto.request.CommentUpdateReqDto;
 import troublog.backend.domain.trouble.dto.response.CommentResDto;
 import troublog.backend.domain.trouble.entity.Comment;
 import troublog.backend.domain.trouble.entity.Post;
@@ -16,7 +15,6 @@ import troublog.backend.domain.trouble.service.factory.CommentFactory;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.CommentQueryService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
-import troublog.backend.domain.user.service.query.UserQueryService;
 
 @Service
 @Transactional
@@ -25,22 +23,21 @@ public class CommentCommandFacade {
 
 	private final PostQueryService postQueryService;
 	private final CommentCommandService commentCommandService;
-	private final UserQueryService userQueryService;
 	private final CommentRelationFacade commentRelationFacade;
 	private final CommentQueryService commentQueryService;
 
-	public CommentResDto createComment(Long userId, CommentReqDto commentReqDto) {
-		Post post = postQueryService.findById(commentReqDto.postId());
+	public CommentResDto createComment(Long userId, Long postId, CommentReqDto commentReqDto) {
+		Post post = postQueryService.findById(postId);
 		PostFactory.validateVisibility(post);
 
 		Comment newComment = CommentConverter.toEntity(commentReqDto);
-		commentRelationFacade.establishRelations(newComment, userId, commentReqDto);
+		commentRelationFacade.establishRelations(newComment, userId, postId);
 		Comment savedComment = commentCommandService.save(newComment);
 		return CommentConverter.toResponse(savedComment);
 	}
 
-	public CommentResDto createChildComment(Long userId, CommentReqDto commentReqDto, Long commentId) {
-		Post post = postQueryService.findById(commentReqDto.postId());
+	public CommentResDto createChildComment(Long userId, CommentReqDto commentReqDto, Long commentId, Long postId) {
+		Post post = postQueryService.findById(postId);
 		PostFactory.validateVisibility(post);
 
 		Comment parentComment = commentQueryService.findComment(commentId);
@@ -48,16 +45,18 @@ public class CommentCommandFacade {
 
 		Comment newChildComment = CommentConverter.toEntity(commentReqDto);
 		commentRelationFacade.establishChildRelations(parentComment, newChildComment);
-		commentRelationFacade.establishRelations(newChildComment, userId, commentReqDto);
+		commentRelationFacade.establishRelations(newChildComment, userId, postId);
 		Comment savedComment = commentCommandService.save(newChildComment);
 		return CommentConverter.toChildResponse(savedComment);
 	}
 
-	public CommentResDto updateComment(Long userId, CommentUpdateReqDto commentUpdateReqDto) {
-		Comment comment = commentQueryService.findComment(commentUpdateReqDto.id());
+	public CommentResDto updateComment(Long userId, CommentReqDto commentReqDto, Long commentId, Long postId) {
+		Post post = postQueryService.findById(postId);
+		PostFactory.validateVisibility(post);
+		Comment comment = commentQueryService.findComment(commentId);
 		CommentFactory.validateAuthorized(userId, comment);
 
-		comment.updateContent(commentUpdateReqDto.contents());
+		comment.updateContent(commentReqDto.contents());
 		return CommentConverter.toResponse(comment);
 	}
 

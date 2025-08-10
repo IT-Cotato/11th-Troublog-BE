@@ -91,7 +91,7 @@ public enum ErrorCode {
 	 * Like Error
 	 */
 	LIKE_ALREADY_EXISTS(HttpStatus.CONFLICT, "L-001", "이미 좋아요가 눌러진 상태입니다."),
-
+	LIKE_NOT_EXISTS(HttpStatus.NOT_FOUND, "L-002", "좋아요가 되어 있지 않은 상태입니다."),
 	/**
 	 * Image Error
 	 */

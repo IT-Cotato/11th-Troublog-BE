@@ -21,7 +21,7 @@ public class CommentConverter {
 
 	public CommentResDto toResponse(Comment comment) {
 		return CommentResDto.builder()
-			.id(comment.getId())
+			.commentId(comment.getId())
 			.postId(comment.getPost().getId())
 			.userId(comment.getUser().getId())
 			.content(comment.getContent())
@@ -31,7 +31,7 @@ public class CommentConverter {
 
 	public CommentResDto toChildResponse(Comment comment) {
 		return CommentResDto.builder()
-			.id(comment.getId())
+			.commentId(comment.getId())
 			.postId(comment.getPost().getId())
 			.userId(comment.getUser().getId())
 			.content(comment.getContent())
@@ -46,7 +46,7 @@ public class CommentConverter {
 			.collect(Collectors.toList());
 
 		return CommentDetailResDto.builder()
-			.id(comment.getId())
+			.postId(comment.getId())
 			.postId(comment.getPost().getId())
 			.userId(comment.getUser().getId())
 			.content(comment.getContent())

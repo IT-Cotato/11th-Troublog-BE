@@ -13,15 +13,15 @@ import lombok.Builder;
 public record CommentDetailResDto(
 
 	@NotNull
-	@Schema(description = "댓글 id")
-	Long id,
+	@Schema(description = "댓글 commentId")
+	Long commentId,
 
 	@NotNull
-	@Schema(description = "포스트 id")
+	@Schema(description = "포스트 commentId")
 	Long postId,
 
 	@NotNull
-	@Schema(description = "유저 id")
+	@Schema(description = "유저 commentId")
 	Long userId,
 
 	@NotNull

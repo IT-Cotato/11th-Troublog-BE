@@ -116,12 +116,6 @@ public class User extends BaseEntity {
 		this.likes.add(like);
 	}
 
-	public void removeLike(Like like) {
-		if (like == null)
-			return;
-		this.likes.remove(like);
-	}
-
 	public void updateUserProfile(UserProfileUpdateReqDto userProfileUpdateReqDto) {
 		this.nickname = userProfileUpdateReqDto.nickname();
 		this.field = userProfileUpdateReqDto.field();

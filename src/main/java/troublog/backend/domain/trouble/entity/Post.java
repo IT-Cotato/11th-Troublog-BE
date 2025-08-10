@@ -176,7 +176,10 @@ public class Post extends BaseEntity {
 	public void removeLike(Like like) {
 		if (like == null)
 			return;
-		this.likes.remove(like);
+		if (this.likes.remove(like)) {
+			if (likeCount > 0)
+				likeCount--;
+		}
 	}
 
 	public void updateTitle(String title) {

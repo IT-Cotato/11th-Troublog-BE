@@ -9,7 +9,7 @@ public record LikeResDto(
 	@Schema(description = "게시글 ID")
 	Long postId,
 
-	@Schema(description = "유저 id")
+	@Schema(description = "유저 commentId")
 	Long userId,
 
 	@Schema(description = "좋아요 수")

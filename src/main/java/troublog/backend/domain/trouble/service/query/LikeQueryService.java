@@ -1,16 +1,16 @@
 package troublog.backend.domain.trouble.service.query;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.entity.Like;
 import troublog.backend.domain.trouble.repository.LikeRepository;
-import troublog.backend.domain.user.entity.User;
-import troublog.backend.global.common.error.ErrorCode;
-import troublog.backend.global.common.error.exception.PostException;
 
 @Slf4j
 @Service
@@ -20,9 +20,11 @@ public class LikeQueryService {
 
 	private final LikeRepository likeRepository;
 
-	public void assertLikeNotExists(User user, Post post) {
-		if (likeRepository.existsByUserAndPost(user, post)) {
-			throw new PostException(ErrorCode.LIKE_ALREADY_EXISTS);
-		}
+	public Optional<Like> findByUserAndPost(Long userId, Long postId) {
+		return likeRepository.findByUserIdAndPostId(userId, postId);
+	}
+
+	public List<Like> findByUserIdOrderByLikedAtDesc(Long userId) {
+		return likeRepository.findByUserIdOrderByLikedAtDesc(userId);
 	}
 }

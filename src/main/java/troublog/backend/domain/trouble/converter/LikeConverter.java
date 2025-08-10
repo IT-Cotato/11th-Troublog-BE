@@ -33,7 +33,7 @@ public class LikeConverter {
 		}
 
 		return LikePostResDto.builder()
-			.id(post.getId())
+			.postId(post.getId())
 			.title(post.getTitle())
 			.techTags(techTag)
 			.errorTags(errorTag)

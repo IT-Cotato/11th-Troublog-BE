@@ -19,7 +19,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.request.CommentReqDto;
-import troublog.backend.domain.trouble.dto.request.CommentUpdateReqDto;
 import troublog.backend.domain.trouble.dto.response.CommentDetailResDto;
 import troublog.backend.domain.trouble.dto.response.CommentResDto;
 import troublog.backend.domain.trouble.dto.response.LikePostResDto;
@@ -38,27 +37,26 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "커뮤니티", description = "커뮤니티 관련 API")
 public class CommunityController {
 
-	private final LikeCommandFacade likeService;
 	private final CommentCommandFacade commentCommandFacade;
 	private final CommentQueryFacade commentQueryFacade;
-	private final LikeCommandFacade likeCommandService;
+	private final LikeCommandFacade likeCommandFacade;
 
 	@PostMapping("{postId}/comment")
 	@Operation(summary = "댓글 생성 API", description = "해당하는 post의 댓글을 생성한다.")
 	public ResponseEntity<BaseResponse<CommentResDto>> createComment(@PathVariable Long postId,
 		@Authentication CustomAuthenticationToken auth,
 		@Valid @RequestBody CommentReqDto commentReqDto) {
-		CommentResDto response = commentCommandFacade.createComment(auth.getUserId(), commentReqDto);
+		CommentResDto response = commentCommandFacade.createComment(auth.getUserId(), postId, commentReqDto);
 		return ResponseUtils.created(response);
 	}
 
-	@PutMapping("{postId}/comment")
+	@PutMapping("{postId}/{commentId}")
 	@Operation(summary = "댓글 수정 API", description = "해당하는 post의 댓글 내용을 수정한다.")
 	public ResponseEntity<BaseResponse<CommentResDto>> updateComment(@PathVariable Long postId,
+		@PathVariable Long commentId,
 		@Authentication CustomAuthenticationToken auth,
-		@Valid @RequestBody CommentUpdateReqDto commentUpdateReqDto) {
-		Long userId = auth.getUserId();
-		CommentResDto response = commentCommandFacade.updateComment(userId, commentUpdateReqDto);
+		@Valid @RequestBody CommentReqDto commentReqDto) {
+		CommentResDto response = commentCommandFacade.updateComment(auth.getUserId(), commentReqDto, postId, commentId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -81,13 +79,14 @@ public class CommunityController {
 		return ResponseUtils.ok(comments);
 	}
 
-	@PostMapping("/{commentId}")
+	@PostMapping("/{postId}/{commentId}")
 	@Operation(summary = "대댓글 생성 API", description = "해당하는 post의 댓글의 대댓글을 생성한다.")
 	public ResponseEntity<BaseResponse<CommentResDto>> createChildComment(@PathVariable Long commentId,
+		@PathVariable Long postId,
 		@Authentication CustomAuthenticationToken auth,
 		@Valid @RequestBody CommentReqDto commentReqDto) {
 		CommentResDto response = commentCommandFacade.createChildComment(auth.getUserId(), commentReqDto,
-			commentId);
+			commentId, postId);
 		return ResponseUtils.created(response);
 	}
 
@@ -100,23 +99,27 @@ public class CommunityController {
 		return ResponseUtils.ok(response);
 	}
 
-	@PostMapping("/{postId}")
+	@PostMapping("/{postId}/like")
 	@Operation(summary = "포스트 좋아요 API", description = "해당하는 포스트에 좋아요한다.")
 	public ResponseEntity<BaseResponse<LikeResDto>> postLike(@PathVariable Long postId,
 		@Authentication CustomAuthenticationToken auth) {
-		LikeResDto response = likeCommandService.postLike(postId, auth.getUserId());
+		LikeResDto response = likeCommandFacade.postLike(postId, auth.getUserId());
 		return ResponseUtils.created(response);
 	}
 
-	// 포스트 좋아요 취소
+	@DeleteMapping("/{postId}/like")
+	@Operation(summary = "포스트 좋아요 취소 API", description = "해당 포스트의 좋아요를 취소한다.")
+	public ResponseEntity<BaseResponse<Void>> deleteLike(@PathVariable Long postId,
+		@Authentication CustomAuthenticationToken auth) {
+		likeCommandFacade.deleteLike(postId, auth.getUserId());
+		return ResponseUtils.noContent();
+	}
 
-	// 좋아요한 포스트 조회
 	@GetMapping("/likes")
 	@Operation(summary = "좋아요한 포스트 조회 API", description = "최근에 좋아요한 순으로 포스트를 불러온다.")
 	public ResponseEntity<BaseResponse<List<LikePostResDto>>> getUserLikedPosts(
 		@Authentication CustomAuthenticationToken auth) {
-		Long userId = auth.getUserId();
-		List<LikePostResDto> likedPosts = likeService.getLikedPostsByUser(userId);
+		List<LikePostResDto> likedPosts = likeCommandFacade.getLikedPostsByUser(auth.getUserId());
 		return ResponseUtils.ok(likedPosts);
 	}
 }
