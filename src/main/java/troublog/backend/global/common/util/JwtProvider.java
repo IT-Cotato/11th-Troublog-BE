@@ -11,15 +11,19 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import javax.crypto.SecretKey;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -238,7 +242,19 @@ public class JwtProvider {
         } catch (ExpiredJwtException e) {
             return true;
         }
+    }
 
+    /**
+     * 토큰에서 만료일시 추출
+     */
+    public Date getExpirationFromToken(String token) {
+        Claims claims = Jwts.parser()
+            .verifyWith(key) // 서명 검증
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
+
+        return claims.getExpiration();
     }
 
     public void checkEnvType(String clientEnvType) {
@@ -284,5 +300,29 @@ public class JwtProvider {
 
         // 리프레시토큰 철회
         refreshToken.revokeRefreshToken();
+    }
+
+    public void setCookieRefreshToken(String refreshToken, HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+            .httpOnly(true)
+            .secure(false)
+            .path("/")
+            .maxAge(Duration.ofSeconds(86400))
+            .sameSite("Strict")
+            .build();
+
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    }
+
+    public void deleteCookieRefreshToken(HttpServletResponse response) {
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
+            .path("/")
+            .maxAge(0)  // 즉시 만료
+            .httpOnly(true)
+            .secure(false)
+            .sameSite("Strict")
+            .build();
+
+        response.setHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
     }
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
 import troublog.backend.domain.like.entity.Like;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.entity.Post;
@@ -22,7 +25,7 @@ import troublog.backend.global.common.entity.BaseEntity;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Table(name = "users")
 public class User extends BaseEntity {
@@ -40,19 +43,12 @@ public class User extends BaseEntity {
 	@Column(name = "password")
 	private String password;
 
-	@NotNull
 	@Column(name = "nickname", unique = true)
 	private String nickname;
 
-	// TODO : 소셜로그인시 받아오는 이름?
-	@Column(name = "name")
-	private String name;
-
-	@NotNull
 	@Column(name = "field")
 	private String field;
 
-	@NotNull
 	@Column(name = "bio")
 	private String bio;
 
@@ -76,6 +72,11 @@ public class User extends BaseEntity {
 
 	@Column(name = "login_type")
 	private String loginType;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	@Builder.Default
+	private UserStatus status = UserStatus.INCOMPLETE;
 
 	@Column(name = "social_id")
 	private String socialId;
@@ -104,5 +105,13 @@ public class User extends BaseEntity {
 
 	public void deleteUser() {
 		this.isDeleted = true;
+	}
+
+	public void updateOAuth2Info(String nickname, String field, String bio, String githubUrl) {
+		this.nickname = nickname;
+		this.bio = bio;
+		this.field = field;
+		this.githubUrl = githubUrl;
+		this.status = UserStatus.ACTIVE;
 	}
 }

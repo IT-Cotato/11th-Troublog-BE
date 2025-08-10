@@ -17,15 +17,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.CorsFilter;
 
 import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.auth.handler.OAuth2LoginSuccessHandler;
 import troublog.backend.global.common.filter.ExceptionHandlerFilter;
 import troublog.backend.global.common.filter.JwtAuthenticationFilter;
 import troublog.backend.global.common.util.JwtAuthenticationProvider;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 	private final JwtAuthenticationProvider jwtAuthenticationProvider;
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final ExceptionHandlerFilter exceptionHandlerFilter;
@@ -36,6 +38,7 @@ public class SecurityConfig {
 		"/auth/login",
 		"/auth/refresh",
 		"/auth/email-check",
+		"/auth/oauth-register",
 		"/swagger-ui/**",
 		"/v3/api-docs/**",
 		"/error",
@@ -59,7 +62,9 @@ public class SecurityConfig {
 				.permitAll()
 				.anyRequest()
 				.authenticated()
-			);
+			)
+			.oauth2Login(oauth2 -> oauth2
+				.successHandler(oAuth2LoginSuccessHandler));
 		
 		http
 			.addFilterBefore(exceptionHandlerFilter, CorsFilter.class)
@@ -74,11 +79,6 @@ public class SecurityConfig {
 		AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
 		builder.authenticationProvider(jwtAuthenticationProvider);
 		return builder.build();
-	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
 	}
 
 	private static void createSessionPolicy(SessionManagementConfigurer<HttpSecurity> session) {

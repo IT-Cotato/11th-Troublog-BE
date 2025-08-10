@@ -5,24 +5,26 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.experimental.UtilityClass;
-import troublog.backend.domain.auth.dto.RegisterDto;
+import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserProfileResDto;
 import troublog.backend.domain.user.entity.User;
+import troublog.backend.domain.user.entity.UserStatus;
 
 @UtilityClass
 public class UserConverter {
 
-	public User toEntity(RegisterDto registerDto, String encodedPassword) {
+	public User toEntity(RegisterReqDto registerReqDto, String encodedPassword) {
 		return User.builder()
-			.email(registerDto.email())
+			.email(registerReqDto.email())
 			.password(encodedPassword)
-			.nickname(registerDto.nickname())
-			.field(registerDto.field())
-			.bio(registerDto.bio())
-			.githubUrl(registerDto.githubUrl())
+			.nickname(registerReqDto.nickname())
+			.field(registerReqDto.field())
+			.bio(registerReqDto.bio())
+			.githubUrl(registerReqDto.githubUrl())
 			.isDeleted(false)
+			.status(UserStatus.ACTIVE)
 			.build();
 	}
 

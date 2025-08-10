@@ -1,5 +1,7 @@
 package troublog.backend.domain.user.service.query;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,5 +58,10 @@ public class UserQueryService {
 	public boolean existsByNickname(String nickname) {
 
 		return userRepository.existsByNickname(nickname);
+	}
+
+	public Optional<User> findUserBySocialId(String socialId) {
+
+	return userRepository.findBySocialId(socialId);
 	}
 }

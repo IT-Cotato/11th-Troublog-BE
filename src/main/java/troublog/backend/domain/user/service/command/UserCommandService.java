@@ -17,8 +17,8 @@ public class UserCommandService {
 
 	private final UserRepository userRepository;
 
-	public Long save(User user) {
-		return userRepository.save(user).getId();
+	public User save(User user) {
+		return userRepository.save(user);
 	}
 
 	public void updateUserProfile(User user, UserProfileUpdateReqDto userProfileUpdateReqDto) {

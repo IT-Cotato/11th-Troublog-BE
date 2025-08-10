@@ -17,9 +17,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
-import troublog.backend.domain.auth.dto.RegisterDto;
+import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
+import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.auth.service.AuthFacade;
-import troublog.backend.domain.auth.service.AuthService;
 import troublog.backend.global.common.response.BaseResponse;
 import troublog.backend.global.common.util.ResponseUtils;
 
@@ -30,17 +30,15 @@ import troublog.backend.global.common.util.ResponseUtils;
 public class AuthController {
 
 	private final AuthFacade authFacade;
-	private final AuthService authService;
-
 	@PostMapping("/register")
 	@Operation(summary = "회원가입 API", description = "깃헙 주소는 선택, 나머지는 필수입력")
 	@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공",
 		content = @Content(schema = @Schema(implementation = Long.class)))
 	public ResponseEntity<BaseResponse<Long>> register(
-		@Valid @RequestBody RegisterDto registerDto,
+		@Valid @RequestBody RegisterReqDto registerReqDto,
 		HttpServletRequest request) {
 
-		Long userId = authFacade.register(registerDto, request);
+		Long userId = authFacade.register(registerReqDto, request);
 
 		return ResponseUtils.created(userId);
 	}
@@ -86,8 +84,22 @@ public class AuthController {
 	@PostMapping("/logout")
 	public ResponseEntity<BaseResponse<Void>> logout(HttpServletRequest request, HttpServletResponse response) {
 
-		authService.logout(request, response);
+		authFacade.logout(request, response);
 
 		return ResponseUtils.noContent();
 	}
+
+	@Operation(summary = "카카오 로그인 약관 동의 후 입력 란", description = "닉네임, 분야, 한 줄 소개, 깃허브 주소 입력")
+	@PostMapping("/oauth-register")
+	@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공",
+		content = @Content(schema = @Schema(implementation = Long.class)))
+	public ResponseEntity<BaseResponse<Long>> oauthRegister(
+		@Valid @RequestBody OAuth2RegisterReqDto oAuth2RegisterReqDto,
+		HttpServletRequest request
+	) {
+		Long userId = authFacade.oAuthRegister(oAuth2RegisterReqDto, request);
+
+		return ResponseUtils.created(userId);
+	}
+
 }
