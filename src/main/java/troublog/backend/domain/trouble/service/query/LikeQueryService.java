@@ -24,6 +24,7 @@ public class LikeQueryService {
 		return likeRepository.findByUserIdAndPostId(userId, postId);
 	}
 
+	@Transactional(readOnly = true)
 	public List<Like> findByUserIdOrderByLikedAtDesc(Long userId) {
 		return likeRepository.findByUserIdOrderByLikedAtDesc(userId);
 	}
