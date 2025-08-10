@@ -9,8 +9,6 @@ CLAUDE.md
 package.json
 package-lock.json
 .env
-*.st
-/src/main/resources/prompts/
 
 ### STS ###
 .apt_generated

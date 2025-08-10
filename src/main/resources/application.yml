@@ -28,11 +28,11 @@ spring:
 
 ai:
   prompts:
-    system: ${AI_PROMPT_SYSTEM}
-    resume: ${AI_PROMPT_RESUME}
-    interview: ${AI_PROMPT_INTERVIEW}
-    blog: ${AI_PROMPT_BLOG}
-    issue-management: ${AI_PROMPT_ISSUE_MANAGEMENT}
+    system: classpath:prompts/system.st
+    resume: classpath:prompts/resume.st
+    interview: classpath:prompts/interview.st
+    blog: classpath:prompts/blog.st
+    issue-management: classpath:prompts/issue-management.st
 
 springdoc:
   swagger-ui:
