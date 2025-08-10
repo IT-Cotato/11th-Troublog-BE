@@ -26,7 +26,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-@Tag(name = "인증", description = "회원가입 및 로그인")
+@Tag(name = "인증", description = "회원가입 및 로그인 API")
 public class AuthController {
 
 	private final AuthFacade authFacade;
