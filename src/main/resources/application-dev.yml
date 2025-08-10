@@ -20,3 +20,7 @@ spring:
           auto: update
         default_batch_fetch_size: 1000
     open-in-view: false
+  data:
+    redis:
+      host: redis # redis container 이름
+      port: 6379
