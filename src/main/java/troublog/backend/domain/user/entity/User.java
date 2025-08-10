@@ -75,7 +75,8 @@ public class User extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
-	private UserStatus status;
+	@Builder.Default
+	private UserStatus status = UserStatus.INCOMPLETE;
 
 	@Column(name = "social_id")
 	private String socialId;
@@ -106,11 +107,11 @@ public class User extends BaseEntity {
 		this.isDeleted = true;
 	}
 
-	public void updateOAuth2Info(OAuth2RegisterReqDto oAuth2RegisterReqDto) {
-		this.nickname = oAuth2RegisterReqDto.nickname();
-		this.bio = oAuth2RegisterReqDto.bio();
-		this.field = oAuth2RegisterReqDto.field();
-		this.githubUrl = oAuth2RegisterReqDto.githubUrl();
+	public void updateOAuth2Info(String nickname, String field, String bio, String githubUrl) {
+		this.nickname = nickname;
+		this.bio = bio;
+		this.field = field;
+		this.githubUrl = githubUrl;
 		this.status = UserStatus.ACTIVE;
 	}
 }

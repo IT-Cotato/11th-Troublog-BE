@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,6 @@ import troublog.backend.domain.user.service.command.UserCommandService;
 import troublog.backend.global.common.constant.EnvType;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.util.JwtProvider;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Value;
 import java.util.UUID;
 
@@ -36,6 +36,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 	private final UserCommandService userCommandService;
 	private final JwtProvider jwtProvider;
 	private final ObjectMapper objectMapper;
+	private final PasswordEncoder passwordEncoder;
 
 	@Value("${spring.profiles.active}")
 	private String profilesActive;
@@ -92,7 +93,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 						.status(UserStatus.INCOMPLETE) // 프로필 정보 미완성 상태
 						.loginType("KAKAO")
 						.socialId(socialId)
-						.password(new BCryptPasswordEncoder().encode(UUID.randomUUID().toString()))
+						.password(passwordEncoder.encode(UUID.randomUUID().toString()))
 						.isDeleted(false)
 						// field, bio, githubUrl은 null로 두고 나중에 입력받음
 						.build()
@@ -143,7 +144,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 			user.getEmail(), 
 			user.getPassword(), 
 			user.getId(),
-			clientEnvType, 
+			clientEnvType,
 			user.getNickname()
 		);
 

@@ -19,6 +19,6 @@ public class RefreshTokenQueryService {
 
 	public Optional<RefreshToken> findLatestTokenByUser(User user) {
 
-		return refreshTokenRepository.findLatestTokenByUserAndNotRevoked(user);
+		return refreshTokenRepository.findFirstByUserAndRevoked(user, false);
 	}
 }

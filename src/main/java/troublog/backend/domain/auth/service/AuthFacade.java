@@ -54,6 +54,9 @@ public class AuthFacade {
 			throw new UserException(ErrorCode.DUPLICATED_NICKNAME);
 		}
 
+		// 비밀번호 중복 체크
+		checkDuplicateEmail(registerReqDto.email(), request);
+
 		// 비밀번호 인코딩
 		String encodedPassword = passwordEncoder.encode(registerReqDto.password());
 
@@ -172,7 +175,8 @@ public class AuthFacade {
 		}
 
 		User user = userQueryService.findUserById(oAuth2RegisterReqDto.userId());
-		user.updateOAuth2Info(oAuth2RegisterReqDto);
+		user.updateOAuth2Info(oAuth2RegisterReqDto.nickname(), oAuth2RegisterReqDto.field(), oAuth2RegisterReqDto.bio(),
+			oAuth2RegisterReqDto.githubUrl());
 
 		return user.getId();
 	}

@@ -81,11 +81,6 @@ public class SecurityConfig {
 		return builder.build();
 	}
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
 	private static void createSessionPolicy(SessionManagementConfigurer<HttpSecurity> session) {
 		session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}

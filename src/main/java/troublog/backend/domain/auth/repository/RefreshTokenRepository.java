@@ -12,6 +12,6 @@ import troublog.backend.domain.user.entity.User;
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
 
-	@Query("SELECT rt FROM RefreshToken rt WHERE rt.user = :user AND rt.isRevoked = false ORDER BY rt.created_at DESC limit 1")
-	Optional<RefreshToken> findLatestTokenByUserAndNotRevoked(User user);
+	@Query("SELECT rt FROM RefreshToken rt WHERE rt.user = :user AND rt.isRevoked = false ORDER BY rt.expiredAt DESC")
+	Optional<RefreshToken> findFirstByUserAndRevoked(User user, boolean isRevoked);
 }
