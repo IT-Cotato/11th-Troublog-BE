@@ -34,11 +34,44 @@ public class PostQueryController {
 
 	private final PostQueryFacade postQueryFacade;
 
+	@GetMapping("/{postId}/combine")
+	@Operation(summary = "트러블슈팅 문서 + AI 요약본 상세 조회 API", description = "ID 값 기반 트러블슈팅 문서 + AI 요약본 상세 조회")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = PostResDto.class)))
+	public ResponseEntity<BaseResponse<PostResDto>> findPostDetailsWithSummary(
+		@Authentication CustomAuthenticationToken token,
+		@PathVariable long postId
+	) {
+		PostResDto response = postQueryFacade.findPostDetailsWithSummaryById(token.getUserId(), postId);
+		return ResponseUtils.ok(response);
+	}
+
+	@GetMapping("/{postId}/summary")
+	@Operation(summary = "AI 요약본 상세 조회 API", description = "ID 값, SummaryType 기반 AI 요약본 상세 조회")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = PostResDto.class)))
+	public ResponseEntity<BaseResponse<PostResDto>> findPostSummaryOnly(
+		@Authentication CustomAuthenticationToken token,
+		@PathVariable long postId,
+		@Schema(
+			allowableValues = {
+				"RESUME",
+				"BLOG",
+				"INTERVIEW",
+				"ISSUE_MANAGEMENT",
+			}
+		)
+		@RequestParam String type
+	) {
+		PostResDto response = postQueryFacade.findPostSummaryById(token.getUserId(), postId, type);
+		return ResponseUtils.ok(response);
+	}
+
 	@GetMapping("/{postId}")
 	@Operation(summary = "트러블슈팅 문서 상세 조회 API", description = "ID 값 기반 트러블슈팅 문서 상세 조회")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
-	public ResponseEntity<BaseResponse<PostResDto>> findPostDetails(
+	public ResponseEntity<BaseResponse<PostResDto>> findPostDetailsOnly(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId
 	) {

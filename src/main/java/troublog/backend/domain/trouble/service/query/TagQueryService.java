@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;
 import troublog.backend.domain.trouble.enums.TagCategory;
 import troublog.backend.domain.trouble.enums.TagType;

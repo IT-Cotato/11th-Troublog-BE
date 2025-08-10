@@ -20,6 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 public class AsyncConfig implements AsyncConfigurer {
 
 	private static final String IMAGE_PREFIX = "Image";
+	public static final String SUMMARY_PREFIX = "AI-Summary";
+
+	@Bean(name = "summaryExecutor")
+	public Executor summaryExecutor() {
+		return createVirtualThreadExecutor(SUMMARY_PREFIX);
+	}
 
 	@Bean(name = "imageExecutor")
 	public Executor imageExecutor() {

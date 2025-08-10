@@ -18,8 +18,14 @@ public class PostTagQueryService {
 	private final PostTagRepository postTagRepository;
 
 	public List<PostTag> findAllByPostId(Long postId) {
-		List<PostTag> postTags = postTagRepository.findAllByPostId(postId);
-		log.info("[PostTag] 게시글별 태그 조회 결과: postId={}, tagCount={}", postId, postTags.size());
+		List<PostTag> postTags = postTagRepository.findAllByPostIdWithTag(postId);
+		log.info("[PostTag] 게시글별 태그 조회 (Fetch Join): postId={}, tagCount={}", postId, postTags.size());
 		return postTags;
+	}
+
+	public List<String> findTagNamesByPostId(Long postId) {
+		List<String> tagNames = postTagRepository.findTagNamesByPostId(postId);
+		log.info("[PostTag] 게시글별 태그명 조회: postId={}, tagCount={}", postId, tagNames.size());
+		return tagNames;
 	}
 }

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.enums.ContentSummaryType;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 	Optional<Post> findByIdAndIsDeletedFalse(Long id);
@@ -65,4 +66,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		@Param("keyword") String keyword,
 		Pageable pageable
 	);
+
+	@Query("SELECT p FROM Post p JOIN FETCH p.contents c WHERE c.authorType = 'AI_GENERATED' AND c.summaryType = :summaryType AND p.id = :id AND p.isDeleted = false")
+	Optional<Post> findSummaryById(@Param("id") Long id, @Param("summaryType") ContentSummaryType summaryType);
+
+	@Query("SELECT p FROM Post p JOIN FETCH p.contents c WHERE c.authorType = 'USER_WRITTEN' AND p.id = :id AND p.isDeleted = false")
+	Optional<Post> findPostWithOutSummaryById(@Param("id") Long id);
 }

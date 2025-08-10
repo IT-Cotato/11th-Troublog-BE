@@ -12,7 +12,7 @@ spring:
       api-key: ${OPEN_AI_API_KEY}
       chat:
         options:
-          model: gpt-4.1-mini
+          model: gpt-5-mini
   mvc:
     log-resolved-exception: false
   cloud:
@@ -25,6 +25,14 @@ spring:
   threads:
     virtual:
       enabled: true
+
+ai:
+  prompts:
+    system: classpath:prompts/system.st
+    resume: classpath:prompts/resume.st
+    interview: classpath:prompts/interview.st
+    blog: classpath:prompts/blog.st
+    issue-management: classpath:prompts/issue-management.st
 
 springdoc:
   swagger-ui:
