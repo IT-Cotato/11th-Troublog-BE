@@ -91,19 +91,72 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	);
 
 	@Query("""
-		  select distinct p
-		    from Post p
-		    left join p.contents c
-		   where p.project.id = :projectId
-		     and p.isDeleted = false
-		     and p.status = :status
-		     and (:summaryType is null or c.summaryType = :summaryType)
+		    select p
+		      from Post p
+		     where p.project.id = :projectId
+		       and p.isDeleted = false
+		       and p.status = :status
+		       and (:visible is null or p.isVisible = :visible)
+		     order by
+		       case p.starRating
+		         when troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS  then 5
+		         when troublog.backend.domain.trouble.enums.StarRating.FOUR_STARS  then 4
+		         when troublog.backend.domain.trouble.enums.StarRating.THREE_STARS then 3
+		         when troublog.backend.domain.trouble.enums.StarRating.TWO_STARS   then 2
+		         when troublog.backend.domain.trouble.enums.StarRating.ONE_STAR    then 1
+		         else 0
+		       end desc,
+		       p.id desc
+		""")
+	List<Post> findByProjectCompletedImportant(
+		@Param("projectId") Long projectId,
+		@Param("status") PostStatus status,
+		@Param("visible") Boolean visible
+	);
+
+	@Query("""
+		    select p
+		      from Post p
+		     where p.project.id = :projectId
+		       and p.isDeleted = false
+		       and p.status = :status
+		       and (:summaryType is null or exists (
+		             select 1 from Content c
+		              where c.post = p and c.summaryType = :summaryType
+		       ))
 		""")
 	List<Post> findByProjectSummarized(
 		@Param("projectId") Long projectId,
 		@Param("status") PostStatus status,
 		@Param("summaryType") ContentSummaryType summaryType,
 		Sort sort
+	);
+
+	@Query("""
+		    select p
+		      from Post p
+		     where p.project.id = :projectId
+		       and p.isDeleted = false
+		       and p.status = :status
+		       and (:summaryType is null or exists (
+		             select 1 from Content c
+		              where c.post = p and c.summaryType = :summaryType
+		       ))
+		     order by
+		       case p.starRating
+		         when troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS  then 5
+		         when troublog.backend.domain.trouble.enums.StarRating.FOUR_STARS  then 4
+		         when troublog.backend.domain.trouble.enums.StarRating.THREE_STARS then 3
+		         when troublog.backend.domain.trouble.enums.StarRating.TWO_STARS   then 2
+		         when troublog.backend.domain.trouble.enums.StarRating.ONE_STAR    then 1
+		         else 0
+		       end desc,
+		       p.id desc
+		""")
+	List<Post> findByProjectSummarizedImportant(
+		@Param("projectId") Long projectId,
+		@Param("status") PostStatus status,
+		@Param("summaryType") ContentSummaryType summaryType
 	);
 
 	List<Post> findAllByUser_IdAndIsDeletedFalse(Long userId, Sort sort);

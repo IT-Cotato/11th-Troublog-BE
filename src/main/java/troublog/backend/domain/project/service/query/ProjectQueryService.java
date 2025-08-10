@@ -65,11 +65,11 @@ public class ProjectQueryService {
 	@Transactional(readOnly = true)
 	public List<TroubleListResDto> getCompletedTroubles(
 		Long projectId, SortType sort, VisibilityType visibility) {
-		Sort s = sort == SortType.IMPORTANT
-			? Sort.by(DESC, "starRating", "id")
-			: Sort.by(DESC, "completedAt", "id");
 		Boolean visible = mapVisibility(visibility);
-		List<Post> posts = postRepository.findByProjectCompleted(projectId, PostStatus.COMPLETED, visible, s);
+		List<Post> posts = (sort == SortType.IMPORTANT)
+			? postRepository.findByProjectCompletedImportant(projectId, PostStatus.COMPLETED, visible)
+			: postRepository.findByProjectCompleted(projectId, PostStatus.COMPLETED, visible,
+			Sort.by(DESC, "completedAt", "id"));
 		if (posts.isEmpty())
 			return List.of();
 
@@ -81,11 +81,11 @@ public class ProjectQueryService {
 	@Transactional(readOnly = true)
 	public List<TroubleListResDto> getSummarizedTroubles(
 		Long projectId, SortType sort, ContentSummaryType summaryType) {
-		Sort s = sort == SortType.IMPORTANT
-			? Sort.by(DESC, "starRating", "id")
-			: Sort.by(DESC, "completedAt", "id");
 		ContentSummaryType st = (summaryType == ContentSummaryType.NONE) ? null : summaryType;
-		List<Post> posts = postRepository.findByProjectSummarized(projectId, PostStatus.SUMMARIZED, st, s);
+		List<Post> posts = (sort == SortType.IMPORTANT)
+			? postRepository.findByProjectSummarizedImportant(projectId, PostStatus.SUMMARIZED, st)
+			: postRepository.findByProjectSummarized(projectId, PostStatus.SUMMARIZED, st,
+			Sort.by(DESC, "completedAt", "id"));
 
 		if (posts.isEmpty())
 			return List.of();
