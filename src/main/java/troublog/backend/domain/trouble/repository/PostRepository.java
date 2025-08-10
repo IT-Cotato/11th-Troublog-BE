@@ -5,12 +5,14 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.ContentSummaryType;
+import troublog.backend.domain.trouble.enums.PostStatus;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 	Optional<Post> findByIdAndIsDeletedFalse(Long id);
@@ -73,5 +75,36 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	@Query("SELECT p FROM Post p JOIN FETCH p.contents c WHERE c.authorType = 'USER_WRITTEN' AND p.id = :id AND p.isDeleted = false")
 	Optional<Post> findPostWithOutSummaryById(@Param("id") Long id);
 
-	List<Post> findAllByUser_Id(Long userId);
+	@Query("""
+		    select p
+		      from Post p
+		     where p.project.id = :projectId
+		       and p.isDeleted = false
+		       and p.status = :status
+		       and (:visible is null or p.isVisible = :visible)
+		""")
+	List<Post> findByProjectCompleted(
+		@Param("projectId") Long projectId,
+		@Param("status") PostStatus status,
+		@Param("visible") Boolean visible,
+		Sort sort
+	);
+
+	@Query("""
+		  select distinct p
+		    from Post p
+		    left join p.contents c
+		   where p.project.id = :projectId
+		     and p.isDeleted = false
+		     and p.status = :status
+		     and (:summaryType is null or c.summaryType = :summaryType)
+		""")
+	List<Post> findByProjectSummarized(
+		@Param("projectId") Long projectId,
+		@Param("status") PostStatus status,
+		@Param("summaryType") ContentSummaryType summaryType,
+		Sort sort
+	);
+
+	List<Post> findAllByUser_IdAndIsDeletedFalse(Long userId, Sort sort);
 }

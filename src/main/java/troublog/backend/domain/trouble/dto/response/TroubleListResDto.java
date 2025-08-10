@@ -13,6 +13,9 @@ public record TroubleListResDto(
 	@Schema(description = "트러블슈팅 id")
 	Long id,
 
+	@Schema(description = "프로젝트 id")
+	Long projectId,
+
 	@Schema(description = "트러블슈팅 제목")
 	String title,
 
@@ -26,7 +29,7 @@ public record TroubleListResDto(
 	LocalDateTime date,
 
 	@Schema(description = "중요도")
-	int starRating,
+	Integer starRating,
 
 	@Schema(description = "에러 정보")
 	String error,

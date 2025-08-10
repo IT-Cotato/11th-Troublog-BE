@@ -21,7 +21,7 @@ public record ProjectDetailResDto(
 	@Schema(description = "썸네일 이미지 URL")
 	String thumbnailImageUrl,
 
-	@Schema(description = "태그")
+	@Schema(description = "기술 태그들")
 	List<String> tags
 ) {
 }

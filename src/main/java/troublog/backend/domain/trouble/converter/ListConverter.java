@@ -11,11 +11,12 @@ public class ListConverter {
 	public TroubleListResDto toAllTroubleListResDto(Post post) {
 		return TroubleListResDto.builder()
 			.id(post.getId())
+			.projectId(post.getProject().getId())
 			.title(post.getTitle())
 			.date(post.getCompletedAt() != null ? post.getCompletedAt() : post.getUpdated_at())
 			.status(String.valueOf(post.getStatus()))
 			.starRating(post.getStarRating() != null ? post.getStarRating().getValue() : null)
-			.imageUrl(String.valueOf(post.getPostImages().getFirst()))
+			.imageUrl(null) // 수정 필요
 			.error(PostQueryFacade.findErrorTag(post))
 			.techs(PostQueryFacade.findTopTechStackTags(post))
 			.isVisible(post.getIsVisible())

@@ -144,6 +144,8 @@ public class PostQueryFacade {
 	public Post findPostById(Long id) {
 		return postQueryService.findById(id);
 	}
+
+	@Transactional(readOnly = true)
 	public List<TroubleListResDto> getAllTroubles(Long userId) {
 		List<Post> posts = postQueryService.getAllTroubles(userId);
 		return posts.stream()

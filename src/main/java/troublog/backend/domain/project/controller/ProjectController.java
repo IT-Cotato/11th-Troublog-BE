@@ -20,12 +20,12 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.project.dto.request.ProjectReqDto;
 import troublog.backend.domain.project.dto.response.ProjectDetailResDto;
 import troublog.backend.domain.project.dto.response.ProjectResDto;
+import troublog.backend.domain.project.enums.ProjectPostStatus;
 import troublog.backend.domain.project.service.facade.ProjectCommandFacade;
 import troublog.backend.domain.project.service.facade.ProjectQueryFacade;
 import troublog.backend.domain.project.service.query.ProjectQueryService;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.enums.ContentSummaryType;
-import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
 import troublog.backend.global.common.annotation.Authentication;
@@ -43,7 +43,6 @@ public class ProjectController {
 	private final ProjectQueryFacade projectQueryFacade;
 	private final ProjectQueryService projectQueryService;
 
-	// 프로젝트 생성
 	@PostMapping("/")
 	@Operation(summary = "프로젝트 생성 API", description = "프로젝트를 생성합니다.")
 	public ResponseEntity<BaseResponse<ProjectResDto>> createProject(
@@ -53,7 +52,6 @@ public class ProjectController {
 		return ResponseUtils.created(response);
 	}
 
-	// 프로젝트 수정
 	@PutMapping("/{projectId}")
 	@Operation(summary = "프로젝트 수정 API", description = "프로젝트를 수정합니다.")
 	public ResponseEntity<BaseResponse<ProjectResDto>> updateProject(
@@ -64,7 +62,6 @@ public class ProjectController {
 		return ResponseUtils.ok(response);
 	}
 
-	// 프로젝트 삭제
 	@DeleteMapping("/{projectId}")
 	@Operation(summary = "프로젝트 삭제 API", description = "프로젝트를 삭제합니다.")
 	public ResponseEntity<BaseResponse<Void>> deletePost(
@@ -74,7 +71,6 @@ public class ProjectController {
 		return ResponseUtils.noContent();
 	}
 
-	// 프로젝트 상세 조회
 	@GetMapping("/{projectId}")
 	@Operation(summary = "프로젝트 상세 조회 API", description = "프로젝트를 하나를 조회합니다.")
 	public ResponseEntity<BaseResponse<ProjectDetailResDto>> getProjectDetails(
@@ -84,22 +80,20 @@ public class ProjectController {
 		return ResponseUtils.ok(response);
 	}
 
-	// 전체 프로젝트 목록 조회
 	@GetMapping("/list")
-	@Operation(summary = "프로젝트 전체 목록 조회 API", description = "전체 프로젝트 리스트를 조회합니다.")
+	@Operation(summary = "프로젝트 전체 목록 조회 API", description = "전체 프로젝트 리스트를 조회합니다. (삭제된 프로젝트는 조회되지 않음)")
 	public ResponseEntity<BaseResponse<List<ProjectDetailResDto>>> getProjects(
 		@Authentication CustomAuthenticationToken auth) {
 		List<ProjectDetailResDto> response = projectQueryService.getAllProjects(auth.getUserId());
 		return ResponseUtils.ok(response);
 	}
 
-	// 프로젝트 내 트러블슈팅 목록 조회
 	@GetMapping("/{projectId}/troubles")
 	@Operation(summary = "프로젝트 내 트러블슈팅 목록 조회 API", description = "작성/요약 완료 상태를 포함한 다양한 조건을 필터링해 조회합니다.")
 	public ResponseEntity<BaseResponse<List<TroubleListResDto>>> getProjectTroubles(
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable Long projectId,
-		@RequestParam PostStatus status,
+		@RequestParam ProjectPostStatus status,
 		@RequestParam(defaultValue = "LATEST") SortType sort,
 		@RequestParam(required = false) VisibilityType visibility,
 		@RequestParam(required = false) ContentSummaryType summaryType

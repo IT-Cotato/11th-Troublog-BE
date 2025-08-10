@@ -1,9 +1,12 @@
 package troublog.backend.domain.trouble.service.query;
 
+import static org.springframework.data.domain.Sort.Direction.*;
+
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +45,6 @@ public class PostQueryService {
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
 
-
 	public Post findNotDeletedPost(Long id) {
 		log.info("[Post] 삭제되지 않은 트러블슈팅 문서 조회: postId={}", id);
 		return postRepository.findByIdAndIsDeletedFalse(id)
@@ -74,9 +76,12 @@ public class PostQueryService {
 		return postPage;
 	}
 
+	@Transactional(readOnly = true)
 	public List<Post> getAllTroubles(Long userId) {
-		List<Post> posts = postRepository.findAllByUser_Id(userId);
-		log.info("[Post] 전체 트러블슈팅 문서 조회: postCount={}", posts.size());
+		// 최신순 기준 선택 필요 - createdAt/updatedAt/completedAt
+		Sort s = Sort.by(DESC, "completedAt", "id");
+		List<Post> posts = postRepository.findAllByUser_IdAndIsDeletedFalse(userId, s);
+		log.info("[Post] 전체 트러블슈팅 문서 조회(최신순): postCount={}", posts.size());
 		return posts;
 	}
 
