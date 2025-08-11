@@ -29,6 +29,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		LEFT JOIN tags t ON pt.tag_id = t.tag_id
 		WHERE p.user_id = :userId
 		  AND p.is_deleted = false
+		  AND C.author_type = 'USER_WRITTEN'
 		  AND (
 		    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 		    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -47,6 +48,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			LEFT JOIN tags t ON pt.tag_id = t.tag_id
 			WHERE p.user_id = :userId
 			  AND p.is_deleted = false
+			  AND C.author_type = 'USER_WRITTEN'
 			  AND (
 			    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 			    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -68,6 +70,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		LEFT JOIN tags t ON pt.tag_id = t.tag_id
 		  WHERE p.is_deleted = false
 		  AND p.visible = true
+		  AND C.author_type = 'USER_WRITTEN'
 		  AND (
 		    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 		    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -86,6 +89,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			LEFT JOIN tags t ON pt.tag_id = t.tag_id
 			WHERE p.is_deleted = false
 			  AND p.visible = true
+			  AND C.author_type = 'USER_WRITTEN'
 			  AND (
 			    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 			    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
