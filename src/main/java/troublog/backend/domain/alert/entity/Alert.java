@@ -62,4 +62,31 @@ public class Alert extends BaseEntity {
 			.user(user)
 			.build();
 	}
+
+	public static Alert postLikesAlert(User targetUser, String userLikesName) {
+		return Alert.builder()
+			.title("포스트 좋아요 알림")
+			.message(String.format("%s 님이 나의 포스트에 좋아요를 눌렀습니다.", userLikesName))
+			.alertType(AlertType.LIKES)
+			.user(targetUser)
+			.build();
+	}
+
+	public static Alert postCommentAlert(User targetUser, String userCommentName) {
+		return Alert.builder()
+			.title("포스트 댓글 알림")
+			.message(String.format("%s 님이 포스트에 댓글을 남겼습니다.", userCommentName))
+			.alertType(AlertType.COMMENTS)
+			.user(targetUser)
+			.build();
+	}
+
+	public static Alert postChildCommentAlert(User targetUser, String userChildCommentName) {
+		return Alert.builder()
+			.title("포스트 대댓글 알림")
+			.message(String.format("%s 님이 나의 댓글에 답글을 남겼습니다.", userChildCommentName))
+			.alertType(AlertType.COMMENTS)
+			.user(targetUser)
+			.build();
+	}
 }
