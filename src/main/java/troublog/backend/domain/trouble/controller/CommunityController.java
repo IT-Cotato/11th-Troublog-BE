@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +26,11 @@ import troublog.backend.domain.trouble.dto.response.CommentDetailResDto;
 import troublog.backend.domain.trouble.dto.response.CommentResDto;
 import troublog.backend.domain.trouble.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.dto.response.LikeResDto;
-import troublog.backend.domain.trouble.service.facade.CommentCommandFacade;
-import troublog.backend.domain.trouble.service.facade.CommentQueryFacade;
-import troublog.backend.domain.trouble.service.facade.LikeCommandFacade;
+import troublog.backend.domain.trouble.dto.response.PostResDto;
+import troublog.backend.domain.trouble.service.facade.command.CommentCommandFacade;
+import troublog.backend.domain.trouble.service.facade.query.CommentQueryFacade;
+import troublog.backend.domain.trouble.service.facade.command.LikeCommandFacade;
+import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -40,6 +45,19 @@ public class CommunityController {
 	private final CommentCommandFacade commentCommandFacade;
 	private final CommentQueryFacade commentQueryFacade;
 	private final LikeCommandFacade likeCommandFacade;
+	private final PostQueryFacade postQueryFacade;
+
+	@GetMapping("/{postId}")
+	@Operation(summary = "커뮤니티 문서 상세 조회 API", description = "ID 값 기반 커뮤니티 문서 상세 조회")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = PostResDto.class)))
+	public ResponseEntity<BaseResponse<PostResDto>> findPostDetailsOnly(
+		@Authentication CustomAuthenticationToken token,
+		@PathVariable long postId
+	) {
+		PostResDto response = postQueryFacade.findPostDetailsById(token.getUserId(), postId);
+		return ResponseUtils.ok(response);
+	}
 
 	@PostMapping("{postId}/comment")
 	@Operation(summary = "댓글 생성 API", description = "해당하는 post의 댓글을 생성한다.")

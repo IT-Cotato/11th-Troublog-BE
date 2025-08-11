@@ -3,7 +3,7 @@ package troublog.backend.domain.trouble.converter;
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.entity.Post;
-import troublog.backend.domain.trouble.service.facade.PostQueryFacade;
+import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 
 @UtilityClass
 public class ListConverter {

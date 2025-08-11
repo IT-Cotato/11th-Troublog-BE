@@ -11,8 +11,8 @@ import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
 import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.entity.Post;
-import troublog.backend.domain.trouble.service.facade.PostQueryFacade;
-import troublog.backend.domain.trouble.service.facade.PostRelationFacade;
+import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
+import troublog.backend.domain.trouble.service.facade.relation.PostRelationFacade;
 
 
 @Slf4j
