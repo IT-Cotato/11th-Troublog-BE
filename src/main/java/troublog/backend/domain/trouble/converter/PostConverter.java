@@ -14,6 +14,7 @@ import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
+import troublog.backend.global.common.util.JsonConverter;
 
 @UtilityClass
 public class PostConverter {
@@ -60,7 +61,9 @@ public class PostConverter {
 			.title(postReqDto.title())
 			.commentCount(DEFAULT_COUNT)
 			.likeCount(DEFAULT_COUNT)
-			.isDeleted(DEFAULT_DELETE_STATUS);
+			.isDeleted(DEFAULT_DELETE_STATUS)
+			.checklistError(JsonConverter.toJson(postReqDto.checklistError()))
+			.checklistReason(JsonConverter.toJson(postReqDto.checklistReason()));
 	}
 
 	public PostResDto toResponse(Post post) {
@@ -74,6 +77,8 @@ public class PostConverter {
 			.isSummaryCreated(post.getIsSummaryCreated())
 			.postStatus(post.getStatus().getMessage())
 			.starRating(post.getStarRating() != null ? post.getStarRating().name() : null)
+			.checklistError(JsonConverter.toList(post.getChecklistError()))
+			.checklistReason(JsonConverter.toList(post.getChecklistReason()))
 			.createdAt(post.getCreated_at())
 			.updatedAt(post.getUpdated_at())
 			.userId(post.getUser().getId())

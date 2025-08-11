@@ -40,6 +40,12 @@ public record PostResDto(
 	@Schema(description = "별점", example = "1")
 	String starRating,
 
+	@Schema(description = "에러 체크리스트", example = "[1, 4, 5]")
+	List<Integer> checklistError,
+
+	@Schema(description = "원인 체크리리스", example = "[2, 3]")
+	List<Integer> checklistReason,
+
 	@Schema(description = "작성 시간", example = "2024-01-15T10:00:00")
 	LocalDateTime createdAt,
 

@@ -48,7 +48,7 @@ public record PostReqDto(
 	List<ContentDto> contentDtoList,
 
 	@Schema(
-		description = "게시글 소개",
+		description = "���시글 소개",
 		example = "Spring Boot 프로젝트 설정 중 발생한 문제와 해결 과정"
 	)
 	String introduction,
@@ -82,6 +82,18 @@ public record PostReqDto(
 		allowableValues = {"0", "1", "2", "3", "4", "5"}
 	)
 	Integer starRating,
+
+	@Schema(
+		description = "에러 체크리스트",
+		example = "[1, 4, 5]"
+	)
+	List<Integer> checklistError,
+
+	@Schema(
+		description = "원인 체크리스트",
+		example = "[2, 3]"
+	)
+	List<Integer> checklistReason,
 
 	@Schema(
 		description = "프로젝트 ID",
