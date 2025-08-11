@@ -160,8 +160,39 @@ public class Post extends BaseEntity {
 	}
 
 	public void addComment(Comment comment) {
+		if (comment == null) {
+			return;
+		}
 		this.comments.add(comment);
 		comment.assignPost(this);
+		this.commentCount++;
+	}
+
+	public void removeComment(Comment comment) {
+		if (comment == null) {
+			return;
+		}
+		this.comments.remove(comment);
+		this.commentCount = Math.max(0, this.commentCount - 1);
+	}
+
+	public void addLike(Like like) {
+		if (like == null) {
+			throw new PostException(ErrorCode.MISSING_LIKE);
+		}
+		likes.add(like);
+		if (like.getPost() != this) {
+			like.assignPost(this);
+		}
+		this.likeCount++;
+	}
+
+	public void removeLike(Like like) {
+		if (like == null) {
+			return;
+		}
+		likes.remove(like);
+		this.likeCount = Math.max(0, this.likeCount - 1);
 	}
 
 	public void addPostTag(PostTag postTag) {
@@ -173,22 +204,6 @@ public class Post extends BaseEntity {
 		}
 		this.postTags.add(postTag);
 		postTag.assignPost(this);
-	}
-
-	public void addLike(Like like) {
-		if (like == null)
-			return;
-		if (this.likes.contains(like))
-			return;
-		this.likes.add(like);
-		likeCount++;
-	}
-
-	public void removeLike(Like like) {
-		if (like == null)
-			return;
-		if (this.likes.remove(like) && likeCount > 0)
-				likeCount--;
 	}
 
 	public void updateTitle(String title) {

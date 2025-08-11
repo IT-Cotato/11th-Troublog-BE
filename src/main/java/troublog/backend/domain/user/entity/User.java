@@ -25,6 +25,8 @@ import troublog.backend.domain.trouble.entity.Like;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
 import troublog.backend.global.common.entity.BaseEntity;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.PostException;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -104,16 +106,40 @@ public class User extends BaseEntity {
 	}
 
 	public void addComment(Comment comment) {
+		if (comment == null)
+			return;
 		this.comments.add(comment);
 		comment.assignUser(this);
 	}
 
-	public void addLike(Like like) {
+	public void removeComment(Comment comment) {
+		if (comment == null)
+			return;
+		comments.remove(comment);
+		if (comment.getUser() == this) {
+			comment.assignUser(null);
+		}
+	}
+
+	public void addLikeRef(Like like) {
+		if (like == null) {
+			throw new PostException(ErrorCode.MISSING_LIKE);
+		}
+		if (!likes.contains(like)) {
+			likes.add(like);
+			if (like.getUser() != this) {
+				like.assignUser(this);
+			}
+		}
+	}
+
+	public void removeLikeRef(Like like) {
 		if (like == null)
 			return;
-		if (this.likes.contains(like))
-			return; // 중복 방지
-		this.likes.add(like);
+		likes.remove(like);
+		if (like.getUser() == this) {
+			like.assignUser(null);
+		}
 	}
 
 	public void updateUserProfile(UserProfileUpdateReqDto userProfileUpdateReqDto) {

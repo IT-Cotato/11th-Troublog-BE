@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,32 +12,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.request.CommentReqDto;
 import troublog.backend.domain.trouble.dto.response.CommentDetailResDto;
 import troublog.backend.domain.trouble.dto.response.CommentResDto;
-import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
-import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
 import troublog.backend.domain.trouble.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.dto.response.LikeResDto;
-import troublog.backend.domain.trouble.dto.response.PostResDto;
-import troublog.backend.domain.trouble.service.facade.command.CommentCommandFacade;
-import troublog.backend.domain.trouble.service.facade.query.CommentQueryFacade;
-import troublog.backend.domain.trouble.service.facade.command.LikeCommandFacade;
-import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
+import troublog.backend.domain.trouble.service.facade.CommentCommandFacade;
+import troublog.backend.domain.trouble.service.facade.CommentQueryFacade;
+import troublog.backend.domain.trouble.service.facade.LikeCommandFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
-import troublog.backend.global.common.response.PageResponse;
 import troublog.backend.global.common.util.ResponseUtils;
 
 @RestController
@@ -95,7 +84,7 @@ public class CommunityController {
 		return ResponseUtils.page(response);
 	}
 
-	@PostMapping("{postId}/comment")
+	@PostMapping("/{postId}/comment")
 	@Operation(summary = "댓글 생성 API", description = "해당하는 post의 댓글을 생성한다.")
 	public ResponseEntity<BaseResponse<CommentResDto>> createComment(@PathVariable Long postId,
 		@Authentication CustomAuthenticationToken auth,
@@ -104,13 +93,13 @@ public class CommunityController {
 		return ResponseUtils.created(response);
 	}
 
-	@PutMapping("{postId}/{commentId}")
+	@PutMapping("/{postId}/{commentId}")
 	@Operation(summary = "댓글 수정 API", description = "해당하는 post의 댓글 내용을 수정한다.")
 	public ResponseEntity<BaseResponse<CommentResDto>> updateComment(@PathVariable Long postId,
 		@PathVariable Long commentId,
 		@Authentication CustomAuthenticationToken auth,
 		@Valid @RequestBody CommentReqDto commentReqDto) {
-		CommentResDto response = commentCommandFacade.updateComment(auth.getUserId(), commentReqDto, postId, commentId);
+		CommentResDto response = commentCommandFacade.updateComment(auth.getUserId(), commentReqDto, commentId, postId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -126,11 +115,15 @@ public class CommunityController {
 
 	@GetMapping("/{postId}/comments")
 	@Operation(summary = "댓글 목록 조회 API", description = "해당하는 트러블슈팅의 댓글 전체를 최신순으로 조회한다.")
-	public ResponseEntity<BaseResponse<List<CommentResDto>>> getComments(
-		@PathVariable long postId
+	public ResponseEntity<PageResponse<CommentResDto>> getComments(
+		@PathVariable long postId,
+		@RequestParam(defaultValue = "1") int page,
+		@RequestParam(defaultValue = "10") int size
+
 	) {
-		List<CommentResDto> comments = commentQueryFacade.getComments(postId);
-		return ResponseUtils.ok(comments);
+		Pageable pageable = postQueryFacade.getPageable(page, size);
+		Page<CommentResDto> comments = commentQueryFacade.getComments(postId, pageable);
+		return ResponseUtils.page(comments);
 	}
 
 	@PostMapping("/{postId}/{commentId}")
@@ -144,11 +137,10 @@ public class CommunityController {
 		return ResponseUtils.created(response);
 	}
 
-	@GetMapping("/{postId}/{commentId}")
+	@GetMapping("/{commentId}")
 	@Operation(summary = "댓글 상세 조회 API", description = "해당하는 댓글과 댓글의 대댓글 전체를 최신순으로 조회한다.")
 	public ResponseEntity<BaseResponse<CommentDetailResDto>> getDetailComment(
-		@PathVariable Long postId,
-		@PathVariable Long commentId
+		@PathVariable long commentId
 	) {
 		CommentDetailResDto response = commentQueryFacade.getDetailComment(commentId);
 		return ResponseUtils.ok(response);
@@ -172,9 +164,12 @@ public class CommunityController {
 
 	@GetMapping("/likes")
 	@Operation(summary = "좋아요한 포스트 조회 API", description = "최근에 좋아요한 순으로 포스트를 불러온다.")
-	public ResponseEntity<BaseResponse<List<LikePostResDto>>> getUserLikedPosts(
-		@Authentication CustomAuthenticationToken auth) {
-		List<LikePostResDto> likedPosts = likeCommandFacade.getLikedPostsByUser(auth.getUserId());
-		return ResponseUtils.ok(likedPosts);
+	public ResponseEntity<PageResponse<LikePostResDto>> getUserLikedPosts(
+		@Authentication CustomAuthenticationToken auth,
+		@RequestParam(defaultValue = "1") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		Pageable pageable = postQueryFacade.getPageable(page, size);
+		Page<LikePostResDto> likedPosts = likeCommandFacade.getLikedPostsByUser(auth.getUserId(), pageable);
+		return ResponseUtils.page(likedPosts);
 	}
 }

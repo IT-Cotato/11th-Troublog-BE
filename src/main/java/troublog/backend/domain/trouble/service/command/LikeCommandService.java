@@ -16,14 +16,17 @@ import troublog.backend.domain.trouble.repository.LikeRepository;
 public class LikeCommandService {
 	private final LikeRepository likeRepository;
 
+	@Transactional
 	public Like save(Like like) {
-		log.info("[Post] 포스트 좋아요 등록: likeId={}, postId={}", like.getId(), like.getPost().getId());
+		log.info("[Post] like 등록: userId={}, postId={}", like.getUser().getId(), like.getPost().getId());
 		return likeRepository.save(like);
 	}
 
+	@Transactional
 	public void deleteLike(Like like) {
-		log.info("[Post] 포스트 좋아요 취소: likeId={}, postId={}", like.getId(), like.getPost().getId());
+		log.info("[Post] like 취소: userId={}, postId={}", like.getUser().getId(), like.getPost().getId());
 		like.getPost().removeLike(like);
+		like.getUser().removeLikeRef(like);
 		likeRepository.delete(like);
 	}
 }

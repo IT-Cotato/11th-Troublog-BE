@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.trouble.entity.Comment;
 import troublog.backend.domain.trouble.repository.CommentRepository;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.PostException;
 
 @Slf4j
 @Service
@@ -22,7 +24,16 @@ public class CommentCommandService {
 	}
 
 	public void delete(Comment comment) {
-		log.info("[Post] 포스트 댓글 삭제: commentId={}, postId={}", comment.getId(), comment.getPost().getId());
+		Long commentId = comment.getId();
+		Long postId = (comment.getPost() != null) ? comment.getPost().getId() : null;
+		Long userId = (comment.getUser() != null) ? comment.getUser().getId() : null;
+		log.info("[Comment] 댓글 하드 삭제: commentId={}, postId={}, userId={}", commentId, postId, userId);
+
+		if (commentRepository.existsByParentCommentId(comment.getId())) {
+			throw new PostException(ErrorCode.COMMENT_HAS_CHILDREN);
+		}
+		comment.getPost().removeComment(comment);
+		comment.getUser().removeComment(comment);
 		commentRepository.delete(comment);
 	}
 

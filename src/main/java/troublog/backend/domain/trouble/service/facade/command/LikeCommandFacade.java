@@ -1,9 +1,7 @@
 package troublog.backend.domain.trouble.service.facade.command;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,16 +29,9 @@ public class LikeCommandFacade {
 	private final LikeCommandService likeCommandService;
 
 	@Transactional(readOnly = true)
-	public List<LikePostResDto> getLikedPostsByUser(Long userId) {
-		List<Like> likes = likeQueryService.findByUserIdOrderByLikedAtDesc(userId);
-
-		if (likes.isEmpty()) {
-			return Collections.emptyList();
-		}
-
-		return likes.stream()
-			.map(like -> LikeConverter.toListResponse(like.getPost()))
-			.collect(Collectors.toList());
+	public Page<LikePostResDto> getLikedPostsByUser(Long userId, Pageable pageable) {
+		Page<Like> likes = likeQueryService.findByUserIdOrderByLikedAtDesc(userId, pageable);
+		return likes.map(like -> LikeConverter.toListResponse(like.getPost()));
 	}
 
 	@Transactional
@@ -53,8 +44,9 @@ public class LikeCommandFacade {
 			throw new PostException(ErrorCode.LIKE_ALREADY_EXISTS);
 		}
 
-		Like newLike = likeCommandService.save(Like.createLike(user, post));
-		return LikeConverter.toResponse(newLike);
+		Like like = Like.createLike(user, post);
+		Like saved = likeCommandService.save(like);
+		return LikeConverter.toResponse(saved);
 	}
 
 	@Transactional

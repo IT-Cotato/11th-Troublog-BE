@@ -16,6 +16,8 @@ import troublog.backend.domain.trouble.service.factory.CommentFactory;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.CommentQueryService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
+import troublog.backend.domain.user.entity.User;
+import troublog.backend.domain.user.service.query.UserQueryService;
 
 @Service
 @Transactional
@@ -26,13 +28,15 @@ public class CommentCommandFacade {
 	private final CommentCommandService commentCommandService;
 	private final CommentRelationFacade commentRelationFacade;
 	private final CommentQueryService commentQueryService;
+	private final UserQueryService userQueryService;
 
 	public CommentResDto createComment(Long userId, Long postId, CommentReqDto commentReqDto) {
 		Post post = postQueryService.findById(postId);
 		PostFactory.validateVisibility(post);
+		User user = userQueryService.findUserById(userId);
 
 		Comment newComment = CommentConverter.toEntity(commentReqDto);
-		commentRelationFacade.establishRelations(newComment, userId, postId);
+		commentRelationFacade.establishRelations(newComment, user, post);
 		Comment savedComment = commentCommandService.save(newComment);
 		return CommentConverter.toResponse(savedComment);
 	}
@@ -40,13 +44,14 @@ public class CommentCommandFacade {
 	public CommentResDto createChildComment(Long userId, CommentReqDto commentReqDto, Long commentId, Long postId) {
 		Post post = postQueryService.findById(postId);
 		PostFactory.validateVisibility(post);
+		User user = userQueryService.findUserById(userId);
 
 		Comment parentComment = commentQueryService.findComment(commentId);
 		CommentFactory.validateParent(parentComment);
 
 		Comment newChildComment = CommentConverter.toEntity(commentReqDto);
 		commentRelationFacade.establishChildRelations(parentComment, newChildComment);
-		commentRelationFacade.establishRelations(newChildComment, userId, postId);
+		commentRelationFacade.establishRelations(newChildComment, user, post);
 		Comment savedComment = commentCommandService.save(newChildComment);
 		return CommentConverter.toChildResponse(savedComment);
 	}

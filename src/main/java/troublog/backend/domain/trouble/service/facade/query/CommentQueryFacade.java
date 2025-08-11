@@ -1,9 +1,7 @@
 package troublog.backend.domain.trouble.service.facade.query;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,17 +23,10 @@ public class CommentQueryFacade {
 	private final PostQueryService postQueryService;
 	private final CommentQueryService commentQueryService;
 
-	public List<CommentResDto> getComments(long postId) {
+	public Page<CommentResDto> getComments(long postId, Pageable pageable) {
 		Post post = postQueryService.findById(postId);
-		List<Comment> comments = commentQueryService.findAllComment(post.getId());
-
-		if (comments.isEmpty()) {
-			return Collections.emptyList();
-		}
-
-		return comments.stream()
-			.map(CommentConverter::toResponse)
-			.collect(Collectors.toList());
+		Page<Comment> comments = commentQueryService.findAllComment(post.getId(), pageable);
+		return comments.map(CommentConverter::toResponse);
 	}
 
 	public CommentDetailResDto getDetailComment(long commentId) {

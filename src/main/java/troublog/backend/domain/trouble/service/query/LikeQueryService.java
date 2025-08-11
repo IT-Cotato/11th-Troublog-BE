@@ -1,8 +1,9 @@
 package troublog.backend.domain.trouble.service.query;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,7 @@ public class LikeQueryService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Like> findByUserIdOrderByLikedAtDesc(Long userId) {
-		return likeRepository.findByUserIdOrderByLikedAtDesc(userId);
+	public Page<Like> findByUserIdOrderByLikedAtDesc(Long userId, Pageable pageable) {
+		return likeRepository.findByUserIdOrderByLikedAtDesc(userId, pageable);
 	}
 }
