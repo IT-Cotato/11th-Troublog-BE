@@ -23,6 +23,8 @@ public class CommentCommandService {
 
 	public void delete(Comment comment) {
 		log.info("[Post] 포스트 댓글 삭제: commentId={}, postId={}", comment.getId(), comment.getPost().getId());
+		comment.getPost().removeComment(comment);
+		comment.getUser().removeComment(comment);
 		commentRepository.delete(comment);
 	}
 

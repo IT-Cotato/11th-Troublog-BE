@@ -41,6 +41,7 @@ public class LikeConverter {
 			.likeCount(post.getLikeCount())
 			.commentCount(post.getCommentCount())
 			.createdAt(post.getCompletedAt())
+			//.images() null일경우 빈리스트 처리로
 			.build();
 	}
 

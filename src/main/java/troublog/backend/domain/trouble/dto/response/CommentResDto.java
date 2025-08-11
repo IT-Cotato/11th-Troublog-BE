@@ -2,9 +2,8 @@ package troublog.backend.domain.trouble.dto.response;
 
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.NotNull;
-
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder

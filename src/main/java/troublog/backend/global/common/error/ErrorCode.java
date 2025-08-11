@@ -84,7 +84,7 @@ public enum ErrorCode {
 	 * Comment Error
 	 */
 	COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "CM-001", "댓글를 찾지 못했습니다."),
-	COMMENT_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "CM-002", "접근 불가능한 댓글입니다."),
+	COMMENT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "CM-002", "접근 불가능한 댓글입니다."),
 	COMMENT_NOT_PARENT(HttpStatus.BAD_REQUEST, "CM-003", "상위 댓글이 아닙니다."),
 
 	/**
@@ -92,6 +92,8 @@ public enum ErrorCode {
 	 */
 	LIKE_ALREADY_EXISTS(HttpStatus.CONFLICT, "L-001", "이미 좋아요가 눌러진 상태입니다."),
 	LIKE_NOT_EXISTS(HttpStatus.NOT_FOUND, "L-002", "좋아요가 되어 있지 않은 상태입니다."),
+	MISSING_LIKE(HttpStatus.NOT_FOUND, "L-003", "좋아요가 생성되지 않았습니다."),
+
 	/**
 	 * Image Error
 	 */

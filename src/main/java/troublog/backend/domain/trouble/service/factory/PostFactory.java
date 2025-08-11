@@ -63,7 +63,7 @@ public class PostFactory {
 	}
 
 	public static void validateVisibility(Post post) {
-		if (!post.getIsVisible()) {
+		if (!Boolean.TRUE.equals(post.getIsVisible())) {
 			throw new PostException(ErrorCode.POST_ACCESS_DENIED);
 		}
 	}

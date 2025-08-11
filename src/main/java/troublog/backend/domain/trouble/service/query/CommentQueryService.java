@@ -1,7 +1,7 @@
 package troublog.backend.domain.trouble.service.query;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +26,9 @@ public class CommentQueryService {
 			.orElseThrow(() -> new PostException(ErrorCode.COMMENT_NOT_FOUND));
 	}
 
-	public List<Comment> findAllComment(Long postId) {
-		List<Comment> comments = commentRepository.findByPostIdOrderByCreatedAtDesc(postId);
-		log.info("[Post] 트러블슈팅 전체 댓글 조회: postId={} size={}", postId, comments.size());
+	public Page<Comment> findAllComment(Long postId, Pageable pageable) {
+		Page<Comment> comments = commentRepository.findByPostIdAndIsDeletedFalseOrderByCreatedAtDesc(postId, pageable);
+		log.info("[Post] 전체 댓글 조회: postId={} size={}", postId, comments.getTotalElements());
 		return comments;
 	}
 }

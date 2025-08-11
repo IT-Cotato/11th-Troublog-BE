@@ -1,6 +1,8 @@
 package troublog.backend.domain.trouble.converter;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.experimental.UtilityClass;
@@ -41,12 +43,14 @@ public class CommentConverter {
 	}
 
 	public CommentDetailResDto toDetailResponse(Comment comment) {
-		List<CommentResDto> childDtoList = comment.getChildComments().stream()
+		List<CommentResDto> childDtoList = Optional.ofNullable(comment.getChildComments())
+			.orElse(Collections.emptyList())
+			.stream()
 			.map(CommentConverter::toResponse)
 			.collect(Collectors.toList());
 
 		return CommentDetailResDto.builder()
-			.postId(comment.getId())
+			.commentId(comment.getId())
 			.postId(comment.getPost().getId())
 			.userId(comment.getUser().getId())
 			.content(comment.getContent())
