@@ -1,12 +1,31 @@
 package troublog.backend.domain.trouble.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import troublog.backend.domain.like.entity.Like;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
@@ -14,10 +33,6 @@ import troublog.backend.domain.user.entity.User;
 import troublog.backend.global.common.entity.BaseEntity;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -106,6 +121,10 @@ public class Post extends BaseEntity {
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Like> likes = new ArrayList<>();
 
+	@Builder.Default
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Comment> comments = new ArrayList<>();
+
 	// 연관관계 편의 메서드들
 	public void assignUser(User user) {
 		if (user == null) {
@@ -129,6 +148,11 @@ public class Post extends BaseEntity {
 		content.assignPost(this);
 	}
 
+	public void addComment(Comment comment) {
+		this.comments.add(comment);
+		comment.assignPost(this);
+	}
+
 	public void addPostTag(PostTag postTag) {
 		if (postTag == null) {
 			throw new PostException(ErrorCode.MISSING_POST_TAG);
@@ -138,6 +162,24 @@ public class Post extends BaseEntity {
 		}
 		this.postTags.add(postTag);
 		postTag.assignPost(this);
+	}
+
+	public void addLike(Like like) {
+		if (like == null)
+			return;
+		if (this.likes.contains(like))
+			return;
+		this.likes.add(like);
+		likeCount++;
+	}
+
+	public void removeLike(Like like) {
+		if (like == null)
+			return;
+		if (this.likes.remove(like)) {
+			if (likeCount > 0)
+				likeCount--;
+		}
 	}
 
 	public void updateTitle(String title) {

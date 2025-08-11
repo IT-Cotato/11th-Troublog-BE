@@ -61,4 +61,10 @@ public class PostFactory {
 		postTag.assignTag(tag);
 		return postTag;
 	}
+
+	public static void validateVisibility(Post post) {
+		if (!post.getIsVisible()) {
+			throw new PostException(ErrorCode.POST_ACCESS_DENIED);
+		}
+	}
 }
