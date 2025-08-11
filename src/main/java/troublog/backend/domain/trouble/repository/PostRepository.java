@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -73,6 +74,92 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	@Query("SELECT p FROM Post p JOIN FETCH p.contents c WHERE c.authorType = 'USER_WRITTEN' AND p.id = :id AND p.isDeleted = false")
 	Optional<Post> findPostWithOutSummaryById(@Param("id") Long id);
-	
+
+	@Query("""
+		    select p
+		      from Post p
+		     where p.project.id = :projectId
+		       and p.isDeleted = false
+		       and p.status = :status
+		       and (:visible is null or p.isVisible = :visible)
+		""")
+	List<Post> findByProjectCompleted(
+		@Param("projectId") Long projectId,
+		@Param("status") PostStatus status,
+		@Param("visible") Boolean visible,
+		Sort sort
+	);
+
+	@Query("""
+		    select p
+		      from Post p
+		     where p.project.id = :projectId
+		       and p.isDeleted = false
+		       and p.status = :status
+		       and (:visible is null or p.isVisible = :visible)
+		     order by
+		       case p.starRating
+		         when troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS  then 5
+		         when troublog.backend.domain.trouble.enums.StarRating.FOUR_STARS  then 4
+		         when troublog.backend.domain.trouble.enums.StarRating.THREE_STARS then 3
+		         when troublog.backend.domain.trouble.enums.StarRating.TWO_STARS   then 2
+		         when troublog.backend.domain.trouble.enums.StarRating.ONE_STAR    then 1
+		         else 0
+		       end desc,
+		       p.id desc
+		""")
+	List<Post> findByProjectCompletedImportant(
+		@Param("projectId") Long projectId,
+		@Param("status") PostStatus status,
+		@Param("visible") Boolean visible
+	);
+
+	@Query("""
+		    select p
+		      from Post p
+		     where p.project.id = :projectId
+		       and p.isDeleted = false
+		       and p.status = :status
+		       and (:summaryType is null or exists (
+		             select 1 from Content c
+		              where c.post = p and c.summaryType = :summaryType
+		       ))
+		""")
+	List<Post> findByProjectSummarized(
+		@Param("projectId") Long projectId,
+		@Param("status") PostStatus status,
+		@Param("summaryType") ContentSummaryType summaryType,
+		Sort sort
+	);
+
+	@Query("""
+		    select p
+		      from Post p
+		     where p.project.id = :projectId
+		       and p.isDeleted = false
+		       and p.status = :status
+		       and (:summaryType is null or exists (
+		             select 1 from Content c
+		              where c.post = p and c.summaryType = :summaryType
+		       ))
+		     order by
+		       case p.starRating
+		         when troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS  then 5
+		         when troublog.backend.domain.trouble.enums.StarRating.FOUR_STARS  then 4
+		         when troublog.backend.domain.trouble.enums.StarRating.THREE_STARS then 3
+		         when troublog.backend.domain.trouble.enums.StarRating.TWO_STARS   then 2
+		         when troublog.backend.domain.trouble.enums.StarRating.ONE_STAR    then 1
+		         else 0
+		       end desc,
+		       p.id desc
+		""")
+	List<Post> findByProjectSummarizedImportant(
+		@Param("projectId") Long projectId,
+		@Param("status") PostStatus status,
+		@Param("summaryType") ContentSummaryType summaryType
+	);
+
+	Page<Post> findAllByUser_IdAndIsDeletedFalse(Long userId, Pageable page);
+
 	List<Post> findByUserIdAndStatusAndIsDeletedFalse(Long userId, PostStatus status);
 }

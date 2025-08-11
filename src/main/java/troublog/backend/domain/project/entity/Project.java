@@ -1,5 +1,6 @@
 package troublog.backend.domain.project.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,13 @@ public class Project extends BaseEntity {
 	private String name;
 
 	@Column(name = "thumbnail_image_url")
-	String thumbnailImageUrl;
+	private String thumbnailImageUrl;
+
+	@Column(name = "is_deleted", nullable = false)
+	private Boolean isDeleted = false;
+
+	@Column(name = "deleted_at")
+	private LocalDateTime deletedAt;
 
 	public void assignUser(User user) {
 		if (user == null) {
@@ -73,5 +80,16 @@ public class Project extends BaseEntity {
 		}
 		this.posts.add(post);
 		post.assignProject(this);
+	}
+
+	public void update(String name, String description, String thumbnailImageUrl) {
+		this.name = name;
+		this.description = description;
+		this.thumbnailImageUrl = thumbnailImageUrl;
+	}
+
+	public void softDelete() {
+		this.isDeleted = true;
+		this.deletedAt = LocalDateTime.now();
 	}
 }
