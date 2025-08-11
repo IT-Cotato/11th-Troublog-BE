@@ -74,8 +74,6 @@ public class CommentCommandFacade {
 	public void softDeleteComment(Long userId, long commentId) {
 		Comment comment = commentQueryService.findComment(commentId);
 		CommentFactory.validateAuthorized(userId, comment);
-		//comment.getPost().removeComment(comment);
-		//comment.getUser().removeComment(comment);
 		comment.markAsDeleted();
 	}
 }

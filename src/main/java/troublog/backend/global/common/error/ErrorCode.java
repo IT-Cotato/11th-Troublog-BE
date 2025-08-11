@@ -86,6 +86,7 @@ public enum ErrorCode {
 	COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "CM-001", "댓글를 찾지 못했습니다."),
 	COMMENT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "CM-002", "접근 불가능한 댓글입니다."),
 	COMMENT_NOT_PARENT(HttpStatus.BAD_REQUEST, "CM-003", "상위 댓글이 아닙니다."),
+	COMMENT_HAS_CHILDREN(HttpStatus.CONFLICT, "CM-004", "대댓글이 존재하는 댓글입니다."),
 
 	/**
 	 * Like Error

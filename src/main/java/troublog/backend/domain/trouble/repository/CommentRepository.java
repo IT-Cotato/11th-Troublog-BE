@@ -8,4 +8,6 @@ import troublog.backend.domain.trouble.entity.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 	Page<Comment> findByPostIdAndIsDeletedFalseOrderByCreatedAtDesc(Long postId, Pageable pageable);
+
+	boolean existsByParentCommentId(Long id);
 }
