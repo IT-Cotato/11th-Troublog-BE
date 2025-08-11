@@ -63,7 +63,7 @@ public class PostAdminController {
 		return ResponseUtils.ok(response);
 	}
 
-	@DeleteMapping("/{commentId}/hard")
+	@DeleteMapping("/comment/{commentId}/hard")
 	@Operation(summary = "댓글 영구 삭제 API", description = "트러블슈팅의 댓글을 영구 삭제한다. (관리자용)")
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> hardDeleteComment(

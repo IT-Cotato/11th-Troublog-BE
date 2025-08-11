@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.converter.ContentConverter;
 import troublog.backend.domain.trouble.converter.ListConverter;
 import troublog.backend.domain.trouble.converter.PostConverter;
+import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
 import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
@@ -142,10 +144,6 @@ public class PostQueryFacade {
 		return posts.map(PostConverter::toResponse);
 	}
 
-	public PageRequest getPageable(int page, int size) {
-		return PageRequest.of(Math.max(0, page - 1), size);
-	}
-
 	public Post findPostById(Long id) {
 		return postQueryService.findById(id);
 	}
@@ -159,6 +157,31 @@ public class PostQueryFacade {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
 		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId());
-		return PostConverter.toCommunityResponse(userInfo, post);
+		return PostConverter.toCommunityDetailsResponse(userInfo, post);
+	}
+
+	public Page<CommunityListResDto> getCommunityPosts(Pageable pageable) {
+		Page<Post> posts = postQueryService.getCommunityPosts(pageable);
+
+		return posts.map(post -> {
+			UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId());
+			return PostConverter.toCommunityListResponse(userInfo, post);
+		});
+	}
+
+	public Pageable getPageable(int page, int size) {
+		return PageRequest.of(Math.max(0, page - 1), size);
+	}
+
+	public PageRequest getPageableWithSorting(int page, int size, String sortBy) {
+		return PageRequest.of(Math.max(0, page - 1), size, getSortByCriteria(sortBy));
+	}
+
+	private Sort getSortByCriteria(String sortBy) {
+		return switch (sortBy.toLowerCase()) {
+			case "recommended" -> Sort.by(Sort.Direction.DESC, "recommendScore", "id");
+			case "likes" -> Sort.by(Sort.Direction.DESC, "likeCount", "id");
+			default -> Sort.by(Sort.Direction.DESC, "completedAt", "id");
+		};
 	}
 }

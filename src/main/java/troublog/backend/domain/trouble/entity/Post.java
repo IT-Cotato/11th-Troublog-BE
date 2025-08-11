@@ -69,6 +69,9 @@ public class Post extends BaseEntity {
 	@Column(name = "introduction")
 	private String introduction;
 
+	@Column(name = "thumbnail_url")
+	private String thumbnailUrl;
+
 	@Column(name = "like_count")
 	private int likeCount;
 
@@ -176,10 +179,8 @@ public class Post extends BaseEntity {
 	public void removeLike(Like like) {
 		if (like == null)
 			return;
-		if (this.likes.remove(like)) {
-			if (likeCount > 0)
+		if (this.likes.remove(like) && likeCount > 0)
 				likeCount--;
-		}
 	}
 
 	public void updateTitle(String title) {

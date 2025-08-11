@@ -6,6 +6,7 @@ import java.util.List;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
+import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
 import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
@@ -42,7 +43,6 @@ public class PostConverter {
 	}
 
 	public Post createSummarizedPost(PostReqDto postReqDto) {
-		//TODO 이후 AI 서비스 개발시 AI 서비스 요청과 함께 전송
 		return createBasePost(postReqDto)
 			.introduction(postReqDto.introduction())
 			.isVisible(postReqDto.isVisible())
@@ -82,13 +82,7 @@ public class PostConverter {
 			.build();
 	}
 
-	public List<PostResDto> toResponseList(List<Post> posts) {
-		return posts.stream()
-			.map(PostConverter::toResponse)
-			.toList();
-	}
-
-	public CommunityPostResDto toCommunityResponse(UserInfoResDto userInfoResDto, Post post) {
+	public CommunityPostResDto toCommunityDetailsResponse(UserInfoResDto userInfoResDto, Post post) {
 		return CommunityPostResDto.builder()
 			.userInfoResDto(userInfoResDto)
 			.id(post.getId())
@@ -102,4 +96,23 @@ public class PostConverter {
 			.build();
 	}
 
+	public CommunityListResDto toCommunityListResponse(UserInfoResDto userInfoResDto, Post post) {
+		return CommunityListResDto.builder()
+			.userInfoResDto(userInfoResDto)
+			.id(post.getId())
+			.title(post.getTitle())
+			.thumbnailUrl(post.getThumbnailUrl())
+			.errorTag(PostQueryFacade.findErrorTag(post))
+			.postTags(PostQueryFacade.findTopTechStackTags(post))
+			.likeCount(post.getLikeCount())
+			.commentCount(post.getCommentCount())
+			.completedAt(post.getCompletedAt().format(DATE_FORMATTER))
+			.build();
+	}
+
+	public List<PostResDto> toResponseList(List<Post> posts) {
+		return posts.stream()
+			.map(PostConverter::toResponse)
+			.toList();
+	}
 }

@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
-import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -35,7 +34,6 @@ import troublog.backend.global.common.util.ResponseUtils;
 public class PostQueryController {
 
 	private final PostQueryFacade postQueryFacade;
-	private final PostQueryService postQueryService;
 
 	@GetMapping("/{postId}/combine")
 	@Operation(summary = "트러블슈팅 문서 + AI 요약본 상세 조회 API", description = "ID 값 기반 트러블슈팅 문서 + AI 요약본 상세 조회")
@@ -130,31 +128,17 @@ public class PostQueryController {
 		return ResponseUtils.page(response);
 	}
 
-	@GetMapping("/search")
-	@Operation(summary = "트러블슈팅 문서 검색 API", description = "키워드를 기반으로  트러블 슈팅 문서를 검색한다.")
-	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(schema = @Schema(implementation = PageResponse.class)))
-	public ResponseEntity<PageResponse<PostResDto>> searchPost(
-		@Authentication CustomAuthenticationToken token,
-		@RequestParam String keyword,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size
-	) {
-		Pageable pageable = postQueryFacade.getPageable(page, size);
-		Page<PostResDto> response = postQueryFacade.searchPostByKeyword(keyword, pageable);
-		return ResponseUtils.page(response);
-	}
-
 	@GetMapping("/list")
-	@Operation(summary = "전체 트러블슈팅 목록 조회 API", description = "트러블슈팅 전체를 최신순으로 조회합니다.")
+	@Operation(summary = "사용자의 전체 트러블슈팅 문서 목록 조회 API", description = "사용자의 트러블슈팅 전체를 최신순으로 조회합니다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PageResponse.class)))
 	public ResponseEntity<PageResponse<TroubleListResDto>> getAllTroubles(
 		@Authentication CustomAuthenticationToken auth,
 		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size
+		@RequestParam(defaultValue = "10") int size,
+		@RequestParam String sortBy
 	) {
-		Pageable pageable = postQueryFacade.getPageable(page, size);
+		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
 		Page<TroubleListResDto> response = postQueryFacade.getAllTroubles(auth.getUserId(), pageable);
 		return ResponseUtils.page(response);
 	}

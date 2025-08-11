@@ -16,11 +16,11 @@ public class ListConverter {
 			.date(post.getCompletedAt() != null ? post.getCompletedAt() : post.getUpdated_at())
 			.status(String.valueOf(post.getStatus()))
 			.starRating(post.getStarRating() != null ? post.getStarRating().getValue() : null)
-			.imageUrl(null) // 수정 필요
+			.imageUrl(post.getThumbnailUrl()) // 수정 필요
 			.error(PostQueryFacade.findErrorTag(post))
 			.techs(PostQueryFacade.findTopTechStackTags(post))
 			.isVisible(post.getIsVisible())
-			.summaryType(post.getIsSummaryCreated() ?
+			.summaryType(Boolean.TRUE.equals(post.getIsSummaryCreated()) ?
 				String.valueOf(post.getContents().getFirst().getSummaryType()) : null)
 			.build();
 	}
