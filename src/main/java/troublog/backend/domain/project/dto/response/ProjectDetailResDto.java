@@ -22,7 +22,10 @@ public record ProjectDetailResDto(
 	String thumbnailImageUrl,
 
 	@Schema(description = "기술 태그들")
-	List<String> tags
+	List<String> tags,
+
+	@Schema(description = "삭제 여부")
+	boolean isDeleted
 ) {
 }
 

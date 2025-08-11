@@ -1,12 +1,10 @@
 package troublog.backend.domain.project.service.query;
 
-import static org.springframework.data.domain.Sort.Direction.*;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +15,7 @@ import troublog.backend.domain.project.converter.ProjectConverter;
 import troublog.backend.domain.project.dto.response.ProjectDetailResDto;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.project.repository.ProjectRepository;
-import troublog.backend.domain.trouble.converter.ListConverter;
-import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
-import troublog.backend.domain.trouble.entity.Post;
-import troublog.backend.domain.trouble.enums.ContentSummaryType;
-import troublog.backend.domain.trouble.enums.PostStatus;
-import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.TagType;
-import troublog.backend.domain.trouble.enums.VisibilityType;
 import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.ProjectException;
@@ -54,50 +45,9 @@ public class ProjectQueryService {
 		return ProjectConverter.toResponseDetail(project, topTags);
 	}
 
-	public List<ProjectDetailResDto> getAllProjects(Long userId) {
-		List<Project> projects = projectRepository.findAllByUserIdAndIsDeletedFalse(userId);
-		log.info("[Project] 전체 프로젝트 조회: userId={}, projectCount={}", userId, projects.size());
-		return projects.stream()
-			.map(this::getDetails)
-			.collect(Collectors.toList());
-	}
-
-	@Transactional(readOnly = true)
-	public List<TroubleListResDto> getCompletedTroubles(
-		Long projectId, SortType sort, VisibilityType visibility) {
-		Boolean visible = mapVisibility(visibility);
-		List<Post> posts = (sort == SortType.IMPORTANT)
-			? postRepository.findByProjectCompletedImportant(projectId, PostStatus.COMPLETED, visible)
-			: postRepository.findByProjectCompleted(projectId, PostStatus.COMPLETED, visible,
-			Sort.by(DESC, "completedAt", "id"));
-		if (posts.isEmpty())
-			return List.of();
-
-		return posts.stream()
-			.map(ListConverter::toAllTroubleListResDto)
-			.toList();
-	}
-
-	@Transactional(readOnly = true)
-	public List<TroubleListResDto> getSummarizedTroubles(
-		Long projectId, SortType sort, ContentSummaryType summaryType) {
-		ContentSummaryType st = (summaryType == ContentSummaryType.NONE) ? null : summaryType;
-		List<Post> posts = (sort == SortType.IMPORTANT)
-			? postRepository.findByProjectSummarizedImportant(projectId, PostStatus.SUMMARIZED, st)
-			: postRepository.findByProjectSummarized(projectId, PostStatus.SUMMARIZED, st,
-			Sort.by(DESC, "completedAt", "id"));
-
-		if (posts.isEmpty())
-			return List.of();
-
-		return posts.stream()
-			.map(ListConverter::toAllTroubleListResDto)
-			.toList();
-	}
-
-	private Boolean mapVisibility(VisibilityType v) {
-		if (v == null || v == VisibilityType.ALL)
-			return null;
-		return (v == VisibilityType.PUBLIC) ? Boolean.TRUE : Boolean.FALSE;
+	public Page<ProjectDetailResDto> getAllProjects(Long userId, Pageable pageable) {
+		Page<Project> page = projectRepository.findAllByUserIdAndIsDeletedFalse(userId, pageable);
+		log.info("[Project] 전체 프로젝트 조회: userId={}, projectCount={}", userId, page.getSize());
+		return page.map(this::getDetails);
 	}
 }

@@ -2,6 +2,8 @@ package troublog.backend.domain.project.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +37,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/project")
+@RequestMapping("/projects")
 @Tag(name = "프로젝트", description = "프로젝트 관련 API")
 public class ProjectController {
 
@@ -43,7 +45,7 @@ public class ProjectController {
 	private final ProjectQueryFacade projectQueryFacade;
 	private final ProjectQueryService projectQueryService;
 
-	@PostMapping("/")
+	@PostMapping
 	@Operation(summary = "프로젝트 생성 API", description = "프로젝트를 생성합니다.")
 	public ResponseEntity<BaseResponse<ProjectResDto>> createProject(
 		@Authentication CustomAuthenticationToken auth,
@@ -80,11 +82,14 @@ public class ProjectController {
 		return ResponseUtils.ok(response);
 	}
 
-	@GetMapping("/list")
+	@GetMapping
 	@Operation(summary = "프로젝트 전체 목록 조회 API", description = "전체 프로젝트 리스트를 조회합니다. (삭제된 프로젝트는 조회되지 않음)")
-	public ResponseEntity<BaseResponse<List<ProjectDetailResDto>>> getProjects(
-		@Authentication CustomAuthenticationToken auth) {
-		List<ProjectDetailResDto> response = projectQueryService.getAllProjects(auth.getUserId());
+	public ResponseEntity<BaseResponse<Page<ProjectDetailResDto>>> getProjects(
+		@Authentication CustomAuthenticationToken auth,
+		@RequestParam(defaultValue = "1") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		Pageable pageable = projectQueryFacade.getPageable(page, size);
+		Page<ProjectDetailResDto> response = projectQueryFacade.getAllProjects(auth.getUserId(), pageable);
 		return ResponseUtils.ok(response);
 	}
 

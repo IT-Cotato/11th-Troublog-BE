@@ -56,10 +56,10 @@ public class Project extends BaseEntity {
 	private String name;
 
 	@Column(name = "thumbnail_image_url")
-	String thumbnailImageUrl;
+	private String thumbnailImageUrl;
 
-	@Column(name = "is_deleted")
-	private Boolean isDeleted;
+	@Column(name = "is_deleted", nullable = false)
+	private Boolean isDeleted = false;
 
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;

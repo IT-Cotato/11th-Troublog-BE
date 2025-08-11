@@ -159,5 +159,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		@Param("summaryType") ContentSummaryType summaryType
 	);
 
-	List<Post> findAllByUser_IdAndIsDeletedFalse(Long userId, Sort sort);
+	Page<Post> findAllByUser_IdAndIsDeletedFalse(Long userId, Pageable page);
 }

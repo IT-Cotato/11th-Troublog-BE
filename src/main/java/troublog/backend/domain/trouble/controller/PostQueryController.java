@@ -147,11 +147,16 @@ public class PostQueryController {
 
 	@GetMapping("/list")
 	@Operation(summary = "전체 트러블슈팅 목록 조회 API", description = "트러블슈팅 전체를 최신순으로 조회합니다.")
-	public ResponseEntity<BaseResponse<List<TroubleListResDto>>> getAllTroubles(
-		@Authentication CustomAuthenticationToken auth
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = PageResponse.class)))
+	public ResponseEntity<PageResponse<TroubleListResDto>> getAllTroubles(
+		@Authentication CustomAuthenticationToken auth,
+		@RequestParam(defaultValue = "1") int page,
+		@RequestParam(defaultValue = "10") int size
 	) {
-		List<TroubleListResDto> response = postQueryFacade.getAllTroubles(auth.getUserId());
-		return ResponseUtils.ok(response);
+		Pageable pageable = postQueryFacade.getPageable(page, size);
+		Page<TroubleListResDto> response = postQueryFacade.getAllTroubles(auth.getUserId(), pageable);
+		return ResponseUtils.page(response);
 	}
 
 }

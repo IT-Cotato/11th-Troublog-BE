@@ -35,7 +35,8 @@ public class ProjectConverter {
 			.name(project.getName())
 			.description(project.getDescription())
 			.thumbnailImageUrl(project.getThumbnailImageUrl())
-			.tags(tags)
+			.tags(tags == null ? List.of() : List.copyOf(tags))
+			.isDeleted(project.getIsDeleted())
 			.build();
 	}
 }

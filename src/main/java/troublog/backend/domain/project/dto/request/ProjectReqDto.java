@@ -1,7 +1,7 @@
 package troublog.backend.domain.project.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @Builder
@@ -9,7 +9,7 @@ import lombok.Builder;
 public record ProjectReqDto(
 
 	@Schema(description = "프로젝트 이름")
-	@NotNull(message = "프로젝트 이름은 null 값일 수 없습니다.")
+	@NotBlank(message = "프로젝트 이름은 null 값일 수 없습니다.")
 	String name,
 
 	@Schema(description = "한 줄 소개")

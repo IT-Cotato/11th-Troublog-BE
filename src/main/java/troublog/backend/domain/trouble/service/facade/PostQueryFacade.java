@@ -146,11 +146,9 @@ public class PostQueryFacade {
 	}
 
 	@Transactional(readOnly = true)
-	public List<TroubleListResDto> getAllTroubles(Long userId) {
-		List<Post> posts = postQueryService.getAllTroubles(userId);
-		return posts.stream()
-			.map(ListConverter::toAllTroubleListResDto)
-			.toList();
+	public Page<TroubleListResDto> getAllTroubles(Long userId, Pageable pageable) {
+		Page<Post> posts = postQueryService.getAllTroubles(userId, pageable);
+		return posts.map(ListConverter::toAllTroubleListResDto);
 	}
 
 }
