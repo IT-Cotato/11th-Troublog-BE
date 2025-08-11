@@ -2,6 +2,7 @@ package troublog.backend.domain.trouble.service.facade.query;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -165,8 +166,14 @@ public class PostQueryFacade {
 	public Page<CommunityListResDto> getCommunityPosts(Pageable pageable) {
 		Page<Post> posts = postQueryService.getCommunityPosts(pageable);
 
+		Set<Long> userIds = posts.getContent().stream()
+			.map(post -> post.getUser().getId())
+			.collect(Collectors.toSet());
+
+		Map<Long, UserInfoResDto> userInfoMap = userFacade.getUserInfoMap(userIds);
+
 		return posts.map(post -> {
-			UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId());
+			UserInfoResDto userInfo = userInfoMap.get(post.getUser().getId());
 			return PostConverter.toCommunityListResponse(userInfo, post);
 		});
 	}

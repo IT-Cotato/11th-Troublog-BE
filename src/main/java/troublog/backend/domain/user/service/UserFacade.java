@@ -2,8 +2,10 @@ package troublog.backend.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import troublog.backend.domain.user.converter.FollowConverter;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
@@ -19,8 +21,13 @@ import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.domain.user.validator.FollowValidator;
 import troublog.backend.domain.user.validator.UserValidator;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 
 @Slf4j
 @Service
@@ -130,6 +137,28 @@ public class UserFacade {
 
 		// DTO 변환
 		return UserConverter.toUserResDto(user, followerNum, followingNum);
+	}
+
+	@Transactional(readOnly = true)
+
+	public Map<Long, UserInfoResDto> getUserInfoMap(Set<Long> userIds) {
+		if (CollectionUtils.isEmpty(userIds)) {
+			return Collections.emptyMap();
+		}
+
+		List<User> users = userQueryService.findAllByIds(userIds);
+
+		return users.stream()
+			.collect(Collectors.toMap(
+				User::getId,
+				this::createUserInfoResDto
+			));
+	}
+
+	private UserInfoResDto createUserInfoResDto(User user) {
+		long followerCount = followQueryService.findFollowers(user).size();
+		long followingCount = followQueryService.findFollowings(user).size();
+		return UserConverter.toUserResDto(user, followerCount, followingCount);
 	}
 
 	@Transactional(readOnly = true)
