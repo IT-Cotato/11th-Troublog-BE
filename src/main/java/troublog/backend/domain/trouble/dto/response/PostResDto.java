@@ -62,7 +62,10 @@ public record PostResDto(
 	List<String> postTags,
 
 	@Schema(description = "게시글 내용 목록")
-	List<ContentInfoDto> contents
+	List<ContentInfoDto> contents,
+
+	@Schema(description = "썸네일 이미지 url")
+	String thumbnailUrl
 ) {
 
 }

@@ -47,7 +47,7 @@ public class PostCommandController {
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> createPost(
 		@Authentication CustomAuthenticationToken token,
-		@Valid @RequestBody PostReqDto postReqDto // 단순하게 JSON만
+		@Valid @RequestBody PostReqDto postReqDto
 	) {
 		PostResDto response = postCommandFacade.createPost(token.getUserId(), postReqDto);
 		return ResponseUtils.created(response);
@@ -60,7 +60,7 @@ public class PostCommandController {
 	public ResponseEntity<BaseResponse<PostResDto>> updatePost(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId,
-		@Valid @RequestBody PostReqDto postReqDto // 단순하게 JSON만
+		@Valid @RequestBody PostReqDto postReqDto
 	) {
 		PostResDto response = postCommandFacade.updatePost(token.getUserId(), postId, postReqDto);
 		return ResponseUtils.ok(response);

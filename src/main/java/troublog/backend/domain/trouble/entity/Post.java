@@ -206,6 +206,9 @@ public class Post extends BaseEntity {
 		this.starRating = starRating;
 	}
 
+	public void updateThumbnailUrl(String thumbnailUrl) {
+		this.thumbnailUrl = thumbnailUrl;
+	}
 	public void markAsDeleted() {
 		this.isDeleted = true;
 		this.deletedAt = LocalDateTime.now();
@@ -215,4 +218,5 @@ public class Post extends BaseEntity {
 		this.isDeleted = false;
 		this.deletedAt = null;
 	}
+
 }

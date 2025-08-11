@@ -38,6 +38,7 @@ public class PostConverter {
 			.isSummaryCreated(DEFAULT_SUMMARY_CREATED)
 			.status(PostStatus.COMPLETED)
 			.starRating(StarRating.from(postReqDto.starRating()))
+			.thumbnailUrl(postReqDto.thumbnailImageUrl())
 			.completedAt(LocalDateTime.now())
 			.build();
 	}
@@ -49,6 +50,7 @@ public class PostConverter {
 			.isSummaryCreated(true)
 			.status(PostStatus.SUMMARIZED)
 			.starRating(StarRating.from(postReqDto.starRating()))
+			.thumbnailUrl(postReqDto.thumbnailImageUrl())
 			.completedAt(LocalDateTime.now())
 			.build();
 	}
@@ -79,6 +81,7 @@ public class PostConverter {
 			.errorTag(PostQueryFacade.findErrorTag(post))
 			.postTags(PostQueryFacade.findTechStackTags(post))
 			.contents(PostQueryFacade.findContents(post))
+			.thumbnailUrl(post.getThumbnailUrl())
 			.build();
 	}
 

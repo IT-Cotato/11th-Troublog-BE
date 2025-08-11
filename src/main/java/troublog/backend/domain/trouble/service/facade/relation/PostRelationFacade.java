@@ -112,6 +112,7 @@ public class PostRelationFacade {
 		foundPost.updateIntroduction(postReqDto.introduction());
 		foundPost.updateVisibility(postReqDto.isVisible());
 		foundPost.updateStatus(PostStatus.from(postReqDto.postStatus()));
+		foundPost.updateThumbnailUrl(postReqDto.thumbnailImageUrl());
 		foundPost.updateStarRating(StarRating.from(postReqDto.starRating()));
 	}
 
