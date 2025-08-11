@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.ContentSummaryType;
+import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
@@ -72,6 +73,12 @@ public class PostQueryService {
 		Page<Post> postPage = postRepository.searchPostsByKeyword(keyword, pageable);
 		log.info("[Post] 검색어 기반 트러블슈팅 문서 조회 : keyword={}, postCount={}", keyword, postPage.getNumberOfElements());
 		return postPage;
+	}
+	
+	public List<Post> findWritingPostsByUserId(Long userId) {
+		List<Post> writingPosts = postRepository.findByUserIdAndStatusAndIsDeletedFalse(userId, PostStatus.WRITING);
+		log.info("[Post] 사용자 WRITING 상태 트러블슈팅 문서 개수 조회: userId={}, count={}", userId, writingPosts.size());
+		return writingPosts;
 	}
 
 }

@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.ContentSummaryType;
+import troublog.backend.domain.trouble.enums.PostStatus;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 	Optional<Post> findByIdAndIsDeletedFalse(Long id);
@@ -72,4 +73,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	@Query("SELECT p FROM Post p JOIN FETCH p.contents c WHERE c.authorType = 'USER_WRITTEN' AND p.id = :id AND p.isDeleted = false")
 	Optional<Post> findPostWithOutSummaryById(@Param("id") Long id);
+	
+	List<Post> findByUserIdAndStatusAndIsDeletedFalse(Long userId, PostStatus status);
 }
