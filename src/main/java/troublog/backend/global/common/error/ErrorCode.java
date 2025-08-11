@@ -56,6 +56,7 @@ public enum ErrorCode {
 	MISSING_POST(HttpStatus.BAD_REQUEST, "P-003", "트러블 슈팅 문서가 누락되었습니다."),
 	POST_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "P-004", "접근 불가능한 트러블슈팅 문서입니다."),
 	POST_NOT_DELETED(HttpStatus.BAD_GATEWAY, "P-005", "삭제되지 않은 트러블슈팅 문서입니다."),
+	POST_NOT_VISIBLE(HttpStatus.BAD_REQUEST,"P-006" , "공개되지 않은 게시물입니다."),
 
 	/**
 	 * Content Error
@@ -116,11 +117,11 @@ public enum ErrorCode {
 	/**
 	 * AI  Error
 	 */
-	TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "A-001", "작업을 찾을 수 없습니다."),
-	TASK_UPDATE_FAILED(HttpStatus.BAD_REQUEST, "A-002", "잘못된 작업 업데이트 요청입니다."),
-	TASK_ALREADY_COMPLETE(HttpStatus.BAD_REQUEST, "A-003", "이미 완료된 작업입니다."),
-	PROMPT_NOT_FOUND(HttpStatus.NOT_FOUND, "A-004", "프롬프트를 찾을 수 없습니다."),
-	TASK_POST_MISMATCH(HttpStatus.BAD_REQUEST, "A-005", "작업과 게시물이 일치하지 않습니다.");
+	TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "AI-001", "작업을 찾을 수 없습니다."),
+	TASK_UPDATE_FAILED(HttpStatus.BAD_REQUEST, "AI-002", "잘못된 작업 업데이트 요청입니다."),
+	TASK_ALREADY_COMPLETE(HttpStatus.BAD_REQUEST, "AI-003", "이미 완료된 작업입니다."),
+	PROMPT_NOT_FOUND(HttpStatus.NOT_FOUND, "AI-004", "프롬프트를 찾을 수 없습니다."),
+	TASK_POST_MISMATCH(HttpStatus.BAD_REQUEST, "AI-005", "작업과 게시물이 일치하지 않습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;

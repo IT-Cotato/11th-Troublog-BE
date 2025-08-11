@@ -1,15 +1,18 @@
 package troublog.backend.domain.trouble.converter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
+import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
+import troublog.backend.domain.user.dto.response.UserInfoResDto;
 
 @UtilityClass
 public class PostConverter {
@@ -17,6 +20,7 @@ public class PostConverter {
 	private static final boolean DEFAULT_VISIBLE = false;
 	private static final boolean DEFAULT_SUMMARY_CREATED = false;
 	private static final boolean DEFAULT_DELETE_STATUS = false;
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
 	public Post createWritingPost(PostReqDto postReqDto) {
 		return createBasePost(postReqDto)
@@ -83,4 +87,19 @@ public class PostConverter {
 			.map(PostConverter::toResponse)
 			.toList();
 	}
+
+	public CommunityPostResDto toCommunityResponse(UserInfoResDto userInfoResDto, Post post) {
+		return CommunityPostResDto.builder()
+			.userInfoResDto(userInfoResDto)
+			.id(post.getId())
+			.title(post.getTitle())
+			.errorTag(PostQueryFacade.findErrorTag(post))
+			.postTags(PostQueryFacade.findTechStackTags(post))
+			.contents(PostQueryFacade.findContents(post))
+			.likeCount(post.getLikeCount())
+			.commentCount(post.getCommentCount())
+			.completedAt(post.getCompletedAt().format(DATE_FORMATTER))
+			.build();
+	}
+
 }

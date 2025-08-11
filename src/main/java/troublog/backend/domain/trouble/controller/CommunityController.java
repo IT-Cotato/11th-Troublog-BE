@@ -24,9 +24,9 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.request.CommentReqDto;
 import troublog.backend.domain.trouble.dto.response.CommentDetailResDto;
 import troublog.backend.domain.trouble.dto.response.CommentResDto;
+import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
 import troublog.backend.domain.trouble.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.dto.response.LikeResDto;
-import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.service.facade.command.CommentCommandFacade;
 import troublog.backend.domain.trouble.service.facade.query.CommentQueryFacade;
 import troublog.backend.domain.trouble.service.facade.command.LikeCommandFacade;
@@ -48,14 +48,11 @@ public class CommunityController {
 	private final PostQueryFacade postQueryFacade;
 
 	@GetMapping("/{postId}")
-	@Operation(summary = "커뮤니티 문서 상세 조회 API", description = "ID 값 기반 커뮤니티 문서 상세 조회")
+	@Operation(summary = "커뮤니티 문서 상세 조회 API", description = "ID 값 기반 커뮤니티 문서 상세 조회 (댓글 포함 X)")
 	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(schema = @Schema(implementation = PostResDto.class)))
-	public ResponseEntity<BaseResponse<PostResDto>> findPostDetailsOnly(
-		@Authentication CustomAuthenticationToken token,
-		@PathVariable long postId
-	) {
-		PostResDto response = postQueryFacade.findPostDetailsById(token.getUserId(), postId);
+		content = @Content(schema = @Schema(implementation = CommunityPostResDto.class)))
+	public ResponseEntity<BaseResponse<CommunityPostResDto>> findPostDetailsOnly(@PathVariable Long postId) {
+		CommunityPostResDto response = postQueryFacade.findCommunityPostDetailsById(postId);
 		return ResponseUtils.ok(response);
 	}
 

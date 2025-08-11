@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.converter.ContentConverter;
 import troublog.backend.domain.trouble.converter.ListConverter;
 import troublog.backend.domain.trouble.converter.PostConverter;
+import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
@@ -27,6 +28,9 @@ import troublog.backend.domain.trouble.enums.TagType;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.service.query.TagQueryService;
+import troublog.backend.domain.trouble.validator.PostValidator;
+import troublog.backend.domain.user.dto.response.UserInfoResDto;
+import troublog.backend.domain.user.service.UserFacade;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,6 +39,7 @@ public class PostQueryFacade {
 
 	private final PostQueryService postQueryService;
 	private final TagQueryService tagQueryService;
+	private final UserFacade userFacade;
 
 	public static String findErrorTag(Post post) {
 		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
@@ -145,10 +150,15 @@ public class PostQueryFacade {
 		return postQueryService.findById(id);
 	}
 
-	@Transactional(readOnly = true)
 	public Page<TroubleListResDto> getAllTroubles(Long userId, Pageable pageable) {
 		Page<Post> posts = postQueryService.getAllTroubles(userId, pageable);
 		return posts.map(ListConverter::toAllTroubleListResDto);
 	}
 
+	public CommunityPostResDto findCommunityPostDetailsById(Long postId) {
+		Post post = postQueryService.findById(postId);
+		PostValidator.validateVisibility(post);
+		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId());
+		return PostConverter.toCommunityResponse(userInfo, post);
+	}
 }
