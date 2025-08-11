@@ -136,6 +136,11 @@ public class PostQueryController {
 		@Authentication CustomAuthenticationToken auth,
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size,
+		@Schema(
+			description = "정렬 기준",
+			allowableValues = {"recommended", "likes", "recent"},
+			defaultValue = "recent"
+		)
 		@RequestParam String sortBy
 	) {
 		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
