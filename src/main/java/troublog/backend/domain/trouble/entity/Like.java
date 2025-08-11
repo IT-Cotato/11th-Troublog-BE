@@ -2,8 +2,6 @@ package troublog.backend.domain.trouble.entity;
 
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.NotNull;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +27,13 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "likes")
+@Table(
+	name = "likes",
+	uniqueConstraints = @jakarta.persistence.UniqueConstraint(
+		name = "uk_likes_user_post",
+		columnNames = {"user_id", "post_id"}
+	)
+)
 public class Like {
 
 	@Id
@@ -36,12 +41,12 @@ public class Like {
 	@Column(name = "likes_id")
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "post_id")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "post_id", nullable = false)
 	private Post post;
 
 	@NotNull
@@ -54,9 +59,18 @@ public class Like {
 	}
 
 	public static Like createLike(User user, Post post) {
+		if (user == null)
+			throw new PostException(ErrorCode.MISSING_USER);
+		if (post == null)
+			throw new PostException(ErrorCode.MISSING_POST);
+
 		Like like = new Like();
 		like.assignUser(user);
 		like.assignPost(post);
+
+		// 양방향 관계 세팅
+		user.addLikeRef(like);
+		post.addLike(like);
 		return like;
 	}
 
@@ -65,7 +79,6 @@ public class Like {
 			throw new PostException(ErrorCode.MISSING_USER);
 		}
 		this.user = user;
-		user.addLike(this);
 	}
 
 	public void assignPost(Post post) {
@@ -73,6 +86,5 @@ public class Like {
 			throw new PostException(ErrorCode.MISSING_POST);
 		}
 		this.post = post;
-		post.addLike(this);
 	}
 }

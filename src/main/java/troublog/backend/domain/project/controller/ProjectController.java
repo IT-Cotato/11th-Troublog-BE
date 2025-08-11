@@ -74,7 +74,7 @@ public class ProjectController {
 	}
 
 	@GetMapping("/{projectId}")
-	@Operation(summary = "프로젝트 상세 조회 API", description = "프로젝트를 하나를 조회합니다.")
+	@Operation(summary = "프로젝트 상세 조회 API", description = "프로젝트 하나를 조회합니다.")
 	public ResponseEntity<BaseResponse<ProjectDetailResDto>> getProjectDetails(
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable long projectId) {
