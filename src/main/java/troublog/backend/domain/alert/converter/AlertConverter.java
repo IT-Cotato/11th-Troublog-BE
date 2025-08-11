@@ -13,7 +13,6 @@ public class AlertConverter {
 			.userId(alert.getUser().getId())
 			.title(alert.getTitle())
 			.message(alert.getMessage())
-			.isRead(alert.isRead())
 			.alertType(alert.getAlertType().getDescription())
 			.build();
 	}

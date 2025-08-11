@@ -38,9 +38,9 @@ public class Alert extends BaseEntity {
 	@Column(name = "message")
 	private String message;
 
-	@Column(name = "is_read")
+	@Column(name = "is_sent")
 	@Builder.Default
-	private boolean isRead = false;
+	private boolean isSent = false;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "alert_type")
@@ -50,7 +50,16 @@ public class Alert extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	public void markAsRead() {
-		this.isRead = true;
+	public void markAsSent() {
+		this.isSent = true;
+	}
+
+	public static Alert postTroubleshootingAlert(User user, int count) {
+		return Alert.builder()
+			.title("미완성 트러블슈팅 알림")
+			.message(String.format("아직 해결되지 않은 트러블 슈팅이 %d개 있어요!", count))
+			.alertType(AlertType.TROUBLES)
+			.user(user)
+			.build();
 	}
 }
