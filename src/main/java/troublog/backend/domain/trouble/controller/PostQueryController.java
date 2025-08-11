@@ -129,7 +129,7 @@ public class PostQueryController {
 	}
 
 	@GetMapping("/list")
-	@Operation(summary = "사용자의 전체 트러블슈팅 문서 목록 조회 API", description = "사용자의 트러블슈팅 전체를 최신순으로 조회합니다.")
+	@Operation(summary = "사용자의 전체 트러블슈팅 문서 목록 조회 API", description = "사용자의 트러블슈팅 문서 목록을 페이지네이션 및 정렬 기준(likes, recent)으로 조회합니다. 기본값은 recent입니다. (recommand 아직)")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PageResponse.class)))
 	public ResponseEntity<PageResponse<TroubleListResDto>> getAllTroubles(
@@ -138,10 +138,10 @@ public class PostQueryController {
 		@RequestParam(defaultValue = "10") int size,
 		@Schema(
 			description = "정렬 기준",
-			allowableValues = {"recommended", "likes", "recent"},
+			allowableValues = {"likes", "recent"},
 			defaultValue = "recent"
 		)
-		@RequestParam String sortBy
+		@RequestParam(defaultValue = "recent") String sortBy
 	) {
 		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
 		Page<TroubleListResDto> response = postQueryFacade.getAllTroubles(auth.getUserId(), pageable);

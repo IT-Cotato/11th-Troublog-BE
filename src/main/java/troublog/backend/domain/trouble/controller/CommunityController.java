@@ -1,7 +1,5 @@
 package troublog.backend.domain.trouble.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -71,10 +69,10 @@ public class CommunityController {
 		@RequestParam(defaultValue = "10") int size,
 		@Schema(
 			description = "정렬 기준",
-			allowableValues = {"recommended", "likes", "recent"},
+			allowableValues = {"likes", "recent"},
 			defaultValue = "recent"
 		)
-		@RequestParam String sortBy
+		@RequestParam(defaultValue = "recent") String sortBy
 	) {
 		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
 		Page<CommunityListResDto> response = postQueryFacade.getCommunityPosts(pageable);
@@ -89,7 +87,7 @@ public class CommunityController {
 		@RequestParam String keyword,
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size
-		) {
+	) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
 		Page<PostResDto> response = postQueryFacade.searchPostByKeyword(keyword, pageable);
 		return ResponseUtils.page(response);
@@ -148,12 +146,13 @@ public class CommunityController {
 		return ResponseUtils.created(response);
 	}
 
-	@GetMapping("/{commentId}")
+	@GetMapping("/{postId}/{commentId}")
 	@Operation(summary = "댓글 상세 조회 API", description = "해당하는 댓글과 댓글의 대댓글 전체를 최신순으로 조회한다.")
 	public ResponseEntity<BaseResponse<CommentDetailResDto>> getDetailComment(
-		@PathVariable long commentId
+		@PathVariable Long commentId,
+		@PathVariable Long postId
 	) {
-		CommentDetailResDto response = commentQueryFacade.getDetailComment(commentId);
+		CommentDetailResDto response = commentQueryFacade.getDetailComment(commentId, postId);
 		return ResponseUtils.ok(response);
 	}
 

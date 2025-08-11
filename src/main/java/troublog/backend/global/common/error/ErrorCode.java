@@ -56,7 +56,8 @@ public enum ErrorCode {
 	MISSING_POST(HttpStatus.BAD_REQUEST, "P-003", "트러블 슈팅 문서가 누락되었습니다."),
 	POST_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "P-004", "접근 불가능한 트러블슈팅 문서입니다."),
 	POST_NOT_DELETED(HttpStatus.BAD_GATEWAY, "P-005", "삭제되지 않은 트러블슈팅 문서입니다."),
-	POST_NOT_VISIBLE(HttpStatus.BAD_REQUEST,"P-006" , "공개되지 않은 게시물입니다."),
+	POST_NOT_VISIBLE(HttpStatus.FORBIDDEN, "P-006", "공개되지 않은 게시물입니다."),
+	JSON_PARSING_ERROR(HttpStatus.BAD_REQUEST, "J-001", "JSON 파싱 중 오류가 발생했습니다."),
 
 	/**
 	 * Content Error

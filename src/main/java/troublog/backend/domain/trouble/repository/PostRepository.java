@@ -29,7 +29,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		LEFT JOIN tags t ON pt.tag_id = t.tag_id
 		WHERE p.user_id = :userId
 		  AND p.is_deleted = false
-		  AND C.author_type = 'USER_WRITTEN'
+		  AND c.author_type = 'USER_WRITTEN'
 		  AND (
 		    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 		    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -48,7 +48,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			LEFT JOIN tags t ON pt.tag_id = t.tag_id
 			WHERE p.user_id = :userId
 			  AND p.is_deleted = false
-			  AND C.author_type = 'USER_WRITTEN'
+			  AND c.author_type = 'USER_WRITTEN'
 			  AND (
 			    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 			    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -70,7 +70,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		LEFT JOIN tags t ON pt.tag_id = t.tag_id
 		  WHERE p.is_deleted = false
 		  AND p.visible = true
-		  AND C.author_type = 'USER_WRITTEN'
+		  AND c.author_type = 'USER_WRITTEN'
 		  AND (
 		    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 		    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -89,7 +89,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			LEFT JOIN tags t ON pt.tag_id = t.tag_id
 			WHERE p.is_deleted = false
 			  AND p.visible = true
-			  AND C.author_type = 'USER_WRITTEN'
+			  AND c.author_type = 'USER_WRITTEN'
 			  AND (
 			    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 			    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -194,9 +194,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	Page<Post> findAllByUser_IdAndIsDeletedFalse(Long userId, Pageable page);
 
-	@Query(value = "SELECT DISTINCT p FROM Post p "
-		+ "WHERE p.isDeleted = FALSE "
-		+ "AND p.isVisible = TRUE "
-		+ "AND (p.status = 'COMPLETED' OR p.status = 'SUMMARIZED')")
+	@Query("""
+		  SELECT DISTINCT p
+		    FROM Post p
+		   WHERE p.isDeleted = FALSE
+		     AND p.isVisible = TRUE
+		     AND p.status IN (
+		       troublog.backend.domain.trouble.enums.PostStatus.COMPLETED,
+		       troublog.backend.domain.trouble.enums.PostStatus.SUMMARIZED
+		     )
+		""")
 	Page<Post> getCommunityPosts(Pageable page);
 }

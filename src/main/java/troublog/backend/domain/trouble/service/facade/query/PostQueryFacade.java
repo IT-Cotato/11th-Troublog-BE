@@ -33,6 +33,8 @@ import troublog.backend.domain.trouble.service.query.TagQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
 import troublog.backend.domain.user.service.UserFacade;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.PostException;
 
 @Service
 @Transactional(readOnly = true)
@@ -179,9 +181,9 @@ public class PostQueryFacade {
 
 	private Sort getSortByCriteria(String sortBy) {
 		return switch (sortBy.toLowerCase()) {
-			case "recommended" -> Sort.by(Sort.Direction.DESC, "recommendScore", "id");
 			case "likes" -> Sort.by(Sort.Direction.DESC, "likeCount", "id");
-			default -> Sort.by(Sort.Direction.DESC, "completedAt", "id");
+			case "recent" -> Sort.by(Sort.Direction.DESC, "completedAt", "id");
+			default -> throw new PostException(ErrorCode.INVALID_VALUE);
 		};
 	}
 }
