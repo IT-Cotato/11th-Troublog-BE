@@ -144,12 +144,9 @@ public class AuthFacade {
 		if (writingCount > 0) {
 
 			Alert alert = Alert.postTroubleshootingAlert(user, writingCount);
-
 			AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
-			boolean isSent = alertSseUtil.sendAlert(user.getId(), alertResDto);
-
-			if (isSent) {
+			if(alertSseUtil.sendAlert(user.getId(), alertResDto)) {
 				alert.markAsSent();
 			}
 

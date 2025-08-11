@@ -45,8 +45,7 @@ public class AlertController {
 		@Authentication CustomAuthenticationToken auth,
 		@RequestParam(required = false) String alertType) {
 
-		List<AlertResDto> alerts = alertFacade.getAlerts(auth.getUserId(), alertType);
-		return ResponseUtils.ok(alerts);
+		return ResponseUtils.ok(alertFacade.getAlerts(auth.getUserId(), alertType));
 	}
 
 	@DeleteMapping("")

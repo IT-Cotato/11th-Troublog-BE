@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -22,6 +23,7 @@ public class AlertFacade {
 	private final AlertCommandService alertCommandService;
 	private final AlertSseUtil alertSseUtil;
 
+	@Transactional(readOnly = true)
 	public List<AlertResDto> getAlerts(Long userId, String alertType) {
 
 		AlertType type = (StringUtils.hasText(alertType))
@@ -33,6 +35,7 @@ public class AlertFacade {
 			.collect(Collectors.toList());
 	}
 
+	@Transactional
 	public void deleteAlert(Long alertId) {
 
 		Alert alert = alertQueryService.getAlertById(alertId);
