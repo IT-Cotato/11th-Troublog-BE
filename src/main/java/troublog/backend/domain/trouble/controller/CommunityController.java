@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,23 +14,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.request.CommentReqDto;
 import troublog.backend.domain.trouble.dto.response.CommentDetailResDto;
 import troublog.backend.domain.trouble.dto.response.CommentResDto;
+import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
+import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
 import troublog.backend.domain.trouble.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.dto.response.LikeResDto;
-import troublog.backend.domain.trouble.service.facade.CommentCommandFacade;
-import troublog.backend.domain.trouble.service.facade.CommentQueryFacade;
-import troublog.backend.domain.trouble.service.facade.LikeCommandFacade;
+import troublog.backend.domain.trouble.dto.response.PostResDto;
+import troublog.backend.domain.trouble.service.facade.command.CommentCommandFacade;
+import troublog.backend.domain.trouble.service.facade.command.LikeCommandFacade;
+import troublog.backend.domain.trouble.service.facade.query.CommentQueryFacade;
+import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
+import troublog.backend.global.common.response.PageResponse;
 import troublog.backend.global.common.util.ResponseUtils;
 
 @RestController

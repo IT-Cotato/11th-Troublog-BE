@@ -33,6 +33,7 @@ import troublog.backend.domain.trouble.enums.VisibilityType;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
+import troublog.backend.global.common.response.PageResponse;
 import troublog.backend.global.common.util.ResponseUtils;
 
 @RestController
@@ -84,13 +85,13 @@ public class ProjectController {
 
 	@GetMapping
 	@Operation(summary = "프로젝트 전체 목록 조회 API", description = "전체 프로젝트 리스트를 조회합니다. (삭제된 프로젝트는 조회되지 않음)")
-	public ResponseEntity<BaseResponse<Page<ProjectDetailResDto>>> getProjects(
+	public ResponseEntity<PageResponse<ProjectDetailResDto>> getProjects(
 		@Authentication CustomAuthenticationToken auth,
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size) {
 		Pageable pageable = projectQueryFacade.getPageable(page, size);
 		Page<ProjectDetailResDto> response = projectQueryFacade.getAllProjects(auth.getUserId(), pageable);
-		return ResponseUtils.ok(response);
+		return ResponseUtils.page(response);
 	}
 
 	@GetMapping("/{projectId}/troubles")
