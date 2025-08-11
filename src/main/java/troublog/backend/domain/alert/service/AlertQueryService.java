@@ -19,8 +19,8 @@ public class AlertQueryService {
 
 	private final AlertRepository alertRepository;
 
-	public List<Alert> getUnreadAlerts(Long userId, AlertType alertType) {
-		return alertRepository.findAllByUserIdAndAlertTypeAndIsReadFalse(userId, alertType);
+	public List<Alert> getAlerts(Long userId, AlertType alertType) {
+		return alertRepository.findAllByUserIdAndAlertType(userId, alertType);
 	}
 
 	public Alert getAlertById(Long alertId) {

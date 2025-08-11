@@ -16,9 +16,18 @@ public interface AlertRepository extends JpaRepository<Alert, Long> {
         select a
         from Alert a
         where a.user.id = :userId
-          and a.isRead = false
           and (:alertType is null or a.alertType = :alertType)
+          and a.isSent = true
         order by a.id desc
     """)
-	List<Alert> findAllByUserIdAndAlertTypeAndIsReadFalse(Long userId, AlertType alertType);
+	List<Alert> findAllByUserIdAndAlertType(Long userId, AlertType alertType);
+	
+	@Query("""
+        select a
+        from Alert a
+        where a.user.id = :userId
+          and a.isSent = false
+        order by a.id desc
+    """)
+	List<Alert> findUnsentAlertsByUserId(Long userId);
 }
