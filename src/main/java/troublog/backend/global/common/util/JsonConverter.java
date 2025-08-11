@@ -1,39 +1,39 @@
 package troublog.backend.global.common.util;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.experimental.UtilityClass;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.BusinessException;
 
 @UtilityClass
 public class JsonConverter {
 
-	public static final String REPLACEMENT = "";
+	private static final ObjectMapper MAPPER = new ObjectMapper();
+	public static final String SQUARE_BRACKETS = "[]";
 
 	public String toJson(List<Integer> scores) {
-		if (scores == null || scores.isEmpty()) {
-			return "[]";
+		try {
+			return MAPPER.writeValueAsString(scores == null ? Collections.emptyList() : scores);
+		} catch (JsonProcessingException e) {
+			throw new BusinessException(ErrorCode.JSON_PARSING_ERROR);
 		}
-		return scores.stream()
-			.map(String::valueOf)
-			.collect(Collectors.joining(",", "[", "]"));
 	}
 
 	public List<Integer> toList(String json) {
-		if (json == null || json.trim().equals("[]") || json.trim().isEmpty()) {
+		if (json == null || json.trim().isEmpty() || SQUARE_BRACKETS.equals(json.trim())) {
 			return Collections.emptyList();
 		}
-
-		String content = json.replace("[", REPLACEMENT).replace("]", REPLACEMENT).trim();
-		if (content.isEmpty()) {
+		try {
+			return MAPPER.readValue(json, new TypeReference<List<Integer>>() {
+			});
+		} catch (Exception e) {
 			return Collections.emptyList();
 		}
-
-		return Arrays.stream(content.split(","))
-			.map(String::trim)
-			.map(Integer::parseInt)
-			.toList();
 	}
 }

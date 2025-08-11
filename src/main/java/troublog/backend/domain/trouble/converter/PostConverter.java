@@ -95,12 +95,13 @@ public class PostConverter {
 			.userInfoResDto(userInfoResDto)
 			.id(post.getId())
 			.title(post.getTitle())
+			.introduction(post.getIntroduction())
 			.errorTag(PostQueryFacade.findErrorTag(post))
 			.postTags(PostQueryFacade.findTechStackTags(post))
 			.contents(PostQueryFacade.findContents(post))
 			.likeCount(post.getLikeCount())
 			.commentCount(post.getCommentCount())
-			.completedAt(post.getCompletedAt().format(DATE_FORMATTER))
+			.completedAt(post.getCompletedAt() == null ? null : post.getCompletedAt().format(DATE_FORMATTER))
 			.build();
 	}
 
@@ -114,7 +115,7 @@ public class PostConverter {
 			.postTags(PostQueryFacade.findTopTechStackTags(post))
 			.likeCount(post.getLikeCount())
 			.commentCount(post.getCommentCount())
-			.completedAt(post.getCompletedAt().format(DATE_FORMATTER))
+			.completedAt(post.getCompletedAt() == null ? null : post.getCompletedAt().format(DATE_FORMATTER))
 			.build();
 	}
 

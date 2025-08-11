@@ -3,7 +3,9 @@ package troublog.backend.domain.trouble.converter;
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
+import troublog.backend.domain.trouble.validator.PostValidator;
 
 @UtilityClass
 public class ListConverter {
@@ -16,12 +18,12 @@ public class ListConverter {
 			.date(post.getCompletedAt() != null ? post.getCompletedAt() : post.getUpdated_at())
 			.status(String.valueOf(post.getStatus()))
 			.starRating(post.getStarRating() != null ? post.getStarRating().getValue() : null)
-			.imageUrl(post.getThumbnailUrl()) // 수정 필요
+			.imageUrl(post.getThumbnailUrl())
 			.error(PostQueryFacade.findErrorTag(post))
 			.techs(PostQueryFacade.findTopTechStackTags(post))
 			.isVisible(post.getIsVisible())
-			.summaryType(Boolean.TRUE.equals(post.getIsSummaryCreated()) ?
-				String.valueOf(post.getContents().getFirst().getSummaryType()) : null)
+			.summaryType(PostValidator.isValidSummaryContent(post) ?
+				ContentSummaryType.getName(post.getContents().getFirst().getSummaryType()) : null)
 			.build();
 	}
 }
