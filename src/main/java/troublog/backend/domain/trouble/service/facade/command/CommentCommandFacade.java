@@ -13,7 +13,6 @@ import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.service.command.CommentCommandService;
 import troublog.backend.domain.trouble.service.facade.relation.CommentRelationFacade;
 import troublog.backend.domain.trouble.service.factory.CommentFactory;
-import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.CommentQueryService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
@@ -49,6 +48,7 @@ public class CommentCommandFacade {
 
 		Comment parentComment = commentQueryService.findComment(commentId);
 		CommentFactory.validateParent(parentComment);
+		PostValidator.validateCommentBelongsToPost(parentComment, postId);
 
 		Comment newChildComment = CommentConverter.toEntity(commentReqDto);
 		commentRelationFacade.establishChildRelations(parentComment, newChildComment);
@@ -62,6 +62,7 @@ public class CommentCommandFacade {
 		PostValidator.validateVisibility(post);
 		Comment comment = commentQueryService.findComment(commentId);
 		CommentFactory.validateAuthorized(userId, comment);
+		PostValidator.validateCommentBelongsToPost(comment, postId);
 
 		comment.updateContent(commentReqDto.contents());
 		return CommentConverter.toResponse(comment);
@@ -79,3 +80,4 @@ public class CommentCommandFacade {
 		comment.markAsDeleted();
 	}
 }
+
