@@ -32,6 +32,7 @@ import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.service.query.TagQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
+import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
 import troublog.backend.domain.user.service.UserFacade;
 import troublog.backend.global.common.error.ErrorCode;
@@ -170,10 +171,10 @@ public class PostQueryFacade {
 			.map(post -> post.getUser().getId())
 			.collect(Collectors.toSet());
 
-		Map<Long, UserInfoResDto> userInfoMap = userFacade.getUserInfoMap(userIds);
+		Map<Long, PostCardUserInfoResDto> userInfoMap = userFacade.getUserInfoMap(userIds);
 
 		return posts.map(post -> {
-			UserInfoResDto userInfo = userInfoMap.get(post.getUser().getId());
+			PostCardUserInfoResDto userInfo = userInfoMap.get(post.getUser().getId());
 			return PostConverter.toCommunityListResponse(userInfo, post);
 		});
 	}

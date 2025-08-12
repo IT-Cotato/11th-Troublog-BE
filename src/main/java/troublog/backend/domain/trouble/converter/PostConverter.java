@@ -13,6 +13,7 @@ import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
+import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
 import troublog.backend.global.common.util.JsonConverter;
 
@@ -105,9 +106,9 @@ public class PostConverter {
 			.build();
 	}
 
-	public CommunityListResDto toCommunityListResponse(UserInfoResDto userInfoResDto, Post post) {
+	public CommunityListResDto toCommunityListResponse(PostCardUserInfoResDto postCardUserInfoResDto, Post post) {
 		return CommunityListResDto.builder()
-			.userInfoResDto(userInfoResDto)
+			.postCardUserInfoResDto(postCardUserInfoResDto)
 			.id(post.getId())
 			.title(post.getTitle())
 			.thumbnailUrl(post.getThumbnailUrl())

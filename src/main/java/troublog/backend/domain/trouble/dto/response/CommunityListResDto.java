@@ -4,12 +4,12 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-import troublog.backend.domain.user.dto.response.UserInfoResDto;
+import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 
 @Builder
 public record CommunityListResDto(
 	@Schema(description = "사용자 정보")
-	UserInfoResDto userInfoResDto,
+	PostCardUserInfoResDto postCardUserInfoResDto,
 
 	@Schema(description = "트러블슈팅 id")
 	Long id,

@@ -2,7 +2,6 @@ package troublog.backend.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.BatchSize;
 import troublog.backend.global.common.entity.BaseEntity;
 
 @Entity
@@ -28,11 +27,9 @@ public class Follow extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "follower_id", nullable = false)
-	@BatchSize(size = 50)  // 배치 페치 크기 설정
 	private User follower;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "following_id", nullable = false)
-	@BatchSize(size = 50)  // 배치 페치 크기 설정
 	private User following;
 }

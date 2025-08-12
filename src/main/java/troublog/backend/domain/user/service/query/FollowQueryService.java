@@ -1,21 +1,16 @@
 package troublog.backend.domain.user.service.query;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.user.entity.Follow;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.repository.FollowRepository;
-import troublog.backend.domain.user.repository.port.FollowStatsQueryPort;
-import troublog.backend.domain.user.repository.value.FollowStats;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.UserException;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +18,6 @@ import java.util.Set;
 public class FollowQueryService {
 
 	private final FollowRepository followRepository;
-	private final FollowStatsQueryPort followStatsQueryPort;
 
 	public void existsByFollowerAndFollowing(User follower, User following) {
 
@@ -46,7 +40,5 @@ public class FollowQueryService {
 		return followRepository.findFollowings(user.getId());
 	}
 
-	public Map<Long, FollowStats> loadFollowStats(Set<Long> userIds) {
-		return followStatsQueryPort.loadFor(userIds); // Map<Long, FollowStats>
-	}
+
 }
