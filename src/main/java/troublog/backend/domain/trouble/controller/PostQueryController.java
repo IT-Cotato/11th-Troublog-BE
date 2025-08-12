@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -84,7 +85,7 @@ public class PostQueryController {
 	@GetMapping("/tags/category")
 	@Operation(summary = "트러블슈팅 기술 태그 조회 API (카테고리)", description = "태그 카테고리 기반 기술태그를 조회한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(schema = @Schema(implementation = String[].class)))
+		content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class))))
 	public ResponseEntity<BaseResponse<List<String>>> findPostTags(
 		@Schema(
 			defaultValue = "FRONTEND",
@@ -106,7 +107,7 @@ public class PostQueryController {
 	@GetMapping("/tags")
 	@Operation(summary = "트러블슈팅 기술 태그 조회 API (키워드)", description = "키워드 기반 기술태그를 조회한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(schema = @Schema(implementation = String[].class)))
+		content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class))))
 	public ResponseEntity<BaseResponse<List<String>>> findPostTagsByName(
 		@RequestParam String tagName
 	) {
