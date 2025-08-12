@@ -9,6 +9,7 @@ import troublog.backend.domain.user.entity.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface FollowRepository extends JpaRepository<Follow, Long> {
@@ -30,4 +31,20 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 		    ORDER BY f.follower.id DESC
 		""")
 	List<User> findFollowings(@Param("userId") Long userId);
+
+	@Query("""
+		SELECT f.following.id, COUNT(f.follower.id)
+		FROM Follow f
+		WHERE f.following.id IN :userIds
+		GROUP BY f.following.id
+		""")
+	List<Long[]> countFollowersByUserIds(@Param("userIds") Set<Long> userIds);
+
+	@Query("""
+		SELECT f.follower.id, COUNT(f.following.id)
+		FROM Follow f
+		WHERE f.follower.id IN :userIds
+		GROUP BY f.follower.id
+		""")
+	List<Long[]> countFollowingsByUserIds(@Param("userIds") Set<Long> userIds);
 }

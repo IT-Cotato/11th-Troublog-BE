@@ -33,8 +33,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserFacade {
 
-	private final FollowValidator followValidator;
+	private static final long DEFAULT_VALUE = 0L;
 
+	private final FollowValidator followValidator;
 	private final UserCommandService userCommandService;
 	private final UserQueryService userQueryService;
 	private final FollowCommandService followCommandService;
@@ -145,17 +146,24 @@ public class UserFacade {
 		}
 
 		List<User> users = userQueryService.findAllByIds(userIds);
+		Map<Long, Long> followerCounts = followQueryService.countFollowersByUserIds(userIds);
+		Map<Long, Long> followingCounts = followQueryService.countFollowingsByUserIds(userIds);
 
 		return users.stream()
 			.collect(Collectors.toMap(
 				User::getId,
-				this::createUserInfoResDto
+				user -> createOptimizedUserInfoResDto(user, followerCounts, followingCounts),
+				(existing, replacement) -> existing
 			));
 	}
 
-	private UserInfoResDto createUserInfoResDto(User user) {
-		long followerCount = followQueryService.findFollowers(user).size();
-		long followingCount = followQueryService.findFollowings(user).size();
+	private UserInfoResDto createOptimizedUserInfoResDto(
+		User user,
+		Map<Long, Long> followerCounts,
+		Map<Long, Long> followingCounts
+	) {
+		long followerCount = followerCounts.getOrDefault(user.getId(), DEFAULT_VALUE);
+		long followingCount = followingCounts.getOrDefault(user.getId(), DEFAULT_VALUE);
 		return UserConverter.toUserResDto(user, followerCount, followingCount);
 	}
 
