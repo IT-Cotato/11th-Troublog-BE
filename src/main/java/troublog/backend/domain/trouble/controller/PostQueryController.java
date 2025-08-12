@@ -12,16 +12,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
-import troublog.backend.domain.trouble.service.facade.PostQueryFacade;
-import troublog.backend.domain.trouble.service.query.PostQueryService;
+import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -35,7 +36,6 @@ import troublog.backend.global.common.util.ResponseUtils;
 public class PostQueryController {
 
 	private final PostQueryFacade postQueryFacade;
-	private final PostQueryService postQueryService;
 
 	@GetMapping("/{postId}/combine")
 	@Operation(summary = "트러블슈팅 문서 + AI 요약본 상세 조회 API", description = "ID 값 기반 트러블슈팅 문서 + AI 요약본 상세 조회")
@@ -85,7 +85,7 @@ public class PostQueryController {
 	@GetMapping("/tags/category")
 	@Operation(summary = "트러블슈팅 기술 태그 조회 API (카테고리)", description = "태그 카테고리 기반 기술태그를 조회한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(schema = @Schema(implementation = String.class)))
+		content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class))))
 	public ResponseEntity<BaseResponse<List<String>>> findPostTags(
 		@Schema(
 			defaultValue = "FRONTEND",
@@ -107,7 +107,7 @@ public class PostQueryController {
 	@GetMapping("/tags")
 	@Operation(summary = "트러블슈팅 기술 태그 조회 API (키워드)", description = "키워드 기반 기술태그를 조회한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(schema = @Schema(implementation = String.class)))
+		content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class))))
 	public ResponseEntity<BaseResponse<List<String>>> findPostTagsByName(
 		@RequestParam String tagName
 	) {
@@ -122,39 +122,30 @@ public class PostQueryController {
 	public ResponseEntity<PageResponse<PostResDto>> searchUserPost(
 		@Authentication CustomAuthenticationToken token,
 		@RequestParam String keyword,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size
 	) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
 		Page<PostResDto> response = postQueryFacade.searchUserPostByKeyword(token.getUserId(), keyword, pageable);
 		return ResponseUtils.page(response);
 	}
 
-	@GetMapping("/search")
-	@Operation(summary = "트러블슈팅 문서 검색 API", description = "키워드를 기반으로  트러블 슈팅 문서를 검색한다.")
-	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(schema = @Schema(implementation = PageResponse.class)))
-	public ResponseEntity<PageResponse<PostResDto>> searchPost(
-		@Authentication CustomAuthenticationToken token,
-		@RequestParam String keyword,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size
-	) {
-		Pageable pageable = postQueryFacade.getPageable(page, size);
-		Page<PostResDto> response = postQueryFacade.searchPostByKeyword(keyword, pageable);
-		return ResponseUtils.page(response);
-	}
-
 	@GetMapping("/list")
-	@Operation(summary = "전체 트러블슈팅 목록 조회 API", description = "트러블슈팅 전체를 최신순으로 조회합니다.")
+	@Operation(summary = "사용자의 전체 트러블슈팅 문서 목록 조회 API", description = "사용자의 트러블슈팅 문서 목록을 페이지네이션 및 정렬 기준(likes, latest)으로 조회합니다. 기본값은 latest입니다. (recommand 아직)")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PageResponse.class)))
 	public ResponseEntity<PageResponse<TroubleListResDto>> getAllTroubles(
 		@Authentication CustomAuthenticationToken auth,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size,
+		@Schema(
+			description = "정렬 기준",
+			allowableValues = {"likes", "latest"},
+			defaultValue = "latest"
+		)
+		@RequestParam(defaultValue = "latest") String sortBy
 	) {
-		Pageable pageable = postQueryFacade.getPageable(page, size);
+		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
 		Page<TroubleListResDto> response = postQueryFacade.getAllTroubles(auth.getUserId(), pageable);
 		return ResponseUtils.page(response);
 	}

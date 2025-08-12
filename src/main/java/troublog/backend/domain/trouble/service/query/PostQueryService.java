@@ -82,7 +82,6 @@ public class PostQueryService {
 		return postPage;
 	}
 
-	@Transactional(readOnly = true)
 	public Page<Post> getAllTroubles(Long userId, Pageable pageable) {
 		// 최신순 기준 선택 필요 - createdAt/updatedAt/completedAt
 		Sort sort = Sort.by(DESC, "completedAt", "id");
@@ -99,7 +98,6 @@ public class PostQueryService {
 		return page;
 	}
 
-	@Transactional(readOnly = true)
 	public List<TroubleListResDto> getCompletedTroubles(
 		Long projectId, SortType sort, VisibilityType visibility) {
 		Boolean visible = mapVisibility(visibility);
@@ -116,7 +114,6 @@ public class PostQueryService {
 			.toList();
 	}
 
-	@Transactional(readOnly = true)
 	public List<TroubleListResDto> getSummarizedTroubles(
 		Long projectId, SortType sort, ContentSummaryType summaryType) {
 		ContentSummaryType st = (summaryType == ContentSummaryType.NONE) ? null : summaryType;
@@ -138,5 +135,9 @@ public class PostQueryService {
 		if (v == null || v == VisibilityType.ALL)
 			return null;
 		return (v == VisibilityType.PUBLIC) ? Boolean.TRUE : Boolean.FALSE;
+	}
+
+	public Page<Post> getCommunityPosts(Pageable pageable) {
+		return postRepository.getCommunityPosts(pageable);
 	}
 }

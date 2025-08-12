@@ -1,25 +1,27 @@
 package troublog.backend.domain.trouble.enums;
 
+import java.util.Arrays;
+
+import org.springframework.data.domain.Sort;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import troublog.backend.global.common.error.ErrorCode;
-import troublog.backend.global.common.error.exception.PostException;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public enum SortType {
-	LATEST("최신순"),
-	IMPORTANT("중요도순");
+	IMPORTANT("recommended", Sort.by(Sort.Direction.DESC, "likeCount", "id")),
+	LIKES("likes", Sort.by(Sort.Direction.DESC, "likeCount", "id")),
+	LATEST("latest", Sort.by(Sort.Direction.DESC, "created_at", "id"));
 
-	private final String message;
+	private final String value;
+	private final Sort sort;
 
-	public static SortType from(String status) {
-		for (SortType sortType : values()) {
-			if (sortType.name().equals(status)) {
-				return sortType;
-			}
-		}
-		throw new PostException(ErrorCode.INVALID_VALUE);
+	public static SortType from(String value) {
+		return Arrays.stream(values())
+			.filter(type -> type.value.equalsIgnoreCase(value))
+			.findFirst()
+			.orElse(LATEST);
 	}
 }

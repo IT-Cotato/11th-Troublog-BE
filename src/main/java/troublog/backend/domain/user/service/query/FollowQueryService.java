@@ -1,15 +1,16 @@
 package troublog.backend.domain.user.service.query;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.user.entity.Follow;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.repository.FollowRepository;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.UserException;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,4 +39,6 @@ public class FollowQueryService {
 	public List<User> findFollowings(User user) {
 		return followRepository.findFollowings(user.getId());
 	}
+
+
 }

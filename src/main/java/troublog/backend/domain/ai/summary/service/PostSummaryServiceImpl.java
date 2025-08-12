@@ -20,7 +20,7 @@ import troublog.backend.domain.trouble.converter.ContentConverter;
 import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.ContentSummaryType;
-import troublog.backend.domain.trouble.service.facade.PostQueryFacade;
+import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.domain.trouble.service.query.ContentQueryService;
 import troublog.backend.domain.trouble.service.query.PostTagQueryService;
 import troublog.backend.global.common.config.PromptProperties;

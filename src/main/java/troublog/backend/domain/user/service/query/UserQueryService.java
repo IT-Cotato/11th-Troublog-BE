@@ -1,6 +1,8 @@
 package troublog.backend.domain.user.service.query;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,6 +50,10 @@ public class UserQueryService {
 		UserValidator.validateUserDeleted(user);
 
 		return user;
+	}
+
+	public List<User> findAllByIds(Set<Long> userIds) {
+		return userRepository.findAllByIdInAndIsDeletedFalse(userIds);
 	}
 
 	public boolean existsByEmail(String email) {

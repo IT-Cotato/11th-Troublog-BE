@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.service.facade;
+package troublog.backend.domain.trouble.service.facade.relation;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

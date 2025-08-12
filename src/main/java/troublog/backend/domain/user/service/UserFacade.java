@@ -1,12 +1,21 @@
 package troublog.backend.domain.user.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.user.converter.FollowConverter;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
+import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserProfileResDto;
@@ -19,16 +28,12 @@ import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.domain.user.validator.FollowValidator;
 import troublog.backend.domain.user.validator.UserValidator;
 
-import java.util.List;
-import java.util.Set;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserFacade {
 
 	private final FollowValidator followValidator;
-
 	private final UserCommandService userCommandService;
 	private final UserQueryService userQueryService;
 	private final FollowCommandService followCommandService;
@@ -130,6 +135,21 @@ public class UserFacade {
 
 		// DTO 변환
 		return UserConverter.toUserResDto(user, followerNum, followingNum);
+	}
+
+	@Transactional(readOnly = true)
+	public Map<Long, PostCardUserInfoResDto> getUserInfoMap(Set<Long> userIds) {
+		if (CollectionUtils.isEmpty(userIds)) {
+			return Collections.emptyMap();
+		}
+
+		List<User> users = userQueryService.findAllByIds(userIds);
+
+		return users.stream()
+			.collect(Collectors.toMap(
+				User::getId,
+				UserConverter::toPostCardUserInfoResDto,
+				(existing, replacement) -> existing));
 	}
 
 	@Transactional(readOnly = true)

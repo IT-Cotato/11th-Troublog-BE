@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.service.facade;
+package troublog.backend.domain.trouble.service.facade.relation;
 
 import java.util.List;
 
@@ -16,8 +16,6 @@ import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;
-import troublog.backend.domain.trouble.enums.PostStatus;
-import troublog.backend.domain.trouble.enums.StarRating;
 import troublog.backend.domain.trouble.service.command.ContentCommandService;
 import troublog.backend.domain.trouble.service.command.PostTagCommandService;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
@@ -108,11 +106,7 @@ public class PostRelationFacade {
 	}
 
 	private void updateCommonInfo(PostReqDto postReqDto, Post foundPost) {
-		foundPost.updateTitle(postReqDto.title());
-		foundPost.updateIntroduction(postReqDto.introduction());
-		foundPost.updateVisibility(postReqDto.isVisible());
-		foundPost.updateStatus(PostStatus.from(postReqDto.postStatus()));
-		foundPost.updateStarRating(StarRating.from(postReqDto.starRating()));
+		foundPost.updateCommonInfo(postReqDto);
 	}
 
 	private void updateProjectRelations(Post post, Long newProjectId) {

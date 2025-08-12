@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
+import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserProfileResDto;
@@ -67,6 +68,14 @@ public class UserConverter {
 			.nickname(user.getNickname())
 			.githubUrl(user.getGithubUrl())
 			.bio(user.getBio())
+			.build();
+	}
+
+	public static PostCardUserInfoResDto toPostCardUserInfoResDto(User user) {
+		return PostCardUserInfoResDto.builder()
+			.userId(user.getId())
+			.nickname(user.getNickname())
+			.profileImageUrl(user.getProfileUrl())
 			.build();
 	}
 }
