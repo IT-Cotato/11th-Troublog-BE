@@ -15,6 +15,7 @@ import troublog.backend.domain.user.dto.response.UserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserProfileResDto;
 import troublog.backend.domain.user.entity.Follow;
 import troublog.backend.domain.user.entity.User;
+import troublog.backend.domain.user.repository.value.FollowStats;
 import troublog.backend.domain.user.service.command.FollowCommandService;
 import troublog.backend.domain.user.service.command.UserCommandService;
 import troublog.backend.domain.user.service.query.FollowQueryService;
@@ -23,6 +24,7 @@ import troublog.backend.domain.user.validator.FollowValidator;
 import troublog.backend.domain.user.validator.UserValidator;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -146,25 +148,19 @@ public class UserFacade {
 		}
 
 		List<User> users = userQueryService.findAllByIds(userIds);
-		Map<Long, Long> followerCounts = followQueryService.countFollowersByUserIds(userIds);
-		Map<Long, Long> followingCounts = followQueryService.countFollowingsByUserIds(userIds);
+		Map<Long, FollowStats> statsById = followQueryService.loadFollowStats(userIds);
 
 		return users.stream()
 			.collect(Collectors.toMap(
 				User::getId,
-				user -> createOptimizedUserInfoResDto(user, followerCounts, followingCounts),
-				(existing, replacement) -> existing
+				u -> createUserInfoResDto(u, statsById.getOrDefault(u.getId(), FollowStats.zero())),
+				(existing, replacement) -> existing,
+				LinkedHashMap::new
 			));
 	}
 
-	private UserInfoResDto createOptimizedUserInfoResDto(
-		User user,
-		Map<Long, Long> followerCounts,
-		Map<Long, Long> followingCounts
-	) {
-		long followerCount = followerCounts.getOrDefault(user.getId(), DEFAULT_VALUE);
-		long followingCount = followingCounts.getOrDefault(user.getId(), DEFAULT_VALUE);
-		return UserConverter.toUserResDto(user, followerCount, followingCount);
+	private UserInfoResDto createUserInfoResDto(User user, FollowStats stats) {
+		return UserConverter.toUserResDto(user, stats.followers(), stats.followings());
 	}
 
 	@Transactional(readOnly = true)

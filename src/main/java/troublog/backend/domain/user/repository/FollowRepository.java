@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import troublog.backend.domain.user.entity.Follow;
 import troublog.backend.domain.user.entity.User;
+import troublog.backend.domain.user.repository.value.FollowStatsRow;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,19 +33,22 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 		""")
 	List<User> findFollowings(@Param("userId") Long userId);
 
-	@Query("""
-		SELECT f.following.id, COUNT(f.follower.id)
-		FROM Follow f
-		WHERE f.following.id IN :userIds
-		GROUP BY f.following.id
-		""")
-	List<Long[]> countFollowersByUserIds(@Param("userIds") Set<Long> userIds);
-
-	@Query("""
-		SELECT f.follower.id, COUNT(f.following.id)
-		FROM Follow f
-		WHERE f.follower.id IN :userIds
-		GROUP BY f.follower.id
-		""")
-	List<Long[]> countFollowingsByUserIds(@Param("userIds") Set<Long> userIds);
+	@Query(value = """
+		SELECT user_id,
+		       SUM(follower_cnt)  AS followers,
+		       SUM(following_cnt) AS followings
+		FROM (
+		    SELECT f.following_id AS user_id, COUNT(*) AS follower_cnt, 0 AS following_cnt
+		    FROM follows f
+		    WHERE f.following_id IN (:userIds)
+		    GROUP BY f.following_id
+		    UNION ALL
+		    SELECT f.follower_id  AS user_id, 0 AS follower_cnt, COUNT(*) AS following_cnt
+		    FROM follows f
+		    WHERE f.follower_id IN (:userIds)
+		    GROUP BY f.follower_id
+		) t
+		GROUP BY user_id
+		""", nativeQuery = true)
+	List<FollowStatsRow> findFollowStats(@Param("userIds") Set<Long> userIds);
 }
