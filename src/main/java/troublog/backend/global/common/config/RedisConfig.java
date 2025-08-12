@@ -12,7 +12,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-@EnableRedisRepositories
+@EnableRedisRepositories(basePackages = "troublog.backend.domain.ai.summary.repository")
 public class RedisConfig {
 
 	@Value("${spring.data.redis.host}")
