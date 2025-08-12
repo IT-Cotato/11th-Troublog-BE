@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import troublog.backend.domain.user.converter.FollowConverter;
 import troublog.backend.domain.user.converter.UserConverter;
@@ -26,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 
 @Slf4j
 @Service
@@ -140,7 +139,6 @@ public class UserFacade {
 	}
 
 	@Transactional(readOnly = true)
-
 	public Map<Long, UserInfoResDto> getUserInfoMap(Set<Long> userIds) {
 		if (CollectionUtils.isEmpty(userIds)) {
 			return Collections.emptyMap();

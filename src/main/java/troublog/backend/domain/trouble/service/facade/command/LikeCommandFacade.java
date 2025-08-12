@@ -37,7 +37,7 @@ public class LikeCommandFacade {
 	@Transactional
 	public LikeResDto postLike(Long postId, Long userId) {
 		Post post = postQueryService.findById(postId);
-		PostFactory.validateVisibility(post);
+		PostValidator.validateVisibility(post);
 		User user = userQueryService.findUserById(userId);
 
 		if (likeQueryService.findByUserAndPost(userId, postId).isPresent()) {
@@ -52,7 +52,7 @@ public class LikeCommandFacade {
 	@Transactional
 	public void deleteLike(Long postId, Long userId) {
 		Post post = postQueryService.findById(postId);
-		PostFactory.validateVisibility(post);
+		PostValidator.validateVisibility(post);
 
 		Like like = likeQueryService.findByUserAndPost(userId, postId)
 			.orElseThrow(() -> new PostException(ErrorCode.LIKE_NOT_EXISTS));

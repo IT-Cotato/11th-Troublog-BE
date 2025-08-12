@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
@@ -120,8 +121,8 @@ public class PostQueryController {
 	public ResponseEntity<PageResponse<PostResDto>> searchUserPost(
 		@Authentication CustomAuthenticationToken token,
 		@RequestParam String keyword,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size
 	) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
 		Page<PostResDto> response = postQueryFacade.searchUserPostByKeyword(token.getUserId(), keyword, pageable);
@@ -129,19 +130,19 @@ public class PostQueryController {
 	}
 
 	@GetMapping("/list")
-	@Operation(summary = "사용자의 전체 트러블슈팅 문서 목록 조회 API", description = "사용자의 트러블슈팅 문서 목록을 페이지네이션 및 정렬 기준(likes, recent)으로 조회합니다. 기본값은 recent입니다. (recommand 아직)")
+	@Operation(summary = "사용자의 전체 트러블슈팅 문서 목록 조회 API", description = "사용자의 트러블슈팅 문서 목록을 페이지네이션 및 정렬 기준(likes, latest)으로 조회합니다. 기본값은 latest입니다. (recommand 아직)")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PageResponse.class)))
 	public ResponseEntity<PageResponse<TroubleListResDto>> getAllTroubles(
 		@Authentication CustomAuthenticationToken auth,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size,
 		@Schema(
 			description = "정렬 기준",
-			allowableValues = {"likes", "recent"},
-			defaultValue = "recent"
+			allowableValues = {"likes", "latest"},
+			defaultValue = "latest"
 		)
-		@RequestParam(defaultValue = "recent") String sortBy
+		@RequestParam(defaultValue = "latest") String sortBy
 	) {
 		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
 		Page<TroubleListResDto> response = postQueryFacade.getAllTroubles(auth.getUserId(), pageable);

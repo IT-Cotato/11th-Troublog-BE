@@ -16,6 +16,7 @@ import troublog.backend.domain.trouble.service.factory.CommentFactory;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.CommentQueryService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
+import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
 
@@ -32,7 +33,7 @@ public class CommentCommandFacade {
 
 	public CommentResDto createComment(Long userId, Long postId, CommentReqDto commentReqDto) {
 		Post post = postQueryService.findById(postId);
-		PostFactory.validateVisibility(post);
+		PostValidator.validateVisibility(post);
 		User user = userQueryService.findUserById(userId);
 
 		Comment newComment = CommentConverter.toEntity(commentReqDto);
@@ -43,7 +44,7 @@ public class CommentCommandFacade {
 
 	public CommentResDto createChildComment(Long userId, CommentReqDto commentReqDto, Long commentId, Long postId) {
 		Post post = postQueryService.findById(postId);
-		PostFactory.validateVisibility(post);
+		PostValidator.validateVisibility(post);
 		User user = userQueryService.findUserById(userId);
 
 		Comment parentComment = commentQueryService.findComment(commentId);
@@ -58,7 +59,7 @@ public class CommentCommandFacade {
 
 	public CommentResDto updateComment(Long userId, CommentReqDto commentReqDto, Long commentId, Long postId) {
 		Post post = postQueryService.findById(postId);
-		PostFactory.validateVisibility(post);
+		PostValidator.validateVisibility(post);
 		Comment comment = commentQueryService.findComment(commentId);
 		CommentFactory.validateAuthorized(userId, comment);
 

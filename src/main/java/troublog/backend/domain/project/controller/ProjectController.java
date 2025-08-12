@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.project.dto.request.ProjectReqDto;
 import troublog.backend.domain.project.dto.response.ProjectDetailResDto;
@@ -25,7 +26,6 @@ import troublog.backend.domain.project.dto.response.ProjectResDto;
 import troublog.backend.domain.project.enums.ProjectPostStatus;
 import troublog.backend.domain.project.service.facade.ProjectCommandFacade;
 import troublog.backend.domain.project.service.facade.ProjectQueryFacade;
-import troublog.backend.domain.project.service.query.ProjectQueryService;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.enums.SortType;
@@ -44,7 +44,6 @@ public class ProjectController {
 
 	private final ProjectCommandFacade projectCommandFacade;
 	private final ProjectQueryFacade projectQueryFacade;
-	private final ProjectQueryService projectQueryService;
 
 	@PostMapping
 	@Operation(summary = "프로젝트 생성 API", description = "프로젝트를 생성합니다.")
@@ -87,8 +86,8 @@ public class ProjectController {
 	@Operation(summary = "프로젝트 전체 목록 조회 API", description = "전체 프로젝트 리스트를 조회합니다. (삭제된 프로젝트는 조회되지 않음)")
 	public ResponseEntity<PageResponse<ProjectDetailResDto>> getProjects(
 		@Authentication CustomAuthenticationToken auth,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size) {
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size) {
 		Pageable pageable = projectQueryFacade.getPageable(page, size);
 		Page<ProjectDetailResDto> response = projectQueryFacade.getAllProjects(auth.getUserId(), pageable);
 		return ResponseUtils.page(response);

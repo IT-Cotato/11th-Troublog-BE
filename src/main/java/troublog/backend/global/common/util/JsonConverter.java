@@ -8,9 +8,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.BusinessException;
 
+@Slf4j
 @UtilityClass
 public class JsonConverter {
 
@@ -26,14 +28,18 @@ public class JsonConverter {
 	}
 
 	public List<Integer> toList(String json) {
-		if (json == null || json.trim().isEmpty() || SQUARE_BRACKETS.equals(json.trim())) {
+		String trimmed = (json == null) ? null : json.trim();
+		if (trimmed == null || trimmed.isEmpty()
+			|| SQUARE_BRACKETS.equals(trimmed)
+			|| "null".equalsIgnoreCase(trimmed)) {
 			return Collections.emptyList();
 		}
 		try {
-			return MAPPER.readValue(json, new TypeReference<List<Integer>>() {
+			return MAPPER.readValue(trimmed, new TypeReference<>() {
 			});
 		} catch (Exception e) {
-			return Collections.emptyList();
+			log.error("JSON 파싱 실패 JSON -> List<Integer>: {}", trimmed, e);
+			return Collections.emptyList(); // 필요 시 예외 전환으로 정책 일치
 		}
 	}
 }

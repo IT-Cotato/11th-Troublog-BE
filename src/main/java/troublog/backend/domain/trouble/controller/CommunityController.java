@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.request.CommentReqDto;
@@ -65,14 +66,14 @@ public class CommunityController {
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PageResponse.class)))
 	public ResponseEntity<PageResponse<CommunityListResDto>> getCommunityPosts(
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size,
 		@Schema(
 			description = "정렬 기준",
-			allowableValues = {"likes", "recent"},
-			defaultValue = "recent"
+			allowableValues = {"likes", "latest"},
+			defaultValue = "latest"
 		)
-		@RequestParam(defaultValue = "recent") String sortBy
+		@RequestParam(defaultValue = "latest") String sortBy
 	) {
 		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
 		Page<CommunityListResDto> response = postQueryFacade.getCommunityPosts(pageable);
@@ -85,8 +86,8 @@ public class CommunityController {
 		content = @Content(schema = @Schema(implementation = PageResponse.class)))
 	public ResponseEntity<PageResponse<PostResDto>> searchPost(
 		@RequestParam String keyword,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size
 	) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
 		Page<PostResDto> response = postQueryFacade.searchPostByKeyword(keyword, pageable);
@@ -126,8 +127,8 @@ public class CommunityController {
 	@Operation(summary = "댓글 목록 조회 API", description = "해당하는 트러블슈팅의 댓글 전체를 최신순으로 조회한다.")
 	public ResponseEntity<PageResponse<CommentResDto>> getComments(
 		@PathVariable long postId,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size
 
 	) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
@@ -176,8 +177,8 @@ public class CommunityController {
 	@Operation(summary = "좋아요한 포스트 조회 API", description = "최근에 좋아요한 순으로 포스트를 불러온다.")
 	public ResponseEntity<PageResponse<LikePostResDto>> getUserLikedPosts(
 		@Authentication CustomAuthenticationToken auth,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size) {
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
 		Page<LikePostResDto> likedPosts = likeCommandFacade.getLikedPostsByUser(auth.getUserId(), pageable);
 		return ResponseUtils.page(likedPosts);

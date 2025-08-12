@@ -21,8 +21,6 @@ import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
-import troublog.backend.global.common.error.ErrorCode;
-import troublog.backend.global.common.error.exception.ProjectException;
 
 @Service
 @Transactional(readOnly = true)
@@ -52,12 +50,10 @@ public class ProjectQueryFacade {
 		Project project = projectQueryService.findById(projectId);
 		validateProjectAuthorized(userId, project);
 
-		if (status == ProjectPostStatus.COMPLETED) {
-			return postQueryService.getCompletedTroubles(projectId, sort, visibility);
-		} else if (status == ProjectPostStatus.SUMMARIZED) {
-			return postQueryService.getSummarizedTroubles(projectId, sort, summaryType);
-		} else
-			throw new ProjectException(ErrorCode.INVALID_VALUE);
+		return switch (status) {
+			case ProjectPostStatus.COMPLETED -> postQueryService.getCompletedTroubles(projectId, sort, visibility);
+			case ProjectPostStatus.SUMMARIZED -> postQueryService.getSummarizedTroubles(projectId, sort, summaryType);
+		};
 	}
 }
 
