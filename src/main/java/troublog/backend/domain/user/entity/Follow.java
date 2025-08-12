@@ -15,7 +15,6 @@ import troublog.backend.global.common.entity.BaseEntity;
 		name = "uk_follow_follower_following",
 		columnNames = {"follower_id", "following_id"}),
 	indexes = {
-		@Index(name = "idx_follow_composite", columnList = "follower_id, following_id"),
 		@Index(name = "idx_follow_following_created", columnList = "following_id, created_at DESC"),
 		@Index(name = "idx_follow_follower_created", columnList = "follower_id, created_at DESC"),
 		@Index(name = "idx_follow_stats_covering", columnList = "following_id, follower_id, created_at")
