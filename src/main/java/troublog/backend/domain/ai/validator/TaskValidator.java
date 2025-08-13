@@ -17,9 +17,9 @@ public class TaskValidator {
 		}
 	}
 
-	public void validateTaskIsCompleted(SummaryTask task) {
-		if (task.isCompleted()) {
-			throw new AiTaskException(ErrorCode.TASK_ALREADY_COMPLETE);
+	public void validateTaskCanBeCancelled(SummaryTask task) {
+		if (task.isTerminalStatus()) {
+			throw new AiTaskException(ErrorCode.TASK_CANNOT_BE_CANCELLED);
 		}
 	}
 

@@ -19,7 +19,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.ai.summary.dto.response.TaskStartResDto;
@@ -98,7 +97,6 @@ public class PostCommandController {
 	public ResponseEntity<BaseResponse<TaskStartResDto>> startSummaryTask(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId,
-		@NotNull(message = "AI 요약 타입은 null일 수 없습니다.")
 		@RequestParam ContentSummaryType summaryType
 	) {
 		return ResponseUtils.ok(postCommandFacade.startSummary(token.getUserId(), summaryType, postId));

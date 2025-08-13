@@ -29,7 +29,7 @@ public class PostCommandFacade {
 	private final PostCommandService postCommandService;
 	private final PostQueryService postQueryService;
 	private final PostRelationFacade postRelationFacade;
-	private final PostSummaryService postSummaryServiceImpl;
+	private final PostSummaryService postSummaryService;
 	private final SummaryTaskFacade summaryTaskFacade;
 
 	public PostResDto createPost(Long userId, PostReqDto postReqDto) {
@@ -68,9 +68,9 @@ public class PostCommandFacade {
 		return PostConverter.toResponse(foundPost);
 	}
 
-	public TaskStartResDto startSummary(Long userId, ContentSummaryType summaryType, long postId) {
+	public TaskStartResDto startSummary(Long userId, ContentSummaryType summaryType, Long postId) {
 		SummaryTask task = summaryTaskFacade.createTask(postId);
-		postSummaryServiceImpl.executeAsync(task, summaryType);
+		postSummaryService.executeAsync(task, summaryType);
 		return SummaryTaskConverter.toStartResponseDto(task, userId);
 	}
 }

@@ -124,7 +124,7 @@ public enum ErrorCode {
 	 */
 	TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "AI-001", "작업을 찾을 수 없습니다."),
 	TASK_UPDATE_FAILED(HttpStatus.BAD_REQUEST, "AI-002", "잘못된 작업 업데이트 요청입니다."),
-	TASK_ALREADY_COMPLETE(HttpStatus.BAD_REQUEST, "AI-003", "이미 완료된 작업입니다."),
+	TASK_CANNOT_BE_CANCELLED(HttpStatus.BAD_REQUEST, "AI-003", "이미 완료된 작업입니다."),
 	PROMPT_NOT_FOUND(HttpStatus.NOT_FOUND, "AI-004", "프롬프트를 찾을 수 없습니다."),
 	TASK_POST_MISMATCH(HttpStatus.BAD_REQUEST, "AI-005", "작업과 게시물이 일치하지 않습니다.");
 

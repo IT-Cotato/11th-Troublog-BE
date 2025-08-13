@@ -49,6 +49,6 @@ public class LoggingUtil {
 	}
 
 	private String formatFieldError(FieldError error) {
-		return String.format("[field: %s, currentStep: %s]", error.getField(), error.getDefaultMessage());
+		return String.format("[field: %s, message: %s]", error.getField(), error.getDefaultMessage());
 	}
 }

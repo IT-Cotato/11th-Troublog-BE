@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
@@ -58,10 +57,9 @@ public class PostQueryController {
 	public ResponseEntity<BaseResponse<PostResDto>> findPostSummaryOnly(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId,
-		@NotNull(message = "AI 요약 타입은 null일 수 없습니다.")
-		@RequestParam ContentSummaryType type
+		@RequestParam ContentSummaryType summaryType
 	) {
-		PostResDto response = postQueryFacade.findPostSummaryById(token.getUserId(), postId, type);
+		PostResDto response = postQueryFacade.findPostSummaryById(token.getUserId(), postId, summaryType);
 		return ResponseUtils.ok(response);
 	}
 

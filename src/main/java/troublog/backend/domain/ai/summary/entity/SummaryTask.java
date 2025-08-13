@@ -56,7 +56,7 @@ public class SummaryTask {
 		this.result = result;
 	}
 
-	public boolean isCompleted() {
+	public boolean isTerminalStatus() {
 		return status == SummaryStatus.COMPLETED || status == SummaryStatus.FAILED || status == SummaryStatus.CANCELLED;
 	}
 }
