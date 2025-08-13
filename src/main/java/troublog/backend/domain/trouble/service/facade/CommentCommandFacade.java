@@ -47,10 +47,10 @@ public class CommentCommandFacade {
 		Comment savedComment = commentCommandService.save(newComment);
 
 		// 알림 전송
-		Alert alert = Alert.postCommentAlert(post.getUser(), user.getNickname());
+		Alert alert = AlertConverter.postCommentAlert(post.getUser(), user.getNickname());
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
-		if(alertSseUtil.sendAlert(user.getId(), alertResDto)) {
+		if(alertSseUtil.sendAlert(post.getUser().getId(), alertResDto)) {
 			alert.markAsSent();
 		}
 
@@ -73,10 +73,10 @@ public class CommentCommandFacade {
 		Comment savedComment = commentCommandService.save(newChildComment);
 
 		// 알림 전송
-		Alert alert = Alert.postChildCommentAlert(parentComment.getUser(), user.getNickname());
+		Alert alert = AlertConverter.postChildCommentAlert(parentComment.getUser(), user.getNickname());
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
-		if(alertSseUtil.sendAlert(user.getId(), alertResDto)) {
+		if(alertSseUtil.sendAlert(parentComment.getUser().getId(), alertResDto)) {
 			alert.markAsSent();
 		}
 

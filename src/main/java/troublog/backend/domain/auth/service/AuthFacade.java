@@ -143,7 +143,7 @@ public class AuthFacade {
 		// 작성중인 트러블 슈팅 알림전송
 		if (writingCount > 0) {
 
-			Alert alert = Alert.postTroubleshootingAlert(user, writingCount);
+			Alert alert = AlertConverter.postTroubleshootingAlert(user, writingCount);
 			AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
 			if(alertSseUtil.sendAlert(user.getId(), alertResDto)) {

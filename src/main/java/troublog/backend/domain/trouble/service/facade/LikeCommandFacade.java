@@ -56,10 +56,10 @@ public class LikeCommandFacade {
 		Like saved = likeCommandService.save(like);
 
 		// 좋아요 알림 전송
-		Alert alert = Alert.postLikesAlert(post.getUser(), user.getNickname());
+		Alert alert = AlertConverter.postLikesAlert(post.getUser(), user.getNickname());
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
-		if(alertSseUtil.sendAlert(user.getId(), alertResDto)) {
+		if(alertSseUtil.sendAlert(post.getUser().getId(), alertResDto)) {
 			alert.markAsSent();
 		}
 

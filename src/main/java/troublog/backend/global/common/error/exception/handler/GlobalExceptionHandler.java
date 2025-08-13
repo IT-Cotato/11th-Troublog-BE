@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(AlertException.class)
-	public ResponseEntity<BaseResponse<ErrorResponse>> handleAlertException(UserException e,
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleAlertException(AlertException e,
 		HttpServletRequest request) {
 		LoggingUtil.logException("AlertException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);

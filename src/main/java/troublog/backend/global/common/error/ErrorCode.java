@@ -45,8 +45,8 @@ public enum ErrorCode {
 	 * Alert Error
 	 */
 
-	ALERT_NOT_FOUND(HttpStatus.NOT_FOUND, "Al-001", "알림을 찾을 수 없습니다."),
-	ALERT_TYPE_INVALID(HttpStatus.BAD_REQUEST, "Al-002", "유효하지 않은 알림 타입입니다."),
+	ALERT_NOT_FOUND(HttpStatus.NOT_FOUND, "AL-001", "알림을 찾을 수 없습니다."),
+	ALERT_TYPE_INVALID(HttpStatus.BAD_REQUEST, "AL-002", "유효하지 않은 알림 타입입니다."),
 
 	/**
 	 * Project Error
