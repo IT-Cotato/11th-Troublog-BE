@@ -12,9 +12,9 @@ import troublog.backend.domain.ai.summary.service.PostSummaryService;
 import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
-import troublog.backend.domain.trouble.dto.request.SummaryTypeReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.service.command.PostCommandService;
 import troublog.backend.domain.trouble.service.facade.relation.PostRelationFacade;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
@@ -68,9 +68,9 @@ public class PostCommandFacade {
 		return PostConverter.toResponse(foundPost);
 	}
 
-	public TaskStartResDto startSummary(Long userId, SummaryTypeReqDto summaryTypeReqDto, long postId) {
+	public TaskStartResDto startSummary(Long userId, ContentSummaryType summaryType, long postId) {
 		SummaryTask task = summaryTaskFacade.createTask(postId);
-		postSummaryServiceImpl.executeAsync(task, summaryTypeReqDto.type());
+		postSummaryServiceImpl.executeAsync(task, summaryType);
 		return SummaryTaskConverter.toStartResponseDto(task, userId);
 	}
 }

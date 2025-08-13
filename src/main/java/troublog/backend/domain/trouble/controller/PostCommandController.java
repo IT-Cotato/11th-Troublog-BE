@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,14 +19,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import troublog.backend.domain.trouble.dto.request.SummaryTypeReqDto;
 import troublog.backend.domain.ai.summary.dto.response.TaskStartResDto;
 import troublog.backend.domain.ai.summary.dto.response.TaskStatusResDto;
 import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
+import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.service.facade.command.PostCommandFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
@@ -95,10 +97,11 @@ public class PostCommandController {
 		content = @Content(schema = @Schema(implementation = TaskStartResDto.class)))
 	public ResponseEntity<BaseResponse<TaskStartResDto>> startSummaryTask(
 		@Authentication CustomAuthenticationToken token,
-		@Valid @RequestBody SummaryTypeReqDto summaryTypeReqDto,
-		@PathVariable Long postId
+		@PathVariable Long postId,
+		@NotNull(message = "AI 요약 타입은 null일 수 없습니다.")
+		@RequestParam ContentSummaryType summaryType
 	) {
-		return ResponseUtils.ok(postCommandFacade.startSummary(token.getUserId(), summaryTypeReqDto, postId));
+		return ResponseUtils.ok(postCommandFacade.startSummary(token.getUserId(), summaryType, postId));
 	}
 
 	@GetMapping("/{postId}/summary/{taskId}")

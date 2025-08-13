@@ -2,6 +2,8 @@ package troublog.backend.domain.ai.common.service;
 
 import java.util.concurrent.CompletableFuture;
 
+import troublog.backend.domain.ai.summary.entity.SummaryTask;
+import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.global.common.error.exception.AiTaskException;
 
 public interface AiTaskService<I, T, O> {
@@ -21,7 +23,7 @@ public interface AiTaskService<I, T, O> {
 	 * @param input 작업 입력 데이터
 	 * @return 작업 결과의 CompletableFuture
 	 */
-	CompletableFuture<O> executeAsync(I input, T type);
+	CompletableFuture<O> executeAsync(SummaryTask input, ContentSummaryType type);
 
 	/**
 	 * 입력 데이터 유효성을 검증합니다.

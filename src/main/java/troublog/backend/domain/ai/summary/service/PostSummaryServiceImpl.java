@@ -42,20 +42,19 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 	private final PostSummaryCompletionService completionService;
 
 	@Override
-	public SummarizedResDto execute(SummaryTask summaryTask, String type) {
+	public SummarizedResDto execute(SummaryTask summaryTask, ContentSummaryType summaryType) {
 		validateInput(summaryTask);
-		return performAiAnalysis(summaryTask, type);
+		return performAiAnalysis(summaryTask, summaryType);
 	}
 
 	@Override
 	@Async("summaryExecutor")
-	public CompletableFuture<SummarizedResDto> executeAsync(SummaryTask summaryTask, String type) {
+	public CompletableFuture<SummarizedResDto> executeAsync(SummaryTask summaryTask, ContentSummaryType summaryType) {
 		return CompletableFuture
-			.supplyAsync(() -> executeAiAnalysis(summaryTask, type))
+			.supplyAsync(() -> executeAiAnalysis(summaryTask, summaryType))
 			.thenApply(result -> processResult(summaryTask, result))
 			.thenApply(result -> completeTask(summaryTask, result))
-			.exceptionally(throwable -> handleFailure(summaryTask, throwable))
-			;
+			.exceptionally(throwable -> handleFailure(summaryTask, throwable));
 	}
 
 	@Override
@@ -63,11 +62,11 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 		return summaryTask != null && summaryTask.getId() != null && summaryTask.getPostId() != null;
 	}
 
-	private SummarizedResDto performAiAnalysis(SummaryTask summaryTask, String type) {
+	private SummarizedResDto performAiAnalysis(SummaryTask summaryTask, ContentSummaryType summaryType) {
 		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.PREPROCESSING);
 		BeanOutputConverter<SummarizedResDto> converter = new BeanOutputConverter<>(SummarizedResDto.class);
 		Post post = postQueryFacade.findPostById(summaryTask.getPostId());
-		PromptTemplate promptTemplate = generatePromptTemplate(post, type);
+		PromptTemplate promptTemplate = generatePromptTemplate(post, summaryType);
 		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.ANALYZING);
 		String aiResponse = callAiService(promptTemplate, converter);
 		return convertAiResponse(aiResponse, converter);
@@ -101,9 +100,8 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 		}
 	}
 
-	private PromptTemplate generatePromptTemplate(Post post, String type) {
+	private PromptTemplate generatePromptTemplate(Post post, ContentSummaryType summaryType) {
 		try {
-			ContentSummaryType summaryType = ContentSummaryType.from(type);
 			PromptTemplate promptTemplate = new PromptTemplate(selectPrompt(summaryType));
 			List<Content> contents = contentQueryService.findAllContentsByPostId(post.getId());
 			promptTemplate.add("title", post.getTitle());
@@ -133,9 +131,9 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 			.toList();
 	}
 
-	private SummarizedResDto executeAiAnalysis(SummaryTask summaryTask, String type) {
+	private SummarizedResDto executeAiAnalysis(SummaryTask summaryTask, ContentSummaryType summaryType) {
 		log.info("AI 분석 작업 시작: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId());
-		return execute(summaryTask, type);
+		return execute(summaryTask, summaryType);
 	}
 
 	private SummarizedResDto processResult(SummaryTask summaryTask, SummarizedResDto result) {
