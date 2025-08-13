@@ -193,4 +193,8 @@ public class PostQueryFacade {
 			default -> throw new PostException(ErrorCode.INVALID_VALUE);
 		};
 	}
+
+	public Post findPostWithoutSummaryById(Long postId) {
+		return postQueryService.findPostWithoutSummaryById(postId);
+	}
 }
