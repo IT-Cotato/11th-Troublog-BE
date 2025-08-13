@@ -43,7 +43,9 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 
 	@Override
 	public SummarizedResDto execute(SummaryTask summaryTask, ContentSummaryType summaryType) {
-		validateInput(summaryTask);
+		if (!validateInput(summaryTask)) {
+			throw new AiTaskException(ErrorCode.INVALID_INPUT);
+		}
 		return performAiAnalysis(summaryTask, summaryType);
 	}
 
