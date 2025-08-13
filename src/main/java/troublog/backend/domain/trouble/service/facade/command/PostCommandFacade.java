@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.ai.summary.converter.SummaryTaskConverter;
 import troublog.backend.domain.ai.summary.dto.response.TaskStartResDto;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
-import troublog.backend.domain.ai.summary.service.PostSummaryServiceImpl;
+import troublog.backend.domain.ai.summary.service.PostSummaryService;
 import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
@@ -29,7 +29,7 @@ public class PostCommandFacade {
 	private final PostCommandService postCommandService;
 	private final PostQueryService postQueryService;
 	private final PostRelationFacade postRelationFacade;
-	private final PostSummaryServiceImpl postSummaryServiceImpl;
+	private final PostSummaryService postSummaryServiceImpl;
 	private final SummaryTaskFacade summaryTaskFacade;
 
 	public PostResDto createPost(Long userId, PostReqDto postReqDto) {

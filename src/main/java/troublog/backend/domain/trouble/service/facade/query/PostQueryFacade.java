@@ -100,8 +100,7 @@ public class PostQueryFacade {
 		return PostConverter.toResponse(post);
 	}
 
-	public PostResDto findPostSummaryById(Long userId, long postId, String type) {
-		ContentSummaryType summaryType = ContentSummaryType.from(type);
+	public PostResDto findPostSummaryById(Long userId, long postId, ContentSummaryType summaryType) {
 		Post post = postQueryService.findSummaryById(postId, summaryType);
 		PostFactory.validateAuthorized(userId, post);
 		return PostConverter.toResponse(post);

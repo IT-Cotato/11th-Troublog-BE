@@ -57,7 +57,8 @@ public enum ErrorCode {
 	POST_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "P-004", "접근 불가능한 트러블슈팅 문서입니다."),
 	POST_NOT_DELETED(HttpStatus.BAD_GATEWAY, "P-005", "삭제되지 않은 트러블슈팅 문서입니다."),
 	POST_NOT_VISIBLE(HttpStatus.FORBIDDEN, "P-006", "공개되지 않은 게시물입니다."),
-	JSON_PARSING_ERROR(HttpStatus.BAD_REQUEST, "J-001", "JSON 파싱 중 오류가 발생했습니다."),
+	JSON_PARSING_ERROR(HttpStatus.BAD_REQUEST, "J-007", "JSON 파싱 중 오류가 발생했습니다."),
+	SUMMARY_NOT_FOUND(HttpStatus.NOT_FOUND,"P-008" , "요약본을 찾을 수 없습니다."),
 
 	/**
 	 * Content Error

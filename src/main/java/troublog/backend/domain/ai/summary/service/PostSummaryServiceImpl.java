@@ -7,6 +7,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -47,12 +48,14 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 	}
 
 	@Override
+	@Async("summaryExecutor")
 	public CompletableFuture<SummarizedResDto> executeAsync(SummaryTask summaryTask, String type) {
 		return CompletableFuture
 			.supplyAsync(() -> executeAiAnalysis(summaryTask, type))
 			.thenApply(result -> processResult(summaryTask, result))
 			.thenApply(result -> completeTask(summaryTask, result))
-			.exceptionally(throwable -> handleFailure(summaryTask, throwable));
+			.exceptionally(throwable -> handleFailure(summaryTask, throwable))
+			;
 	}
 
 	@Override

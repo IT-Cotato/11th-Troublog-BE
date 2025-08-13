@@ -59,7 +59,7 @@ public class PostCommandController {
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> updatePost(
 		@Authentication CustomAuthenticationToken token,
-		@PathVariable long postId,
+		@PathVariable Long postId,
 		@Valid @RequestBody PostReqDto postReqDto
 	) {
 		PostResDto response = postCommandFacade.updatePost(token.getUserId(), postId, postReqDto);
@@ -71,7 +71,7 @@ public class PostCommandController {
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> deletePost(
 		@Authentication CustomAuthenticationToken token,
-		@PathVariable long postId
+		@PathVariable Long postId
 	) {
 		postCommandFacade.softDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
@@ -83,7 +83,7 @@ public class PostCommandController {
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> restorePost(
 		@Authentication CustomAuthenticationToken token,
-		@PathVariable long postId
+		@PathVariable Long postId
 	) {
 		PostResDto response = postCommandFacade.restorePost(token.getUserId(), postId);
 		return ResponseUtils.ok(response);
@@ -96,7 +96,7 @@ public class PostCommandController {
 	public ResponseEntity<BaseResponse<TaskStartResDto>> startSummaryTask(
 		@Authentication CustomAuthenticationToken token,
 		@Valid @RequestBody SummaryTypeReqDto summaryTypeReqDto,
-		@PathVariable long postId
+		@PathVariable Long postId
 	) {
 		return ResponseUtils.ok(postCommandFacade.startSummary(token.getUserId(), summaryTypeReqDto, postId));
 	}
@@ -108,7 +108,7 @@ public class PostCommandController {
 	public ResponseEntity<BaseResponse<TaskStatusResDto>> getSummaryTaskStatus(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable String taskId,
-		@PathVariable long postId
+		@PathVariable Long postId
 	) {
 		return ResponseUtils.ok(summaryTaskFacade.findTask(taskId, token.getUserId(), postId));
 	}
@@ -118,7 +118,7 @@ public class PostCommandController {
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> cancelSummaryTask(
 		@PathVariable String taskId,
-		@PathVariable long postId
+		@PathVariable Long postId
 	) {
 		summaryTaskFacade.cancelTask(taskId, postId);
 		return ResponseUtils.noContent();

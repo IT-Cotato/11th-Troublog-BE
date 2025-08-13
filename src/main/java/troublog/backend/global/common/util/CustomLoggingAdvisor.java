@@ -34,12 +34,12 @@ public class CustomLoggingAdvisor implements CallAdvisor {
 
 	@Override
 	public ChatClientResponse adviseCall(ChatClientRequest request, CallAdvisorChain chain) {
-		log.debug("============== Request =============");
-
-		log.debug(LOG_FORMAT, AI_TAG, "Prompt: " + request.prompt().getContents());
-
+		long start = System.currentTimeMillis();
+		loggingRequest(request);
 		ChatClientResponse advisedResponse = chain.nextCall(request);
 
+		long tookMs = System.currentTimeMillis() - start;
+		log.info(LOG_FORMAT, AI_TAG, String.format("Call duration: %d ms", tookMs));
 		log.info("============ Response ============");
 		Optional.ofNullable(advisedResponse.chatResponse())
 			.map(ChatResponse::getMetadata)
@@ -52,5 +52,15 @@ public class CustomLoggingAdvisor implements CallAdvisor {
 
 		log.info("==================================");
 		return advisedResponse;
+	}
+
+	private static void loggingRequest(ChatClientRequest request) {
+		if (log.isDebugEnabled()) {
+			log.debug("============== Request =============");
+			String contents = Optional.of(request.prompt())
+				.map(p -> String.valueOf(p.getContents()))
+				.orElse("(null)");
+			log.debug(LOG_FORMAT, AI_TAG, "Prompt: " + contents.replaceAll("(?i)sk-[A-z0-9]{10,}", "***"));
+		}
 	}
 }

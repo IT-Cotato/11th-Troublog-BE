@@ -42,8 +42,7 @@ public class SummaryTaskFacade {
 		SummaryTask summaryTask = summaryTaskQueryService.findTask(taskId);
 
 		TaskValidator.validateTaskBelongsToPost(summaryTask, postId);
-		TaskValidator.validateTaskCanBeCancelled(summaryTask);
-
+		TaskValidator.validateTaskIsCompleted(summaryTask);
 		updateTaskStatus(summaryTask, SummaryStatus.CANCELLED);
 		summaryTaskCommandService.save(summaryTask);
 		logTaskCancellation(summaryTask);

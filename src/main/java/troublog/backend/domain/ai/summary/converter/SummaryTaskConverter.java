@@ -1,12 +1,11 @@
 package troublog.backend.domain.ai.summary.converter;
 
-import java.time.LocalDateTime;
-
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.ai.summary.dto.response.TaskStartResDto;
 import troublog.backend.domain.ai.summary.dto.response.TaskStatusResDto;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
+import troublog.backend.domain.ai.validator.TaskValidator;
 import troublog.backend.global.common.util.IdGenerator;
 
 @UtilityClass
@@ -17,7 +16,6 @@ public class SummaryTaskConverter {
 			.id(IdGenerator.generate())
 			.postId(postId)
 			.status(SummaryStatus.PENDING)
-			.startedAt(LocalDateTime.now())
 			.build();
 	}
 
@@ -26,7 +24,7 @@ public class SummaryTaskConverter {
 			.taskId(summaryTask.getId())
 			.userId(userId)
 			.status(summaryTask.getStatus())
-			.message(summaryTask.getStatus().getMessage())
+			.currentStep(summaryTask.getStatus().getMessage())
 			.createdAt(summaryTask.getStartedAt())
 			.build();
 	}
@@ -36,9 +34,9 @@ public class SummaryTaskConverter {
 			.taskId(summaryTask.getId())
 			.userId(userId)
 			.status(summaryTask.getStatus())
-			.message(summaryTask.getStatus().getMessage())
+			.currentStep(summaryTask.getCurrentStep())
 			.progress(summaryTask.getProgress())
-			.result(summaryTask.getResult())
+			.result(TaskValidator.validateTaskStatusIsCompleted(summaryTask) ? summaryTask.getResult() : null)
 			.createdAt(summaryTask.getStartedAt())
 			.completedAt(summaryTask.getCompletedAt())
 			.build();
