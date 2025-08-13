@@ -12,7 +12,7 @@ import troublog.backend.global.common.error.exception.AiTaskException;
 public class TaskValidator {
 
 	public void validateTaskBelongsToPost(SummaryTask task, Long postId) {
-		if (Objects.equals(task.getPostId(), postId)) {
+		if (!Objects.equals(task.getPostId(), postId)) {
 			throw new AiTaskException(ErrorCode.TASK_POST_MISMATCH);
 		}
 	}

@@ -33,6 +33,7 @@ import troublog.backend.global.common.error.exception.AiTaskException;
 @RequiredArgsConstructor
 public class PostSummaryServiceImpl implements PostSummaryService {
 
+	public static final int ERROR_TAG_INDEX = 1;
 	private final ChatClient chatClient;
 	private final PromptProperties promptProperties;
 	private final PostTagQueryService postTagQueryService;
@@ -105,10 +106,16 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 	private PromptTemplate generatePromptTemplate(Post post, ContentSummaryType summaryType) {
 		try {
 			PromptTemplate promptTemplate = new PromptTemplate(selectPrompt(summaryType));
-			List<Content> contents = contentQueryService.findAllContentsByPostId(post.getId());
+			List<Content> contents = contentQueryService.findContentsWithoutSummaryByPostId(post.getId());
+			List<String> allTags = postTagQueryService.findTagNamesByPostId(post.getId());
+			String errorTag = allTags.isEmpty() ? "" : allTags.getFirst();
+			List<String> postTags = allTags.stream()
+				.skip(ERROR_TAG_INDEX)
+				.toList();
+
 			promptTemplate.add("title", post.getTitle());
-			promptTemplate.add("errorTag", postTagQueryService.findTagNamesByPostId(post.getId())); // 올바른 서비스 사용
-			promptTemplate.add("postTag", post.getTitle());
+			promptTemplate.add("errorTag", errorTag); // 올바른 서비스 사용
+			promptTemplate.add("postTag", postTags);
 			promptTemplate.add("content", extractFromContent(contents));
 			return promptTemplate;
 		} catch (Exception e) {

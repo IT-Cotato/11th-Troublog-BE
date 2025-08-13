@@ -22,4 +22,8 @@ public class ContentQueryService {
 	public List<Content> findAllContentsByPostId(Long postId) {
 		return contentRepository.findAllByPostId(postId);
 	}
+
+	public List<Content> findContentsWithoutSummaryByPostId(Long postId) {
+		return contentRepository.findContentsWithoutSummaryByPostId(postId);
+	}
 }
