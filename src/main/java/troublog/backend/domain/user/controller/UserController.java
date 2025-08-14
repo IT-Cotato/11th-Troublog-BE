@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
+import troublog.backend.domain.user.dto.response.UserPostStatusResDto;
 import troublog.backend.domain.user.dto.response.UserProfileResDto;
 import troublog.backend.domain.user.service.UserFacade;
 import troublog.backend.global.common.annotation.Authentication;
@@ -90,6 +91,18 @@ public class UserController {
 		@Authentication CustomAuthenticationToken auth) {
 
 		return ResponseUtils.ok(userFacade.getMyProfile(auth.getUserId()));
+	}
+
+	@GetMapping("/troubles")
+	@Operation(summary = "내가 작성한 게시글 작성상태별 조회", description = "마이페이지 내가 작성한 게시글 작성상태별 조회"
+		+ "WRITING, COMPLETED, SUMMARIZED로 구분, 아무런 입력도 없으면 전체리턴")
+	@ApiResponse(responseCode = "200", description = "성공",
+		content = @Content(schema = @Schema(implementation = UserPostStatusResDto.class)))
+	public ResponseEntity<BaseResponse<UserPostStatusResDto>> getMyPostStatus(
+		@RequestParam(required = false) String postStatus,
+		@Authentication CustomAuthenticationToken auth) {
+
+		return ResponseUtils.ok(userFacade.getMyPostStatus(postStatus, auth.getUserId()));
 	}
 
 	@PatchMapping("")
