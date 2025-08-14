@@ -35,7 +35,7 @@ public class PostQueryService {
 	private final PostRepository postRepository;
 
 	public Post findById(Long id) {
-		log.info("[Post] 트러블슈팅 문서 조회: postId={}", id);
+		log.info("[Post] 트러블슈팅 문서 + AI 요약본 조회:: postId={}", id);
 		return postRepository.findById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
@@ -43,12 +43,12 @@ public class PostQueryService {
 	public Post findSummaryById(Long id, ContentSummaryType summaryType) {
 		log.info("[Post] AI 요약본 조회: postId={}", id);
 		return postRepository.findSummaryById(id, summaryType)
-			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
+			.orElseThrow(() -> new PostException(ErrorCode.SUMMARY_NOT_FOUND));
 	}
 
 	public Post findPostWithoutSummaryById(Long id) {
-		log.info("[Post] 트러블슈팅 문서 + AI 요약본 조회: postId={}", id);
-		return postRepository.findPostWithOutSummaryById(id)
+		log.info("[Post] 트러블슈팅 문서: postId={}", id);
+		return postRepository.findPostWithoutSummaryById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
 
@@ -106,7 +106,6 @@ public class PostQueryService {
 		return page;
 	}
 
-	@Transactional(readOnly = true)
 	public List<TroubleListResDto> getCompletedTroubles(
 		Long projectId, SortType sort, VisibilityType visibility) {
 		Boolean visible = mapVisibility(visibility);
@@ -123,7 +122,6 @@ public class PostQueryService {
 			.toList();
 	}
 
-	@Transactional(readOnly = true)
 	public List<TroubleListResDto> getSummarizedTroubles(
 		Long projectId, SortType sort, ContentSummaryType summaryType) {
 		ContentSummaryType st = (summaryType == ContentSummaryType.NONE) ? null : summaryType;
@@ -145,5 +143,9 @@ public class PostQueryService {
 		if (v == null || v == VisibilityType.ALL)
 			return null;
 		return (v == VisibilityType.PUBLIC) ? Boolean.TRUE : Boolean.FALSE;
+	}
+
+	public Page<Post> getCommunityPosts(Pageable pageable) {
+		return postRepository.getCommunityPosts(pageable);
 	}
 }

@@ -7,6 +7,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ import troublog.backend.domain.trouble.converter.ContentConverter;
 import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.ContentSummaryType;
-import troublog.backend.domain.trouble.service.facade.PostQueryFacade;
+import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.domain.trouble.service.query.ContentQueryService;
 import troublog.backend.domain.trouble.service.query.PostTagQueryService;
 import troublog.backend.global.common.config.PromptProperties;
@@ -32,6 +33,7 @@ import troublog.backend.global.common.error.exception.AiTaskException;
 @RequiredArgsConstructor
 public class PostSummaryServiceImpl implements PostSummaryService {
 
+	public static final int POST_TAGS_START_INDEX = 1;
 	private final ChatClient chatClient;
 	private final PromptProperties promptProperties;
 	private final PostTagQueryService postTagQueryService;
@@ -41,15 +43,18 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 	private final PostSummaryCompletionService completionService;
 
 	@Override
-	public SummarizedResDto execute(SummaryTask summaryTask, String type) {
-		validateInput(summaryTask);
-		return performAiAnalysis(summaryTask, type);
+	public SummarizedResDto execute(SummaryTask summaryTask, ContentSummaryType summaryType) {
+		if (!validateInput(summaryTask)) {
+			throw new AiTaskException(ErrorCode.INVALID_INPUT);
+		}
+		return performAiAnalysis(summaryTask, summaryType);
 	}
 
 	@Override
-	public CompletableFuture<SummarizedResDto> executeAsync(SummaryTask summaryTask, String type) {
+	@Async("summaryExecutor")
+	public CompletableFuture<SummarizedResDto> executeAsync(SummaryTask summaryTask, ContentSummaryType summaryType) {
 		return CompletableFuture
-			.supplyAsync(() -> executeAiAnalysis(summaryTask, type))
+			.supplyAsync(() -> executeAiAnalysis(summaryTask, summaryType))
 			.thenApply(result -> processResult(summaryTask, result))
 			.thenApply(result -> completeTask(summaryTask, result))
 			.exceptionally(throwable -> handleFailure(summaryTask, throwable));
@@ -60,11 +65,11 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 		return summaryTask != null && summaryTask.getId() != null && summaryTask.getPostId() != null;
 	}
 
-	private SummarizedResDto performAiAnalysis(SummaryTask summaryTask, String type) {
+	private SummarizedResDto performAiAnalysis(SummaryTask summaryTask, ContentSummaryType summaryType) {
 		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.PREPROCESSING);
 		BeanOutputConverter<SummarizedResDto> converter = new BeanOutputConverter<>(SummarizedResDto.class);
-		Post post = postQueryFacade.findPostById(summaryTask.getPostId());
-		PromptTemplate promptTemplate = generatePromptTemplate(post, type);
+		Post post = postQueryFacade.findPostWithoutSummaryById(summaryTask.getPostId());
+		PromptTemplate promptTemplate = generatePromptTemplate(post, summaryType);
 		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.ANALYZING);
 		String aiResponse = callAiService(promptTemplate, converter);
 		return convertAiResponse(aiResponse, converter);
@@ -98,14 +103,19 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 		}
 	}
 
-	private PromptTemplate generatePromptTemplate(Post post, String type) {
+	private PromptTemplate generatePromptTemplate(Post post, ContentSummaryType summaryType) {
 		try {
-			ContentSummaryType summaryType = ContentSummaryType.from(type);
 			PromptTemplate promptTemplate = new PromptTemplate(selectPrompt(summaryType));
-			List<Content> contents = contentQueryService.findAllContentsByPostId(post.getId());
+			List<Content> contents = contentQueryService.findContentsWithoutSummaryByPostId(post.getId());
+			List<String> allTags = postTagQueryService.findTagNamesByPostId(post.getId());
+			String errorTag = allTags.isEmpty() ? "" : allTags.getFirst();
+			List<String> postTags = allTags.size() > POST_TAGS_START_INDEX
+				? allTags.subList(POST_TAGS_START_INDEX, allTags.size())
+				: List.of();
+
 			promptTemplate.add("title", post.getTitle());
-			promptTemplate.add("errorTag", postTagQueryService.findTagNamesByPostId(post.getId())); // 올바른 서비스 사용
-			promptTemplate.add("postTag", post.getTitle());
+			promptTemplate.add("errorTag", errorTag); // 올바른 서비스 사용
+			promptTemplate.add("postTag", postTags);
 			promptTemplate.add("content", extractFromContent(contents));
 			return promptTemplate;
 		} catch (Exception e) {
@@ -130,9 +140,9 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 			.toList();
 	}
 
-	private SummarizedResDto executeAiAnalysis(SummaryTask summaryTask, String type) {
+	private SummarizedResDto executeAiAnalysis(SummaryTask summaryTask, ContentSummaryType summaryType) {
 		log.info("AI 분석 작업 시작: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId());
-		return execute(summaryTask, type);
+		return execute(summaryTask, summaryType);
 	}
 
 	private SummarizedResDto processResult(SummaryTask summaryTask, SummarizedResDto result) {

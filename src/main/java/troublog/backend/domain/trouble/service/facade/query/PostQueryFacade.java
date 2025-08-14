@@ -1,12 +1,14 @@
-package troublog.backend.domain.trouble.service.facade;
+package troublog.backend.domain.trouble.service.facade.query;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.converter.ContentConverter;
 import troublog.backend.domain.trouble.converter.ListConverter;
 import troublog.backend.domain.trouble.converter.PostConverter;
+import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
+import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
@@ -27,6 +31,12 @@ import troublog.backend.domain.trouble.enums.TagType;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.service.query.TagQueryService;
+import troublog.backend.domain.trouble.validator.PostValidator;
+import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
+import troublog.backend.domain.user.dto.response.UserInfoResDto;
+import troublog.backend.domain.user.service.UserFacade;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.PostException;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,6 +45,7 @@ public class PostQueryFacade {
 
 	private final PostQueryService postQueryService;
 	private final TagQueryService tagQueryService;
+	private final UserFacade userFacade;
 
 	public static String findErrorTag(Post post) {
 		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
@@ -89,8 +100,7 @@ public class PostQueryFacade {
 		return PostConverter.toResponse(post);
 	}
 
-	public PostResDto findPostSummaryById(Long userId, long postId, String type) {
-		ContentSummaryType summaryType = ContentSummaryType.from(type);
+	public PostResDto findPostSummaryById(Long userId, long postId, ContentSummaryType summaryType) {
 		Post post = postQueryService.findSummaryById(postId, summaryType);
 		PostFactory.validateAuthorized(userId, post);
 		return PostConverter.toResponse(post);
@@ -137,18 +147,54 @@ public class PostQueryFacade {
 		return posts.map(PostConverter::toResponse);
 	}
 
-	public PageRequest getPageable(int page, int size) {
-		return PageRequest.of(Math.max(0, page - 1), size);
-	}
-
 	public Post findPostById(Long id) {
 		return postQueryService.findById(id);
 	}
 
-	@Transactional(readOnly = true)
 	public Page<TroubleListResDto> getAllTroubles(Long userId, Pageable pageable) {
 		Page<Post> posts = postQueryService.getAllTroubles(userId, pageable);
 		return posts.map(ListConverter::toAllTroubleListResDto);
 	}
 
+	public CommunityPostResDto findCommunityPostDetailsById(Long postId) {
+		Post post = postQueryService.findById(postId);
+		PostValidator.validateVisibility(post);
+		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId());
+		return PostConverter.toCommunityDetailsResponse(userInfo, post);
+	}
+
+	public Page<CommunityListResDto> getCommunityPosts(Pageable pageable) {
+		Page<Post> posts = postQueryService.getCommunityPosts(pageable);
+
+		Set<Long> userIds = posts.getContent().stream()
+			.map(post -> post.getUser().getId())
+			.collect(Collectors.toSet());
+
+		Map<Long, PostCardUserInfoResDto> userInfoMap = userFacade.getUserInfoMap(userIds);
+
+		return posts.map(post -> {
+			PostCardUserInfoResDto userInfo = userInfoMap.get(post.getUser().getId());
+			return PostConverter.toCommunityListResponse(userInfo, post);
+		});
+	}
+
+	public Pageable getPageable(int page, int size) {
+		return PageRequest.of(Math.max(0, page - 1), size);
+	}
+
+	public PageRequest getPageableWithSorting(int page, int size, String sortBy) {
+		return PageRequest.of(Math.max(0, page - 1), size, getSortByCriteria(sortBy));
+	}
+
+	private Sort getSortByCriteria(String sortBy) {
+		return switch (sortBy.toLowerCase()) {
+			case "likes" -> Sort.by(Sort.Direction.DESC, "likeCount", "id");
+			case "latest" -> Sort.by(Sort.Direction.DESC, "completedAt", "id");
+			default -> throw new PostException(ErrorCode.INVALID_VALUE);
+		};
+	}
+
+	public Post findPostWithoutSummaryById(Long postId) {
+		return postQueryService.findPostWithoutSummaryById(postId);
+	}
 }

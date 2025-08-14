@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,13 +21,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import troublog.backend.domain.trouble.dto.request.SummaryTypeReqDto;
 import troublog.backend.domain.ai.summary.dto.response.TaskStartResDto;
 import troublog.backend.domain.ai.summary.dto.response.TaskStatusResDto;
 import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
-import troublog.backend.domain.trouble.service.facade.PostCommandFacade;
+import troublog.backend.domain.trouble.enums.ContentSummaryType;
+import troublog.backend.domain.trouble.service.facade.command.PostCommandFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -47,7 +48,7 @@ public class PostCommandController {
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> createPost(
 		@Authentication CustomAuthenticationToken token,
-		@Valid @RequestBody PostReqDto postReqDto // 단순하게 JSON만
+		@Valid @RequestBody PostReqDto postReqDto
 	) {
 		PostResDto response = postCommandFacade.createPost(token.getUserId(), postReqDto);
 		return ResponseUtils.created(response);
@@ -59,21 +60,32 @@ public class PostCommandController {
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> updatePost(
 		@Authentication CustomAuthenticationToken token,
-		@PathVariable long postId,
-		@Valid @RequestBody PostReqDto postReqDto // 단순하게 JSON만
+		@PathVariable Long postId,
+		@Valid @RequestBody PostReqDto postReqDto
 	) {
 		PostResDto response = postCommandFacade.updatePost(token.getUserId(), postId, postReqDto);
 		return ResponseUtils.ok(response);
 	}
 
+	@Deprecated(forRemoval = true)
 	@DeleteMapping("/{postId}")
-	@Operation(summary = "트러블슈팅 문서 임시 삭제 API", description = "트러블슈팅 문서를 임시 삭제한다.")
+	@Operation(summary = "트러블슈팅 문서 임시 삭제 API", description = "트러블슈팅 문서를 임시 삭제한다. (Deprecated)")
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> deletePost(
 		@Authentication CustomAuthenticationToken token,
-		@PathVariable long postId
+		@PathVariable Long postId
 	) {
 		postCommandFacade.softDeletePost(token.getUserId(), postId);
+		return ResponseUtils.noContent();
+	}
+
+	@DeleteMapping("/{postId}/hard")
+	@Operation(summary = "트러블슈팅 문서 영구 삭제 API", description = "트러블슈팅 문서를 영구적으로 삭제한다.")
+	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
+	public ResponseEntity<BaseResponse<Void>> hardDeletePost(
+		@Authentication CustomAuthenticationToken token,
+		@PathVariable Long postId) {
+		postCommandFacade.hardDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
 	}
 
@@ -83,7 +95,7 @@ public class PostCommandController {
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> restorePost(
 		@Authentication CustomAuthenticationToken token,
-		@PathVariable long postId
+		@PathVariable Long postId
 	) {
 		PostResDto response = postCommandFacade.restorePost(token.getUserId(), postId);
 		return ResponseUtils.ok(response);
@@ -95,10 +107,10 @@ public class PostCommandController {
 		content = @Content(schema = @Schema(implementation = TaskStartResDto.class)))
 	public ResponseEntity<BaseResponse<TaskStartResDto>> startSummaryTask(
 		@Authentication CustomAuthenticationToken token,
-		@Valid @RequestBody SummaryTypeReqDto summaryTypeReqDto,
-		@PathVariable long postId
+		@PathVariable Long postId,
+		@RequestParam ContentSummaryType summaryType
 	) {
-		return ResponseUtils.ok(postCommandFacade.startSummary(token.getUserId(), summaryTypeReqDto, postId));
+		return ResponseUtils.ok(postCommandFacade.startSummary(token.getUserId(), summaryType, postId));
 	}
 
 	@GetMapping("/{postId}/summary/{taskId}")
@@ -108,7 +120,7 @@ public class PostCommandController {
 	public ResponseEntity<BaseResponse<TaskStatusResDto>> getSummaryTaskStatus(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable String taskId,
-		@PathVariable long postId
+		@PathVariable Long postId
 	) {
 		return ResponseUtils.ok(summaryTaskFacade.findTask(taskId, token.getUserId(), postId));
 	}
@@ -118,10 +130,9 @@ public class PostCommandController {
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> cancelSummaryTask(
 		@PathVariable String taskId,
-		@PathVariable long postId
+		@PathVariable Long postId
 	) {
 		summaryTaskFacade.cancelTask(taskId, postId);
 		return ResponseUtils.noContent();
 	}
-
 }

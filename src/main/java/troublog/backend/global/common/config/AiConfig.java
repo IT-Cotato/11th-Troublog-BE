@@ -27,7 +27,7 @@ import troublog.backend.global.common.util.CustomLoggingAdvisor;
  * - 메모리 기반 대화 관리 설정
  */
 @Configuration
-@EnableConfigurationProperties({PromptProperties.class})
+@EnableConfigurationProperties({PromptProperties.class, OpenAiProperties.class})
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class AiConfig {
 
@@ -39,7 +39,7 @@ public class AiConfig {
 	/**
 	 * 대화 메모리를 관리하는 Advisor를 생성합니다.
 	 * MessageWindowChatMemory를 사용하여 최근 대화 이력을 유지합니다.
-	 *
+	 * 사용자 컨텍스트가 섞일 수 있어 현재는 비활성화 상태입니다.
 	 * @return MessageChatMemoryAdvisor 인스턴스
 	 */
 	@Bean
@@ -62,7 +62,7 @@ public class AiConfig {
 		ChatModel chatModel = createChatModel(openAiApi, chatOptions);
 
 		return ChatClient.builder(chatModel)
-			.defaultAdvisors(customLoggingAdvisor, chatMemoryAdvisor())
+			.defaultAdvisors(customLoggingAdvisor)
 			.build();
 	}
 
@@ -91,7 +91,7 @@ public class AiConfig {
 	/**
 	 * OpenAI ChatModel을 생성합니다.
 	 *
-	 * @param openAiApi OpenAI API 클라이언트
+	 * @param openAiApi   OpenAI API 클라이언트
 	 * @param chatOptions 채팅 옵션
 	 * @return 구성된 ChatModel 인스턴스
 	 */

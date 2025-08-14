@@ -29,4 +29,8 @@ public enum ContentSummaryType {
 		}
 		throw new PostException(ErrorCode.INVALID_VALUE);
 	}
+
+	public static String getName(ContentSummaryType contentSummaryType) {
+		return contentSummaryType.name();
+	}
 }

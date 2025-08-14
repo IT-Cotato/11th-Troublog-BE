@@ -1,5 +1,7 @@
 package troublog.backend.domain.trouble.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -14,19 +16,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.request.CommentReqDto;
 import troublog.backend.domain.trouble.dto.response.CommentDetailResDto;
 import troublog.backend.domain.trouble.dto.response.CommentResDto;
+import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
+import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
 import troublog.backend.domain.trouble.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.dto.response.LikeResDto;
-import troublog.backend.domain.trouble.service.facade.CommentCommandFacade;
-import troublog.backend.domain.trouble.service.facade.CommentQueryFacade;
-import troublog.backend.domain.trouble.service.facade.LikeCommandFacade;
-import troublog.backend.domain.trouble.service.facade.PostQueryFacade;
+import troublog.backend.domain.trouble.dto.response.PostResDto;
+import troublog.backend.domain.trouble.service.facade.command.CommentCommandFacade;
+import troublog.backend.domain.trouble.service.facade.command.LikeCommandFacade;
+import troublog.backend.domain.trouble.service.facade.query.CommentQueryFacade;
+import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -43,6 +51,48 @@ public class CommunityController {
 	private final CommentQueryFacade commentQueryFacade;
 	private final LikeCommandFacade likeCommandFacade;
 	private final PostQueryFacade postQueryFacade;
+
+	@GetMapping("/{postId}")
+	@Operation(summary = "트러블슈팅 게시글 상세 조회 API", description = "게시글 ID로 공개된 트러블슈팅 게시글의 상세 정보를 조회합니다. 댓글은 별도 API로 조회해야 합니다.")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = CommunityPostResDto.class)))
+	public ResponseEntity<BaseResponse<CommunityPostResDto>> findCommunityPostDetailsOnly(@PathVariable Long postId) {
+		CommunityPostResDto response = postQueryFacade.findCommunityPostDetailsById(postId);
+		return ResponseUtils.ok(response);
+	}
+
+	@GetMapping("/list")
+	@Operation(summary = "트러블슈팅 게시글 목록 조회 API", description = "공개된 모든 트러블슈팅 게시글을 페이지네이션으로 조회합니다. 정렬 기준을 지정할 수 있습니다.")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = PageResponse.class)))
+	public ResponseEntity<PageResponse<CommunityListResDto>> getCommunityPosts(
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size,
+		@Schema(
+			description = "정렬 기준",
+			allowableValues = {"likes", "latest"},
+			defaultValue = "latest"
+		)
+		@RequestParam(defaultValue = "latest") String sortBy
+	) {
+		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
+		Page<CommunityListResDto> response = postQueryFacade.getCommunityPosts(pageable);
+		return ResponseUtils.page(response);
+	}
+
+	@GetMapping("/search")
+	@Operation(summary = "트러블슈팅 게시글 검색", description = "키워드를 사용하여 공개된 트러블슈팅 게시글을 검색합니다. 제목, 내용, 태그 등에서 검색됩니다.")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = PageResponse.class)))
+	public ResponseEntity<PageResponse<PostResDto>> searchPost(
+		@RequestParam String keyword,
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size
+	) {
+		Pageable pageable = postQueryFacade.getPageable(page, size);
+		Page<PostResDto> response = postQueryFacade.searchPostByKeyword(keyword, pageable);
+		return ResponseUtils.page(response);
+	}
 
 	@PostMapping("/{postId}/comment")
 	@Operation(summary = "댓글 생성 API", description = "해당하는 post의 댓글을 생성한다.")
@@ -77,8 +127,8 @@ public class CommunityController {
 	@Operation(summary = "댓글 목록 조회 API", description = "해당하는 트러블슈팅의 댓글 전체를 최신순으로 조회한다.")
 	public ResponseEntity<PageResponse<CommentResDto>> getComments(
 		@PathVariable long postId,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size
 
 	) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
@@ -97,12 +147,13 @@ public class CommunityController {
 		return ResponseUtils.created(response);
 	}
 
-	@GetMapping("/{commentId}")
+	@GetMapping("/{postId}/{commentId}")
 	@Operation(summary = "댓글 상세 조회 API", description = "해당하는 댓글과 댓글의 대댓글 전체를 최신순으로 조회한다.")
 	public ResponseEntity<BaseResponse<CommentDetailResDto>> getDetailComment(
-		@PathVariable long commentId
+		@PathVariable Long commentId,
+		@PathVariable Long postId
 	) {
-		CommentDetailResDto response = commentQueryFacade.getDetailComment(commentId);
+		CommentDetailResDto response = commentQueryFacade.getDetailComment(commentId, postId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -126,8 +177,8 @@ public class CommunityController {
 	@Operation(summary = "좋아요한 포스트 조회 API", description = "최근에 좋아요한 순으로 포스트를 불러온다.")
 	public ResponseEntity<PageResponse<LikePostResDto>> getUserLikedPosts(
 		@Authentication CustomAuthenticationToken auth,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size) {
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
 		Page<LikePostResDto> likedPosts = likeCommandFacade.getLikedPostsByUser(auth.getUserId(), pageable);
 		return ResponseUtils.page(likedPosts);

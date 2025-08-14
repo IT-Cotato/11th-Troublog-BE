@@ -12,7 +12,7 @@ spring:
       api-key: ${OPEN_AI_API_KEY}
       chat:
         options:
-          model: gpt-5-mini
+          model: ${OPENAI_MODEL:gpt-4.1-nano}
   mvc:
     log-resolved-exception: false
   cloud:
@@ -54,6 +54,7 @@ ai:
 springdoc:
   swagger-ui:
     display-request-duration: true
+    operations-sorter: alpha
 
 jwt:
   secret: ${JWT_SECRET_KEY}

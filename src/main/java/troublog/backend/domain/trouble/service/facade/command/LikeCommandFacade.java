@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.service.facade;
+package troublog.backend.domain.trouble.service.facade.command;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +16,9 @@ import troublog.backend.domain.trouble.dto.response.LikeResDto;
 import troublog.backend.domain.trouble.entity.Like;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.service.command.LikeCommandService;
-import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.LikeQueryService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
+import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.global.common.error.ErrorCode;
@@ -45,7 +45,7 @@ public class LikeCommandFacade {
 	@Transactional
 	public LikeResDto postLike(Long postId, Long userId) {
 		Post post = postQueryService.findById(postId);
-		PostFactory.validateVisibility(post);
+		PostValidator.validateVisibility(post);
 		User user = userQueryService.findUserById(userId);
 
 		if (likeQueryService.findByUserAndPost(userId, postId).isPresent()) {
@@ -71,7 +71,7 @@ public class LikeCommandFacade {
 	@Transactional
 	public void deleteLike(Long postId, Long userId) {
 		Post post = postQueryService.findById(postId);
-		PostFactory.validateVisibility(post);
+		PostValidator.validateVisibility(post);
 
 		Like like = likeQueryService.findByUserAndPost(userId, postId)
 			.orElseThrow(() -> new PostException(ErrorCode.LIKE_NOT_EXISTS));

@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.service.facade;
+package troublog.backend.domain.trouble.service.facade.query;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +14,7 @@ import troublog.backend.domain.trouble.entity.Comment;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.service.query.CommentQueryService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
+import troublog.backend.domain.trouble.validator.PostValidator;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,8 +30,9 @@ public class CommentQueryFacade {
 		return comments.map(CommentConverter::toResponse);
 	}
 
-	public CommentDetailResDto getDetailComment(long commentId) {
+	public CommentDetailResDto getDetailComment(long commentId, Long postId) {
 		Comment comment = commentQueryService.findComment(commentId);
+		PostValidator.validateCommentBelongsToPost(comment, postId);
 		return CommentConverter.toDetailResponse(comment);
 	}
 }

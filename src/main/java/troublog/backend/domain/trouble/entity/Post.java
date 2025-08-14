@@ -27,12 +27,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import troublog.backend.domain.project.entity.Project;
+import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.global.common.entity.BaseEntity;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
+import troublog.backend.global.common.util.JsonConverter;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -69,6 +71,9 @@ public class Post extends BaseEntity {
 	@Column(name = "introduction")
 	private String introduction;
 
+	@Column(name = "thumbnail_url")
+	private String thumbnailUrl;
+
 	@Column(name = "like_count")
 	private int likeCount;
 
@@ -94,6 +99,12 @@ public class Post extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "star_rating")
 	private StarRating starRating;
+
+	@Column(name = "checklist_error", columnDefinition = "JSON")
+	private String checklistError;
+
+	@Column(name = "checklist_reason", columnDefinition = "JSON")
+	private String checklistReason;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "completed_at")
@@ -218,6 +229,9 @@ public class Post extends BaseEntity {
 		this.starRating = starRating;
 	}
 
+	public void updateThumbnailUrl(String thumbnailUrl) {
+		this.thumbnailUrl = thumbnailUrl;
+	}
 	public void markAsDeleted() {
 		this.isDeleted = true;
 		this.deletedAt = LocalDateTime.now();
@@ -226,5 +240,16 @@ public class Post extends BaseEntity {
 	public void restoreFromDeleted() {
 		this.isDeleted = false;
 		this.deletedAt = null;
+	}
+
+	public void updateCommonInfo(PostReqDto postReqDto) {
+		this.updateTitle(postReqDto.title());
+		this.updateIntroduction(postReqDto.introduction());
+		this.updateVisibility(postReqDto.isVisible());
+		this.updateStatus(PostStatus.from(postReqDto.postStatus()));
+		this.updateThumbnailUrl(postReqDto.thumbnailImageUrl());
+		this.updateStarRating(StarRating.from(postReqDto.starRating()));
+		this.checklistError = JsonConverter.toJson(postReqDto.checklistError());
+		this.checklistReason = JsonConverter.toJson(postReqDto.checklistReason());
 	}
 }

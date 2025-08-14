@@ -1,15 +1,21 @@
 package troublog.backend.domain.trouble.converter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
+import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
+import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
-import troublog.backend.domain.trouble.service.facade.PostQueryFacade;
+import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
+import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
+import troublog.backend.domain.user.dto.response.UserInfoResDto;
+import troublog.backend.global.common.util.JsonConverter;
 
 @UtilityClass
 public class PostConverter {
@@ -17,6 +23,7 @@ public class PostConverter {
 	private static final boolean DEFAULT_VISIBLE = false;
 	private static final boolean DEFAULT_SUMMARY_CREATED = false;
 	private static final boolean DEFAULT_DELETE_STATUS = false;
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
 	public Post createWritingPost(PostReqDto postReqDto) {
 		return createBasePost(postReqDto)
@@ -33,18 +40,19 @@ public class PostConverter {
 			.isSummaryCreated(DEFAULT_SUMMARY_CREATED)
 			.status(PostStatus.COMPLETED)
 			.starRating(StarRating.from(postReqDto.starRating()))
+			.thumbnailUrl(postReqDto.thumbnailImageUrl())
 			.completedAt(LocalDateTime.now())
 			.build();
 	}
 
 	public Post createSummarizedPost(PostReqDto postReqDto) {
-		//TODO 이후 AI 서비스 개발시 AI 서비스 요청과 함께 전송
 		return createBasePost(postReqDto)
 			.introduction(postReqDto.introduction())
 			.isVisible(postReqDto.isVisible())
 			.isSummaryCreated(true)
 			.status(PostStatus.SUMMARIZED)
 			.starRating(StarRating.from(postReqDto.starRating()))
+			.thumbnailUrl(postReqDto.thumbnailImageUrl())
 			.completedAt(LocalDateTime.now())
 			.build();
 	}
@@ -54,7 +62,9 @@ public class PostConverter {
 			.title(postReqDto.title())
 			.commentCount(DEFAULT_COUNT)
 			.likeCount(DEFAULT_COUNT)
-			.isDeleted(DEFAULT_DELETE_STATUS);
+			.isDeleted(DEFAULT_DELETE_STATUS)
+			.checklistError(JsonConverter.toJson(postReqDto.checklistError()))
+			.checklistReason(JsonConverter.toJson(postReqDto.checklistReason()));
 	}
 
 	public PostResDto toResponse(Post post) {
@@ -68,6 +78,8 @@ public class PostConverter {
 			.isSummaryCreated(post.getIsSummaryCreated())
 			.postStatus(post.getStatus().getMessage())
 			.starRating(post.getStarRating() != null ? post.getStarRating().name() : null)
+			.checklistError(JsonConverter.toList(post.getChecklistError()))
+			.checklistReason(JsonConverter.toList(post.getChecklistReason()))
 			.createdAt(post.getCreated_at())
 			.updatedAt(post.getUpdated_at())
 			.userId(post.getUser().getId())
@@ -75,6 +87,36 @@ public class PostConverter {
 			.errorTag(PostQueryFacade.findErrorTag(post))
 			.postTags(PostQueryFacade.findTechStackTags(post))
 			.contents(PostQueryFacade.findContents(post))
+			.thumbnailUrl(post.getThumbnailUrl())
+			.build();
+	}
+
+	public CommunityPostResDto toCommunityDetailsResponse(UserInfoResDto userInfoResDto, Post post) {
+		return CommunityPostResDto.builder()
+			.userInfoResDto(userInfoResDto)
+			.id(post.getId())
+			.title(post.getTitle())
+			.introduction(post.getIntroduction())
+			.errorTag(PostQueryFacade.findErrorTag(post))
+			.postTags(PostQueryFacade.findTechStackTags(post))
+			.contents(PostQueryFacade.findContents(post))
+			.likeCount(post.getLikeCount())
+			.commentCount(post.getCommentCount())
+			.completedAt(post.getCompletedAt() == null ? null : post.getCompletedAt().format(DATE_FORMATTER))
+			.build();
+	}
+
+	public CommunityListResDto toCommunityListResponse(PostCardUserInfoResDto postCardUserInfoResDto, Post post) {
+		return CommunityListResDto.builder()
+			.postCardUserInfoResDto(postCardUserInfoResDto)
+			.id(post.getId())
+			.title(post.getTitle())
+			.thumbnailUrl(post.getThumbnailUrl())
+			.errorTag(PostQueryFacade.findErrorTag(post))
+			.postTags(PostQueryFacade.findTopTechStackTags(post))
+			.likeCount(post.getLikeCount())
+			.commentCount(post.getCommentCount())
+			.completedAt(post.getCompletedAt() == null ? null : post.getCompletedAt().format(DATE_FORMATTER))
 			.build();
 	}
 

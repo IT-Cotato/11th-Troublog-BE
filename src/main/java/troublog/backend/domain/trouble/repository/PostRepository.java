@@ -29,6 +29,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		LEFT JOIN tags t ON pt.tag_id = t.tag_id
 		WHERE p.user_id = :userId
 		  AND p.is_deleted = false
+		  AND c.author_type = 'USER_WRITTEN'
 		  AND (
 		    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 		    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -39,6 +40,21 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		  MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 		) DESC, p.post_id DESC
 		""",
+		countQuery = """
+			SELECT COUNT(DISTINCT p.post_id)
+			FROM posts p
+			LEFT JOIN contents c ON p.post_id = c.post_id
+			LEFT JOIN post_tags pt ON p.post_id = pt.post_id
+			LEFT JOIN tags t ON pt.tag_id = t.tag_id
+			WHERE p.user_id = :userId
+			  AND p.is_deleted = false
+			  AND c.author_type = 'USER_WRITTEN'
+			  AND (
+			    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
+			    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
+			    OR t.name LIKE CONCAT('%', :keyword, '%')
+			  )
+			""",
 		nativeQuery = true)
 	Page<Post> searchUserPostsByKeyword(
 		@Param("userId") Long userId,
@@ -53,6 +69,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		LEFT JOIN post_tags pt ON p.post_id = pt.post_id
 		LEFT JOIN tags t ON pt.tag_id = t.tag_id
 		  WHERE p.is_deleted = false
+		  AND p.visible = true
+		  AND c.author_type = 'USER_WRITTEN'
 		  AND (
 		    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 		    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -63,6 +81,21 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		  MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 		) DESC, p.post_id DESC
 		""",
+		countQuery = """
+			SELECT COUNT(DISTINCT p.post_id)
+			FROM posts p
+			LEFT JOIN contents c ON p.post_id = c.post_id
+			LEFT JOIN post_tags pt ON p.post_id = pt.post_id
+			LEFT JOIN tags t ON pt.tag_id = t.tag_id
+			WHERE p.is_deleted = false
+			  AND p.visible = true
+			  AND c.author_type = 'USER_WRITTEN'
+			  AND (
+			    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
+			    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
+			    OR t.name LIKE CONCAT('%', :keyword, '%')
+			  )
+			""",
 		nativeQuery = true)
 	Page<Post> searchPostsByKeyword(
 		@Param("keyword") String keyword,
@@ -73,7 +106,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	Optional<Post> findSummaryById(@Param("id") Long id, @Param("summaryType") ContentSummaryType summaryType);
 
 	@Query("SELECT p FROM Post p JOIN FETCH p.contents c WHERE c.authorType = 'USER_WRITTEN' AND p.id = :id AND p.isDeleted = false")
-	Optional<Post> findPostWithOutSummaryById(@Param("id") Long id);
+	Optional<Post> findPostWithoutSummaryById(@Param("id") Long id);
 
 	@Query("""
 		    select p
@@ -160,6 +193,18 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	);
 
 	Page<Post> findAllByUser_IdAndIsDeletedFalse(Long userId, Pageable page);
+
+	@Query("""
+		  SELECT DISTINCT p
+		    FROM Post p
+		   WHERE p.isDeleted = FALSE
+		     AND p.isVisible = TRUE
+		     AND p.status IN (
+		       troublog.backend.domain.trouble.enums.PostStatus.COMPLETED,
+		       troublog.backend.domain.trouble.enums.PostStatus.SUMMARIZED
+		     )
+		""")
+	Page<Post> getCommunityPosts(Pageable page);
 
 	List<Post> findByUserIdAndStatusAndIsDeletedFalse(Long userId, PostStatus status);
 }

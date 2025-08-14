@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.service.facade;
+package troublog.backend.domain.trouble.service.facade.command;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +15,11 @@ import troublog.backend.domain.trouble.dto.response.CommentResDto;
 import troublog.backend.domain.trouble.entity.Comment;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.service.command.CommentCommandService;
+import troublog.backend.domain.trouble.service.facade.relation.CommentRelationFacade;
 import troublog.backend.domain.trouble.service.factory.CommentFactory;
-import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.CommentQueryService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
+import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.global.common.util.AlertSseUtil;
@@ -39,7 +40,7 @@ public class CommentCommandFacade {
 
 	public CommentResDto createComment(Long userId, Long postId, CommentReqDto commentReqDto) {
 		Post post = postQueryService.findById(postId);
-		PostFactory.validateVisibility(post);
+		PostValidator.validateVisibility(post);
 		User user = userQueryService.findUserById(userId);
 
 		Comment newComment = CommentConverter.toEntity(commentReqDto);
@@ -61,11 +62,12 @@ public class CommentCommandFacade {
 
 	public CommentResDto createChildComment(Long userId, CommentReqDto commentReqDto, Long commentId, Long postId) {
 		Post post = postQueryService.findById(postId);
-		PostFactory.validateVisibility(post);
+		PostValidator.validateVisibility(post);
 		User user = userQueryService.findUserById(userId);
 
 		Comment parentComment = commentQueryService.findComment(commentId);
 		CommentFactory.validateParent(parentComment);
+		PostValidator.validateCommentBelongsToPost(parentComment, postId);
 
 		Comment newChildComment = CommentConverter.toEntity(commentReqDto);
 		commentRelationFacade.establishChildRelations(parentComment, newChildComment);
@@ -87,9 +89,10 @@ public class CommentCommandFacade {
 
 	public CommentResDto updateComment(Long userId, CommentReqDto commentReqDto, Long commentId, Long postId) {
 		Post post = postQueryService.findById(postId);
-		PostFactory.validateVisibility(post);
+		PostValidator.validateVisibility(post);
 		Comment comment = commentQueryService.findComment(commentId);
 		CommentFactory.validateAuthorized(userId, comment);
+		PostValidator.validateCommentBelongsToPost(comment, postId);
 
 		comment.updateContent(commentReqDto.contents());
 		return CommentConverter.toResponse(comment);
@@ -107,3 +110,4 @@ public class CommentCommandFacade {
 		comment.markAsDeleted();
 	}
 }
+
