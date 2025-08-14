@@ -5,6 +5,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.alert.converter.AlertConverter;
+import troublog.backend.domain.alert.dto.response.AlertResDto;
+import troublog.backend.domain.alert.entity.Alert;
+import troublog.backend.domain.alert.service.AlertCommandService;
 import troublog.backend.domain.trouble.converter.CommentConverter;
 import troublog.backend.domain.trouble.dto.request.CommentReqDto;
 import troublog.backend.domain.trouble.dto.response.CommentResDto;
@@ -18,6 +22,7 @@ import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
+import troublog.backend.global.common.util.AlertSseUtil;
 
 @Service
 @Transactional
@@ -29,6 +34,9 @@ public class CommentCommandFacade {
 	private final CommentRelationFacade commentRelationFacade;
 	private final CommentQueryService commentQueryService;
 	private final UserQueryService userQueryService;
+	private final AlertCommandService alertCommandService;
+
+	private final AlertSseUtil alertSseUtil;
 
 	public CommentResDto createComment(Long userId, Long postId, CommentReqDto commentReqDto) {
 		Post post = postQueryService.findById(postId);
@@ -38,6 +46,17 @@ public class CommentCommandFacade {
 		Comment newComment = CommentConverter.toEntity(commentReqDto);
 		commentRelationFacade.establishRelations(newComment, user, post);
 		Comment savedComment = commentCommandService.save(newComment);
+
+		// 알림 전송
+		Alert alert = AlertConverter.postCommentAlert(post.getUser(), user.getNickname());
+		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
+
+		if(alertSseUtil.sendAlert(post.getUser().getId(), alertResDto)) {
+			alert.markAsSent();
+		}
+
+		alertCommandService.save(alert);
+
 		return CommentConverter.toResponse(savedComment);
 	}
 
@@ -54,6 +73,17 @@ public class CommentCommandFacade {
 		commentRelationFacade.establishChildRelations(parentComment, newChildComment);
 		commentRelationFacade.establishRelations(newChildComment, user, post);
 		Comment savedComment = commentCommandService.save(newChildComment);
+
+		// 알림 전송
+		Alert alert = AlertConverter.postChildCommentAlert(parentComment.getUser(), user.getNickname());
+		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
+
+		if(alertSseUtil.sendAlert(parentComment.getUser().getId(), alertResDto)) {
+			alert.markAsSent();
+		}
+
+		alertCommandService.save(alert);
+
 		return CommentConverter.toChildResponse(savedComment);
 	}
 

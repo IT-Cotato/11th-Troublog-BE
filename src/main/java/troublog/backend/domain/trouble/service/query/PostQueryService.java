@@ -21,6 +21,7 @@ import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
+import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
@@ -82,6 +83,13 @@ public class PostQueryService {
 		return postPage;
 	}
 
+	public List<Post> findWritingPostsByUserId(Long userId) {
+		List<Post> writingPosts = postRepository.findByUserIdAndStatusAndIsDeletedFalse(userId, PostStatus.WRITING);
+		log.info("[Post] 사용자 WRITING 상태 트러블슈팅 문서 개수 조회: userId={}, count={}", userId, writingPosts.size());
+		return writingPosts;
+	}
+
+	@Transactional(readOnly = true)
 	public Page<Post> getAllTroubles(Long userId, Pageable pageable) {
 		// 최신순 기준 선택 필요 - createdAt/updatedAt/completedAt
 		Sort sort = Sort.by(DESC, "completedAt", "id");

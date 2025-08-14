@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.AlertException;
 import troublog.backend.global.common.error.exception.AuthException;
 import troublog.backend.global.common.error.exception.BusinessException;
 import troublog.backend.global.common.error.exception.PostException;
@@ -49,6 +50,14 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<BaseResponse<ErrorResponse>> handleUserException(UserException e,
 		HttpServletRequest request) {
 		LoggingUtil.logException("UserException 발생", e, request);
+		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
+		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
+	}
+
+	@ExceptionHandler(AlertException.class)
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleAlertException(AlertException e,
+		HttpServletRequest request) {
+		LoggingUtil.logException("AlertException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}

@@ -6,6 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.alert.converter.AlertConverter;
+import troublog.backend.domain.alert.dto.response.AlertResDto;
+import troublog.backend.domain.alert.entity.Alert;
+import troublog.backend.domain.alert.service.AlertCommandService;
 import troublog.backend.domain.trouble.converter.LikeConverter;
 import troublog.backend.domain.trouble.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.dto.response.LikeResDto;
@@ -19,6 +23,7 @@ import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
+import troublog.backend.global.common.util.AlertSseUtil;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +32,9 @@ public class LikeCommandFacade {
 	private final UserQueryService userQueryService;
 	private final LikeQueryService likeQueryService;
 	private final LikeCommandService likeCommandService;
+	private final AlertCommandService alertCommandService;
+
+	private final AlertSseUtil alertSseUtil;
 
 	@Transactional(readOnly = true)
 	public Page<LikePostResDto> getLikedPostsByUser(Long userId, Pageable pageable) {
@@ -46,6 +54,17 @@ public class LikeCommandFacade {
 
 		Like like = Like.createLike(user, post);
 		Like saved = likeCommandService.save(like);
+
+		// 좋아요 알림 전송
+		Alert alert = AlertConverter.postLikesAlert(post.getUser(), user.getNickname());
+		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
+
+		if(alertSseUtil.sendAlert(post.getUser().getId(), alertResDto)) {
+			alert.markAsSent();
+		}
+
+		alertCommandService.save(alert);
+
 		return LikeConverter.toResponse(saved);
 	}
 

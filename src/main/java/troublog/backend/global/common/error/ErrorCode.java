@@ -19,13 +19,13 @@ public enum ErrorCode {
 	/**
 	 * Auth Error
 	 */
-	INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "A-001", "secret key가 위조되거나 잘못된 토큰입니다."),
-	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "A-002", "토큰이 만료되었습니다."),
-	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "A-003", "유효하지 않은 토큰입니다."),
-	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "A-004", "인증이 필요합니다."),
-	WRONG_ENVIRONMENT(HttpStatus.UNAUTHORIZED, "A-005", "잘못된 환경으로 접근했습니다."),
-	TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "A-006", "토큰을 찾을 수 없습니다."),
-	TOKEN_NOT_EXPIRED(HttpStatus.CONFLICT, "A-007", "만료되지 않은 토큰입니다."),
+	INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "AU-001", "secret key가 위조되거나 잘못된 토큰입니다."),
+	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AU-002", "토큰이 만료되었습니다."),
+	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AU-003", "유효하지 않은 토큰입니다."),
+	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AU-004", "인증이 필요합니다."),
+	WRONG_ENVIRONMENT(HttpStatus.UNAUTHORIZED, "AU-005", "잘못된 환경으로 접근했습니다."),
+	TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AU-006", "토큰을 찾을 수 없습니다."),
+	TOKEN_NOT_EXPIRED(HttpStatus.CONFLICT, "AU-007", "만료되지 않은 토큰입니다."),
 
 	/**
 	 * User Error
@@ -39,8 +39,14 @@ public enum ErrorCode {
 	USER_UPDATE_SELF(HttpStatus.BAD_REQUEST, "U-007", "자기자신의 정보만 수정할 수 있습니다."),
 	DUPLICATED_FOLLOWED(HttpStatus.CONFLICT, "U-008", "이미 팔로우한 유저입니다."),
 	USER_NOT_FOLLOWED(HttpStatus.BAD_REQUEST, "U-009", "팔로우하지 않은 유저입니다."),
-
 	MISSING_USER(HttpStatus.BAD_REQUEST, "U-0010", "사용자 정보가 누락되었습니다."),
+
+	/**
+	 * Alert Error
+	 */
+
+	ALERT_NOT_FOUND(HttpStatus.NOT_FOUND, "AL-001", "알림을 찾을 수 없습니다."),
+	ALERT_TYPE_INVALID(HttpStatus.BAD_REQUEST, "AL-002", "유효하지 않은 알림 타입입니다."),
 
 	/**
 	 * Project Error

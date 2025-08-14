@@ -12,10 +12,15 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.alert.converter.AlertConverter;
+import troublog.backend.domain.alert.dto.response.AlertResDto;
+import troublog.backend.domain.alert.entity.Alert;
+import troublog.backend.domain.alert.service.AlertCommandService;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
+import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.command.UserCommandService;
@@ -24,6 +29,7 @@ import troublog.backend.global.common.constant.EnvType;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.UserException;
+import troublog.backend.global.common.util.AlertSseUtil;
 import troublog.backend.global.common.util.JwtProvider;
 
 @Service
@@ -32,7 +38,11 @@ public class AuthFacade {
 
 	private final UserQueryService userQueryService;
 	private final UserCommandService userCommandService;
+	private final PostQueryService postQueryService;
 
+	private final AlertCommandService alertCommandService;
+
+	private final AlertSseUtil alertSseUtil;
 	private final AuthenticationManager authenticationManager;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtProvider jwtProvider;
@@ -127,6 +137,21 @@ public class AuthFacade {
 				user.getNickname());
 
 		Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+		int writingCount = postQueryService.findWritingPostsByUserId(user.getId()).size();
+
+		// 작성중인 트러블 슈팅 알림전송
+		if (writingCount > 0) {
+
+			Alert alert = AlertConverter.postTroubleshootingAlert(user, writingCount);
+			AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
+
+			if(alertSseUtil.sendAlert(user.getId(), alertResDto)) {
+				alert.markAsSent();
+			}
+
+			alertCommandService.save(alert);
+		}
 
 		// 새로운 액세스토큰 생성
 		return jwtProvider.createAuthToken(authentication);

@@ -205,4 +205,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		     )
 		""")
 	Page<Post> getCommunityPosts(Pageable page);
+
+	List<Post> findByUserIdAndStatusAndIsDeletedFalse(Long userId, PostStatus status);
 }
