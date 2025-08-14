@@ -67,14 +67,25 @@ public class PostCommandController {
 		return ResponseUtils.ok(response);
 	}
 
+	@Deprecated(forRemoval = true)
 	@DeleteMapping("/{postId}")
-	@Operation(summary = "트러블슈팅 문서 임시 삭제 API", description = "트러블슈팅 문서를 임시 삭제한다.")
+	@Operation(summary = "트러블슈팅 문서 임시 삭제 API", description = "트러블슈팅 문서를 임시 삭제한다. (Deprecated)")
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> deletePost(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
 		postCommandFacade.softDeletePost(token.getUserId(), postId);
+		return ResponseUtils.noContent();
+	}
+
+	@DeleteMapping("/{postId}/hard")
+	@Operation(summary = "트러블슈팅 문서 영구 삭제 API", description = "트러블슈팅 문서를 영구적으로 삭제한다.")
+	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
+	public ResponseEntity<BaseResponse<Void>> hardDeletePost(
+		@Authentication CustomAuthenticationToken token,
+		@PathVariable long postId) {
+		postCommandFacade.hardDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
 	}
 
@@ -124,5 +135,4 @@ public class PostCommandController {
 		summaryTaskFacade.cancelTask(taskId, postId);
 		return ResponseUtils.noContent();
 	}
-
 }
