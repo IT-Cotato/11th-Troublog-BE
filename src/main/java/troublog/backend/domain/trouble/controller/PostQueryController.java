@@ -161,7 +161,7 @@ public class PostQueryController {
 		return ResponseUtils.page(response);
 	}
 
-	@GetMapping("/users/{userId}/troubles")
+	@GetMapping("/users/{userId}/list")
 	@Operation(summary = "특정 사용자의 트러블슈팅 문서 목록 조회 API",
 		description = "지정된 사용자의 트러블슈팅 문서 목록을 페이지네이션 및 정렬 기준으로 조회합니다.")
 	@ApiResponse(responseCode = "200", description = "OK",
