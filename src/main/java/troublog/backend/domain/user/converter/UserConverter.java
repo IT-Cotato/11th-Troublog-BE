@@ -9,6 +9,7 @@ import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
+import troublog.backend.domain.user.dto.response.UserPostStatusResDto;
 import troublog.backend.domain.user.dto.response.UserProfileResDto;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.entity.UserStatus;
@@ -76,6 +77,15 @@ public class UserConverter {
 			.userId(user.getId())
 			.nickname(user.getNickname())
 			.profileImageUrl(user.getProfileUrl())
+			.build();
+	}
+
+	public static UserPostStatusResDto toUserPostStatusResDto(
+		Long userId, String postStatus, List<Long> postIdList) {
+		return UserPostStatusResDto.builder()
+			.userId(userId)
+			.postStatus(postStatus)
+			.postIdList(postIdList.toArray(new Long[0]))
 			.build();
 	}
 }
