@@ -11,10 +11,16 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 @Configuration
 @EnableRedisRepositories(basePackages = "troublog.backend.domain.ai.summary.repository")
 public class RedisConfig {
 
+	public static final String PACKAGE_PREFIX = "troublog.backend";
 	@Value("${spring.data.redis.host}")
 	private String host;
 
@@ -42,14 +48,14 @@ public class RedisConfig {
 
 		// Key-Value 형태로 직렬화를 수행합니다.
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+		redisTemplate.setValueSerializer(genericJsonSerializer());
 
 		// Hash Key-Value 형태로 직렬화를 수행합니다.
 		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-		redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+		redisTemplate.setHashValueSerializer(genericJsonSerializer());
 
 		// 기본적으로 직렬화를 수행합니다.
-		redisTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+		redisTemplate.setDefaultSerializer(genericJsonSerializer());
 
 		return redisTemplate;
 	}
@@ -60,5 +66,17 @@ public class RedisConfig {
 		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 		container.setConnectionFactory(redisConnectionFactory);
 		return container;
+	}
+
+	private GenericJackson2JsonRedisSerializer genericJsonSerializer() {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		var ptv = BasicPolymorphicTypeValidator.builder()
+			.allowIfSubType(PACKAGE_PREFIX)
+			.build();
+		mapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
+
+		return new GenericJackson2JsonRedisSerializer(mapper);
 	}
 }
