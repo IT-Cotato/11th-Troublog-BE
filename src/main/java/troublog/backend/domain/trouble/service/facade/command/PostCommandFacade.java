@@ -8,13 +8,13 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.ai.summary.converter.SummaryTaskConverter;
 import troublog.backend.domain.ai.summary.dto.response.TaskStartResDto;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
-import troublog.backend.domain.ai.summary.service.PostSummaryServiceImpl;
+import troublog.backend.domain.ai.summary.service.PostSummaryService;
 import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
-import troublog.backend.domain.trouble.dto.request.SummaryTypeReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.service.command.PostCommandService;
 import troublog.backend.domain.trouble.service.facade.relation.PostRelationFacade;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
@@ -29,7 +29,7 @@ public class PostCommandFacade {
 	private final PostCommandService postCommandService;
 	private final PostQueryService postQueryService;
 	private final PostRelationFacade postRelationFacade;
-	private final PostSummaryServiceImpl postSummaryServiceImpl;
+	private final PostSummaryService postSummaryService;
 	private final SummaryTaskFacade summaryTaskFacade;
 
 	public PostResDto createPost(Long userId, PostReqDto postReqDto) {
@@ -68,9 +68,9 @@ public class PostCommandFacade {
 		return PostConverter.toResponse(foundPost);
 	}
 
-	public TaskStartResDto startSummary(Long userId, SummaryTypeReqDto summaryTypeReqDto, long postId) {
+	public TaskStartResDto startSummary(Long userId, ContentSummaryType summaryType, Long postId) {
 		SummaryTask task = summaryTaskFacade.createTask(postId);
-		postSummaryServiceImpl.executeAsync(task, summaryTypeReqDto.type());
+		postSummaryService.executeAsync(task, summaryType);
 		return SummaryTaskConverter.toStartResponseDto(task, userId);
 	}
 }

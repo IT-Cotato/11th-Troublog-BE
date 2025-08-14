@@ -33,7 +33,7 @@ public record TaskStatusResDto(
 		description = "현재 작업 단계 메시지",
 		example = "트러블슈팅 문서 분석을 시작했어요"
 	)
-	String message,
+	String currentStep,
 
 	@Schema(
 		description = "작업 진행률 (퍼센트)",

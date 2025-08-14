@@ -31,7 +31,7 @@ public record TaskStartResDto(
 		description = "상태 메시지",
 		example = "요약 작업이 대기열에 등록되었어요! 잠시만 기다려주세요"
 	)
-	String message,
+	String currentStep,
 
 	@Schema(
 		description = "작업 생성 시간",

@@ -22,6 +22,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
+import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
@@ -56,17 +57,9 @@ public class PostQueryController {
 	public ResponseEntity<BaseResponse<PostResDto>> findPostSummaryOnly(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable long postId,
-		@Schema(
-			allowableValues = {
-				"RESUME",
-				"BLOG",
-				"INTERVIEW",
-				"ISSUE_MANAGEMENT",
-			}
-		)
-		@RequestParam String type
+		@RequestParam ContentSummaryType summaryType
 	) {
-		PostResDto response = postQueryFacade.findPostSummaryById(token.getUserId(), postId, type);
+		PostResDto response = postQueryFacade.findPostSummaryById(token.getUserId(), postId, summaryType);
 		return ResponseUtils.ok(response);
 	}
 

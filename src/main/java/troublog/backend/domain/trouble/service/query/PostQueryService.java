@@ -34,7 +34,7 @@ public class PostQueryService {
 	private final PostRepository postRepository;
 
 	public Post findById(Long id) {
-		log.info("[Post] 트러블슈팅 문서 조회: postId={}", id);
+		log.info("[Post] 트러블슈팅 문서 + AI 요약본 조회:: postId={}", id);
 		return postRepository.findById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
@@ -42,12 +42,12 @@ public class PostQueryService {
 	public Post findSummaryById(Long id, ContentSummaryType summaryType) {
 		log.info("[Post] AI 요약본 조회: postId={}", id);
 		return postRepository.findSummaryById(id, summaryType)
-			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
+			.orElseThrow(() -> new PostException(ErrorCode.SUMMARY_NOT_FOUND));
 	}
 
 	public Post findPostWithoutSummaryById(Long id) {
-		log.info("[Post] 트러블슈팅 문서 + AI 요약본 조회: postId={}", id);
-		return postRepository.findPostWithOutSummaryById(id)
+		log.info("[Post] 트러블슈팅 문서: postId={}", id);
+		return postRepository.findPostWithoutSummaryById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
 

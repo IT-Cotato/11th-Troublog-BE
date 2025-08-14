@@ -4,7 +4,8 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.redis.core.RedisHash;
 
-import jakarta.persistence.Id;
+import org.springframework.data.annotation.Id;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -55,7 +56,7 @@ public class SummaryTask {
 		this.result = result;
 	}
 
-	public boolean isCompleted() {
+	public boolean isTerminalStatus() {
 		return status == SummaryStatus.COMPLETED || status == SummaryStatus.FAILED || status == SummaryStatus.CANCELLED;
 	}
 }
