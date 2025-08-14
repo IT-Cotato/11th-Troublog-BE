@@ -89,6 +89,7 @@ public class PostCommandController {
 		return ResponseUtils.noContent();
 	}
 
+	@Deprecated(forRemoval = true)
 	@PostMapping("/{postId}/restore")
 	@Operation(summary = "트러블슈팅 문서 복구 API", description = "임시 삭제된 트러블슈팅 문서를 복구한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
