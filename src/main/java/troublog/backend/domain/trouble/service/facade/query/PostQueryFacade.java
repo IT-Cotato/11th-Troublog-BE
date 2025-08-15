@@ -32,6 +32,7 @@ import troublog.backend.domain.trouble.enums.TagCategory;
 import troublog.backend.domain.trouble.enums.TagType;
 import troublog.backend.domain.trouble.service.facade.command.RecentPostCommandFacade;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
+import troublog.backend.domain.trouble.service.query.LikeQueryService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.service.query.RecentPostQueryService;
 import troublog.backend.domain.trouble.service.query.TagQueryService;
@@ -50,8 +51,10 @@ public class PostQueryFacade {
 	private final PostQueryService postQueryService;
 	private final TagQueryService tagQueryService;
 	private final UserFacade userFacade;
+	private final LikeQueryService likeQueryService;
 	private final RecentPostCommandFacade recentPostCommandFacade;
 	private final RecentPostQueryService recentPostQueryService;
+
 
 	public static String findErrorTag(Post post) {
 		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
@@ -166,8 +169,9 @@ public class PostQueryFacade {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
 		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId());
-		recentPostCommandFacade.recordPostView(userId, postId);
-		return PostConverter.toCommunityDetailsResponse(userInfo, post);
+		boolean liked = likeQueryService.findByUserAndPost(userId, postId).isPresent();
+    recentPostCommandFacade.recordPostView(userId, postId);
+		return PostConverter.toCommunityDetailsResponse(userInfo, post, liked);
 	}
 
 	public Page<CommunityListResDto> getCommunityPosts(Pageable pageable) {

@@ -58,9 +58,10 @@ public class CommunityController {
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = CommunityPostResDto.class)))
 	public ResponseEntity<BaseResponse<CommunityPostResDto>> findCommunityPostDetailsOnly(
-		@Authentication CustomAuthenticationToken auth,
-		@PathVariable Long postId) {
-		CommunityPostResDto response = postQueryFacade.findCommunityPostDetailsById(auth.getUserId(), postId);
+		@Authentication CustomAuthenticationToken token,
+		@PathVariable Long postId
+	) {
+		CommunityPostResDto response = postQueryFacade.findCommunityPostDetailsById(token.getUserId(), postId);
 		return ResponseUtils.ok(response);
 	}
 
