@@ -28,6 +28,9 @@ public record CommunityPostResDto(
 	@Schema(description = "댓글 수", example = "3")
 	int commentCount,
 
+	@Schema(description = "좋아요 여부", example = "true")
+	boolean liked,
+
 	@Schema(description = "작성 완료 시간", example = "2024-01-15")
 	String completedAt,
 

@@ -29,6 +29,7 @@ import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.enums.TagCategory;
 import troublog.backend.domain.trouble.enums.TagType;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
+import troublog.backend.domain.trouble.service.query.LikeQueryService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.service.query.TagQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
@@ -46,6 +47,7 @@ public class PostQueryFacade {
 	private final PostQueryService postQueryService;
 	private final TagQueryService tagQueryService;
 	private final UserFacade userFacade;
+	private final LikeQueryService likeQueryService;
 
 	public static String findErrorTag(Post post) {
 		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
@@ -156,11 +158,12 @@ public class PostQueryFacade {
 		return posts.map(ListConverter::toAllTroubleListResDto);
 	}
 
-	public CommunityPostResDto findCommunityPostDetailsById(Long postId) {
+	public CommunityPostResDto findCommunityPostDetailsById(Long userId, Long postId) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
 		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId());
-		return PostConverter.toCommunityDetailsResponse(userInfo, post);
+		boolean liked = likeQueryService.findByUserAndPost(userId, postId).isPresent();
+		return PostConverter.toCommunityDetailsResponse(userInfo, post, liked);
 	}
 
 	public Page<CommunityListResDto> getCommunityPosts(Pageable pageable) {
