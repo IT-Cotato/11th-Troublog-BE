@@ -1,5 +1,6 @@
 package troublog.backend.domain.trouble.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -207,4 +208,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	Page<Post> getCommunityPosts(Pageable page);
 
 	List<Post> findByUserIdAndStatusAndIsDeletedFalse(Long userId, PostStatus status);
+
+	List<Post> findByIdIn(Collection<Long> recentIds);
 }

@@ -2,10 +2,12 @@ package troublog.backend.domain.trouble.service.facade.query;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,8 +30,10 @@ import troublog.backend.domain.trouble.entity.Tag;
 import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.enums.TagCategory;
 import troublog.backend.domain.trouble.enums.TagType;
+import troublog.backend.domain.trouble.service.facade.command.RecentPostCommandFacade;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
+import troublog.backend.domain.trouble.service.query.RecentPostQueryService;
 import troublog.backend.domain.trouble.service.query.TagQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
@@ -46,6 +50,8 @@ public class PostQueryFacade {
 	private final PostQueryService postQueryService;
 	private final TagQueryService tagQueryService;
 	private final UserFacade userFacade;
+	private final RecentPostCommandFacade recentPostCommandFacade;
+	private final RecentPostQueryService recentPostQueryService;
 
 	public static String findErrorTag(Post post) {
 		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
@@ -156,10 +162,11 @@ public class PostQueryFacade {
 		return posts.map(ListConverter::toAllTroubleListResDto);
 	}
 
-	public CommunityPostResDto findCommunityPostDetailsById(Long postId) {
+	public CommunityPostResDto findCommunityPostDetailsById(Long userId, Long postId) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
 		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId());
+		recentPostCommandFacade.recordPostView(userId, postId);
 		return PostConverter.toCommunityDetailsResponse(userInfo, post);
 	}
 
@@ -196,5 +203,28 @@ public class PostQueryFacade {
 
 	public Post findPostWithoutSummaryById(Long postId) {
 		return postQueryService.findPostWithoutSummaryById(postId);
+	}
+
+	public Page<PostResDto> getRecentlyViewedPosts(Long userId, Pageable pageable) {
+
+		List<Long> recentIds = recentPostQueryService.getRecentlyViewedPostIds(
+			userId, pageable.getPageSize()
+		);
+		if (recentIds.isEmpty()) {
+			return Page.empty(pageable);
+		}
+
+		List<Post> posts = postQueryService.findByIds(recentIds);
+
+		Map<Long, Post> postMap = posts.stream()
+			.collect(Collectors.toMap(Post::getId, p -> p, (a, b) -> a));
+
+		List<PostResDto> content = recentIds.stream()
+			.map(postMap::get)
+			.filter(Objects::nonNull)
+			.map(PostConverter::toResponse)
+			.toList();
+
+		return new PageImpl<>(content, pageable, content.size());
 	}
 }
