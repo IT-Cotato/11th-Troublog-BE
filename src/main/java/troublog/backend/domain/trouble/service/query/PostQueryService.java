@@ -21,7 +21,6 @@ import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
-import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
@@ -148,4 +147,15 @@ public class PostQueryService {
 	public Page<Post> getCommunityPosts(Pageable pageable) {
 		return postRepository.getCommunityPosts(pageable);
 	}
+
+	public List<Post> findByIds(List<Long> ids) {
+		if (ids == null || ids.isEmpty()) {
+			log.info("[Post] 최근 열람 DB 조회: requested=0, found=0");
+			return List.of();
+		}
+		List<Post> posts = postRepository.findByIdIn(ids);
+		log.info("[Post] 최근 열람 DB 조회: requested={}, found={}", ids.size(), posts.size());
+		return posts;
+	}
+
 }
