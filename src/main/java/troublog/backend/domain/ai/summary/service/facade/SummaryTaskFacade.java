@@ -11,6 +11,7 @@ import troublog.backend.domain.ai.summary.enums.SummaryStatus;
 import troublog.backend.domain.ai.summary.service.command.SummaryTaskCommandService;
 import troublog.backend.domain.ai.summary.service.query.SummaryTaskQueryService;
 import troublog.backend.domain.ai.validator.TaskValidator;
+import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.AiTaskException;
 
@@ -22,8 +23,8 @@ public class SummaryTaskFacade {
 	private final SummaryTaskCommandService summaryTaskCommandService;
 	private final SummaryTaskQueryService summaryTaskQueryService;
 
-	public SummaryTask createTask(Long postId) {
-		SummaryTask summaryTask = SummaryTaskConverter.from(postId);
+	public SummaryTask createTask(Long postId, Long userId, SummaryType summaryType) {
+		SummaryTask summaryTask = SummaryTaskConverter.from(postId, userId, summaryType);
 		return summaryTaskCommandService.save(summaryTask);
 	}
 

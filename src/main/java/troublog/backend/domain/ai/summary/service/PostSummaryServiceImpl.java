@@ -20,7 +20,7 @@ import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.converter.ContentConverter;
 import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
-import troublog.backend.domain.trouble.enums.ContentSummaryType;
+import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.domain.trouble.service.query.ContentQueryService;
 import troublog.backend.domain.trouble.service.query.PostTagQueryService;
@@ -43,7 +43,7 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 	private final PostSummaryCompletionService completionService;
 
 	@Override
-	public SummarizedResDto execute(SummaryTask summaryTask, ContentSummaryType summaryType) {
+	public SummarizedResDto execute(SummaryTask summaryTask, SummaryType summaryType) {
 		if (!validateInput(summaryTask)) {
 			throw new AiTaskException(ErrorCode.INVALID_INPUT);
 		}
@@ -52,7 +52,7 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 
 	@Override
 	@Async("summaryExecutor")
-	public CompletableFuture<SummarizedResDto> executeAsync(SummaryTask summaryTask, ContentSummaryType summaryType) {
+	public CompletableFuture<SummarizedResDto> executeAsync(SummaryTask summaryTask, SummaryType summaryType) {
 		return CompletableFuture
 			.supplyAsync(() -> executeAiAnalysis(summaryTask, summaryType))
 			.thenApply(result -> processResult(summaryTask, result))
@@ -65,10 +65,10 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 		return summaryTask != null && summaryTask.getId() != null && summaryTask.getPostId() != null;
 	}
 
-	private SummarizedResDto performAiAnalysis(SummaryTask summaryTask, ContentSummaryType summaryType) {
+	private SummarizedResDto performAiAnalysis(SummaryTask summaryTask, SummaryType summaryType) {
 		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.PREPROCESSING);
 		BeanOutputConverter<SummarizedResDto> converter = new BeanOutputConverter<>(SummarizedResDto.class);
-		Post post = postQueryFacade.findPostWithoutSummaryById(summaryTask.getPostId());
+		Post post = postQueryFacade.findPostById(summaryTask.getPostId(), summaryTask.getUserId());
 		PromptTemplate promptTemplate = generatePromptTemplate(post, summaryType);
 		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.ANALYZING);
 		String aiResponse = callAiService(promptTemplate, converter);
@@ -103,10 +103,10 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 		}
 	}
 
-	private PromptTemplate generatePromptTemplate(Post post, ContentSummaryType summaryType) {
+	private PromptTemplate generatePromptTemplate(Post post, SummaryType summaryType) {
 		try {
 			PromptTemplate promptTemplate = new PromptTemplate(selectPrompt(summaryType));
-			List<Content> contents = contentQueryService.findContentsWithoutSummaryByPostId(post.getId());
+			List<Content> contents = contentQueryService.findUserPostContents(post.getId());
 			List<String> allTags = postTagQueryService.findTagNamesByPostId(post.getId());
 			String errorTag = allTags.isEmpty() ? "" : allTags.getFirst();
 			List<String> postTags = allTags.size() > POST_TAGS_START_INDEX
@@ -124,8 +124,8 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 		}
 	}
 
-	private Resource selectPrompt(ContentSummaryType contentSummaryType) {
-		return switch (contentSummaryType) {
+	private Resource selectPrompt(SummaryType summaryType) {
+		return switch (summaryType) {
 			case BLOG -> promptProperties.blog();
 			case RESUME -> promptProperties.resume();
 			case INTERVIEW -> promptProperties.interview();
@@ -140,7 +140,7 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 			.toList();
 	}
 
-	private SummarizedResDto executeAiAnalysis(SummaryTask summaryTask, ContentSummaryType summaryType) {
+	private SummarizedResDto executeAiAnalysis(SummaryTask summaryTask, SummaryType summaryType) {
 		log.info("AI 분석 작업 시작: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId());
 		return execute(summaryTask, summaryType);
 	}

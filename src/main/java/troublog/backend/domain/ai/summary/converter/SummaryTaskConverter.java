@@ -6,16 +6,19 @@ import troublog.backend.domain.ai.summary.dto.response.TaskStatusResDto;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
 import troublog.backend.domain.ai.validator.TaskValidator;
+import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.global.common.util.IdGenerator;
 
 @UtilityClass
 public class SummaryTaskConverter {
 
-	public SummaryTask from(Long postId) {
+	public SummaryTask from(Long postId, Long userId, SummaryType summaryType) {
 		return SummaryTask.builder()
 			.id(IdGenerator.generate())
 			.postId(postId)
+			.userId(userId)
 			.status(SummaryStatus.PENDING)
+			.summaryType(summaryType)
 			.build();
 	}
 

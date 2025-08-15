@@ -11,6 +11,8 @@ import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
 import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.entity.PostSummary;
+import troublog.backend.domain.trouble.service.facade.command.PostSummaryCommandFacade;
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.domain.trouble.service.facade.relation.PostRelationFacade;
 
@@ -24,11 +26,13 @@ public class PostSummaryCompletionService {
 	private final SummaryTaskFacade summaryTaskFacade;
 	private final PostQueryFacade postQueryFacade;
 	private final PostRelationFacade postRelationFacade;
+	private final PostSummaryCommandFacade postSummaryCommandFacade;
 
 	@Transactional
 	public SummarizedResDto completeTask(SummaryTask summaryTask, SummarizedResDto result) {
-		Post foundPost = postQueryFacade.findPostById(summaryTask.getPostId());
-		postRelationFacade.setContentRelations(foundPost, result.contentDtoList());
+		Post foundPost = postQueryFacade.findPostById(summaryTask.getPostId(), summaryTask.getUserId());
+		PostSummary postSummary = postSummaryCommandFacade.createPostSummary(summaryTask);
+		postRelationFacade.setPostSummaryRelation(foundPost, postSummary);
 		log.info("AI 분석 작업 완료: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId());
 		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.COMPLETED);
 		return result;
