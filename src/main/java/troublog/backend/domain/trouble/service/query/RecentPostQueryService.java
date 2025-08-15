@@ -22,15 +22,15 @@ public class RecentPostQueryService {
 		if (size <= 0)
 			return List.of();
 
-		long start = offset;
 		long end = offset + size - 1;
 
-		Set<Object> range = redisTemplate.opsForZSet().reverseRange(key, start, end);
+		Set<Object> range = redisTemplate.opsForZSet().reverseRange(key, offset, end);
 		if (range == null || range.isEmpty())
 			return List.of();
 
 		return range.stream()
-			.map(o -> Long.valueOf(o.toString()))
+			.map(id -> (id instanceof Number) ? ((Number)id).longValue()
+				: Long.parseLong(id.toString()))
 			.toList();
 	}
 
