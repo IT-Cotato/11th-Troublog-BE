@@ -53,7 +53,8 @@ public class CommunityController {
 	private final PostQueryFacade postQueryFacade;
 
 	@GetMapping("/{postId}")
-	@Operation(summary = "트러블슈팅 게시글 상세 조회 API", description = "게시글 ID로 공개된 트러블슈팅 게시글의 상세 정보를 조회합니다. 댓글은 별도 API로 조회해야 합니다.")
+	@Operation(summary = "트러블슈팅 게시글 상세 조회 API", description =
+		"게시글 ID로 공개된 트러블슈팅 게시글의 상세 정보를 조회합니다. 댓글은 별도 API로 조회해야 합니다." + "이 API 호출 시 최근 읽은 포스트의 기록으로 저장됩니다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = CommunityPostResDto.class)))
 	public ResponseEntity<BaseResponse<CommunityPostResDto>> findCommunityPostDetailsOnly(
