@@ -57,7 +57,7 @@ public class PostQueryFacade {
 		return post;
 	}
 
-	public PostResDto findPostEntityById(Long id,Long userId) {
+	public PostResDto findPostEntityById(Long id, Long userId) {
 		Post post = postQueryService.findById(id);
 		PostFactory.validateAuthorized(userId, post);
 		return PostConverter.toResponse(post);
@@ -67,9 +67,7 @@ public class PostQueryFacade {
 		if (post.getContents() == null || post.getContents().isEmpty()) {
 			return List.of();
 		}
-		return post.getContents().stream()
-			.map(ContentConverter::toResponse)
-			.toList();
+		return ContentConverter.toResponseList(post.getContents());
 	}
 
 	public CombineResDto findPostDetailsWithSummaryById(Long userId, Long postId, Long summaryId) {

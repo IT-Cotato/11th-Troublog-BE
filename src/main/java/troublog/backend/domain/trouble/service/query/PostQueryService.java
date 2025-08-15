@@ -39,12 +39,6 @@ public class PostQueryService {
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
 
-	public Post findWithContentById(Long id) {
-		log.info("[Post] 트러블슈팅 조회:: postId={}", id);
-		return postRepository.findByIdWithContents(id)
-			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
-	}
-
 	public Post findNotDeletedPost(Long id) {
 		log.info("[Post] 삭제되지 않은 트러블슈팅 문서 조회: postId={}", id);
 		return postRepository.findByIdAndIsDeletedFalse(id)

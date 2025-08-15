@@ -13,6 +13,7 @@ import troublog.backend.domain.trouble.converter.SummaryContentConverter;
 import troublog.backend.domain.trouble.dto.response.PostSummaryResDto;
 import troublog.backend.domain.trouble.dto.response.common.SummaryContentInfoDto;
 import troublog.backend.domain.trouble.entity.PostSummary;
+import troublog.backend.domain.trouble.entity.SummaryContent;
 import troublog.backend.domain.trouble.service.query.PostSummaryQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
 
@@ -33,8 +34,7 @@ public class PostSummaryQueryFacade {
 		if (CollectionUtils.isEmpty(postSummary.getSummaryContents())) {
 			return List.of();
 		}
-		return postSummary.getSummaryContents().stream()
-			.map(SummaryContentConverter::toResponse)
-			.toList();
+		List<SummaryContent> summaryContents = postSummary.getSummaryContents();
+		return SummaryContentConverter.toResponseList(summaryContents);
 	}
 }

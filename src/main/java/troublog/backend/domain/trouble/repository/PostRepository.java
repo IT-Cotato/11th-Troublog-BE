@@ -205,13 +205,4 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	Page<Post> getCommunityPosts(Pageable page);
 
 	List<Post> findByUserIdAndStatusAndIsDeletedFalse(Long userId, PostStatus status);
-
-	@Query("""
-		    SELECT p
-		      FROM Post p
-		     LEFT JOIN FETCH p.contents
-		     WHERE p.id = :id
-		       AND p.isDeleted = false
-		""")
-	Optional<Post> findByIdWithContents(@Param("id") Long id);
 }
