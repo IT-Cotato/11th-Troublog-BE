@@ -19,8 +19,15 @@ public record CommentResDto(
 	Long postId,
 
 	@NotNull
-	@Schema(description = "유저 commentId")
+	@Schema(description = "유저 Id")
 	Long userId,
+
+	@NotNull
+	@Schema(description = "유저 닉네임")
+	String name,
+
+	@Schema(description = "프로필 사진")
+	String profileImg,
 
 	@NotNull
 	@Schema(description = "댓글 내용")
