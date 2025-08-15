@@ -22,12 +22,17 @@ public class CommentConverter {
 	}
 
 	public CommentResDto toResponse(Comment comment) {
+		Long parentId = (comment.getParentComment() != null) ? comment.getParentComment().getId() : null;
+
 		return CommentResDto.builder()
 			.commentId(comment.getId())
 			.postId(comment.getPost().getId())
 			.userId(comment.getUser().getId())
+			.name(comment.getUser().getNickname())
+			.profileImg(comment.getUser().getProfileUrl())
 			.content(comment.getContent())
 			.createdAt(comment.getCreatedAt())
+			.parentCommentId(parentId)
 			.build();
 	}
 
