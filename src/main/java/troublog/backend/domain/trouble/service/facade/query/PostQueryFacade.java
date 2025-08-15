@@ -17,19 +17,22 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.converter.ContentConverter;
 import troublog.backend.domain.trouble.converter.ListConverter;
 import troublog.backend.domain.trouble.converter.PostConverter;
+import troublog.backend.domain.trouble.converter.PostSummaryConverter;
+import troublog.backend.domain.trouble.dto.response.CombineResDto;
 import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
 import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.entity.PostSummary;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;
-import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.enums.TagCategory;
 import troublog.backend.domain.trouble.enums.TagType;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
+import troublog.backend.domain.trouble.service.query.PostSummaryQueryService;
 import troublog.backend.domain.trouble.service.query.TagQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
@@ -46,43 +49,18 @@ public class PostQueryFacade {
 	private final PostQueryService postQueryService;
 	private final TagQueryService tagQueryService;
 	private final UserFacade userFacade;
+	private final PostSummaryQueryService postSummaryQueryService;
 
-	public static String findErrorTag(Post post) {
-		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
-			return null;
-		}
-		return post.getPostTags().stream()
-			.map(PostTag::getTag)
-			.filter(tag -> tag != null && tag.getTagType() == TagType.ERROR)
-			.map(Tag::getName)
-			.findFirst()
-			.orElse(null);
+	public Post findPostById(Long id, Long userId) {
+		Post post = postQueryService.findById(id);
+		PostFactory.validateAuthorized(userId, post);
+		return post;
 	}
 
-	public static List<String> findTechStackTags(Post post) {
-		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
-			return List.of();
-		}
-		return post.getPostTags().stream()
-			.map(PostTag::getTag)
-			.filter(tag -> tag != null && tag.getTagType() == TagType.TECH_STACK)
-			.map(Tag::getName)
-			.toList();
-	}
-
-	public static List<String> findTopTechStackTags(Post post) {
-		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
-			return List.of();
-		}
-		return post.getPostTags().stream()
-			.map(PostTag::getTag)
-			.filter(t -> t != null && t.getTagType() == TagType.TECH_STACK)
-			.collect(Collectors.groupingBy(Tag::getName, Collectors.counting()))
-			.entrySet().stream()
-			.sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-			.limit(3)
-			.map(Map.Entry::getKey)
-			.toList();
+	public PostResDto findPostEntityById(Long id,Long userId) {
+		Post post = postQueryService.findById(id);
+		PostFactory.validateAuthorized(userId, post);
+		return PostConverter.toResponse(post);
 	}
 
 	public static List<ContentInfoDto> findContents(Post post) {
@@ -94,22 +72,17 @@ public class PostQueryFacade {
 			.toList();
 	}
 
-	public PostResDto findPostDetailsWithSummaryById(Long userId, long postId) {
+	public CombineResDto findPostDetailsWithSummaryById(Long userId, Long postId, Long summaryId) {
 		Post post = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, post);
-		return PostConverter.toResponse(post);
-	}
 
-	public PostResDto findPostSummaryById(Long userId, long postId, ContentSummaryType summaryType) {
-		Post post = postQueryService.findSummaryById(postId, summaryType);
-		PostFactory.validateAuthorized(userId, post);
-		return PostConverter.toResponse(post);
-	}
+		PostSummary postSummary = postSummaryQueryService.findById(summaryId);
+		PostValidator.validateSummaryBelongsToUser(userId, postSummary);
 
-	public PostResDto findPostDetailsById(Long userId, Long postId) {
-		Post post = postQueryService.findPostWithoutSummaryById(postId);
-		PostFactory.validateAuthorized(userId, post);
-		return PostConverter.toResponse(post);
+		return CombineResDto.builder()
+			.postResDto(PostConverter.toResponse(post))
+			.postSummaryResDto(PostSummaryConverter.toResponse(postSummary))
+			.build();
 	}
 
 	public List<PostResDto> findAllNotDeletedPosts() {
@@ -145,10 +118,6 @@ public class PostQueryFacade {
 	public Page<PostResDto> searchPostByKeyword(String keyword, Pageable pageable) {
 		Page<Post> posts = postQueryService.searchPostByKeyword(keyword, pageable);
 		return posts.map(PostConverter::toResponse);
-	}
-
-	public Post findPostById(Long id) {
-		return postQueryService.findById(id);
 	}
 
 	public Page<TroubleListResDto> getAllTroubles(Long userId, Pageable pageable) {
@@ -194,7 +163,41 @@ public class PostQueryFacade {
 		};
 	}
 
-	public Post findPostWithoutSummaryById(Long postId) {
-		return postQueryService.findPostWithoutSummaryById(postId);
+	public static String findErrorTag(Post post) {
+		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
+			return null;
+		}
+		return post.getPostTags().stream()
+			.map(PostTag::getTag)
+			.filter(tag -> tag != null && tag.getTagType() == TagType.ERROR)
+			.map(Tag::getName)
+			.findFirst()
+			.orElse(null);
+	}
+
+	public static List<String> findTechStackTags(Post post) {
+		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
+			return List.of();
+		}
+		return post.getPostTags().stream()
+			.map(PostTag::getTag)
+			.filter(tag -> tag != null && tag.getTagType() == TagType.TECH_STACK)
+			.map(Tag::getName)
+			.toList();
+	}
+
+	public static List<String> findTopTechStackTags(Post post) {
+		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
+			return List.of();
+		}
+		return post.getPostTags().stream()
+			.map(PostTag::getTag)
+			.filter(t -> t != null && t.getTagType() == TagType.TECH_STACK)
+			.collect(Collectors.groupingBy(Tag::getName, Collectors.counting()))
+			.entrySet().stream()
+			.sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+			.limit(3)
+			.map(Map.Entry::getKey)
+			.toList();
 	}
 }

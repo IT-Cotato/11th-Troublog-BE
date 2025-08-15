@@ -1,0 +1,36 @@
+package troublog.backend.domain.trouble.service.facade.command;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.ai.summary.entity.SummaryTask;
+import troublog.backend.domain.trouble.converter.PostSummaryConverter;
+import troublog.backend.domain.trouble.converter.SummaryContentConverter;
+import troublog.backend.domain.trouble.entity.PostSummary;
+import troublog.backend.domain.trouble.entity.SummaryContent;
+import troublog.backend.domain.trouble.service.command.PostSummaryCommandService;
+import troublog.backend.domain.trouble.service.command.SummaryContentCommandService;
+import troublog.backend.domain.trouble.service.facade.relation.PostSummaryRelationFacade;
+
+@Service
+@Transactional
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+public class PostSummaryCommandFacade {
+
+	private final SummaryContentCommandService summaryContentCommandService;
+	private final PostSummaryRelationFacade postSummaryRelationFacade;
+	private final PostSummaryCommandService postSummaryCommandService;
+
+	public PostSummary createPostSummary(SummaryTask summaryTask) {
+		PostSummary newPostSummary = PostSummaryConverter.toEntity(summaryTask);
+		PostSummary savedPostSummary = postSummaryCommandService.save(newPostSummary);
+		List<SummaryContent> summaryContents = summaryContentCommandService
+			.saveAll(SummaryContentConverter.toEntityList(summaryTask.getResult()));
+		postSummaryRelationFacade.setRelation(savedPostSummary, summaryContents);
+		return savedPostSummary;
+	}
+}

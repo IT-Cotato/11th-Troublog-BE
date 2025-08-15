@@ -64,8 +64,15 @@ public enum ErrorCode {
 	POST_NOT_DELETED(HttpStatus.BAD_GATEWAY, "P-005", "삭제되지 않은 트러블슈팅 문서입니다."),
 	POST_NOT_VISIBLE(HttpStatus.FORBIDDEN, "P-006", "공개되지 않은 게시물입니다."),
 	JSON_PARSING_ERROR(HttpStatus.BAD_REQUEST, "J-007", "JSON 파싱 중 오류가 발생했습니다."),
-	SUMMARY_NOT_FOUND(HttpStatus.NOT_FOUND,"P-008" , "요약본을 찾을 수 없습니다."),
+	SUMMARY_NOT_FOUND(HttpStatus.NOT_FOUND, "P-008", "요약본을 찾을 수 없습니다."),
 
+	/**
+	 * Post Summary Error
+	 */
+	MISSING_POST_SUMMARY(HttpStatus.BAD_REQUEST, "PS-001", "요약본 정보가 누락되었습니다."),
+	MISSING_SUMMARY_CONTENT(HttpStatus.BAD_REQUEST, "PS-002", "요약본 콘텐츠 정보가 누락되었습니다."),
+	POST_SUMMARY_NOT_FOUND(HttpStatus.NOT_FOUND, "PS-003", "요약본을 찾지 못했습니다."),
+	USER_SUMMARY_MISMATCH(HttpStatus.BAD_REQUEST, "PS-004", "해당 요약본과 소유자가 일치하지 않습니다."),
 	/**
 	 * Content Error
 	 */
@@ -133,7 +140,6 @@ public enum ErrorCode {
 	TASK_CANNOT_BE_CANCELLED(HttpStatus.BAD_REQUEST, "AI-003", "이미 완료된 작업입니다."),
 	PROMPT_NOT_FOUND(HttpStatus.NOT_FOUND, "AI-004", "프롬프트를 찾을 수 없습니다."),
 	TASK_POST_MISMATCH(HttpStatus.BAD_REQUEST, "AI-005", "작업과 게시물이 일치하지 않습니다.");
-
 	private final HttpStatus httpStatus;
 	private final String code;
 	private final String message;

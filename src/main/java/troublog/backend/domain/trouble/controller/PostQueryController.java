@@ -20,10 +20,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.trouble.dto.response.CombineResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
+import troublog.backend.domain.trouble.dto.response.PostSummaryResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
-import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
+import troublog.backend.domain.trouble.service.facade.query.PostSummaryQueryFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -37,29 +39,17 @@ import troublog.backend.global.common.util.ResponseUtils;
 public class PostQueryController {
 
 	private final PostQueryFacade postQueryFacade;
+	private final PostSummaryQueryFacade postSummaryQueryFacade;
 
-	@GetMapping("/{postId}/combine")
-	@Operation(summary = "트러블슈팅 문서 + AI 요약본 상세 조회 API", description = "ID 값 기반 트러블슈팅 문서 + AI 요약본 상세 조회")
+	@GetMapping("/summary/{summaryId}")
+	@Operation(summary = "AI 요약본 상세 조회 API", description = "ID 값 기반 트러블 슈팅 AI 요약본 상세 조회")
 	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(schema = @Schema(implementation = PostResDto.class)))
-	public ResponseEntity<BaseResponse<PostResDto>> findPostDetailsWithSummary(
+		content = @Content(schema = @Schema(implementation = PostSummaryResDto.class)))
+	public ResponseEntity<BaseResponse<PostSummaryResDto>> findPostSummaryOnly(
 		@Authentication CustomAuthenticationToken token,
-		@PathVariable long postId
+		@PathVariable Long summaryId
 	) {
-		PostResDto response = postQueryFacade.findPostDetailsWithSummaryById(token.getUserId(), postId);
-		return ResponseUtils.ok(response);
-	}
-
-	@GetMapping("/{postId}/summary")
-	@Operation(summary = "AI 요약본 상세 조회 API", description = "ID 값, SummaryType 기반 AI 요약본 상세 조회")
-	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(schema = @Schema(implementation = PostResDto.class)))
-	public ResponseEntity<BaseResponse<PostResDto>> findPostSummaryOnly(
-		@Authentication CustomAuthenticationToken token,
-		@PathVariable long postId,
-		@RequestParam ContentSummaryType summaryType
-	) {
-		PostResDto response = postQueryFacade.findPostSummaryById(token.getUserId(), postId, summaryType);
+		PostSummaryResDto response = postSummaryQueryFacade.findPostSummaryById(token.getUserId(), summaryId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -69,9 +59,22 @@ public class PostQueryController {
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> findPostDetailsOnly(
 		@Authentication CustomAuthenticationToken token,
-		@PathVariable long postId
+		@PathVariable Long postId
 	) {
-		PostResDto response = postQueryFacade.findPostDetailsById(token.getUserId(), postId);
+		PostResDto response = postQueryFacade.findPostEntityById(postId, token.getUserId());
+		return ResponseUtils.ok(response);
+	}
+
+	@GetMapping("/{postId}/combine/{summaryId}")
+	@Operation(summary = "트러블슈팅 문서 + AI 요약본 상세 조회 API", description = "ID 값 기반 트러블슈팅 문서 + AI 요약본 상세 조회")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = CombineResDto.class)))
+	public ResponseEntity<BaseResponse<CombineResDto>> findPostDetailsWithSummary(
+		@Authentication CustomAuthenticationToken token,
+		@PathVariable Long postId,
+		@PathVariable Long summaryId
+	) {
+		CombineResDto response = postQueryFacade.findPostDetailsWithSummaryById(token.getUserId(), postId, summaryId);
 		return ResponseUtils.ok(response);
 	}
 

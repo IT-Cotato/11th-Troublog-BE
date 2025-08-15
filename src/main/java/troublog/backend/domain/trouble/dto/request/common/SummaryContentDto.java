@@ -6,8 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-@Schema(description = "사용자 트러블로그 문서 본문 내용 DTO")
-public record ContentDto(
+@Schema(description = "사용자 트러블로그 문서 요약 내용 DTO")
+public record SummaryContentDto(
 
 	@Schema(
 		description = "컨텐츠 소제목 내용",

@@ -3,9 +3,7 @@ package troublog.backend.domain.trouble.converter;
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.entity.Post;
-import troublog.backend.domain.trouble.enums.ContentSummaryType;
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
-import troublog.backend.domain.trouble.validator.PostValidator;
 
 @UtilityClass
 public class ListConverter {
@@ -22,8 +20,8 @@ public class ListConverter {
 			.error(PostQueryFacade.findErrorTag(post))
 			.techs(PostQueryFacade.findTopTechStackTags(post))
 			.isVisible(post.getIsVisible())
-			.summaryType(PostValidator.isValidSummaryContent(post) ?
-				ContentSummaryType.getName(post.getContents().getFirst().getSummaryType()) : null)
+			// .summaryType(PostValidator.isValidSummaryContent(post) ?
+			// 	SummaryType.getName(post.getContents().getFirst().getSummaryType()) : null)
 			.build();
 	}
 }

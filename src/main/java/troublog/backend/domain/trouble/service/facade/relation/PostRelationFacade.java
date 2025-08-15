@@ -14,6 +14,7 @@ import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.request.common.ContentDto;
 import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.entity.PostSummary;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;
 import troublog.backend.domain.trouble.service.command.ContentCommandService;
@@ -131,5 +132,9 @@ public class PostRelationFacade {
 	public void deleteAllTagByPostId(Long postId) {
 		List<PostTag> postTags = postTagQueryService.findAllByPostId(postId);
 		postTagCommandService.deleteAll(postTags);
+	}
+
+	public void setPostSummaryRelation(Post post, PostSummary postSummary) {
+		post.addPostSummary(postSummary);
 	}
 }

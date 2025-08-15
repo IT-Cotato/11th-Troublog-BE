@@ -1,12 +1,12 @@
 package troublog.backend.domain.trouble.converter;
 
+import java.util.List;
+
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.ai.summary.dto.common.ExtractedContentDto;
 import troublog.backend.domain.trouble.dto.request.common.ContentDto;
 import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
 import troublog.backend.domain.trouble.entity.Content;
-import troublog.backend.domain.trouble.enums.ContentAuthorType;
-import troublog.backend.domain.trouble.enums.ContentSummaryType;
 
 @UtilityClass
 public class ContentConverter {
@@ -15,8 +15,6 @@ public class ContentConverter {
 			.subTitle(contentDto.subTitle())
 			.body(contentDto.body())
 			.sequence(contentDto.sequence())
-			.authorType(ContentAuthorType.from(contentDto.authorType()))
-			.summaryType(ContentSummaryType.from(contentDto.summaryType()))
 			.build();
 	}
 
@@ -26,9 +24,13 @@ public class ContentConverter {
 			.subTitle(content.getSubTitle())
 			.body(content.getBody())
 			.sequence(content.getSequence())
-			.authorType(content.getAuthorType())
-			.summaryType(content.getSummaryType())
 			.build();
+	}
+
+	public List<ContentInfoDto> toResponseList(List<Content> contents) {
+		return contents.stream()
+			.map(ContentConverter::toResponse)
+			.toList();
 	}
 
 	public ExtractedContentDto extractContent(Content content) {
