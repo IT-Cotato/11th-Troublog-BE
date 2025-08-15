@@ -17,11 +17,27 @@ public class RecentPostQueryService {
 
 	private final RedisTemplate<String, Object> redisTemplate;
 
-	public List<Long> getRecentlyViewedPostIds(Long userId, int limit) {
+	public List<Long> getRecentlyViewedPostIds(Long userId, long offset, int size) {
 		String key = "recent_posts:" + userId;
-		Set<Object> postIds = redisTemplate.opsForZSet().reverseRange(key, 0, limit - 1);
-		if (postIds == null)
+		if (size <= 0)
 			return List.of();
-		return postIds.stream().map(id -> Long.valueOf(id.toString())).toList();
+
+		long start = offset;
+		long end = offset + size - 1;
+
+		Set<Object> range = redisTemplate.opsForZSet().reverseRange(key, start, end);
+		if (range == null || range.isEmpty())
+			return List.of();
+
+		return range.stream()
+			.map(o -> Long.valueOf(o.toString()))
+			.toList();
 	}
+
+	public long getRecentlyViewedCount(Long userId) {
+		String key = "recent_posts:" + userId;
+		Long cnt = redisTemplate.opsForZSet().zCard(key);
+		return (cnt == null) ? 0L : cnt;
+	}
+
 }

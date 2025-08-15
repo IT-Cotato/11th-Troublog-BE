@@ -206,10 +206,15 @@ public class PostQueryFacade {
 	}
 
 	public Page<PostResDto> getRecentlyViewedPosts(Long userId, Pageable pageable) {
+		long offset = pageable.getOffset();
+		int size = pageable.getPageSize();
 
-		List<Long> recentIds = recentPostQueryService.getRecentlyViewedPostIds(
-			userId, pageable.getPageSize()
-		);
+		long total = recentPostQueryService.getRecentlyViewedCount(userId);
+		if (total == 0 || offset >= total) {
+			return Page.empty(pageable);
+		}
+
+		List<Long> recentIds = recentPostQueryService.getRecentlyViewedPostIds(userId, offset, size);
 		if (recentIds.isEmpty()) {
 			return Page.empty(pageable);
 		}
@@ -225,6 +230,6 @@ public class PostQueryFacade {
 			.map(PostConverter::toResponse)
 			.toList();
 
-		return new PageImpl<>(content, pageable, content.size());
+		return new PageImpl<>(content, pageable, total);
 	}
 }

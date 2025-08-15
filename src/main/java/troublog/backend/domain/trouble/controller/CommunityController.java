@@ -188,7 +188,7 @@ public class CommunityController {
 	}
 
 	@GetMapping("/recent")
-	@Operation(summary = "최근에 읽은 포스트 조회 API", description = "사용자가 최근에 열람한 순으로 포스트를 불러온다.")
+	@Operation(summary = "최근에 열람한 포스트 조회 API", description = "사용자가 최근에 열람한 순으로 포스트를 불러온다. (/community/{postId} 호출 기준)")
 	public ResponseEntity<PageResponse<PostResDto>> getRecentlyViewedPosts(
 		@Authentication CustomAuthenticationToken auth,
 		@RequestParam(defaultValue = "1") @Min(1) int page,
