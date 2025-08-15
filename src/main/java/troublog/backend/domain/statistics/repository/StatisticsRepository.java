@@ -33,11 +33,11 @@ public interface StatisticsRepository extends JpaRepository<Post, Long> {
                                                @Param("tagType") TagType tagType);
 
 
-    @Query("SELECT new troublog.backend.domain.statistics.dto.response.StatsResDto(STR(c.summaryType), COUNT(c)) " +
-            "FROM Content c " +
-            "WHERE c.post.user.id = :userId " +
-            "GROUP BY STR(c.summaryType) " +
-            "ORDER BY COUNT(c) DESC")
+    @Query("SELECT new troublog.backend.domain.statistics.dto.response.StatsResDto(STR(ps.summaryType), COUNT(ps)) " +
+            "FROM PostSummary ps " +
+            "WHERE ps.post.user.id = :userId " +
+            "GROUP BY STR(ps.summaryType) " +
+            "ORDER BY COUNT(ps) DESC")
     List<StatsResDto> findSummaryTypesByUser(@Param("userId") Long userId);
 
 }
