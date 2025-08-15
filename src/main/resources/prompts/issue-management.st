@@ -82,30 +82,22 @@ You must respond ONLY in the following JSON format:
     {{
       "subTitle": "변경사항 요약",
       "body": "PR의 주요 변경사항과 해결한 문제를 한 줄로 요약한 한국어 PR 문서 콘텐츠",
-      "sequence": 1,
-      "authorType": "AI_GENERATED",
-      "summaryType": "ISSUE_MANAGEMENT"
+      "sequence": 1
     }},
     {{
       "subTitle": "이슈 상세 분석",
       "body": "사용자가 직면한 구체적 문제 상황과 발생 환경을 상세히 기술한 한국어 PR 문서 콘텐츠",
-      "sequence": 2,
-      "authorType": "AI_GENERATED",
-      "summaryType": "ISSUE_MANAGEMENT"
+      "sequence": 2
     }},
     {{
       "subTitle": "해결 방법 및 구현",
       "body": "사용자가 선택한 해결 접근법과 실제 구현 내용을 설명한 한국어 PR 문서 콘텐츠",
-      "sequence": 3,
-      "authorType": "AI_GENERATED",
-      "summaryType": "ISSUE_MANAGEMENT"
+      "sequence": 3
     }},
     {{
       "subTitle": "테스트 및 검증",
       "body": "사용자가 수행한 테스트 과정과 변경사항 검증 결과를 정리한 한국어 PR 문서 콘텐츠",
-      "sequence": 4,
-      "authorType": "AI_GENERATED",
-      "summaryType": "ISSUE_MANAGEMENT"
+      "sequence": 4
     }}
   ]
 }}

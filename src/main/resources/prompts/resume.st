@@ -77,30 +77,22 @@ You must respond ONLY in the following JSON format:
     {{
       "subTitle": "프로젝트 개요",
       "body": "사용자의 실제 작업과 역할, 사용 기술을 요약한 한국어 이력서 콘텐츠",
-      "sequence": 1,
-      "authorType": "AI_GENERATED",
-      "summaryType": "RESUME"
+      "sequence": 1
     }},
     {{
       "subTitle": "기술적 도전과제",
       "body": "사용자가 직면한 구체적 문제와 그 복잡성을 설명한 한국어 이력서 콘텐츠",
-      "sequence": 2,
-      "authorType": "AI_GENERATED",
-      "summaryType": "RESUME"
+      "sequence": 2
     }},
     {{
       "subTitle": "문제 해결 접근법",
       "body": "사용자의 체계적 해결 과정과 기술적 의사결정을 기술한 한국어 이력서 콘텐츠",
-      "sequence": 3,
-      "authorType": "AI_GENERATED",
-      "summaryType": "RESUME"
+      "sequence": 3
     }},
     {{
       "subTitle": "구현 결과 및 성과",
       "body": "사용자가 달성한 구체적 결과와 정량적 개선 효과를 정리한 한국어 이력서 콘텐츠",
-      "sequence": 4,
-      "authorType": "AI_GENERATED",
-      "summaryType": "RESUME"
+      "sequence": 4
     }}
   ]
 }}
