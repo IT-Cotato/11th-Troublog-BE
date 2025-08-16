@@ -52,12 +52,11 @@ public class LikeCommandFacade {
 
 		if (existing.isPresent()) {
 			// 좋아요 취소
-			LikeResDto res = LikeConverter.toResponse(existing.get(), false);
 			deleteLike(existing.get());
-			return res;
+			int likeCount = likeQueryService.countByPostId(postId);
+			return LikeConverter.toResponse(post, likeCount, false);
 		}
-		Like like = Like.createLike(user, post);
-		Like saved = likeCommandService.save(like);
+		likeCommandService.save(Like.createLike(user, post));
 
 		// 좋아요 알림 전송
 		Alert alert = AlertConverter.postLikesAlert(post.getUser(), user.getNickname());
@@ -69,7 +68,8 @@ public class LikeCommandFacade {
 
 		alertCommandService.save(alert);
 
-		return LikeConverter.toResponse(saved, true);
+		int likeCount = likeQueryService.countByPostId(postId);
+		return LikeConverter.toResponse(post, likeCount, true);
 
 	}
 

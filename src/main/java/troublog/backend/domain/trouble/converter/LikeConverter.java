@@ -6,7 +6,6 @@ import java.util.List;
 import troublog.backend.domain.trouble.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.dto.response.LikeResDto;
 import troublog.backend.domain.trouble.entity.Content;
-import troublog.backend.domain.trouble.entity.Like;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;
@@ -45,11 +44,11 @@ public class LikeConverter {
 			.build();
 	}
 
-	public static LikeResDto toResponse(Like like, Boolean isLiked) {
+	public static LikeResDto toResponse(Post post, int likeCount, boolean liked) {
 		return LikeResDto.builder()
-			.postId(like.getPost().getId())
-			.likeCount(like.getPost().getLikeCount())
-			.like(isLiked)
+			.postId(post.getId())
+			.likeCount(likeCount)
+			.like(liked)
 			.build();
 	}
 }
