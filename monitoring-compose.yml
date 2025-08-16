@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
+    volumes:
+      - prometheus_data:/prometheus
+
+  loki:
+    container_name: loki
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    configs:
+      - source: loki_config
+        target: /etc/loki/local-config.yaml
+    volumes:
+      - loki_data:/loki
+
+  promtail:
+    container_name: promtail
+    image: grafana/promtail:latest
+    command: -config.file=/etc/promtail/config.yml
+    configs:
+      - source: promtail_config
+        target: /etc/promtail/config.yml
+    volumes:
+      - ./logs:/var/log/app:ro
+    depends_on:
+      - loki
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+      - loki
+
+configs:
+  prometheus_config:
+    file: ./monitoring/prometheus/prometheus.yml
+  loki_config:
+    file: ./monitoring/loki/loki-config.yml
+  promtail_config:
+    file: ./monitoring/promtail/promtail-config.yml
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  loki_data:

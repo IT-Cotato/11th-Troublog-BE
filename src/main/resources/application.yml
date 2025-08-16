@@ -65,3 +65,36 @@ cloud:
   aws:
     s3:
       bucket: ${BUCKET_ADDRESS}
+
+# 모니터링 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+      service: troublog
+
+# 로그 설정
+logging:
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%t] %c{1} : %m%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%t] %c{1} : %m%n"
+  file:
+    path: ./logs
+    name: ./logs/troublog.log
+  level:
+    troublog.backend: INFO
+    org.springframework.web: DEBUG

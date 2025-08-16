@@ -1,0 +1,33 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  # Spring Boot 애플리케이션 로그
+  - job_name: troublog-app
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: troublog-app
+          service: troublog
+          __path__: /var/log/app/*.log
+    pipeline_stages:
+      - match:
+          selector: '{job="troublog-app"}'
+          stages:
+            - regex:
+                expression: '(?P<timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\.\d{3})\s+(?P<level>\w+)\s+(?P<thread>\[\w+\])\s+(?P<logger>\S+)\s+:\s+(?P<message>.*)'
+            - labels:
+                level:
+                thread:
+                logger:
+            - timestamp:
+                source: timestamp
+                format: '2006-01-02 15:04:05.000'

@@ -1,0 +1,14 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  # Prometheus 자체 모니터링
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # 추후 Spring Boot 연결용 (현재는 주석 처리)
+  # - job_name: 'troublog-app'
+  #   metrics_path: '/actuator/prometheus'
+  #   static_configs:
+  #     - targets: ['troublog-app:8080']
