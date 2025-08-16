@@ -30,6 +30,10 @@ public record UserInfoResDto(
 
 	@Schema(description = "팔로잉 수")
 	@JsonProperty("followingNum")
-	Long followingNum
+	Long followingNum,
+
+	@Schema(description = "사용자의 팔로우 여부")
+	@JsonProperty("isFollowed")
+	Boolean isFollowed
 ) {
 }

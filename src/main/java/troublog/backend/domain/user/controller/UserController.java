@@ -78,9 +78,9 @@ public class UserController {
 	@ApiResponse(responseCode = "200", description = "성공",
 		content = @Content(schema = @Schema(implementation = UserInfoResDto.class)))
 	public ResponseEntity<BaseResponse<UserInfoResDto>> getUserInfo(
-		@PathVariable Long userId) {
+		@PathVariable Long userId, @Authentication CustomAuthenticationToken auth) {
 
-		return ResponseUtils.ok(userFacade.getUserInfo(userId));
+		return ResponseUtils.ok(userFacade.getUserInfo(userId, auth.getUserId()));
 	}
 
 	@GetMapping("")

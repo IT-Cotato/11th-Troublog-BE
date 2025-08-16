@@ -52,7 +52,7 @@ public class UserConverter {
 			.build();
 	}
 
-	public static UserInfoResDto toUserResDto(User user, long followerNum, long followingNum) {
+	public static UserInfoResDto toUserResDto(User user, long followerNum, long followingNum, boolean isFollowed) {
 		return UserInfoResDto.builder()
 			.userId(user.getId())
 			.nickname(user.getNickname())
@@ -60,6 +60,7 @@ public class UserConverter {
 			.bio(user.getBio())
 			.followerNum(followerNum)
 			.followingNum(followingNum)
+			.isFollowed(isFollowed)
 			.build();
 	}
 

@@ -156,10 +156,10 @@ public class PostQueryFacade {
 		return posts.map(ListConverter::toAllTroubleListResDto);
 	}
 
-	public CommunityPostResDto findCommunityPostDetailsById(Long postId) {
+	public CommunityPostResDto findCommunityPostDetailsById(Long postId, Long userId) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
-		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId());
+		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId(), userId);
 		return PostConverter.toCommunityDetailsResponse(userInfo, post);
 	}
 

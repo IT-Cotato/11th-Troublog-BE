@@ -93,11 +93,11 @@ public class UserFacade {
 			: userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(targetUserId);
 
 		// 다른 사용자의 팔로워 리스트 조회
-		List<User> followers = followQueryService.findFollowers(targetUser);
+		List<User> followers = followQueryService.findFollowers(targetUser.getId());
 
 		// 사용자 (본인) 가 팔로우하고 있는 유저 목록 조회 → ID만 추출
 		Set<Long> viewerFollowingIds = UserConverter.extractUserIds(
-			followQueryService.findFollowings(viewer)
+			followQueryService.findFollowings(viewer.getId())
 		);
 
 		// DTO 변환
@@ -116,11 +116,11 @@ public class UserFacade {
 			: userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(targetUserId);
 
 		// 다른 사용자의 팔로잉 리스트 조회
-		List<User> followings = followQueryService.findFollowings(targetUser);
+		List<User> followings = followQueryService.findFollowings(targetUser.getId());
 
 		// 사용자 (본인) 가 팔로우하고 있는 유저 목록 조회 → ID만 추출
 		Set<Long> viewerFollowingIds = UserConverter.extractUserIds(
-			followQueryService.findFollowings(viewer)
+			followQueryService.findFollowings(viewer.getId())
 		);
 
 		// DTO 변환
@@ -128,19 +128,25 @@ public class UserFacade {
 	}
 
 	@Transactional(readOnly = true)
-	public UserInfoResDto getUserInfo(Long userId) {
+	public UserInfoResDto getUserInfo(Long userId, Long myId) {
 
 		// 사용자 조회
 		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
 
 		// 사용자의 팔로잉 목록 조회
-		long followingNum = followQueryService.findFollowings(user).size();
+		List<User> followingUserList = followQueryService.findFollowings(user.getId());
 
 		// 사용자의 팔로워 목록 조회
-		long followerNum = followQueryService.findFollowers(user).size();
+		long followerNum = followQueryService.findFollowers(user.getId()).size();
+
+		// (본인)의 팔로잉 목록 조회
+		List<User> myFollowingUserList = followQueryService.findFollowings(myId);
+
+		// 사용자 (본인) 가 팔로우하고 있는지 여부 확인
+		boolean isFollowed = myFollowingUserList.contains(user);
 
 		// DTO 변환
-		return UserConverter.toUserResDto(user, followerNum, followingNum);
+		return UserConverter.toUserResDto(user, followerNum, followingUserList.size(), isFollowed);
 	}
 
 	@Transactional(readOnly = true)
