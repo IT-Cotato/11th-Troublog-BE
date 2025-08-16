@@ -87,4 +87,11 @@ public class Like {
 		}
 		this.post = post;
 	}
+
+	public void unassignUser() {
+		if (this.user != null) {
+			this.user.getLikes().remove(this);
+			this.user = null;
+		}
+	}
 }

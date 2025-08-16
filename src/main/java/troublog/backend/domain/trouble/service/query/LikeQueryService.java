@@ -29,4 +29,8 @@ public class LikeQueryService {
 	public Page<Like> findByUserIdOrderByLikedAtDesc(Long userId, Pageable pageable) {
 		return likeRepository.findByUserIdOrderByLikedAtDesc(userId, pageable);
 	}
+
+	public int countByPostId(Long postId) {
+		return likeRepository.countByPostId(postId);
+	}
 }

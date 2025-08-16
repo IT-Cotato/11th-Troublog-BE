@@ -1,5 +1,7 @@
 package troublog.backend.domain.trouble.service.facade.command;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,8 +23,6 @@ import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
-import troublog.backend.global.common.error.ErrorCode;
-import troublog.backend.global.common.error.exception.PostException;
 import troublog.backend.global.common.util.AlertSseUtil;
 
 @Service
@@ -48,34 +48,33 @@ public class LikeCommandFacade {
 		PostValidator.validateVisibility(post);
 		User user = userQueryService.findUserById(userId);
 
-		if (likeQueryService.findByUserAndPost(userId, postId).isPresent()) {
-			throw new PostException(ErrorCode.LIKE_ALREADY_EXISTS);
-		}
+		Optional<Like> existing = likeQueryService.findByUserAndPost(userId, postId);
 
-		Like like = Like.createLike(user, post);
-		Like saved = likeCommandService.save(like);
+		if (existing.isPresent()) {
+			// 좋아요 취소
+			deleteLike(existing.get());
+			int likeCount = likeQueryService.countByPostId(postId);
+			return LikeConverter.toResponse(post, likeCount, false);
+		}
+		likeCommandService.save(Like.createLike(user, post));
 
 		// 좋아요 알림 전송
 		Alert alert = AlertConverter.postLikesAlert(post.getUser(), user.getNickname());
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
-		if(alertSseUtil.sendAlert(post.getUser().getId(), alertResDto)) {
+		if (alertSseUtil.sendAlert(post.getUser().getId(), alertResDto)) {
 			alert.markAsSent();
 		}
 
 		alertCommandService.save(alert);
 
-		return LikeConverter.toResponse(saved);
+		int likeCount = likeQueryService.countByPostId(postId);
+		return LikeConverter.toResponse(post, likeCount, true);
+
 	}
 
 	@Transactional
-	public void deleteLike(Long postId, Long userId) {
-		Post post = postQueryService.findById(postId);
-		PostValidator.validateVisibility(post);
-
-		Like like = likeQueryService.findByUserAndPost(userId, postId)
-			.orElseThrow(() -> new PostException(ErrorCode.LIKE_NOT_EXISTS));
-
+	public void deleteLike(Like like) {
 		likeCommandService.deleteLike(like);
 	}
 }
