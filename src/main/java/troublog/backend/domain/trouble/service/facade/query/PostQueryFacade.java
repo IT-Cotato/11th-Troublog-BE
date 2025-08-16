@@ -168,7 +168,7 @@ public class PostQueryFacade {
 	public CommunityPostResDto findCommunityPostDetailsById(Long userId, Long postId) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
-		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId());
+		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId(), userId);
 		boolean liked = likeQueryService.findByUserAndPost(userId, postId).isPresent();
     recentPostCommandFacade.recordPostView(userId, postId);
 		return PostConverter.toCommunityDetailsResponse(userInfo, post, liked);

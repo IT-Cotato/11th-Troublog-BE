@@ -133,17 +133,19 @@ public class UserFacade {
 		// 사용자 조회
 		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
 
+		// (본인) 조회자 검증
+		User viewer = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(myId);
+
 		// 사용자의 팔로잉 목록 조회
 		List<User> followingUserList = followQueryService.findFollowings(user.getId());
 
 		// 사용자의 팔로워 목록 조회
 		long followerNum = followQueryService.findFollowers(user.getId()).size();
 
-		// (본인)의 팔로잉 목록 조회
-		List<User> myFollowingUserList = followQueryService.findFollowings(myId);
-
-		// 사용자 (본인) 가 팔로우하고 있는지 여부 확인
-		boolean isFollowed = myFollowingUserList.contains(user);
+		// (본인)의 팔로잉 목록 조회 후 ID 기반 포함 여부 판단
+		List<User> myFollowingUserList = followQueryService.findFollowings(viewer.getId());
+		boolean isFollowed = UserConverter.extractUserIds(myFollowingUserList)
+			.contains(user.getId());
 
 		// DTO 변환
 		return UserConverter.toUserResDto(user, followerNum, followingUserList.size(), isFollowed);
