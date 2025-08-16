@@ -20,6 +20,7 @@ import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
+import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
@@ -84,7 +85,7 @@ public class AuthFacade {
 		jwtProvider.checkEnvType(clientEnvType);
 
 		// 유저 확인
-		User user = userQueryService.findUserByEmailAndIsDeletedFalse(loginReqDto.email());
+		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(loginReqDto.email());
 
 		// 비밀번호 검증
 		if (!passwordEncoder.matches(loginReqDto.password(), user.getPassword())) {
@@ -125,7 +126,7 @@ public class AuthFacade {
 		Long userId = jwtProvider.reissueAccessToken(request);
 
 		// 새로운 액세스토큰에 넣어 줄 유저 정보 조회
-		User user = userQueryService.findUserByIdAndIsDeletedFalse(userId);
+		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
 
 		//새로운 CustomAuthenticationToken 객체 생성
 		CustomAuthenticationToken authenticationToken =
@@ -138,7 +139,7 @@ public class AuthFacade {
 
 		Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
-		int writingCount = postQueryService.findWritingPostsByUserId(user.getId()).size();
+		int writingCount = postQueryService.findPostByStatusAndUserId(user.getId(), PostStatus.WRITING).size();
 
 		// 작성중인 트러블 슈팅 알림전송
 		if (writingCount > 0) {

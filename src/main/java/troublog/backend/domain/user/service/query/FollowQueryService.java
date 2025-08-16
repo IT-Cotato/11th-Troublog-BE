@@ -32,12 +32,12 @@ public class FollowQueryService {
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOLLOWED));
 	}
 
-	public List<User> findFollowers(User targetUser) {
-		return followRepository.findFollowers(targetUser.getId());
+	public List<User> findFollowers(Long userId) {
+		return followRepository.findFollowers(userId);
 	}
 
-	public List<User> findFollowings(User user) {
-		return followRepository.findFollowings(user.getId());
+	public List<User> findFollowings(Long userId) {
+		return followRepository.findFollowings(userId);
 	}
 
 

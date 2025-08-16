@@ -32,22 +32,24 @@ public class UserQueryService {
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 	}
 
-	public User findUserByIdAndIsDeletedFalse(Long userId) {
+	public User findUserByIdAndIsDeletedFalseAndStatusActive(Long userId) {
 
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 
 		UserValidator.validateUserDeleted(user);
+		UserValidator.validateUserStatus(user);
 
 		return user;
 	}
 
-	public User findUserByEmailAndIsDeletedFalse(String email) {
+	public User findUserByEmailAndIsDeletedFalseAndStatusActive(String email) {
 
 		User user = userRepository.findByEmail(email)
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 
 		UserValidator.validateUserDeleted(user);
+		UserValidator.validateUserStatus(user);
 
 		return user;
 	}

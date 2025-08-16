@@ -207,7 +207,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		""")
 	Page<Post> getCommunityPosts(Pageable page);
 
-	List<Post> findByUserIdAndStatusAndIsDeletedFalse(Long userId, PostStatus status);
+	@Query("""
+		  SELECT p
+		    FROM Post p
+		   WHERE p.user.id = :userId
+		     AND (:status is null or p.status = :status)
+		     AND p.isDeleted = FALSE
+		""")
+	List<Post> findByUserIdAndStatusAndIsDeletedFalse(@Param("userId") Long userId, @Param("status") PostStatus status);
+
+	List<Post> findByUserIdAndIsDeletedFalse(Long userId);
 
 	List<Post> findByIdIn(Collection<Long> recentIds);
 }
