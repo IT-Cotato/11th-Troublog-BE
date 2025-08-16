@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
+@Schema(description = "트러블슈팅 작성자 정보 DTO")
 public record PostCardUserInfoResDto(
 	@Schema(description = "유저 ID")
 	Long userId,
