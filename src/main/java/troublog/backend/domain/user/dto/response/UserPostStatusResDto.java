@@ -1,7 +1,10 @@
 package troublog.backend.domain.user.dto.response;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
+import troublog.backend.domain.trouble.enums.PostStatus;
 
 @Builder
 public record UserPostStatusResDto(
@@ -13,6 +16,6 @@ public record UserPostStatusResDto(
 	String postStatus,
 
 	@Schema(description = "게시글 ID 리스트")
-	Long[] postIdList
+	List<Long> postIdList
 ) {
 }

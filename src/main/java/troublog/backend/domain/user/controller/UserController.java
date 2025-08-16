@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
@@ -99,7 +101,7 @@ public class UserController {
 	@ApiResponse(responseCode = "200", description = "성공",
 		content = @Content(schema = @Schema(implementation = UserPostStatusResDto.class)))
 	public ResponseEntity<BaseResponse<UserPostStatusResDto>> getMyPostStatus(
-		@RequestParam(required = false) String postStatus,
+		@RequestParam(required = false) PostStatus postStatus,
 		@Authentication CustomAuthenticationToken auth) {
 
 		return ResponseUtils.ok(userFacade.getMyPostStatus(postStatus, auth.getUserId()));

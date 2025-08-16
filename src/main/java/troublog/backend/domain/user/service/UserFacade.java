@@ -150,15 +150,10 @@ public class UserFacade {
 	}
 
 	@Transactional(readOnly = true)
-	public UserPostStatusResDto getMyPostStatus(String postStatus, Long userId) {
-
-		PostStatus status = null;
-		if(StringUtils.hasText(postStatus)) {
-			status = PostStatus.from(postStatus);
-		}
+	public UserPostStatusResDto getMyPostStatus(PostStatus postStatus, Long userId) {
 
 		// 작성 상태에 따른 게시글 ID 리스트 조회
-		List<Long> postIdList = postQueryService.findPostByStatusAndUserId(userId, status)
+		List<Long> postIdList = postQueryService.findPostByStatusAndUserId(userId, postStatus)
 			.stream()
 			.map(Post::getId)
 			.toList();
@@ -166,7 +161,7 @@ public class UserFacade {
 		// DTO 변환
 		return UserConverter.toUserPostStatusResDto(
 			userId,
-			postStatus,
+			postStatus != null ? postStatus.name() : "ALL",
 			postIdList
 		);
 	}

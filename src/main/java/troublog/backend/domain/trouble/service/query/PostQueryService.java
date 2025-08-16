@@ -84,9 +84,12 @@ public class PostQueryService {
 	}
 
 	public List<Post> findPostByStatusAndUserId(Long userId, PostStatus status) {
-		List<Post> writingPosts = postRepository.findByUserIdAndStatusAndIsDeletedFalse(userId, status);
-		log.info("[Post] 사용자 {} 상태 트러블슈팅 문서 개수 조회: userId={}, count={}", status, userId, writingPosts.size());
-		return writingPosts;
+		List<Post> posts = (status == null)
+			? postRepository.findByUserIdAndIsDeletedFalse(userId)
+			: postRepository.findByUserIdAndStatusAndIsDeletedFalse(userId, status);
+		log.info("[Post] 사용자 {} 상태 트러블슈팅 문서 개수 조회: userId={}, count={}",
+			(status == null ? "ALL" : status), userId, posts.size());
+		return posts;
 	}
 
 	@Transactional(readOnly = true)

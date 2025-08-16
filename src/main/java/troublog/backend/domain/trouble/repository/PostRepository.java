@@ -213,5 +213,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		     AND (:status is null or p.status = :status)
 		     AND p.isDeleted = FALSE
 		""")
-	List<Post> findByUserIdAndStatusAndIsDeletedFalse(Long userId, PostStatus status);
+	List<Post> findByUserIdAndStatusAndIsDeletedFalse(@Param("userId") Long userId, @Param("status") PostStatus status);
+
+	List<Post> findByUserIdAndIsDeletedFalse(Long userId);
 }

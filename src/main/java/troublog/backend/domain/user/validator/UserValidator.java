@@ -22,7 +22,7 @@ public class UserValidator {
 	}
 
 	public static void validateUserStatus(User user) {
-		if(!user.getStatus().equals(UserStatus.ACTIVE)) {
+		if(user.getStatus() != UserStatus.ACTIVE) {
 			throw new UserException(ErrorCode.USER_STATUS_INVALID);
 		}
 	}
