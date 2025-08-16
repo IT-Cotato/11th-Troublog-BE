@@ -14,7 +14,9 @@ public class CorsConfig {
 		"http://localhost:3000",
 		"http://localhost:8080",
 		"http://localhost:5173",
-		"https://troublog.shop"
+		"https://troublog.shop",
+		"https://troublog.vercel.app",
+		"https://troublog.com"
 	);
 
 	private static final List<String> ALLOWED_HEADERS = List.of(
