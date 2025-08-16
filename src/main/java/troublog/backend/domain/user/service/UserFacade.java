@@ -9,15 +9,20 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.enums.PostStatus;
+import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.FollowConverter;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
 import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
+import troublog.backend.domain.user.dto.response.UserPostStatusResDto;
 import troublog.backend.domain.user.dto.response.UserProfileResDto;
 import troublog.backend.domain.user.entity.Follow;
 import troublog.backend.domain.user.entity.User;
@@ -38,6 +43,7 @@ public class UserFacade {
 	private final UserQueryService userQueryService;
 	private final FollowCommandService followCommandService;
 	private final FollowQueryService followQueryService;
+	private final PostQueryService postQueryService;
 
 	@Transactional
 	public void followUser(Long followerId, Long followingId) {
@@ -46,8 +52,8 @@ public class UserFacade {
 		followValidator.validateNotSelfFollow(followerId, followingId);
 
 		// 유저 존재 확인
-		User follower = userQueryService.findUserByIdAndIsDeletedFalse(followerId);
-		User following = userQueryService.findUserByIdAndIsDeletedFalse(followingId);
+		User follower = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(followerId);
+		User following = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(followingId);
 
 		// 이미 존재하는 팔로우 관계인지 확인
 		followQueryService.existsByFollowerAndFollowing(follower, following);
@@ -65,8 +71,8 @@ public class UserFacade {
 		followValidator.validateNotSelfFollow(followerId, followingId);
 
 		// 유저 존재 확인
-		User follower = userQueryService.findUserByIdAndIsDeletedFalse(followerId);
-		User following = userQueryService.findUserByIdAndIsDeletedFalse(followingId);
+		User follower = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(followerId);
+		User following = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(followingId);
 
 		// 팔로우 관계인지 확인
 		Follow follow = followQueryService.findByFollowerAndFollowing(follower, following);
@@ -79,19 +85,19 @@ public class UserFacade {
 	public List<UserFollowsResDto> getFollowers(Long userId, Long targetUserId) {
 
 		// 사용자 (본인) 조회
-		User viewer = userQueryService.findUserByIdAndIsDeletedFalse(userId);
+		User viewer = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
 
 		// 커뮤니티 - 다른 사용자 조회 (본인 or 타인)
 		User targetUser = userId.equals(targetUserId)
 			? viewer
-			: userQueryService.findUserByIdAndIsDeletedFalse(targetUserId);
+			: userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(targetUserId);
 
 		// 다른 사용자의 팔로워 리스트 조회
-		List<User> followers = followQueryService.findFollowers(targetUser);
+		List<User> followers = followQueryService.findFollowers(targetUser.getId());
 
 		// 사용자 (본인) 가 팔로우하고 있는 유저 목록 조회 → ID만 추출
 		Set<Long> viewerFollowingIds = UserConverter.extractUserIds(
-			followQueryService.findFollowings(viewer)
+			followQueryService.findFollowings(viewer.getId())
 		);
 
 		// DTO 변환
@@ -102,19 +108,19 @@ public class UserFacade {
 	public List<UserFollowsResDto> getFollowings(Long userId, Long targetUserId) {
 
 		// 사용자 (본인) 조회
-		User viewer = userQueryService.findUserByIdAndIsDeletedFalse(userId);
+		User viewer = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
 
 		// 커뮤니티의 경우 - 다른 사용자 조회 (본인 or 타인)
 		User targetUser = userId.equals(targetUserId)
 			? viewer
-			: userQueryService.findUserByIdAndIsDeletedFalse(targetUserId);
+			: userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(targetUserId);
 
 		// 다른 사용자의 팔로잉 리스트 조회
-		List<User> followings = followQueryService.findFollowings(targetUser);
+		List<User> followings = followQueryService.findFollowings(targetUser.getId());
 
 		// 사용자 (본인) 가 팔로우하고 있는 유저 목록 조회 → ID만 추출
 		Set<Long> viewerFollowingIds = UserConverter.extractUserIds(
-			followQueryService.findFollowings(viewer)
+			followQueryService.findFollowings(viewer.getId())
 		);
 
 		// DTO 변환
@@ -122,19 +128,44 @@ public class UserFacade {
 	}
 
 	@Transactional(readOnly = true)
-	public UserInfoResDto getUserInfo(Long userId) {
+	public UserInfoResDto getUserInfo(Long userId, Long myId) {
 
 		// 사용자 조회
-		User user = userQueryService.findUserByIdAndIsDeletedFalse(userId);
+		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
+
+		// (본인) 조회자 검증
+		User viewer = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(myId);
 
 		// 사용자의 팔로잉 목록 조회
-		long followingNum = followQueryService.findFollowings(user).size();
+		List<User> followingUserList = followQueryService.findFollowings(user.getId());
 
 		// 사용자의 팔로워 목록 조회
-		long followerNum = followQueryService.findFollowers(user).size();
+		long followerNum = followQueryService.findFollowers(user.getId()).size();
+
+		// (본인)의 팔로잉 목록 조회 후 ID 기반 포함 여부 판단
+		List<User> myFollowingUserList = followQueryService.findFollowings(viewer.getId());
+		boolean isFollowed = UserConverter.extractUserIds(myFollowingUserList)
+			.contains(user.getId());
 
 		// DTO 변환
-		return UserConverter.toUserResDto(user, followerNum, followingNum);
+		return UserConverter.toUserResDto(user, followerNum, followingUserList.size(), isFollowed);
+	}
+
+	@Transactional(readOnly = true)
+	public UserPostStatusResDto getMyPostStatus(PostStatus postStatus, Long userId) {
+
+		// 작성 상태에 따른 게시글 ID 리스트 조회
+		List<Long> postIdList = postQueryService.findPostByStatusAndUserId(userId, postStatus)
+			.stream()
+			.map(Post::getId)
+			.toList();
+
+		// DTO 변환
+		return UserConverter.toUserPostStatusResDto(
+			userId,
+			postStatus != null ? postStatus.name() : "ALL",
+			postIdList
+		);
 	}
 
 	@Transactional(readOnly = true)
@@ -156,7 +187,7 @@ public class UserFacade {
 	public UserProfileResDto getMyProfile(Long userId) {
 
 		// 사용자 (본인) 조회
-		User user = userQueryService.findUserByIdAndIsDeletedFalse(userId);
+		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
 
 		// DTO 변환
 		return UserConverter.toUserProfileResDto(user);
@@ -169,7 +200,7 @@ public class UserFacade {
 		UserValidator.validateProfileUpdateRequest(userId, userProfileUpdateReqDto.userId());
 
 		// 사용자 (본인) 조회
-		User user = userQueryService.findUserByIdAndIsDeletedFalse(userId);
+		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
 
 		// 프로필 수정
 		userCommandService.updateUserProfile(user, userProfileUpdateReqDto);
@@ -179,7 +210,7 @@ public class UserFacade {
 	public void deleteMyProfile(Long userId) {
 
 		// 사용자 (본인) 조회
-		User user = userQueryService.findUserByIdAndIsDeletedFalse(userId);
+		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
 
 		// 사용자 삭제
 		userCommandService.deleteUser(user);

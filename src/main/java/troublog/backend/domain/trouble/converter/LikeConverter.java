@@ -6,7 +6,6 @@ import java.util.List;
 import troublog.backend.domain.trouble.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.dto.response.LikeResDto;
 import troublog.backend.domain.trouble.entity.Content;
-import troublog.backend.domain.trouble.entity.Like;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;
@@ -41,15 +40,15 @@ public class LikeConverter {
 			.likeCount(post.getLikeCount())
 			.commentCount(post.getCommentCount())
 			.createdAt(post.getCompletedAt())
-			//.images() null일경우 빈리스트 처리로
+			.image(post.getThumbnailUrl())
 			.build();
 	}
 
-	public static LikeResDto toResponse(Like like) {
+	public static LikeResDto toResponse(Post post, int likeCount, boolean liked) {
 		return LikeResDto.builder()
-			.userId(like.getUser().getId())
-			.postId(like.getPost().getId())
-			.likeCount(like.getPost().getLikeCount())
+			.postId(post.getId())
+			.likeCount(likeCount)
+			.like(liked)
 			.build();
 	}
 }

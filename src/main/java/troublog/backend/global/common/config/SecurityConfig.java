@@ -41,8 +41,7 @@ public class SecurityConfig {
 		"/auth/oauth-register",
 		"/swagger-ui/**",
 		"/v3/api-docs/**",
-		"/error",
-		"/image/**"
+		"/error"
 	};
 
 	@Bean

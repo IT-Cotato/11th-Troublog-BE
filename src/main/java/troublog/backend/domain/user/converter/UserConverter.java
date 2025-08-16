@@ -6,9 +6,11 @@ import java.util.stream.Collectors;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
+import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
+import troublog.backend.domain.user.dto.response.UserPostStatusResDto;
 import troublog.backend.domain.user.dto.response.UserProfileResDto;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.entity.UserStatus;
@@ -51,7 +53,7 @@ public class UserConverter {
 			.build();
 	}
 
-	public static UserInfoResDto toUserResDto(User user, long followerNum, long followingNum) {
+	public static UserInfoResDto toUserResDto(User user, long followerNum, long followingNum, boolean isFollowed) {
 		return UserInfoResDto.builder()
 			.userId(user.getId())
 			.nickname(user.getNickname())
@@ -59,6 +61,7 @@ public class UserConverter {
 			.bio(user.getBio())
 			.followerNum(followerNum)
 			.followingNum(followingNum)
+			.isFollowed(isFollowed)
 			.build();
 	}
 
@@ -76,6 +79,15 @@ public class UserConverter {
 			.userId(user.getId())
 			.nickname(user.getNickname())
 			.profileImageUrl(user.getProfileUrl())
+			.build();
+	}
+
+	public static UserPostStatusResDto toUserPostStatusResDto(
+		Long userId, String postStatus, List<Long> postIdList) {
+		return UserPostStatusResDto.builder()
+			.userId(userId)
+			.postStatus(postStatus)
+			.postIdList(postIdList)
 			.build();
 	}
 }

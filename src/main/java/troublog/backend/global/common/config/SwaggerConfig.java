@@ -59,7 +59,7 @@ public class SwaggerConfig {
 			// 	server.setDescription("운영 서버");
 			// }
 			case "dev" -> {
-				server.setUrl("http://3.37.163.222:8080");
+				server.setUrl("https://troublog.shop");
 				server.setDescription("개발 서버");
 			}
 			default -> {

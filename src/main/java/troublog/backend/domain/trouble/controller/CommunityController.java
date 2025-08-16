@@ -53,11 +53,15 @@ public class CommunityController {
 	private final PostQueryFacade postQueryFacade;
 
 	@GetMapping("/{postId}")
-	@Operation(summary = "트러블슈팅 게시글 상세 조회 API", description = "게시글 ID로 공개된 트러블슈팅 게시글의 상세 정보를 조회합니다. 댓글은 별도 API로 조회해야 합니다.")
+	@Operation(summary = "트러블슈팅 게시글 상세 조회 API", description =
+		"게시글 ID로 공개된 트러블슈팅 게시글의 상세 정보를 조회합니다. 댓글은 별도 API로 조회해야 합니다." + "이 API 호출 시 최근 읽은 포스트의 기록으로 저장됩니다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = CommunityPostResDto.class)))
-	public ResponseEntity<BaseResponse<CommunityPostResDto>> findCommunityPostDetailsOnly(@PathVariable Long postId) {
-		CommunityPostResDto response = postQueryFacade.findCommunityPostDetailsById(postId);
+	public ResponseEntity<BaseResponse<CommunityPostResDto>> findCommunityPostDetailsOnly(
+		@Authentication CustomAuthenticationToken token,
+		@PathVariable Long postId
+	) {
+		CommunityPostResDto response = postQueryFacade.findCommunityPostDetailsById(token.getUserId(), postId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -158,19 +162,11 @@ public class CommunityController {
 	}
 
 	@PostMapping("/{postId}/like")
-	@Operation(summary = "포스트 좋아요 API", description = "해당하는 포스트에 좋아요한다.")
+	@Operation(summary = "포스트 좋아요 API", description = "해당하는 포스트에 좋아요한다. 만약 좋아요가 눌러져 있을 시 자동으로 삭제된다. (like true 시 좋아요 눌러진 것/ false는 취소된 것")
 	public ResponseEntity<BaseResponse<LikeResDto>> postLike(@PathVariable Long postId,
 		@Authentication CustomAuthenticationToken auth) {
 		LikeResDto response = likeCommandFacade.postLike(postId, auth.getUserId());
 		return ResponseUtils.created(response);
-	}
-
-	@DeleteMapping("/{postId}/like")
-	@Operation(summary = "포스트 좋아요 취소 API", description = "해당 포스트의 좋아요를 취소한다.")
-	public ResponseEntity<BaseResponse<Void>> deleteLike(@PathVariable Long postId,
-		@Authentication CustomAuthenticationToken auth) {
-		likeCommandFacade.deleteLike(postId, auth.getUserId());
-		return ResponseUtils.noContent();
 	}
 
 	@GetMapping("/likes")
@@ -183,4 +179,16 @@ public class CommunityController {
 		Page<LikePostResDto> likedPosts = likeCommandFacade.getLikedPostsByUser(auth.getUserId(), pageable);
 		return ResponseUtils.page(likedPosts);
 	}
+
+	@GetMapping("/recent")
+	@Operation(summary = "최근에 열람한 포스트 조회 API", description = "사용자가 최근에 열람한 순으로 포스트를 불러온다. (/community/{postId} 호출 기준)")
+	public ResponseEntity<PageResponse<PostResDto>> getRecentlyViewedPosts(
+		@Authentication CustomAuthenticationToken auth,
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size) {
+		Pageable pageable = postQueryFacade.getPageable(page, size);
+		Page<PostResDto> posts = postQueryFacade.getRecentlyViewedPosts(auth.getUserId(), pageable);
+		return ResponseUtils.page(posts);
+	}
+
 }

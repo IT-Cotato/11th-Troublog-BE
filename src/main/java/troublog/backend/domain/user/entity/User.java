@@ -136,9 +136,8 @@ public class User extends BaseEntity {
 	public void removeLikeRef(Like like) {
 		if (like == null)
 			return;
-		likes.remove(like);
-		if (like.getUser() == this) {
-			like.assignUser(null);
+		if (likes.contains(like)) {
+			like.unassignUser();
 		}
 	}
 

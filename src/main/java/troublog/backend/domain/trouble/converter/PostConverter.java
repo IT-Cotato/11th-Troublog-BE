@@ -91,7 +91,7 @@ public class PostConverter {
 			.build();
 	}
 
-	public CommunityPostResDto toCommunityDetailsResponse(UserInfoResDto userInfoResDto, Post post) {
+	public CommunityPostResDto toCommunityDetailsResponse(UserInfoResDto userInfoResDto, Post post, boolean liked) {
 		return CommunityPostResDto.builder()
 			.userInfoResDto(userInfoResDto)
 			.id(post.getId())
@@ -101,6 +101,7 @@ public class PostConverter {
 			.postTags(PostQueryFacade.findTechStackTags(post))
 			.contents(PostQueryFacade.findContents(post))
 			.likeCount(post.getLikeCount())
+			.liked(liked)
 			.commentCount(post.getCommentCount())
 			.completedAt(post.getCompletedAt() == null ? null : post.getCompletedAt().format(DATE_FORMATTER))
 			.build();
