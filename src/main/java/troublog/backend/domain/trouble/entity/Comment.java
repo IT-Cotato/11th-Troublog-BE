@@ -107,9 +107,7 @@ public class Comment {
 		if (!this.childComments.contains(child)) {
 			this.childComments.add(child);
 		}
-		if (child.getParentComment() != this) {
-			child.setParentComment(this);
-		}
+		child.setParentComment(this);
 	}
 
 	protected void setParentComment(Comment parent) {

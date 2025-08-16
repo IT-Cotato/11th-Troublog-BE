@@ -108,11 +108,12 @@ public class PostQueryController {
 		return ResponseUtils.ok(response);
 	}
 
-	@GetMapping("/my")
-	@Operation(summary = "사용자의 트러블슈팅 문서 기반 검색 API", description = "로그인한 사용자의 모든 트러블 슈팅 문서를 키워드를 기반으로 검색한다.")
+	@GetMapping("/my/search")
+	@Operation(summary = "내 트러블슈팅 문서 검색 API",
+		description = "로그인한 사용자의 트러블슈팅 문서를 키워드 기반으로 검색합니다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PageResponse.class)))
-	public ResponseEntity<PageResponse<PostResDto>> searchUserPost(
+	public ResponseEntity<PageResponse<PostResDto>> searchMyPosts(
 		@Authentication CustomAuthenticationToken token,
 		@RequestParam String keyword,
 		@RequestParam(defaultValue = "1") @Min(1) int page,
@@ -123,11 +124,12 @@ public class PostQueryController {
 		return ResponseUtils.page(response);
 	}
 
-	@GetMapping("/list")
-	@Operation(summary = "사용자의 전체 트러블슈팅 문서 목록 조회 API", description = "사용자의 트러블슈팅 문서 목록을 페이지네이션 및 정렬 기준(likes, latest)으로 조회합니다. 기본값은 latest입니다. (recommand 아직)")
+	@GetMapping("/my/list")
+	@Operation(summary = "내 트러블슈팅 문서 목록 조회 API",
+		description = "로그인한 사용자의 트러블슈팅 문서 목록을 페이지네이션 및 정렬 기준으로 조회합니다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PageResponse.class)))
-	public ResponseEntity<PageResponse<TroubleListResDto>> getAllTroubles(
+	public ResponseEntity<PageResponse<TroubleListResDto>> getMyTroubles(
 		@Authentication CustomAuthenticationToken auth,
 		@RequestParam(defaultValue = "1") @Min(1) int page,
 		@RequestParam(defaultValue = "10") @Min(1) int size,
@@ -143,4 +145,40 @@ public class PostQueryController {
 		return ResponseUtils.page(response);
 	}
 
+	@GetMapping("/users/{userId}/search")
+	@Operation(summary = "특정 사용자의 트러블슈팅 문서 검색 API",
+		description = "지정된 사용자의 트러블슈팅 문서를 키워드 기반으로 검색합니다.")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = PageResponse.class)))
+	public ResponseEntity<PageResponse<PostResDto>> searchUserPosts(
+		@PathVariable Long userId,
+		@RequestParam String keyword,
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size
+	) {
+		Pageable pageable = postQueryFacade.getPageable(page, size);
+		Page<PostResDto> response = postQueryFacade.searchUserPostByKeyword(userId, keyword, pageable);
+		return ResponseUtils.page(response);
+	}
+
+	@GetMapping("/users/{userId}/list")
+	@Operation(summary = "특정 사용자의 트러블슈팅 문서 목록 조회 API",
+		description = "지정된 사용자의 트러블슈팅 문서 목록을 페이지네이션 및 정렬 기준으로 조회합니다.")
+	@ApiResponse(responseCode = "200", description = "OK",
+		content = @Content(schema = @Schema(implementation = PageResponse.class)))
+	public ResponseEntity<PageResponse<TroubleListResDto>> getUserTroubles(
+		@PathVariable Long userId,
+		@RequestParam(defaultValue = "1") @Min(1) int page,
+		@RequestParam(defaultValue = "10") @Min(1) int size,
+		@Schema(
+			description = "정렬 기준",
+			allowableValues = {"likes", "latest"},
+			defaultValue = "latest"
+		)
+		@RequestParam(defaultValue = "latest") String sortBy
+	) {
+		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
+		Page<TroubleListResDto> response = postQueryFacade.getAllTroubles(userId, pageable);
+		return ResponseUtils.page(response);
+	}
 }
