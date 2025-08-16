@@ -34,6 +34,6 @@ public record LikePostResDto(
 	LocalDateTime createdAt,
 
 	@Schema(description = "첨부 이미지")
-	List<String> images
+	String image
 ) {
 }

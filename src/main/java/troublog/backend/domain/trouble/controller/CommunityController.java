@@ -162,19 +162,11 @@ public class CommunityController {
 	}
 
 	@PostMapping("/{postId}/like")
-	@Operation(summary = "포스트 좋아요 API", description = "해당하는 포스트에 좋아요한다.")
+	@Operation(summary = "포스트 좋아요 API", description = "해당하는 포스트에 좋아요한다. 만약 좋아요가 눌러져 있을 시 자동으로 삭제된다. (like true 시 좋아요 눌러진 것/ false는 취소된 것")
 	public ResponseEntity<BaseResponse<LikeResDto>> postLike(@PathVariable Long postId,
 		@Authentication CustomAuthenticationToken auth) {
 		LikeResDto response = likeCommandFacade.postLike(postId, auth.getUserId());
 		return ResponseUtils.created(response);
-	}
-
-	@DeleteMapping("/{postId}/like")
-	@Operation(summary = "포스트 좋아요 취소 API", description = "해당 포스트의 좋아요를 취소한다.")
-	public ResponseEntity<BaseResponse<Void>> deleteLike(@PathVariable Long postId,
-		@Authentication CustomAuthenticationToken auth) {
-		likeCommandFacade.deleteLike(postId, auth.getUserId());
-		return ResponseUtils.noContent();
 	}
 
 	@GetMapping("/likes")

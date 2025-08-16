@@ -41,15 +41,15 @@ public class LikeConverter {
 			.likeCount(post.getLikeCount())
 			.commentCount(post.getCommentCount())
 			.createdAt(post.getCompletedAt())
-			//.images() null일경우 빈리스트 처리로
+			.image(post.getThumbnailUrl())
 			.build();
 	}
 
-	public static LikeResDto toResponse(Like like) {
+	public static LikeResDto toResponse(Like like, Boolean isLiked) {
 		return LikeResDto.builder()
-			.userId(like.getUser().getId())
 			.postId(like.getPost().getId())
 			.likeCount(like.getPost().getLikeCount())
+			.like(isLiked)
 			.build();
 	}
 }

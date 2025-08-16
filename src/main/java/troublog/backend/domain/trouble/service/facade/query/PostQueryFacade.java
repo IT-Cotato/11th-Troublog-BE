@@ -55,7 +55,6 @@ public class PostQueryFacade {
 	private final RecentPostCommandFacade recentPostCommandFacade;
 	private final RecentPostQueryService recentPostQueryService;
 
-
 	public static String findErrorTag(Post post) {
 		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
 			return null;
@@ -170,7 +169,7 @@ public class PostQueryFacade {
 		PostValidator.validateVisibility(post);
 		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId(), userId);
 		boolean liked = likeQueryService.findByUserAndPost(userId, postId).isPresent();
-    recentPostCommandFacade.recordPostView(userId, postId);
+		recentPostCommandFacade.recordPostView(userId, postId);
 		return PostConverter.toCommunityDetailsResponse(userInfo, post, liked);
 	}
 
