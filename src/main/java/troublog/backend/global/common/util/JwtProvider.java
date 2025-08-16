@@ -305,7 +305,7 @@ public class JwtProvider {
     public void setCookieRefreshToken(String refreshToken, HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
             .httpOnly(true)
-            .secure(false)
+            .secure(true)
             .path("/")
             .maxAge(Duration.ofSeconds(86400))
             .sameSite("Strict")
@@ -319,7 +319,7 @@ public class JwtProvider {
             .path("/")
             .maxAge(0)  // 즉시 만료
             .httpOnly(true)
-            .secure(false)
+            .secure(true)
             .sameSite("Strict")
             .build();
 
