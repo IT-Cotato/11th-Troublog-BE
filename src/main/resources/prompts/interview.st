@@ -120,6 +120,7 @@ Generate comprehensive Korean IT interview questions based on the user's documen
 4. Communication skills for explaining experience to others
 
 **Requirements**:
+- Questions with the same sequence number are grouped together in the body with the same sutitle within the same content area
 - Every question must be derivable from provided content only
 - Professional Korean interview tone throughout
 - Logical progression from basic to advanced questions
