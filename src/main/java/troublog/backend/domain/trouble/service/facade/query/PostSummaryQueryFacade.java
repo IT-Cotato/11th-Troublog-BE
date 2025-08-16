@@ -24,8 +24,8 @@ public class PostSummaryQueryFacade {
 
 	private final PostSummaryQueryService postSummaryQueryService;
 
-	public PostSummaryResDto findPostSummaryById(Long userId, Long postId) {
-		PostSummary postSummary = postSummaryQueryService.findById(postId);
+	public PostSummaryResDto findPostSummaryById(Long userId, Long summaryId) {
+		PostSummary postSummary = postSummaryQueryService.findById(summaryId);
 		PostValidator.validateSummaryBelongsToUser(userId, postSummary);
 		return PostSummaryConverter.toResponse(postSummary);
 	}

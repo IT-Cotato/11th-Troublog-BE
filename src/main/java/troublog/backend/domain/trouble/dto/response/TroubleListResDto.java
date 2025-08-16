@@ -14,7 +14,7 @@ public record TroubleListResDto(
 	Long id,
 
 	@Schema(description = "요약본 id")
-	Long summaryPostId,
+	Long postSummaryId,
 
 	@Schema(description = "프로젝트 id")
 	Long projectId,

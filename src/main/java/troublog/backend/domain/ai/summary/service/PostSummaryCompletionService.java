@@ -31,7 +31,7 @@ public class PostSummaryCompletionService {
 	@Transactional
 	public SummarizedResDto completeTask(SummaryTask summaryTask, SummarizedResDto result) {
 		Post foundPost = postQueryFacade.findPostById(summaryTask.getPostId(), summaryTask.getUserId());
-		PostSummary postSummary = postSummaryCommandFacade.createPostSummary(summaryTask);
+		PostSummary postSummary = postSummaryCommandFacade.createPostSummary(summaryTask, result);
 		postRelationFacade.setPostSummaryRelation(foundPost, postSummary);
 		log.info("AI 분석 작업 완료: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId());
 		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.COMPLETED);

@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.ai.summary.dto.response.SummarizedResDto;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.trouble.converter.PostSummaryConverter;
 import troublog.backend.domain.trouble.converter.SummaryContentConverter;
@@ -25,11 +26,11 @@ public class PostSummaryCommandFacade {
 	private final PostSummaryRelationFacade postSummaryRelationFacade;
 	private final PostSummaryCommandService postSummaryCommandService;
 
-	public PostSummary createPostSummary(SummaryTask summaryTask) {
+	public PostSummary createPostSummary(SummaryTask summaryTask, SummarizedResDto result) {
 		PostSummary newPostSummary = PostSummaryConverter.toEntity(summaryTask);
 		PostSummary savedPostSummary = postSummaryCommandService.save(newPostSummary);
 		List<SummaryContent> summaryContents = summaryContentCommandService
-			.saveAll(SummaryContentConverter.toEntityList(summaryTask.getResult()));
+			.saveAll(SummaryContentConverter.toEntityList(result));
 		postSummaryRelationFacade.setRelation(savedPostSummary, summaryContents);
 		return savedPostSummary;
 	}

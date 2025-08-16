@@ -4,5 +4,5 @@ import java.util.List;
 
 import troublog.backend.domain.trouble.dto.request.common.SummaryContentDto;
 
-public record SummarizedResDto(List<SummaryContentDto> contentDtoList) {
+public record SummarizedResDto(List<SummaryContentDto> summaryContentDtos) {
 }

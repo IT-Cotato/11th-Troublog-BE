@@ -12,7 +12,7 @@ import troublog.backend.domain.trouble.entity.SummaryContent;
 public class SummaryContentConverter {
 
 	public List<SummaryContent> toEntityList(SummarizedResDto summarizedResDto) {
-		return summarizedResDto.contentDtoList().stream()
+		return summarizedResDto.summaryContentDtos().stream()
 			.map(SummaryContentConverter::toEntity)
 			.toList();
 	}

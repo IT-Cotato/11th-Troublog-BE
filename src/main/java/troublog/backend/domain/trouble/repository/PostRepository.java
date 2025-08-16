@@ -23,24 +23,29 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	List<Post> findByIsDeletedTrue();
 
 	@Query(value = """
-		SELECT DISTINCT
-		       p.*,
-		       MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE) as title_score,
-		       IFNULL(MAX(MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)), 0) as content_score
-		FROM posts p
-		LEFT JOIN contents c ON p.post_id = c.post_id
-		LEFT JOIN post_tags pt ON p.post_id = pt.post_id
-		LEFT JOIN tags t ON pt.tag_id = t.tag_id
-		WHERE p.user_id = :userId
-		  AND p.is_deleted = false
-		  AND (
-		    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
-		    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
-		    OR t.name LIKE CONCAT('%', :keyword, '%')
-		  )
-		GROUP BY p.post_id, p.user_id, p.title, p.created_at, p.updated_at, p.is_deleted,
-		         MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
-		ORDER BY (title_score * 2 + content_score) DESC, p.post_id DESC
+		SELECT p.*
+		FROM (
+		  SELECT DISTINCT
+		         p.post_id,
+		         (MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE) * 2 +
+		          IFNULL(MAX(MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)), 0)) AS total_score
+		  FROM posts p
+		  LEFT JOIN contents c ON p.post_id = c.post_id
+		  LEFT JOIN post_tags pt ON p.post_id = pt.post_id
+		  LEFT JOIN tags t ON pt.tag_id = t.tag_id
+		  WHERE p.user_id = :userId
+		    AND p.is_deleted = false
+		    AND (
+		      MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
+		      OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
+		      OR t.name LIKE CONCAT('%', :keyword, '%')
+		    )
+		  GROUP BY p.post_id, MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
+		  ORDER BY total_score DESC, p.post_id DESC
+		) ranked_posts
+		JOIN posts p ON p.post_id = ranked_posts.post_id
+		ORDER BY ranked_posts.total_score DESC, p.post_id DESC;
+		
 		""",
 		countQuery = """
 			SELECT COUNT(DISTINCT p.post_id)

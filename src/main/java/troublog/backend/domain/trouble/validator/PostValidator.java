@@ -26,7 +26,10 @@ public class PostValidator {
 	}
 
 	public void validateSummaryBelongsToUser(Long userId, PostSummary postSummary) {
-		if (postSummary == null || postSummary.getPost().getId().equals(userId)) {
+		if (postSummary == null || postSummary.getPost() == null || postSummary.getPost().getUser() == null) {
+			throw new PostException(ErrorCode.USER_SUMMARY_MISMATCH);
+		}
+		if (!userId.equals(postSummary.getPost().getUser().getId())) {
 			throw new PostException(ErrorCode.USER_SUMMARY_MISMATCH);
 		}
 	}

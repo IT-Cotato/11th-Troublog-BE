@@ -58,10 +58,13 @@ public class PostSummary extends BaseEntity {
 	private List<SummaryContent> summaryContents = new ArrayList<>();
 
 	public void assignPost(Post post) {
-		if (post == null) {
-			throw new PostException(ErrorCode.MISSING_POST);
+		if (this.post != null) {
+			this.post.getPostSummaries().remove(this);
 		}
 		this.post = post;
+		if (!post.getPostSummaries().contains(this)) {
+			post.getPostSummaries().add(this);
+		}
 	}
 
 	public void addSummaryContents(SummaryContent summaryContent) {

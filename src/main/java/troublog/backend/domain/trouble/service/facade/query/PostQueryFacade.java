@@ -57,6 +57,7 @@ public class PostQueryFacade {
 	private final LikeQueryService likeQueryService;
 	private final RecentPostCommandFacade recentPostCommandFacade;
 	private final RecentPostQueryService recentPostQueryService;
+	private final PostSummaryQueryService postSummaryQueryService;
 
 	public Post findPostById(Long id, Long userId) {
 		Post post = postQueryService.findById(id);
@@ -83,6 +84,10 @@ public class PostQueryFacade {
 
 		PostSummary postSummary = postSummaryQueryService.findById(summaryId);
 		PostValidator.validateSummaryBelongsToUser(userId, postSummary);
+
+		if (!postSummary.getPost().getId().equals(postId)) {
+			throw new PostException(ErrorCode.POST_SUMMARY_NOT_FOUND);
+		}
 
 		return CombineResDto.builder()
 			.postResDto(PostConverter.toResponse(post))

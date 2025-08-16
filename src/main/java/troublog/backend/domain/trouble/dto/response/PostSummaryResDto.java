@@ -36,7 +36,7 @@ public record PostSummaryResDto(
 	List<SummaryContentInfoDto> summaryContents,
 
 	@Schema(description = "요약 생성일", example = "2024-06-01")
-	@DateTimeFormat(pattern = "yyyy.mm.dd")
+	@DateTimeFormat(pattern = "yyyy.MM.dd")
 	LocalDateTime summaryCreatedAt
 ) {
 }

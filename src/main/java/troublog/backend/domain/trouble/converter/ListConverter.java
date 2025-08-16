@@ -29,7 +29,7 @@ public class ListConverter {
 	public static TroubleListResDto toAllSummerizedListResDto(PostSummary postSummary) {
 		return TroubleListResDto.builder()
 			.id(postSummary.getPost().getId())
-			.summaryPostId(postSummary.getId())
+			.postSummaryId(postSummary.getId())
 			.projectId(postSummary.getPost().getProject().getId())
 			.title(postSummary.getPost().getTitle())
 			.date(postSummary.getCreated_at() != null ? postSummary.getCreated_at() : null)

@@ -1,6 +1,6 @@
 package troublog.backend.domain.trouble.entity;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -51,7 +51,7 @@ public class SummaryContent extends BaseEntity {
 
 	public void assignPostSummary(PostSummary postSummary) {
 		if (postSummary == null) {
-			throw new PostException(ErrorCode.MISSING_POST);
+			throw new PostException(ErrorCode.MISSING_POST_SUMMARY);
 		}
 		if (this.postSummary != null) {
 			this.postSummary.getSummaryContents().remove(this);
