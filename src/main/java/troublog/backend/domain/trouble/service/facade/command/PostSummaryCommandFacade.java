@@ -14,7 +14,6 @@ import troublog.backend.domain.trouble.converter.SummaryContentConverter;
 import troublog.backend.domain.trouble.entity.PostSummary;
 import troublog.backend.domain.trouble.entity.SummaryContent;
 import troublog.backend.domain.trouble.service.command.PostSummaryCommandService;
-import troublog.backend.domain.trouble.service.command.SummaryContentCommandService;
 import troublog.backend.domain.trouble.service.facade.relation.PostSummaryRelationFacade;
 
 @Service
