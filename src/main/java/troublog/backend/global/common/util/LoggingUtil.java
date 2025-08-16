@@ -23,9 +23,10 @@ public class LoggingUtil {
 	 */
 	public void logException(String prefix, Exception e, HttpServletRequest request) {
 		String firstStack = Arrays.stream(e.getStackTrace())
-			.findFirst()
+			// .findFirst()
 			.map(StackTraceElement::toString)
-			.orElse("스택 없음");
+			// .orElse("스택 없음");
+			.toString();
 
 		log.error("{}: {}", prefix, e.getMessage());
 		log.error("예외 발생 지점 [{} {}]", request.getMethod(), request.getRequestURI());

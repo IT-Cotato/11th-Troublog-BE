@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.trouble.converter.ListConverter;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.entity.PostSummary;
 import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.SortType;
@@ -82,7 +83,7 @@ public class PostQueryService {
 	@Transactional(readOnly = true)
 	public Page<Post> getAllTroubles(Long userId, Pageable pageable) {
 		// 최신순 기준 선택 필요 - createdAt/updatedAt/completedAt
-		Sort sort = Sort.by(DESC, "completedAt", "id");
+		Sort sort = Sort.by(DESC, "completed_at", "id");
 
 		Pageable pageReq = PageRequest.of(
 			pageable.getPageNumber(),
@@ -116,17 +117,17 @@ public class PostQueryService {
 		Long projectId, SortType sort, SummaryType summaryType
 	) {
 		SummaryType st = (summaryType == SummaryType.NONE) ? null : summaryType;
-		List<Post> posts = (sort == SortType.IMPORTANT)
+		List<PostSummary> posts = (sort == SortType.IMPORTANT)
 			? postRepository.findByProjectSummarizedImportant(projectId, PostStatus.SUMMARIZED, st)
 			: postRepository.findByProjectSummarized(projectId, PostStatus.SUMMARIZED, st,
-			Sort.by(DESC, "completedAt", "id"));
+			Sort.by(DESC, "created_at", "id"));
 
 		if (posts.isEmpty())
 			return List.of();
 
 		log.info("[Post] 요약완료된 트러블슈팅 문서 조회: postCount={}", posts.size());
 		return posts.stream()
-			.map(ListConverter::toAllTroubleListResDto)
+			.map(ListConverter::toAllSummerizedListResDto)
 			.toList();
 	}
 

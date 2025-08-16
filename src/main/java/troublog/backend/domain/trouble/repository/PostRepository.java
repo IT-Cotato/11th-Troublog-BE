@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.entity.PostSummary;
 import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.PostStatus;
 
@@ -135,12 +136,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		       and p.status = :status
 		       and (:visible is null or p.isVisible = :visible)
 		     order by
-		       case p.starRating
-		         when troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS  then 5
-		         when troublog.backend.domain.trouble.enums.StarRating.FOUR_STARS  then 4
-		         when troublog.backend.domain.trouble.enums.StarRating.THREE_STARS then 3
-		         when troublog.backend.domain.trouble.enums.StarRating.TWO_STARS   then 2
-		         when troublog.backend.domain.trouble.enums.StarRating.ONE_STAR    then 1
+		       case ORDINAL(p.starRating)
+		         when 5 then 5
+		         when 4 then 4
+		         when 3 then 3
+		         when 2 then 2
+		         when 1 then 1
 		         else 0
 		       end desc,
 		       p.id desc
@@ -152,17 +153,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	);
 
 	@Query("""
-		    select p
-		      from Post p
-		     where p.project.id = :projectId
-		       and p.isDeleted = false
-		       and p.status = :status
-		       and (:summaryType is null or exists (
-		             select 1 from PostSummary ps
-		              where ps.post = p and ps.summaryType = :summaryType
-		       ))
+		    select ps
+		      from PostSummary ps
+		     where ps.post.project.id = :projectId
+		       and ps.post.isDeleted = false
+		       and ps.post.status = :status
+		       and ps.summaryType = :summaryType
 		""")
-	List<Post> findByProjectSummarized(
+	List<PostSummary> findByProjectSummarized(
 		@Param("projectId") Long projectId,
 		@Param("status") PostStatus status,
 		@Param("summaryType") SummaryType summaryType,
@@ -170,27 +168,24 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	);
 
 	@Query("""
-		    select p
-		      from Post p
-		     where p.project.id = :projectId
-		       and p.isDeleted = false
-		       and p.status = :status
-		       and (:summaryType is null or exists (
-		             select 1 from PostSummary ps
-		              where ps.post = p and ps.summaryType = :summaryType
-		       ))
+			 select ps
+		      from PostSummary ps
+		     where ps.post.project.id = :projectId
+		       and ps.post.isDeleted = false
+		       and ps.post.status = :status
+			   and ps.summaryType = :summaryType
 		     order by
-		       case p.starRating
-		         when troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS  then 5
-		         when troublog.backend.domain.trouble.enums.StarRating.FOUR_STARS  then 4
-		         when troublog.backend.domain.trouble.enums.StarRating.THREE_STARS then 3
-		         when troublog.backend.domain.trouble.enums.StarRating.TWO_STARS   then 2
-		         when troublog.backend.domain.trouble.enums.StarRating.ONE_STAR    then 1
+		       case ORDINAL(ps.post.starRating)
+		         when 5 then 5
+		         when 4 then 4
+		         when 3 then 3
+		         when 2 then 2
+		         when 1 then 1
 		         else 0
 		       end desc,
-		       p.id desc
+		       ps.id desc
 		""")
-	List<Post> findByProjectSummarizedImportant(
+	List<PostSummary> findByProjectSummarizedImportant(
 		@Param("projectId") Long projectId,
 		@Param("status") PostStatus status,
 		@Param("summaryType") SummaryType summaryType
