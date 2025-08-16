@@ -11,10 +11,13 @@ import troublog.backend.domain.trouble.dto.response.common.SummaryContentInfoDto
 
 @Builder
 public record PostSummaryResDto(
-	@Schema(description = "게시글 요약 ID", example = "101")
+	@Schema(description = "트러블슈팅 요약 ID", example = "101")
 	Long summaryId,
 
-	@Schema(description = "게시글 제목", example = "Spring Boot 환경설정 트러블슈팅")
+	@Schema(description = "트러블슈팅 원본 ID", example = "48")
+	Long postId,
+	
+	@Schema(description = "트러블슈팅 제목", example = "Spring Boot 환경설정 트러블슈팅")
 	String title,
 
 	@Schema(description = "작성자 ID", example = "42")

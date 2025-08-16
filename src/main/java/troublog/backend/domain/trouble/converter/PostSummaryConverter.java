@@ -18,6 +18,7 @@ public class PostSummaryConverter {
 
 	public PostSummaryResDto toResponse(PostSummary postSummary) {
 		return PostSummaryResDto.builder()
+			.postId(postSummary.getPost().getId())
 			.title(postSummary.getPost().getTitle())
 			.userId(postSummary.getPost().getUser().getId())
 			.projectId(postSummary.getPost().getProject().getId())
