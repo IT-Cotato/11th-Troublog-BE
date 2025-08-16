@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.project.service.query.ProjectQueryService;
 import troublog.backend.domain.trouble.converter.ContentConverter;
@@ -134,7 +135,8 @@ public class PostRelationFacade {
 		postTagCommandService.deleteAll(postTags);
 	}
 
-	public void setPostSummaryRelation(Post post, PostSummary postSummary) {
+	public void setPostSummaryRelation(Post post, PostSummary postSummary, SummaryTask summaryTask) {
+		summaryTask.updatePostSummaryId(postSummary.getId());
 		post.addPostSummary(postSummary);
 	}
 }

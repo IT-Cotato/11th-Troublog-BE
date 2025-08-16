@@ -28,6 +28,8 @@ public class SummaryTask {
 
 	private Long userId;
 
+	private Long postSummaryId;
+
 	@Builder.Default
 	private SummaryStatus status = SummaryStatus.PENDING;
 
@@ -63,5 +65,11 @@ public class SummaryTask {
 
 	public boolean isTerminalStatus() {
 		return status == SummaryStatus.COMPLETED || status == SummaryStatus.FAILED || status == SummaryStatus.CANCELLED;
+	}
+
+	public void updatePostSummaryId(Long postSummaryId) {
+		if (postSummaryId != null) {
+			this.postSummaryId = postSummaryId;
+		}
 	}
 }

@@ -36,6 +36,7 @@ public class SummaryTaskConverter {
 		return TaskStatusResDto.builder()
 			.taskId(summaryTask.getId())
 			.userId(userId)
+			.postSummaryId(summaryTask.getPostSummaryId())
 			.status(summaryTask.getStatus())
 			.currentStep(summaryTask.getCurrentStep())
 			.progress(summaryTask.getProgress())
