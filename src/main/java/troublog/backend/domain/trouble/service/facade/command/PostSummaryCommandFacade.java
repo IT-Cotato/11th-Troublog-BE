@@ -22,16 +22,13 @@ import troublog.backend.domain.trouble.service.facade.relation.PostSummaryRelati
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostSummaryCommandFacade {
 
-	private final SummaryContentCommandService summaryContentCommandService;
 	private final PostSummaryRelationFacade postSummaryRelationFacade;
 	private final PostSummaryCommandService postSummaryCommandService;
 
 	public PostSummary createPostSummary(SummaryTask summaryTask, SummarizedResDto result) {
 		PostSummary newPostSummary = PostSummaryConverter.toEntity(summaryTask);
-		PostSummary savedPostSummary = postSummaryCommandService.save(newPostSummary);
-		List<SummaryContent> summaryContents = summaryContentCommandService
-			.saveAll(SummaryContentConverter.toEntityList(result));
-		postSummaryRelationFacade.setRelation(savedPostSummary, summaryContents);
-		return savedPostSummary;
+		List<SummaryContent> summaryContents = SummaryContentConverter.toEntityList(result);
+		postSummaryRelationFacade.setRelation(newPostSummary, summaryContents);
+		return postSummaryCommandService.save(newPostSummary);
 	}
 }

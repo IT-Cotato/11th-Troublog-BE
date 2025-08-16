@@ -45,7 +45,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		  ORDER BY total_score DESC, p.post_id DESC
 		) ranked_posts
 		JOIN posts p ON p.post_id = ranked_posts.post_id
-		ORDER BY ranked_posts.total_score DESC, p.post_id DESC;
+		ORDER BY ranked_posts.total_score DESC, p.post_id DESC
 		
 		""",
 		countQuery = """

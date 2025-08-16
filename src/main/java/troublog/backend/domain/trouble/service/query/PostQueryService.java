@@ -83,7 +83,7 @@ public class PostQueryService {
 	@Transactional(readOnly = true)
 	public Page<Post> getAllTroubles(Long userId, Pageable pageable) {
 		// 최신순 기준 선택 필요 - createdAt/updatedAt/completedAt
-		Sort sort = Sort.by(DESC, "completed_at", "id");
+		Sort sort = Sort.by(DESC, "completedAt", "id");
 
 		Pageable pageReq = PageRequest.of(
 			pageable.getPageNumber(),
@@ -120,7 +120,7 @@ public class PostQueryService {
 		List<PostSummary> posts = (sort == SortType.IMPORTANT)
 			? postRepository.findByProjectSummarizedImportant(projectId, PostStatus.SUMMARIZED, st)
 			: postRepository.findByProjectSummarized(projectId, PostStatus.SUMMARIZED, st,
-			Sort.by(DESC, "created_at", "id"));
+			Sort.by(DESC, "createdAt", "id"));
 
 		if (posts.isEmpty())
 			return List.of();
