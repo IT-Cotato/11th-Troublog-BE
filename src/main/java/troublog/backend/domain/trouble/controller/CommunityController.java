@@ -26,8 +26,8 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.request.CommentReqDto;
 import troublog.backend.domain.trouble.dto.response.CommentDetailResDto;
 import troublog.backend.domain.trouble.dto.response.CommentResDto;
-import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
-import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
+import troublog.backend.domain.trouble.dto.response.PostCardResDto;
+import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.dto.response.LikeResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
@@ -56,12 +56,12 @@ public class CommunityController {
 	@Operation(summary = "트러블슈팅 게시글 상세 조회 API", description =
 		"게시글 ID로 공개된 트러블슈팅 게시글의 상세 정보를 조회합니다. 댓글은 별도 API로 조회해야 합니다." + "이 API 호출 시 최근 읽은 포스트의 기록으로 저장됩니다.")
 	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(schema = @Schema(implementation = CommunityPostResDto.class)))
-	public ResponseEntity<BaseResponse<CommunityPostResDto>> findCommunityPostDetailsOnly(
+		content = @Content(schema = @Schema(implementation = PostDetailsResDto.class)))
+	public ResponseEntity<BaseResponse<PostDetailsResDto>> findCommunityPostDetailsOnly(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
-		CommunityPostResDto response = postQueryFacade.findCommunityPostDetailsById(token.getUserId(), postId);
+		PostDetailsResDto response = postQueryFacade.findCommunityPostDetailsById(token.getUserId(), postId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -69,7 +69,7 @@ public class CommunityController {
 	@Operation(summary = "트러블슈팅 게시글 목록 조회 API", description = "공개된 모든 트러블슈팅 게시글을 페이지네이션으로 조회합니다. 정렬 기준을 지정할 수 있습니다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PageResponse.class)))
-	public ResponseEntity<PageResponse<CommunityListResDto>> getCommunityPosts(
+	public ResponseEntity<PageResponse<PostCardResDto>> getCommunityPosts(
 		@RequestParam(defaultValue = "1") @Min(1) int page,
 		@RequestParam(defaultValue = "10") @Min(1) int size,
 		@Schema(
@@ -80,7 +80,7 @@ public class CommunityController {
 		@RequestParam(defaultValue = "latest") String sortBy
 	) {
 		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
-		Page<CommunityListResDto> response = postQueryFacade.getCommunityPosts(pageable);
+		Page<PostCardResDto> response = postQueryFacade.getCommunityPosts(pageable);
 		return ResponseUtils.page(response);
 	}
 

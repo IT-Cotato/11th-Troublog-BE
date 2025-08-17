@@ -21,6 +21,8 @@ import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.response.CombineResDto;
+import troublog.backend.domain.trouble.dto.response.PostCardResDto;
+import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.dto.response.PostSummaryResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
@@ -57,11 +59,11 @@ public class PostQueryController {
 	@Operation(summary = "트러블슈팅 문서 상세 조회 API", description = "ID 값 기반 트러블슈팅 문서 상세 조회")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
-	public ResponseEntity<BaseResponse<PostResDto>> findPostDetailsOnly(
+	public ResponseEntity<BaseResponse<PostDetailsResDto>> findPostDetailsOnly(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
-		PostResDto response = postQueryFacade.findPostEntityById(postId, token.getUserId());
+		PostDetailsResDto response = postQueryFacade.findPostById(postId, token.getUserId());
 		return ResponseUtils.ok(response);
 	}
 
@@ -116,14 +118,14 @@ public class PostQueryController {
 		description = "로그인한 사용자의 트러블슈팅 문서를 키워드 기반으로 검색합니다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PageResponse.class)))
-	public ResponseEntity<PageResponse<PostResDto>> searchMyPosts(
+	public ResponseEntity<PageResponse<PostCardResDto>> searchMyPosts(
 		@Authentication CustomAuthenticationToken token,
 		@RequestParam String keyword,
 		@RequestParam(defaultValue = "1") @Min(1) int page,
 		@RequestParam(defaultValue = "10") @Min(1) int size
 	) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
-		Page<PostResDto> response = postQueryFacade.searchUserPostByKeyword(token.getUserId(), keyword, pageable);
+		Page<PostCardResDto> response = postQueryFacade.searchUserPostByKeyword(token.getUserId(), keyword, pageable);
 		return ResponseUtils.page(response);
 	}
 
@@ -138,7 +140,7 @@ public class PostQueryController {
 		@RequestParam(defaultValue = "10") @Min(1) int size,
 		@Schema(
 			description = "정렬 기준",
-			allowableValues = {"likes", "latest"},
+			allowableValues = {"important", "latest"},
 			defaultValue = "latest"
 		)
 		@RequestParam(defaultValue = "latest") String sortBy
@@ -153,14 +155,14 @@ public class PostQueryController {
 		description = "지정된 사용자의 트러블슈팅 문서를 키워드 기반으로 검색합니다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PageResponse.class)))
-	public ResponseEntity<PageResponse<PostResDto>> searchUserPosts(
+	public ResponseEntity<PageResponse<PostCardResDto>> searchUserPosts(
 		@PathVariable Long userId,
 		@RequestParam String keyword,
 		@RequestParam(defaultValue = "1") @Min(1) int page,
 		@RequestParam(defaultValue = "10") @Min(1) int size
 	) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
-		Page<PostResDto> response = postQueryFacade.searchUserPostByKeyword(userId, keyword, pageable);
+		Page<PostCardResDto> response = postQueryFacade.searchUserPostByKeyword(userId, keyword, pageable);
 		return ResponseUtils.page(response);
 	}
 
@@ -175,7 +177,7 @@ public class PostQueryController {
 		@RequestParam(defaultValue = "10") @Min(1) int size,
 		@Schema(
 			description = "정렬 기준",
-			allowableValues = {"likes", "latest"},
+			allowableValues = {"important", "latest"},
 			defaultValue = "latest"
 		)
 		@RequestParam(defaultValue = "latest") String sortBy

@@ -21,8 +21,8 @@ import troublog.backend.domain.trouble.converter.ListConverter;
 import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.converter.PostSummaryConverter;
 import troublog.backend.domain.trouble.dto.response.CombineResDto;
-import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
-import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
+import troublog.backend.domain.trouble.dto.response.PostCardResDto;
+import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
@@ -59,16 +59,18 @@ public class PostQueryFacade {
 	private final RecentPostQueryService recentPostQueryService;
 	private final PostSummaryQueryService postSummaryQueryService;
 
-	public Post findPostById(Long id, Long userId) {
+	public Post findPostEntityById(Long id, Long userId) {
 		Post post = postQueryService.findById(id);
 		PostFactory.validateAuthorized(userId, post);
 		return post;
 	}
 
-	public PostResDto findPostEntityById(Long id, Long userId) {
+	public PostDetailsResDto findPostById(Long id, Long userId) {
 		Post post = postQueryService.findById(id);
 		PostFactory.validateAuthorized(userId, post);
-		return PostConverter.toResponse(post);
+		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId(), userId);
+		boolean liked = likeQueryService.findByUserAndPost(userId, post.getId()).isPresent();
+		return PostConverter.toPostDetailsResponse(userInfo, post, liked);
 	}
 
 	public static List<ContentInfoDto> findContents(Post post) {
@@ -120,9 +122,18 @@ public class PostQueryFacade {
 			.toList();
 	}
 
-	public Page<PostResDto> searchUserPostByKeyword(Long userId, String keyword, Pageable pageable) {
+	public Page<PostCardResDto> searchUserPostByKeyword(Long userId, String keyword, Pageable pageable) {
 		Page<Post> posts = postQueryService.searchUserPostByKeyword(userId, keyword, pageable);
-		return posts.map(PostConverter::toResponse);
+		Set<Long> userIds = posts.getContent().stream()
+			.map(post -> post.getUser().getId())
+			.collect(Collectors.toSet());
+
+		Map<Long, PostCardUserInfoResDto> userInfoMap = userFacade.getUserInfoMap(userIds);
+
+		return posts.map(post -> {
+			PostCardUserInfoResDto userInfo = userInfoMap.get(post.getUser().getId());
+			return PostConverter.toCommunityListResponse(userInfo, post);
+		});
 	}
 
 	public Page<PostResDto> searchPostByKeyword(String keyword, Pageable pageable) {
@@ -130,25 +141,23 @@ public class PostQueryFacade {
 		return posts.map(PostConverter::toResponse);
 	}
 
-	public Post findPostById(Long id) {
-		return postQueryService.findById(id);
-	}
-
 	public Page<TroubleListResDto> getAllTroubles(Long userId, Pageable pageable) {
-		Page<Post> posts = postQueryService.getAllTroubles(userId, pageable);
+		Page<Post> posts = isSortByStarRating(pageable)
+			? postQueryService.getAllTroublesOrderByStarRating(userId, pageable)
+			: postQueryService.getAllTroubles(userId, pageable);
 		return posts.map(ListConverter::toAllTroubleListResDto);
 	}
 
-	public CommunityPostResDto findCommunityPostDetailsById(Long userId, Long postId) {
+	public PostDetailsResDto findCommunityPostDetailsById(Long userId, Long postId) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
 		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId(), userId);
 		boolean liked = likeQueryService.findByUserAndPost(userId, postId).isPresent();
 		recentPostCommandFacade.recordPostView(userId, postId);
-		return PostConverter.toCommunityDetailsResponse(userInfo, post, liked);
+		return PostConverter.toPostDetailsResponse(userInfo, post, liked);
 	}
 
-	public Page<CommunityListResDto> getCommunityPosts(Pageable pageable) {
+	public Page<PostCardResDto> getCommunityPosts(Pageable pageable) {
 		Page<Post> posts = postQueryService.getCommunityPosts(pageable);
 
 		Set<Long> userIds = posts.getContent().stream()
@@ -173,7 +182,7 @@ public class PostQueryFacade {
 
 	private Sort getSortByCriteria(String sortBy) {
 		return switch (sortBy.toLowerCase()) {
-			case "likes" -> Sort.by(Sort.Direction.DESC, "likeCount", "id");
+			case "important" -> Sort.by(Sort.Direction.DESC, "starRating");
 			case "latest" -> Sort.by(Sort.Direction.DESC, "completedAt", "id");
 			default -> throw new PostException(ErrorCode.INVALID_VALUE);
 		};
@@ -243,5 +252,9 @@ public class PostQueryFacade {
 			.toList();
 
 		return new PageImpl<>(content, pageable, total);
+	}
+
+	private boolean isSortByStarRating(Pageable pageable) {
+		return pageable.getSort().getOrderFor("starRating") != null;
 	}
 }
