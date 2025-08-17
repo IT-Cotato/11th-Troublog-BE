@@ -5,7 +5,6 @@ import static org.springframework.data.domain.Sort.Direction.*;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -82,17 +81,16 @@ public class PostQueryService {
 
 	@Transactional(readOnly = true)
 	public Page<Post> getAllTroubles(Long userId, Pageable pageable) {
-		// 최신순 기준 선택 필요 - createdAt/updatedAt/completedAt
-		Sort sort = Sort.by(DESC, "completedAt", "id");
-
-		Pageable pageReq = PageRequest.of(
-			pageable.getPageNumber(),
-			pageable.getPageSize(),
-			sort
-		);
-
-		Page<Post> page = postRepository.findAllByUser_IdAndIsDeletedFalse(userId, pageReq);
+		Page<Post> page = postRepository.findAllByUser_IdAndIsDeletedFalse(userId, pageable);
 		log.info("[Post] 전체 트러블 조회: userId={}, total={}, page={}, size={}, elementsInPage={}",
+			userId, page.getTotalElements(), page.getNumber(), page.getSize(), page.getNumberOfElements());
+		return page;
+	}
+
+	@Transactional(readOnly = true)
+	public Page<Post> getAllTroublesOrderByStarRating(Long userId, Pageable pageable) {
+		Page<Post> page = postRepository.findTroublesByUserOrderByStarRating(userId, pageable);
+		log.info("[Post] 전체 트러블 조회 (중요도순): userId={}, total={}, page={}, size={}, elementsInPage={}",
 			userId, page.getTotalElements(), page.getNumber(), page.getSize(), page.getNumberOfElements());
 		return page;
 	}

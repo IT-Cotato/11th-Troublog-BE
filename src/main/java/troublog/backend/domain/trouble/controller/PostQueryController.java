@@ -138,7 +138,7 @@ public class PostQueryController {
 		@RequestParam(defaultValue = "10") @Min(1) int size,
 		@Schema(
 			description = "정렬 기준",
-			allowableValues = {"likes", "latest"},
+			allowableValues = {"important", "latest"},
 			defaultValue = "latest"
 		)
 		@RequestParam(defaultValue = "latest") String sortBy
@@ -175,7 +175,7 @@ public class PostQueryController {
 		@RequestParam(defaultValue = "10") @Min(1) int size,
 		@Schema(
 			description = "정렬 기준",
-			allowableValues = {"likes", "latest"},
+			allowableValues = {"important", "latest"},
 			defaultValue = "latest"
 		)
 		@RequestParam(defaultValue = "latest") String sortBy

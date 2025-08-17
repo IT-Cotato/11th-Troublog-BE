@@ -193,6 +193,27 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	Page<Post> findAllByUser_IdAndIsDeletedFalse(Long userId, Pageable page);
 
+	@Query(value = """
+		SELECT p FROM Post p
+		WHERE p.user.id = :userId AND p.isDeleted = false
+		ORDER BY
+		    CASE p.starRating
+		        WHEN troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS THEN 5
+		        WHEN troublog.backend.domain.trouble.enums.StarRating.FOUR_STARS THEN 4
+		        WHEN troublog.backend.domain.trouble.enums.StarRating.THREE_STARS THEN 3
+		        WHEN troublog.backend.domain.trouble.enums.StarRating.TWO_STARS THEN 2
+		        WHEN troublog.backend.domain.trouble.enums.StarRating.ONE_STAR THEN 1
+		        ELSE 0
+		    END DESC,
+		    p.id DESC
+		""",
+		countQuery = """
+			SELECT count(p) FROM Post p
+			WHERE p.user.id = :userId AND p.isDeleted = false
+			""")
+	Page<Post> findTroublesByUserOrderByStarRating(@Param("userId") Long userId,
+		Pageable pageable);
+
 	@Query("""
 		  SELECT DISTINCT p
 		    FROM Post p

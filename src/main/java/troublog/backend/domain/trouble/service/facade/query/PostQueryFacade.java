@@ -135,7 +135,9 @@ public class PostQueryFacade {
 	}
 
 	public Page<TroubleListResDto> getAllTroubles(Long userId, Pageable pageable) {
-		Page<Post> posts = postQueryService.getAllTroubles(userId, pageable);
+		Page<Post> posts = isSortByStarRating(pageable)
+			? postQueryService.getAllTroublesOrderByStarRating(userId, pageable)
+			: postQueryService.getAllTroubles(userId, pageable);
 		return posts.map(ListConverter::toAllTroubleListResDto);
 	}
 
@@ -173,7 +175,7 @@ public class PostQueryFacade {
 
 	private Sort getSortByCriteria(String sortBy) {
 		return switch (sortBy.toLowerCase()) {
-			case "likes" -> Sort.by(Sort.Direction.DESC, "likeCount", "id");
+			case "important" -> Sort.by(Sort.Direction.DESC, "starRating");
 			case "latest" -> Sort.by(Sort.Direction.DESC, "completedAt", "id");
 			default -> throw new PostException(ErrorCode.INVALID_VALUE);
 		};
@@ -243,5 +245,9 @@ public class PostQueryFacade {
 			.toList();
 
 		return new PageImpl<>(content, pageable, total);
+	}
+
+	private boolean isSortByStarRating(Pageable pageable) {
+		return pageable.getSort().getOrderFor("starRating") != null;
 	}
 }
