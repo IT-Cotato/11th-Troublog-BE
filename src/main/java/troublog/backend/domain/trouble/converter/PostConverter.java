@@ -30,6 +30,7 @@ public class PostConverter {
 		return createBasePost(postReqDto)
 			.status(PostStatus.WRITING)
 			.isVisible(DEFAULT_VISIBLE)
+			.starRating(StarRating.NONE)
 			.isSummaryCreated(DEFAULT_SUMMARY_CREATED)
 			.build();
 	}
@@ -105,7 +106,7 @@ public class PostConverter {
 			.liked(liked)
 			.isSummaryCreated(post.getIsSummaryCreated())
 			.postStatus(post.getStatus() != null ? String.valueOf(post.getStatus()) : null)
-			.starRating(String.valueOf(post.getStarRating() != null ? post.getStarRating().getValue() : null))
+			.starRating(post.getStarRating() != null ? post.getStarRating().getValue() : null)
 			.templateType(post.getTemplateType() != null ? post.getTemplateType().toString() : null)
 			.checklistError(JsonConverter.toList(post.getChecklistError()))
 			.checklistReason(JsonConverter.toList(post.getChecklistReason()))

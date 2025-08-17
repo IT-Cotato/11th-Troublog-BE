@@ -39,7 +39,7 @@ public record PostDetailsResDto(
 	String postStatus,
 
 	@Schema(description = "별점", example = "1")
-	String starRating,
+	Integer starRating,
 
 	@Schema(description = "템플릿 정보", example = "FREE_FORM")
 	String templateType,
