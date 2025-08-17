@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import troublog.backend.domain.trouble.dto.request.common.ContentDto;
+import troublog.backend.domain.trouble.enums.TemplateType;
 
 @Builder
 @Schema(description = "트러블로그 문서 생성/업데이트 DTO")
@@ -49,7 +50,7 @@ public record PostReqDto(
 	List<ContentDto> contentDtoList,
 
 	@Schema(
-		description = "���시글 소개",
+		description = "게시글 소개",
 		example = "Spring Boot 프로젝트 설정 중 발생한 문제와 해결 과정"
 	)
 	String introduction,
@@ -83,6 +84,14 @@ public record PostReqDto(
 		allowableValues = {"0", "1", "2", "3", "4", "5"}
 	)
 	Integer starRating,
+
+	@Schema(
+		description = "템플릿 타입",
+		example = "FREE_FORM",
+		allowableValues = {"FREE_FORM", "GUIDELINE"}
+	)
+	@NotNull(message = "템플릿 타입은 필수 값입니다.")
+	TemplateType templateType,
 
 	@Schema(
 		description = "에러 체크리스트",

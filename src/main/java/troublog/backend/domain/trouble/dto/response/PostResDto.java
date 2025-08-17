@@ -41,6 +41,9 @@ public record PostResDto(
 	@Schema(description = "별점", example = "1")
 	String starRating,
 
+	@Schema(description = "템플릿 정보", example = "FREE_FORM")
+	String templateType,
+
 	@Schema(description = "에러 체크리스트", example = "[1, 4, 5]")
 	List<Integer> checklistError,
 

@@ -79,6 +79,7 @@ public class PostConverter {
 			.isSummaryCreated(post.getIsSummaryCreated())
 			.postStatus(post.getStatus().getMessage())
 			.starRating(post.getStarRating() != null ? post.getStarRating().name() : null)
+			.templateType(post.getTemplateType() != null ? post.getTemplateType().name() : null)
 			.checklistError(JsonConverter.toList(post.getChecklistError()))
 			.checklistReason(JsonConverter.toList(post.getChecklistReason()))
 			.createdAt(post.getCreated_at())
