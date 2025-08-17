@@ -231,7 +231,12 @@ public class Post extends BaseEntity {
 	}
 
 	public void updateStatus(PostStatus status) {
+		if (status == PostStatus.SUMMARIZED) {
+			return;
+		}
+
 		this.status = status;
+
 		if (status == PostStatus.COMPLETED) {
 			this.completedAt = LocalDateTime.now();
 		}
