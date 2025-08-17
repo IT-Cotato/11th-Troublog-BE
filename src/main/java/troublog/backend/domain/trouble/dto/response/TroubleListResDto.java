@@ -43,8 +43,8 @@ public record TroubleListResDto(
 	@Schema(description = "작성 상태")
 	String status,
 
-	@Schema(description = "요약 방식")
-	String summaryType
+	@Schema(description = "요약본 리스트")
+	List<PostSummaryResDto> summaries
 
 ) {
 }
