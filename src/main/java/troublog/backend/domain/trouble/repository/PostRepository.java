@@ -12,8 +12,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import troublog.backend.domain.trouble.entity.Post;
-import troublog.backend.domain.trouble.entity.PostSummary;
-import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.PostStatus;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -150,45 +148,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		@Param("projectId") Long projectId,
 		@Param("status") PostStatus status,
 		@Param("visible") Boolean visible
-	);
-
-	@Query("""
-		    select ps
-		      from PostSummary ps
-		     where ps.post.project.id = :projectId
-		       and ps.post.isDeleted = false
-		       and ps.post.status = :status
-		       and ps.summaryType = :summaryType
-		""")
-	List<PostSummary> findByProjectSummarized(
-		@Param("projectId") Long projectId,
-		@Param("status") PostStatus status,
-		@Param("summaryType") SummaryType summaryType,
-		Sort sort
-	);
-
-	@Query("""
-			 select ps
-		      from PostSummary ps
-		     where ps.post.project.id = :projectId
-		       and ps.post.isDeleted = false
-		       and ps.post.status = :status
-			   and ps.summaryType = :summaryType
-		     order by
-		       case ORDINAL(ps.post.starRating)
-		         when 5 then 5
-		         when 4 then 4
-		         when 3 then 3
-		         when 2 then 2
-		         when 1 then 1
-		         else 0
-		       end desc,
-		       ps.id desc
-		""")
-	List<PostSummary> findByProjectSummarizedImportant(
-		@Param("projectId") Long projectId,
-		@Param("status") PostStatus status,
-		@Param("summaryType") SummaryType summaryType
 	);
 
 	Page<Post> findAllByUser_IdAndIsDeletedFalse(Long userId, Pageable page);

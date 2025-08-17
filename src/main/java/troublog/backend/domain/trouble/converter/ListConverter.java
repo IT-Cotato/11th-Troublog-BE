@@ -51,6 +51,7 @@ public class ListConverter {
 			.error(PostQueryFacade.findErrorTag(postSummary.getPost()))
 			.techs(PostQueryFacade.findTopTechStackTags(postSummary.getPost()))
 			.isVisible(postSummary.getPost().getIsVisible())
+			.summaryType(postSummary.getSummaryType().toString())
 			.build();
 	}
 }
