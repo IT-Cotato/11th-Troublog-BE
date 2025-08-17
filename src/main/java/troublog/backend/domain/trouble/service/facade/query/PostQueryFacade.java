@@ -84,10 +84,6 @@ public class PostQueryFacade {
 		Post post = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, post);
 
-		/*if (post.getStatus() != PostStatus.SUMMARIZED) {
-			throw new PostException(ErrorCode.POST_NOT_SUMMARIZED);
-		}*/
-
 		PostSummary postSummary = postSummaryQueryService.findById(summaryId);
 		PostValidator.validateSummaryBelongsToUser(userId, postSummary);
 

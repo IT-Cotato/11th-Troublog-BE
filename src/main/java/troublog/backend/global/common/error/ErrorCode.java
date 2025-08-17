@@ -66,7 +66,6 @@ public enum ErrorCode {
 	POST_NOT_VISIBLE(HttpStatus.FORBIDDEN, "P-006", "공개되지 않은 게시물입니다."),
 	JSON_PARSING_ERROR(HttpStatus.BAD_REQUEST, "J-007", "JSON 파싱 중 오류가 발생했습니다."),
 	SUMMARY_NOT_FOUND(HttpStatus.NOT_FOUND, "P-008", "요약본을 찾을 수 없습니다."),
-	POST_NOT_SUMMARIZED(HttpStatus.BAD_REQUEST, "P-009", "아직 요약 완료 상태가 아닙니다."),
 
 	/**
 	 * Post Summary Error
