@@ -1,5 +1,6 @@
 package troublog.backend.domain.trouble.dto.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,6 +31,30 @@ public record PostDetailsResDto(
 
 	@Schema(description = "좋아요 여부", example = "true")
 	boolean liked,
+
+	@Schema(description = "요약 생성 여부", example = "false")
+	boolean isSummaryCreated,
+
+	@Schema(description = "게시글 상태", example = "COMPLETED")
+	String postStatus,
+
+	@Schema(description = "별점", example = "1")
+	String starRating,
+
+	@Schema(description = "템플릿 정보", example = "FREE_FORM")
+	String templateType,
+
+	@Schema(description = "에러 체크리스트", example = "[1, 4, 5]")
+	List<Integer> checklistError,
+
+	@Schema(description = "원인 체크리스트", example = "[2, 3]")
+	List<Integer> checklistReason,
+
+	@Schema(description = "작성 시간", example = "2024-01-15T10:00:00")
+	LocalDateTime createdAt,
+
+	@Schema(description = "수정 시간", example = "2024-01-15T15:00:00")
+	LocalDateTime updatedAt,
 
 	@Schema(description = "작성 완료 시간", example = "2024-01-15")
 	String completedAt,

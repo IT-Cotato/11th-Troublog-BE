@@ -56,9 +56,6 @@ public record PostResDto(
 	@Schema(description = "수정 시간", example = "2024-01-15T15:00:00")
 	LocalDateTime updatedAt,
 
-	@Schema(description = "삭제 시간", example = "2024-01-15T15:00:00")
-	LocalDateTime deletedAt,
-
 	PostCardUserInfoResDto userInfo,
 	
 	@Schema(description = "프로젝트 정보")
