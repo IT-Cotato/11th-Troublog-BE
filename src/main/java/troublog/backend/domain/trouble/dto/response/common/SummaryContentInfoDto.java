@@ -4,8 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
-@Schema(description = "콘텐츠 정보")
-public record ContentInfoDto(
+public record SummaryContentInfoDto(
 	@Schema(description = "콘텐츠 ID", example = "1")
 	Long id,
 

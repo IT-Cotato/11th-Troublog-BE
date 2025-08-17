@@ -22,6 +22,11 @@ public record TaskStatusResDto(
 	Long userId,
 
 	@Schema(
+		description = "AI 요약본 ID (요약이 완료되었을때만 값을 제공합니다.)",
+		example = "2"
+	)
+	Long postSummaryId,
+	@Schema(
 		description = "작업 상태",
 		example = "STARTED",
 		allowableValues = {"PENDING", "STARTED", "PREPROCESSING", "ANALYZING", "POSTPROCESSING", "COMPLETED", "FAILED",

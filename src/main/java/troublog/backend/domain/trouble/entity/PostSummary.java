@@ -1,7 +1,13 @@
 package troublog.backend.domain.trouble.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,13 +15,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.global.common.entity.BaseEntity;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
@@ -26,46 +33,49 @@ import troublog.backend.global.common.error.exception.PostException;
 @Builder
 @Getter
 @Table(
-	name = "contents",
+	name = "post_summaries",
 	indexes = {
-		@Index(
-			name = "idx_contents_post_id",
-			columnList = "post_id"
-		)
+		@Index(name = "idx_post_summary_post_type", columnList = "post_id, summary_type"),
+		@Index(name = "idx_post_summary_created", columnList = "created_at")
 	}
 )
-public class Content extends BaseEntity {
+public class PostSummary extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "content_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id")
 	private Post post;
 
-	@Column(name = "sub_title")
-	private String subTitle;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "summary_type")
+	private SummaryType summaryType;
 
-	@Column(columnDefinition = "TEXT")
-	private String body;
+	@Builder.Default
+	@OneToMany(mappedBy = "postSummary", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<SummaryContent> summaryContents = new ArrayList<>();
 
-	@NotNull
-	@Column(name = "sequence")
-	private int sequence;
-
-	// 연관관계 편의 메서드
 	public void assignPost(Post post) {
 		if (post == null) {
 			throw new PostException(ErrorCode.MISSING_POST);
 		}
+
 		if (this.post != null) {
-			this.post.getContents().remove(this);
+			this.post.getPostSummaries().remove(this);
 		}
 		this.post = post;
-		if (!post.getContents().contains(this)) {
-			post.getContents().add(this);
+		if (!post.getPostSummaries().contains(this)) {
+			post.getPostSummaries().add(this);
 		}
+	}
+
+	public void addSummaryContents(SummaryContent summaryContent) {
+		if (summaryContent == null) {
+			throw new PostException(ErrorCode.MISSING_SUMMARY_CONTENT);
+		}
+		this.summaryContents.add(summaryContent);
+		summaryContent.assignPostSummary(this);
 	}
 }

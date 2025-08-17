@@ -27,7 +27,7 @@ import troublog.backend.domain.project.enums.ProjectPostStatus;
 import troublog.backend.domain.project.service.facade.ProjectCommandFacade;
 import troublog.backend.domain.project.service.facade.ProjectQueryFacade;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
-import troublog.backend.domain.trouble.enums.ContentSummaryType;
+import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
 import troublog.backend.global.common.annotation.Authentication;
@@ -103,7 +103,7 @@ public class ProjectController {
 		@RequestParam ProjectPostStatus status,
 		@RequestParam(defaultValue = "LATEST") SortType sort,
 		@RequestParam(required = false) VisibilityType visibility,
-		@RequestParam(required = false) ContentSummaryType summaryType
+		@RequestParam(required = false) SummaryType summaryType
 	) {
 		List<TroubleListResDto> response = projectQueryFacade.getProjectTroubles(auth.getUserId(), projectId, status,
 			sort, visibility, summaryType);

@@ -26,7 +26,7 @@ import troublog.backend.domain.ai.summary.dto.response.TaskStatusResDto;
 import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
-import troublog.backend.domain.trouble.enums.ContentSummaryType;
+import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.service.facade.command.PostCommandFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
@@ -68,7 +68,7 @@ public class PostCommandController {
 	}
 
 	@Deprecated(forRemoval = true)
-	@DeleteMapping("/{postId}")
+	@DeleteMapping("/{postId}/soft")
 	@Operation(summary = "트러블슈팅 문서 임시 삭제 API", description = "트러블슈팅 문서를 임시 삭제한다. (Deprecated)")
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> deletePost(
@@ -79,7 +79,7 @@ public class PostCommandController {
 		return ResponseUtils.noContent();
 	}
 
-	@DeleteMapping("/{postId}/hard")
+	@DeleteMapping("/{postId}")
 	@Operation(summary = "트러블슈팅 문서 영구 삭제 API", description = "트러블슈팅 문서를 영구적으로 삭제한다.")
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> hardDeletePost(
@@ -109,7 +109,7 @@ public class PostCommandController {
 	public ResponseEntity<BaseResponse<TaskStartResDto>> startSummaryTask(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId,
-		@RequestParam ContentSummaryType summaryType
+		@RequestParam SummaryType summaryType
 	) {
 		return ResponseUtils.ok(postCommandFacade.startSummary(token.getUserId(), summaryType, postId));
 	}

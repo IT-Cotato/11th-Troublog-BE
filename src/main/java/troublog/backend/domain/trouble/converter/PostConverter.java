@@ -13,6 +13,7 @@ import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
+import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
 import troublog.backend.global.common.util.JsonConverter;
@@ -82,7 +83,7 @@ public class PostConverter {
 			.checklistReason(JsonConverter.toList(post.getChecklistReason()))
 			.createdAt(post.getCreated_at())
 			.updatedAt(post.getUpdated_at())
-			.userId(post.getUser().getId())
+			.userInfo(UserConverter.toPostCardUserInfoResDto(post.getUser()))
 			.projectId(post.getProject().getId())
 			.errorTag(PostQueryFacade.findErrorTag(post))
 			.postTags(PostQueryFacade.findTechStackTags(post))

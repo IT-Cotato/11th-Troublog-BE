@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import troublog.backend.domain.ai.summary.dto.response.SummarizedResDto;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
+import troublog.backend.domain.trouble.enums.SummaryType;
 
 @Getter
 @Builder
@@ -25,6 +26,10 @@ public class SummaryTask {
 
 	private Long postId;
 
+	private Long userId;
+
+	private Long postSummaryId;
+
 	@Builder.Default
 	private SummaryStatus status = SummaryStatus.PENDING;
 
@@ -32,6 +37,8 @@ public class SummaryTask {
 	private Integer progress = 0;
 
 	private SummarizedResDto result;
+
+	private SummaryType summaryType;
 	private LocalDateTime startedAt;
 	private LocalDateTime completedAt;
 	private String currentStep;
@@ -58,5 +65,11 @@ public class SummaryTask {
 
 	public boolean isTerminalStatus() {
 		return status == SummaryStatus.COMPLETED || status == SummaryStatus.FAILED || status == SummaryStatus.CANCELLED;
+	}
+
+	public void updatePostSummaryId(Long postSummaryId) {
+		if (postSummaryId != null) {
+			this.postSummaryId = postSummaryId;
+		}
 	}
 }

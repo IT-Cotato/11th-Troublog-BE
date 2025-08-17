@@ -8,18 +8,17 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.trouble.entity.Content;
-import troublog.backend.domain.trouble.repository.ContentRepository;
+import troublog.backend.domain.trouble.entity.SummaryContent;
+import troublog.backend.domain.trouble.repository.SummaryContentRepository;
 
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class ContentQueryService {
+public class SummaryContentQueryService {
+	private final SummaryContentRepository summaryContentRepository;
 
-	private final ContentRepository contentRepository;
-
-	public List<Content> findUserPostContents(Long postId) {
-		return contentRepository.findAllByPostId(postId);
+	public List<SummaryContent> findAllByPostSummaryId(Long summaryId) {
+		return summaryContentRepository.findAllByPostSummary_Id(summaryId);
 	}
 }

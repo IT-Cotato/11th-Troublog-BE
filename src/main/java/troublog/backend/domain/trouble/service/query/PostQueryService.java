@@ -17,7 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.trouble.converter.ListConverter;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.entity.Post;
-import troublog.backend.domain.trouble.enums.ContentSummaryType;
+import troublog.backend.domain.trouble.entity.PostSummary;
+import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
@@ -34,20 +35,8 @@ public class PostQueryService {
 	private final PostRepository postRepository;
 
 	public Post findById(Long id) {
-		log.info("[Post] 트러블슈팅 문서 + AI 요약본 조회:: postId={}", id);
+		log.info("[Post] 트러블슈팅 조회:: postId={}", id);
 		return postRepository.findById(id)
-			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
-	}
-
-	public Post findSummaryById(Long id, ContentSummaryType summaryType) {
-		log.info("[Post] AI 요약본 조회: postId={}", id);
-		return postRepository.findSummaryById(id, summaryType)
-			.orElseThrow(() -> new PostException(ErrorCode.SUMMARY_NOT_FOUND));
-	}
-
-	public Post findPostWithoutSummaryById(Long id) {
-		log.info("[Post] 트러블슈팅 문서: postId={}", id);
-		return postRepository.findPostWithoutSummaryById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
 
@@ -125,19 +114,20 @@ public class PostQueryService {
 	}
 
 	public List<TroubleListResDto> getSummarizedTroubles(
-		Long projectId, SortType sort, ContentSummaryType summaryType) {
-		ContentSummaryType st = (summaryType == ContentSummaryType.NONE) ? null : summaryType;
-		List<Post> posts = (sort == SortType.IMPORTANT)
+		Long projectId, SortType sort, SummaryType summaryType
+	) {
+		SummaryType st = (summaryType == SummaryType.NONE) ? null : summaryType;
+		List<PostSummary> posts = (sort == SortType.IMPORTANT)
 			? postRepository.findByProjectSummarizedImportant(projectId, PostStatus.SUMMARIZED, st)
 			: postRepository.findByProjectSummarized(projectId, PostStatus.SUMMARIZED, st,
-			Sort.by(DESC, "completedAt", "id"));
+			Sort.by(DESC, "createdAt", "id"));
 
 		if (posts.isEmpty())
 			return List.of();
 
 		log.info("[Post] 요약완료된 트러블슈팅 문서 조회: postCount={}", posts.size());
 		return posts.stream()
-			.map(ListConverter::toAllTroubleListResDto)
+			.map(ListConverter::toAllSummerizedListResDto)
 			.toList();
 	}
 

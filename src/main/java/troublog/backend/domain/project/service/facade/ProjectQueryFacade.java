@@ -17,7 +17,7 @@ import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.project.enums.ProjectPostStatus;
 import troublog.backend.domain.project.service.query.ProjectQueryService;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
-import troublog.backend.domain.trouble.enums.ContentSummaryType;
+import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
@@ -46,7 +46,7 @@ public class ProjectQueryFacade {
 
 	public List<TroubleListResDto> getProjectTroubles(Long userId, Long projectId, ProjectPostStatus status,
 		SortType sort,
-		VisibilityType visibility, ContentSummaryType summaryType) {
+		VisibilityType visibility, SummaryType summaryType) {
 		Project project = projectQueryService.findById(projectId);
 		validateProjectAuthorized(userId, project);
 

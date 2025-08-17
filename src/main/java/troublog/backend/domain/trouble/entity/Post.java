@@ -122,6 +122,10 @@ public class Post extends BaseEntity {
 
 	@Builder.Default
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<PostSummary> postSummaries = new ArrayList<>();
+
+	@Builder.Default
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Content> contents = new ArrayList<>();
 
 	@Builder.Default
@@ -157,6 +161,14 @@ public class Post extends BaseEntity {
 		}
 		this.contents.add(content);
 		content.assignPost(this);
+	}
+
+	public void addPostSummary(PostSummary postSummary) {
+		if (postSummary == null) {
+			throw new PostException(ErrorCode.MISSING_POST_SUMMARY);
+		}
+		this.postSummaries.add(postSummary);
+		postSummary.assignPost(this);
 	}
 
 	public void addComment(Comment comment) {
@@ -232,6 +244,7 @@ public class Post extends BaseEntity {
 	public void updateThumbnailUrl(String thumbnailUrl) {
 		this.thumbnailUrl = thumbnailUrl;
 	}
+
 	public void markAsDeleted() {
 		this.isDeleted = true;
 		this.deletedAt = LocalDateTime.now();

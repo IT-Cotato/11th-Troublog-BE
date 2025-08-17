@@ -14,7 +14,7 @@ import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
-import troublog.backend.domain.trouble.enums.ContentSummaryType;
+import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.service.command.PostCommandService;
 import troublog.backend.domain.trouble.service.facade.relation.PostRelationFacade;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
@@ -68,8 +68,8 @@ public class PostCommandFacade {
 		return PostConverter.toResponse(foundPost);
 	}
 
-	public TaskStartResDto startSummary(Long userId, ContentSummaryType summaryType, Long postId) {
-		SummaryTask task = summaryTaskFacade.createTask(postId);
+	public TaskStartResDto startSummary(Long userId, SummaryType summaryType, Long postId) {
+		SummaryTask task = summaryTaskFacade.createTask(postId, userId, summaryType);
 		postSummaryService.executeAsync(task, summaryType);
 		return SummaryTaskConverter.toStartResponseDto(task, userId);
 	}

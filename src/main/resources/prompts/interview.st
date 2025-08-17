@@ -77,30 +77,22 @@ You must respond ONLY in the following JSON format:
     {{
       "subTitle": "기술적 의사결정 질문",
       "body": "사용자의 기술 선택과 의사결정 과정을 탐구하는 한국어 면접 질문들",
-      "sequence": 1,
-      "authorType": "AI_GENERATED",
-      "summaryType": "INTERVIEW"
+      "sequence": 1
     }},
     {{
       "subTitle": "문제 해결 과정 질문",
       "body": "사용자의 문제 진단과 해결 방법론을 평가하는 한국어 면접 질문들",
-      "sequence": 2,
-      "authorType": "AI_GENERATED",
-      "summaryType": "INTERVIEW"
+      "sequence": 2
     }},
     {{
       "subTitle": "구현 품질 평가 질문",
       "body": "사용자의 코드/설정 품질과 유지보수성을 확인하는 한국어 면접 질문들",
-      "sequence": 3,
-      "authorType": "AI_GENERATED",
-      "summaryType": "INTERVIEW"
+      "sequence": 3
     }},
     {{
       "subTitle": "학습과 성장 질문",
       "body": "사용자의 학습 민첩성과 성장 마인드셋을 평가하는 한국어 면접 질문들",
-      "sequence": 4,
-      "authorType": "AI_GENERATED",
-      "summaryType": "INTERVIEW"
+      "sequence": 4
     }}
   ]
 }}
@@ -128,6 +120,7 @@ Generate comprehensive Korean IT interview questions based on the user's documen
 4. Communication skills for explaining experience to others
 
 **Requirements**:
+- Questions with the same sequence number are grouped together in the body with the same sutitle within the same content area
 - Every question must be derivable from provided content only
 - Professional Korean interview tone throughout
 - Logical progression from basic to advanced questions

@@ -73,30 +73,22 @@ You must respond ONLY in the following JSON format:
     {{
       "subTitle": "🚨 위기의 순간",
       "body": "사용자의 실제 문제 발견 순간을 감정적으로 생생하게 표현한 한국어 콘텐츠",
-      "sequence": 1,
-      "authorType": "AI_GENERATED",
-      "summaryType": "BLOG"
+      "sequence": 1
     }},
     {{
       "subTitle": "🔍 원인 추적",
       "body": "사용자의 실제 진단 과정을 시간순으로 상세히 기술한 한국어 콘텐츠",
-      "sequence": 2,
-      "authorType": "AI_GENERATED",
-      "summaryType": "BLOG"
+      "sequence": 2
     }},
     {{
       "subTitle": "⚡ 해결 과정",
       "body": "사용자가 실제 적용한 해결 과정을 구체적으로 설명한 한국어 콘텐츠",
-      "sequence": 3,
-      "authorType": "AI_GENERATED",
-      "summaryType": "BLOG"
+      "sequence": 3
     }},
     {{
       "subTitle": "🎯 핵심 인사이트",
       "body": "사용자 경험에서 명확히 도출되는 교훈과 향후 적용 방안을 정리한 한국어 콘텐츠",
-      "sequence": 4,
-      "authorType": "AI_GENERATED",
-      "summaryType": "BLOG"
+      "sequence": 4
     }}
   ]
 }}

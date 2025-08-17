@@ -1,16 +1,16 @@
 package troublog.backend.domain.trouble.entity;
 
+import jakarta.validation.constraints.NotNull;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,47 +25,40 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(
-	name = "contents",
-	indexes = {
-		@Index(
-			name = "idx_contents_post_id",
-			columnList = "post_id"
-		)
-	}
-)
-public class Content extends BaseEntity {
+@Table(name = "summary_contents")
+public class SummaryContent extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "content_id")
+	@Column(name = "summary_content_id")
 	private Long id;
 
+	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "post_id")
-	private Post post;
+	@JoinColumn(name = "post_summary_id")
+	private PostSummary postSummary;
 
 	@Column(name = "sub_title")
 	private String subTitle;
 
+	@NotNull
 	@Column(columnDefinition = "TEXT")
 	private String body;
 
 	@NotNull
 	@Column(name = "sequence")
-	private int sequence;
+	private Integer sequence;
 
-	// 연관관계 편의 메서드
-	public void assignPost(Post post) {
-		if (post == null) {
-			throw new PostException(ErrorCode.MISSING_POST);
+	public void assignPostSummary(PostSummary postSummary) {
+		if (postSummary == null) {
+			throw new PostException(ErrorCode.MISSING_POST_SUMMARY);
 		}
-		if (this.post != null) {
-			this.post.getContents().remove(this);
+		if (this.postSummary != null) {
+			this.postSummary.getSummaryContents().remove(this);
 		}
-		this.post = post;
-		if (!post.getContents().contains(this)) {
-			post.getContents().add(this);
+		this.postSummary = postSummary;
+		if (!postSummary.getSummaryContents().contains(this)) {
+			postSummary.getSummaryContents().add(this);
 		}
 	}
 }

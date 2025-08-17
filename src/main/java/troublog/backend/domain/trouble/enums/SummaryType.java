@@ -8,7 +8,7 @@ import troublog.backend.global.common.error.exception.PostException;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public enum ContentSummaryType {
+public enum SummaryType {
 	NONE("없음"),
 	RESUME("이력서"),
 	INTERVIEW("면접"),
@@ -17,20 +17,20 @@ public enum ContentSummaryType {
 
 	private final String description;
 
-	public static ContentSummaryType from(String type) {
+	public static SummaryType from(String type) {
 		if (type == null) {
 			return NONE;
 		}
 
-		for (ContentSummaryType contentSummaryType : values()) {
-			if (contentSummaryType.name().equals(type)) {
-				return contentSummaryType;
+		for (SummaryType summaryType : values()) {
+			if (summaryType.name().equals(type)) {
+				return summaryType;
 			}
 		}
 		throw new PostException(ErrorCode.INVALID_VALUE);
 	}
 
-	public static String getName(ContentSummaryType contentSummaryType) {
-		return contentSummaryType.name();
+	public static String getName(SummaryType summaryType) {
+		return summaryType.name();
 	}
 }
