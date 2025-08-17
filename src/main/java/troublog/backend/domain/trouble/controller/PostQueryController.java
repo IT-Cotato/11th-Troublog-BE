@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.response.CombineResDto;
 import troublog.backend.domain.trouble.dto.response.PostCardResDto;
 import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
-import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.dto.response.PostSummaryResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
@@ -58,7 +57,7 @@ public class PostQueryController {
 	@GetMapping("/{postId}")
 	@Operation(summary = "트러블슈팅 문서 상세 조회 API", description = "ID 값 기반 트러블슈팅 문서 상세 조회")
 	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(schema = @Schema(implementation = PostResDto.class)))
+		content = @Content(schema = @Schema(implementation = PostDetailsResDto.class)))
 	public ResponseEntity<BaseResponse<PostDetailsResDto>> findPostDetailsOnly(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId

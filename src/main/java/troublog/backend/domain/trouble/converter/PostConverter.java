@@ -30,6 +30,7 @@ public class PostConverter {
 		return createBasePost(postReqDto)
 			.status(PostStatus.WRITING)
 			.isVisible(DEFAULT_VISIBLE)
+			.starRating(StarRating.NONE)
 			.isSummaryCreated(DEFAULT_SUMMARY_CREATED)
 			.build();
 	}
@@ -64,6 +65,7 @@ public class PostConverter {
 			.commentCount(DEFAULT_COUNT)
 			.likeCount(DEFAULT_COUNT)
 			.isDeleted(DEFAULT_DELETE_STATUS)
+			.templateType(postReqDto.templateType())
 			.checklistError(JsonConverter.toJson(postReqDto.checklistError()))
 			.checklistReason(JsonConverter.toJson(postReqDto.checklistReason()));
 	}
@@ -99,13 +101,21 @@ public class PostConverter {
 			.id(post.getId())
 			.title(post.getTitle())
 			.introduction(post.getIntroduction())
+			.likeCount(post.getLikeCount())
+			.commentCount(post.getCommentCount())
+			.liked(liked)
+			.isSummaryCreated(post.getIsSummaryCreated())
+			.postStatus(post.getStatus() != null ? String.valueOf(post.getStatus()) : null)
+			.starRating(post.getStarRating() != null ? post.getStarRating().getValue() : null)
+			.templateType(post.getTemplateType() != null ? post.getTemplateType().toString() : null)
+			.checklistError(JsonConverter.toList(post.getChecklistError()))
+			.checklistReason(JsonConverter.toList(post.getChecklistReason()))
 			.errorTag(PostQueryFacade.findErrorTag(post))
 			.postTags(PostQueryFacade.findTechStackTags(post))
 			.contents(PostQueryFacade.findContents(post))
-			.likeCount(post.getLikeCount())
-			.liked(liked)
-			.commentCount(post.getCommentCount())
-			.completedAt(post.getCompletedAt() == null ? null : post.getCompletedAt().format(DATE_FORMATTER))
+			.createdAt(post.getCreated_at())
+			.updatedAt(post.getUpdated_at())
+			.completedAt(post.getCompletedAt() != null ? post.getCompletedAt().format(DATE_FORMATTER) : null)
 			.build();
 	}
 
