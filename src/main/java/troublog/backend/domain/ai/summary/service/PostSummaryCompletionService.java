@@ -35,7 +35,6 @@ public class PostSummaryCompletionService {
 		postRelationFacade.setPostSummaryRelation(foundPost, postSummary, summaryTask);
 		log.info("AI 분석 작업 완료: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId());
 		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.COMPLETED);
-
 		return result;
 	}
 }
