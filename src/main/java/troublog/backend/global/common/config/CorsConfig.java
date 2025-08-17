@@ -8,14 +8,16 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import troublog.backend.global.common.constant.Domain;
+
 @Configuration
 public class CorsConfig {
 	private static final List<String> ALLOWED_ORIGINS = List.of(
 		"http://localhost:3000",
 		"http://localhost:8080",
-		"http://localhost:5173",
+		Domain.LOCAL.getDomain(),
 		"https://troublog.shop",
-		"https://troublog.vercel.app",
+		Domain.DEV.getDomain(),
 		"https://troublog.com"
 	);
 

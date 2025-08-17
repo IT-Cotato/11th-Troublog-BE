@@ -22,6 +22,8 @@ import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
+import troublog.backend.global.common.constant.Domain;
+import troublog.backend.global.common.constant.EnvType;
 import troublog.backend.global.common.util.AlertSseUtil;
 
 @Service
@@ -38,7 +40,7 @@ public class CommentCommandFacade {
 
 	private final AlertSseUtil alertSseUtil;
 
-	public CommentResDto createComment(Long userId, Long postId, CommentReqDto commentReqDto) {
+	public CommentResDto createComment(Long userId, Long postId, CommentReqDto commentReqDto, String clientEnvType) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
 		User user = userQueryService.findUserById(userId);
@@ -48,7 +50,9 @@ public class CommentCommandFacade {
 		Comment savedComment = commentCommandService.save(newComment);
 
 		// 알림 전송
-		Alert alert = AlertConverter.postCommentAlert(post.getUser(), user.getNickname());
+		String targetUrl = Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + "/user/community/" + post.getId();
+
+		Alert alert = AlertConverter.postCommentAlert(post.getUser(), user.getNickname(), targetUrl);
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
 		if(alertSseUtil.sendAlert(post.getUser().getId(), alertResDto)) {
@@ -60,7 +64,7 @@ public class CommentCommandFacade {
 		return CommentConverter.toResponse(savedComment);
 	}
 
-	public CommentResDto createChildComment(Long userId, CommentReqDto commentReqDto, Long commentId, Long postId) {
+	public CommentResDto createChildComment(Long userId, CommentReqDto commentReqDto, Long commentId, Long postId, String clientEnvType) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
 		User user = userQueryService.findUserById(userId);
@@ -75,7 +79,9 @@ public class CommentCommandFacade {
 		Comment savedComment = commentCommandService.save(newChildComment);
 
 		// 알림 전송
-		Alert alert = AlertConverter.postChildCommentAlert(parentComment.getUser(), user.getNickname());
+		String targetUrl = Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + "/user/community/" + post.getId();
+
+		Alert alert = AlertConverter.postChildCommentAlert(parentComment.getUser(), user.getNickname(), targetUrl);
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
 		if(alertSseUtil.sendAlert(parentComment.getUser().getId(), alertResDto)) {

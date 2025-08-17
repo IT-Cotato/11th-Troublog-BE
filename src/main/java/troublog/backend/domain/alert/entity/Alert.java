@@ -46,6 +46,9 @@ public class Alert extends BaseEntity {
 	@Column(name = "alert_type")
 	private AlertType alertType;
 
+	@Column(name = "target_url")
+	private String targetUrl;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;

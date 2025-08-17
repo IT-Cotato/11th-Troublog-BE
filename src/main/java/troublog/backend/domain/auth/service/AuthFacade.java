@@ -26,6 +26,7 @@ import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.command.UserCommandService;
 import troublog.backend.domain.user.service.query.UserQueryService;
+import troublog.backend.global.common.constant.Domain;
 import troublog.backend.global.common.constant.EnvType;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.error.ErrorCode;
@@ -144,7 +145,11 @@ public class AuthFacade {
 		// 작성중인 트러블 슈팅 알림전송
 		if (writingCount > 0) {
 
-			Alert alert = AlertConverter.postTroubleshootingAlert(user, writingCount);
+			// 환경에 맞게 url 세팅
+			// ex) dev 환경 -> https://troublog.vercel.app/user/mypage/2
+			String targetUrl = Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + "/user/mypage/2";
+
+			Alert alert = AlertConverter.postTroubleshootingAlert(user, writingCount, targetUrl);
 			AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
 			if(alertSseUtil.sendAlert(user.getId(), alertResDto)) {
