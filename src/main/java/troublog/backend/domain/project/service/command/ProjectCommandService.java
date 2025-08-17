@@ -22,4 +22,10 @@ public class ProjectCommandService {
 		log.info("[Project] 프로젝트 생성: projectId={}, name={}", saved.getId(), saved.getName());
 		return saved;
 	}
+
+	public void delete(Project project) {
+		Long projectId = project.getId();
+		log.info("[Project] 프로젝트 하드 삭제: projectId={}", projectId);
+		projectRepository.delete(project);
+	}
 }

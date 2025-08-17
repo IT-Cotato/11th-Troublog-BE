@@ -49,7 +49,7 @@ public class Project extends BaseEntity {
 	private String description;
 
 	@Builder.Default
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Post> posts = new ArrayList<>();
 	@NotNull
 	@Column(name = "name")
