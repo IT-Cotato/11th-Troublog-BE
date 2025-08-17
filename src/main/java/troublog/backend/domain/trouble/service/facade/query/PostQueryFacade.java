@@ -182,6 +182,7 @@ public class PostQueryFacade {
 
 	private Sort getSortByCriteria(String sortBy) {
 		return switch (sortBy.toLowerCase()) {
+			case "likes" -> Sort.by(Sort.Direction.DESC, "likeCount");
 			case "important" -> Sort.by(Sort.Direction.DESC, "starRating");
 			case "latest" -> Sort.by(Sort.Direction.DESC, "completedAt", "id");
 			default -> throw new PostException(ErrorCode.INVALID_VALUE);
