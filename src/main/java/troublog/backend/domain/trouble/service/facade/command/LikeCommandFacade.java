@@ -23,6 +23,8 @@ import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
+import troublog.backend.global.common.constant.Domain;
+import troublog.backend.global.common.constant.EnvType;
 import troublog.backend.global.common.util.AlertSseUtil;
 
 @Service
@@ -43,7 +45,7 @@ public class LikeCommandFacade {
 	}
 
 	@Transactional
-	public LikeResDto postLike(Long postId, Long userId) {
+	public LikeResDto postLike(Long postId, Long userId, String clientEnvType) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
 		User user = userQueryService.findUserById(userId);
@@ -59,7 +61,9 @@ public class LikeCommandFacade {
 		likeCommandService.save(Like.createLike(user, post));
 
 		// 좋아요 알림 전송
-		Alert alert = AlertConverter.postLikesAlert(post.getUser(), user.getNickname());
+		String targetUrl = Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + "/user/community/" + post.getId();
+
+		Alert alert = AlertConverter.postLikesAlert(post.getUser(), user.getNickname(), targetUrl);
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
 		if (alertSseUtil.sendAlert(post.getUser().getId(), alertResDto)) {

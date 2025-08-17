@@ -10,6 +10,8 @@ public record AlertResDto(
 	String message,
 	String alertType,
 	boolean isRead,
+
+	String targetUrl,
 	Long userId
 ) {
 }
