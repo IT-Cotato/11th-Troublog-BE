@@ -64,6 +64,7 @@ public class PostConverter {
 			.commentCount(DEFAULT_COUNT)
 			.likeCount(DEFAULT_COUNT)
 			.isDeleted(DEFAULT_DELETE_STATUS)
+			.templateType(postReqDto.templateType())
 			.checklistError(JsonConverter.toJson(postReqDto.checklistError()))
 			.checklistReason(JsonConverter.toJson(postReqDto.checklistReason()));
 	}
