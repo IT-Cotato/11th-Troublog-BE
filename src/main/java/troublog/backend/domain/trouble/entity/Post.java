@@ -30,6 +30,7 @@ import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
+import troublog.backend.domain.trouble.enums.TemplateType;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.global.common.entity.BaseEntity;
 import troublog.backend.global.common.error.ErrorCode;
@@ -99,6 +100,10 @@ public class Post extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "star_rating")
 	private StarRating starRating;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "template_type")
+	private TemplateType templateType;
 
 	@Column(name = "checklist_error", columnDefinition = "JSON")
 	private String checklistError;
@@ -269,5 +274,10 @@ public class Post extends BaseEntity {
 		this.updateStarRating(StarRating.from(postReqDto.starRating()));
 		this.checklistError = JsonConverter.toJson(postReqDto.checklistError());
 		this.checklistReason = JsonConverter.toJson(postReqDto.checklistReason());
+	}
+
+	public void registerAsSummarized() {
+		this.status = PostStatus.SUMMARIZED;
+		this.isSummaryCreated = true;
 	}
 }
