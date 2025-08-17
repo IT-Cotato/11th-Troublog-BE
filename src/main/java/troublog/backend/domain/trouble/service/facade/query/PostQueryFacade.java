@@ -22,7 +22,7 @@ import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.converter.PostSummaryConverter;
 import troublog.backend.domain.trouble.dto.response.CombineResDto;
 import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
-import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
+import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
@@ -59,16 +59,18 @@ public class PostQueryFacade {
 	private final RecentPostQueryService recentPostQueryService;
 	private final PostSummaryQueryService postSummaryQueryService;
 
-	public Post findPostById(Long id, Long userId) {
+	public Post findPostEntityById(Long id, Long userId) {
 		Post post = postQueryService.findById(id);
 		PostFactory.validateAuthorized(userId, post);
 		return post;
 	}
 
-	public PostResDto findPostEntityById(Long id, Long userId) {
+	public PostDetailsResDto findPostById(Long id, Long userId) {
 		Post post = postQueryService.findById(id);
 		PostFactory.validateAuthorized(userId, post);
-		return PostConverter.toResponse(post);
+		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId(), userId);
+		boolean liked = likeQueryService.findByUserAndPost(userId, post.getId()).isPresent();
+		return PostConverter.toPostDetailsResponse(userInfo, post, liked);
 	}
 
 	public static List<ContentInfoDto> findContents(Post post) {
@@ -130,7 +132,7 @@ public class PostQueryFacade {
 		return posts.map(PostConverter::toResponse);
 	}
 
-	public Post findPostById(Long id) {
+	public Post findPostEntityById(Long id) {
 		return postQueryService.findById(id);
 	}
 
@@ -141,13 +143,13 @@ public class PostQueryFacade {
 		return posts.map(ListConverter::toAllTroubleListResDto);
 	}
 
-	public CommunityPostResDto findCommunityPostDetailsById(Long userId, Long postId) {
+	public PostDetailsResDto findCommunityPostDetailsById(Long userId, Long postId) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
 		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId(), userId);
 		boolean liked = likeQueryService.findByUserAndPost(userId, postId).isPresent();
 		recentPostCommandFacade.recordPostView(userId, postId);
-		return PostConverter.toCommunityDetailsResponse(userInfo, post, liked);
+		return PostConverter.toPostDetailsResponse(userInfo, post, liked);
 	}
 
 	public Page<CommunityListResDto> getCommunityPosts(Pageable pageable) {

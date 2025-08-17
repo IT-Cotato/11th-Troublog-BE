@@ -21,6 +21,7 @@ import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.response.CombineResDto;
+import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.dto.response.PostSummaryResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
@@ -57,11 +58,11 @@ public class PostQueryController {
 	@Operation(summary = "트러블슈팅 문서 상세 조회 API", description = "ID 값 기반 트러블슈팅 문서 상세 조회")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
-	public ResponseEntity<BaseResponse<PostResDto>> findPostDetailsOnly(
+	public ResponseEntity<BaseResponse<PostDetailsResDto>> findPostDetailsOnly(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
-		PostResDto response = postQueryFacade.findPostEntityById(postId, token.getUserId());
+		PostDetailsResDto response = postQueryFacade.findPostById(postId, token.getUserId());
 		return ResponseUtils.ok(response);
 	}
 

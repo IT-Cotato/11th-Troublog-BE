@@ -9,7 +9,7 @@ import troublog.backend.domain.user.dto.response.UserInfoResDto;
 
 
 @Builder
-public record CommunityPostResDto(
+public record PostDetailsResDto(
 	@Schema(description = "사용자 정보")
 	UserInfoResDto userInfoResDto,
 

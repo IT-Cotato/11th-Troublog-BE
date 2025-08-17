@@ -7,7 +7,7 @@ import java.util.List;
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
-import troublog.backend.domain.trouble.dto.response.CommunityPostResDto;
+import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.PostStatus;
@@ -92,8 +92,8 @@ public class PostConverter {
 			.build();
 	}
 
-	public CommunityPostResDto toCommunityDetailsResponse(UserInfoResDto userInfoResDto, Post post, boolean liked) {
-		return CommunityPostResDto.builder()
+	public PostDetailsResDto toPostDetailsResponse(UserInfoResDto userInfoResDto, Post post, boolean liked) {
+		return PostDetailsResDto.builder()
 			.userInfoResDto(userInfoResDto)
 			.id(post.getId())
 			.title(post.getTitle())

@@ -68,7 +68,7 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 	private SummarizedResDto performAiAnalysis(SummaryTask summaryTask, SummaryType summaryType) {
 		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.PREPROCESSING);
 		BeanOutputConverter<SummarizedResDto> converter = new BeanOutputConverter<>(SummarizedResDto.class);
-		Post post = postQueryFacade.findPostById(summaryTask.getPostId(), summaryTask.getUserId());
+		Post post = postQueryFacade.findPostEntityById(summaryTask.getPostId(), summaryTask.getUserId());
 		PromptTemplate promptTemplate = generatePromptTemplate(post, summaryType);
 		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.ANALYZING);
 		String aiResponse = callAiService(promptTemplate, converter);
