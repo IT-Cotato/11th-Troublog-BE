@@ -1,9 +1,11 @@
 package troublog.backend.global.common.constant;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.AuthException;
 
+@Getter
 @RequiredArgsConstructor
 public enum Domain {
 
@@ -15,8 +17,8 @@ public enum Domain {
 
 	public static String fromEnvType(EnvType envType) {
 		return switch (envType) {
-			case LOCAL -> LOCAL.domain;
-			case DEV -> DEV.domain;
+			case LOCAL -> LOCAL.getDomain();
+			case DEV -> DEV.getDomain();
 			default -> throw new AuthException(ErrorCode.WRONG_ENVIRONMENT);
 		};
 	}
