@@ -13,11 +13,13 @@ import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.SummaryType;
 
 public interface PostSummaryRepository extends JpaRepository<PostSummary, Long> {
+
+	@EntityGraph(attributePaths = {"post", "post.project"})
 	@Query("""
 		    select ps
 		      from PostSummary ps
 		     where ps.post.project.id = :projectId
-		       and ps.post.isDeleted = false
+		       and coalesce(ps.post.isDeleted, false) = false
 		       and (:status is null or ps.post.status = :status)  
 		       and (:summaryType is null or ps.summaryType = :summaryType)
 		""")

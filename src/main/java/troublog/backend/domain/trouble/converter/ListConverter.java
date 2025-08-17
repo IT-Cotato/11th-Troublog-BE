@@ -14,7 +14,7 @@ import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 public class ListConverter {
 
 	public TroubleListResDto toAllTroubleListResDto(Post post) {
-		List<PostSummaryResDto> summaries = null;
+		List<PostSummaryResDto> summaries = List.of();
 
 		if (post.getStatus() == PostStatus.SUMMARIZED) {
 			summaries = post.getPostSummaries().stream()
@@ -51,7 +51,7 @@ public class ListConverter {
 			.error(PostQueryFacade.findErrorTag(postSummary.getPost()))
 			.techs(PostQueryFacade.findTopTechStackTags(postSummary.getPost()))
 			.isVisible(postSummary.getPost().getIsVisible())
-			.summaryType(postSummary.getSummaryType().toString())
+			.summaryType(postSummary.getSummaryType().name())
 			.build();
 	}
 }
