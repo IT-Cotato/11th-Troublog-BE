@@ -21,7 +21,7 @@ import troublog.backend.domain.trouble.converter.ListConverter;
 import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.converter.PostSummaryConverter;
 import troublog.backend.domain.trouble.dto.response.CombineResDto;
-import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
+import troublog.backend.domain.trouble.dto.response.PostCardResDto;
 import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
@@ -122,18 +122,23 @@ public class PostQueryFacade {
 			.toList();
 	}
 
-	public Page<PostResDto> searchUserPostByKeyword(Long userId, String keyword, Pageable pageable) {
+	public Page<PostCardResDto> searchUserPostByKeyword(Long userId, String keyword, Pageable pageable) {
 		Page<Post> posts = postQueryService.searchUserPostByKeyword(userId, keyword, pageable);
-		return posts.map(PostConverter::toResponse);
+		Set<Long> userIds = posts.getContent().stream()
+			.map(post -> post.getUser().getId())
+			.collect(Collectors.toSet());
+
+		Map<Long, PostCardUserInfoResDto> userInfoMap = userFacade.getUserInfoMap(userIds);
+
+		return posts.map(post -> {
+			PostCardUserInfoResDto userInfo = userInfoMap.get(post.getUser().getId());
+			return PostConverter.toCommunityListResponse(userInfo, post);
+		});
 	}
 
 	public Page<PostResDto> searchPostByKeyword(String keyword, Pageable pageable) {
 		Page<Post> posts = postQueryService.searchPostByKeyword(keyword, pageable);
 		return posts.map(PostConverter::toResponse);
-	}
-
-	public Post findPostEntityById(Long id) {
-		return postQueryService.findById(id);
 	}
 
 	public Page<TroubleListResDto> getAllTroubles(Long userId, Pageable pageable) {
@@ -152,7 +157,7 @@ public class PostQueryFacade {
 		return PostConverter.toPostDetailsResponse(userInfo, post, liked);
 	}
 
-	public Page<CommunityListResDto> getCommunityPosts(Pageable pageable) {
+	public Page<PostCardResDto> getCommunityPosts(Pageable pageable) {
 		Page<Post> posts = postQueryService.getCommunityPosts(pageable);
 
 		Set<Long> userIds = posts.getContent().stream()

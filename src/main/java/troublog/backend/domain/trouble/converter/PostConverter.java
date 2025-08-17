@@ -6,7 +6,7 @@ import java.util.List;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
-import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
+import troublog.backend.domain.trouble.dto.response.PostCardResDto;
 import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.entity.Post;
@@ -108,8 +108,8 @@ public class PostConverter {
 			.build();
 	}
 
-	public CommunityListResDto toCommunityListResponse(PostCardUserInfoResDto postCardUserInfoResDto, Post post) {
-		return CommunityListResDto.builder()
+	public PostCardResDto toCommunityListResponse(PostCardUserInfoResDto postCardUserInfoResDto, Post post) {
+		return PostCardResDto.builder()
 			.postCardUserInfoResDto(postCardUserInfoResDto)
 			.id(post.getId())
 			.title(post.getTitle())

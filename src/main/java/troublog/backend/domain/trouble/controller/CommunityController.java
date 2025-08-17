@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.request.CommentReqDto;
 import troublog.backend.domain.trouble.dto.response.CommentDetailResDto;
 import troublog.backend.domain.trouble.dto.response.CommentResDto;
-import troublog.backend.domain.trouble.dto.response.CommunityListResDto;
+import troublog.backend.domain.trouble.dto.response.PostCardResDto;
 import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.dto.response.LikeResDto;
@@ -69,7 +69,7 @@ public class CommunityController {
 	@Operation(summary = "트러블슈팅 게시글 목록 조회 API", description = "공개된 모든 트러블슈팅 게시글을 페이지네이션으로 조회합니다. 정렬 기준을 지정할 수 있습니다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PageResponse.class)))
-	public ResponseEntity<PageResponse<CommunityListResDto>> getCommunityPosts(
+	public ResponseEntity<PageResponse<PostCardResDto>> getCommunityPosts(
 		@RequestParam(defaultValue = "1") @Min(1) int page,
 		@RequestParam(defaultValue = "10") @Min(1) int size,
 		@Schema(
@@ -80,7 +80,7 @@ public class CommunityController {
 		@RequestParam(defaultValue = "latest") String sortBy
 	) {
 		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
-		Page<CommunityListResDto> response = postQueryFacade.getCommunityPosts(pageable);
+		Page<PostCardResDto> response = postQueryFacade.getCommunityPosts(pageable);
 		return ResponseUtils.page(response);
 	}
 

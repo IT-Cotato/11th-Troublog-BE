@@ -7,7 +7,7 @@ import lombok.Builder;
 import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 
 @Builder
-public record CommunityListResDto(
+public record PostCardResDto(
 	@Schema(description = "사용자 정보")
 	PostCardUserInfoResDto postCardUserInfoResDto,
 
