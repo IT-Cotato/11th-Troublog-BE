@@ -16,6 +16,9 @@ public record TroubleListResDto(
 	@Schema(description = "요약본 id")
 	Long postSummaryId,
 
+	@Schema(description = "요약 타입")
+	String summaryType,
+
 	@Schema(description = "프로젝트 id")
 	Long projectId,
 
@@ -43,8 +46,8 @@ public record TroubleListResDto(
 	@Schema(description = "작성 상태")
 	String status,
 
-	@Schema(description = "요약 방식")
-	String summaryType
+	@Schema(description = "요약본 리스트")
+	List<PostSummaryResDto> summaries
 
 ) {
 }

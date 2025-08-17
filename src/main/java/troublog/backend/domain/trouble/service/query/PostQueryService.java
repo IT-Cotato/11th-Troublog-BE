@@ -17,11 +17,12 @@ import troublog.backend.domain.trouble.converter.ListConverter;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostSummary;
-import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.SortType;
+import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
 import troublog.backend.domain.trouble.repository.PostRepository;
+import troublog.backend.domain.trouble.repository.PostSummaryRepository;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
 
@@ -32,6 +33,7 @@ import troublog.backend.global.common.error.exception.PostException;
 public class PostQueryService {
 
 	private final PostRepository postRepository;
+	private final PostSummaryRepository postSummaryRepository;
 
 	public Post findById(Long id) {
 		log.info("[Post] 트러블슈팅 조회:: postId={}", id);
@@ -116,9 +118,9 @@ public class PostQueryService {
 	) {
 		SummaryType st = (summaryType == SummaryType.NONE) ? null : summaryType;
 		List<PostSummary> posts = (sort == SortType.IMPORTANT)
-			? postRepository.findByProjectSummarizedImportant(projectId, PostStatus.SUMMARIZED, st)
-			: postRepository.findByProjectSummarized(projectId, PostStatus.SUMMARIZED, st,
-			Sort.by(DESC, "createdAt", "id"));
+			? postSummaryRepository.findByProjectSummarizedImportant(projectId, PostStatus.SUMMARIZED, st)
+			: postSummaryRepository.findByProjectSummarized(projectId, PostStatus.SUMMARIZED, st,
+			Sort.by(DESC, "created_at", "id"));
 
 		if (posts.isEmpty())
 			return List.of();
