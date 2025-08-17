@@ -18,8 +18,8 @@ import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostSummary;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;
-import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.command.ContentCommandService;
+import troublog.backend.domain.trouble.service.command.PostCommandService;
 import troublog.backend.domain.trouble.service.command.PostTagCommandService;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostTagQueryService;
@@ -39,6 +39,7 @@ public class PostRelationFacade {
 	private final TagQueryService tagQueryService;
 	private final PostFactory postFactory;
 	private final ContentCommandService contentCommandService;
+	private final PostCommandService postCommandService;
 
 	public void establishRequireRelations(Post createdPost, Long userId, PostReqDto postReqDto) {
 		setUserRelations(createdPost, userId);
@@ -139,6 +140,6 @@ public class PostRelationFacade {
 	public void setPostSummaryRelation(Post post, PostSummary postSummary, SummaryTask summaryTask) {
 		summaryTask.updatePostSummaryId(postSummary.getId());
 		post.addPostSummary(postSummary);
-		post.updateStatus(PostStatus.SUMMARIZED);
+		post.registerAsSummarized();
 	}
 }

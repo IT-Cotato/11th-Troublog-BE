@@ -270,4 +270,9 @@ public class Post extends BaseEntity {
 		this.checklistError = JsonConverter.toJson(postReqDto.checklistError());
 		this.checklistReason = JsonConverter.toJson(postReqDto.checklistReason());
 	}
+
+	public void registerAsSummarized() {
+		this.status = PostStatus.SUMMARIZED;
+		this.isSummaryCreated = true;
+	}
 }
