@@ -69,6 +69,7 @@ public class UserConverter {
 		return UserProfileResDto.builder()
 			.userId(user.getId())
 			.nickname(user.getNickname())
+			.field(user.getField())
 			.githubUrl(user.getGithubUrl())
 			.bio(user.getBio())
 			.build();
