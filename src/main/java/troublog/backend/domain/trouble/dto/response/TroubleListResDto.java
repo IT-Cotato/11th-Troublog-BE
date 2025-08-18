@@ -25,6 +25,12 @@ public record TroubleListResDto(
 	@Schema(description = "트러블슈팅 제목")
 	String title,
 
+	@Schema(description = "게시글 소개")
+	String introduction,
+
+	@Schema(description = "별점", example = "1")
+	Integer starRating,
+
 	@Schema(description = "이미지 URL")
 	String imageUrl,
 
@@ -34,8 +40,11 @@ public record TroubleListResDto(
 	@Schema(description = "날짜")
 	LocalDateTime date,
 
-	@Schema(description = "중요도")
-	Integer starRating,
+	@Schema(description = "좋아요 수")
+	Integer likeCount,
+
+	@Schema(description = "댓글 수")
+	Integer commentCount,
 
 	@Schema(description = "에러 정보")
 	String error,
