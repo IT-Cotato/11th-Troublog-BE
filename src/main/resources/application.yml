@@ -1,5 +1,3 @@
-server:
-  forward-headers-strategy: framework
 spring:
   application:
     name: Troublog
@@ -67,3 +65,5 @@ cloud:
   aws:
     s3:
       bucket: ${BUCKET_ADDRESS}
+server:
+  forward-headers-strategy: framework
