@@ -1,6 +1,9 @@
 package troublog.backend.domain.auth.handler;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.springframework.security.core.Authentication;
@@ -15,11 +18,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.entity.UserStatus;
 import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.domain.user.service.command.UserCommandService;
+import troublog.backend.global.common.constant.Domain;
 import troublog.backend.global.common.constant.EnvType;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.util.JwtProvider;
@@ -54,11 +57,11 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		boolean isNewUser = user.getStatus() == UserStatus.INCOMPLETE;
 
 		if (isNewUser) {
-			// 신규 유저: 회원가입 데이터 반환 (일반 JSON 응답)
-			handleNewUserResponse(response, user);
+			// 신규 유저: 프론트엔드 회원가입 완료 페이지로 리다이렉트
+			handleNewUserRedirect(response, user, clientEnvType);
 		} else {
-			// 기존 유저: 로그인 로직과 동일하게 토큰 반환
-			handleExistingUserLogin(response, user, clientEnvType);
+			// 기존 유저: 프론트엔드 메인 페이지로 토큰과 함께 리다이렉트
+			handleExistingUserRedirect(response, user, clientEnvType);
 		}
 	}
 
@@ -118,24 +121,24 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 	}
 
 
-	private void handleNewUserResponse(HttpServletResponse response, User user) throws IOException {
+	private void handleNewUserRedirect(HttpServletResponse response, User user, String clientEnvType) throws IOException {
 		log.info("신규 카카오 유저 회원가입 완료: userId={}", user.getId());
 		
-		// 신규 유저 데이터 응답
-		Map<String, Object> userResponse = Map.of(
-			"id", user.getId(),
-			"email", user.getEmail(),
-			"nickname", user.getNickname(),
-			"loginType", user.getLoginType(),
-			"status", user.getStatus().name()
-		);
+		// 프론트엔드 도메인 가져오기
+		String frontendDomain = Domain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
 
-		response.setContentType("application/json;charset=UTF-8");
-		response.setStatus(HttpServletResponse.SC_OK);
-		response.getWriter().write(objectMapper.writeValueAsString(userResponse));
+		// 신규 유저 정보를 URL 파라미터로 전달
+		String redirectUrl = String.format("%s/auth/oauth-register?userId=%d&nickname=%s&loginType=%s&status=%s",
+			frontendDomain,
+			user.getId(),
+			URLEncoder.encode(user.getNickname(), StandardCharsets.UTF_8),
+			user.getLoginType(),
+			user.getStatus().name()
+		);
+		response.sendRedirect(redirectUrl);
 	}
 
-	private void handleExistingUserLogin(HttpServletResponse response, User user, String clientEnvType) throws IOException {
+	private void handleExistingUserRedirect(HttpServletResponse response, User user, String clientEnvType) throws IOException {
 		log.info("기존 카카오 유저 로그인: userId={}", user.getId());
 
 		// CustomAuthenticationToken 생성 (일반 로그인과 동일)
@@ -155,14 +158,22 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		// 리프레시 토큰 Set-Cookie로 설정
 		jwtProvider.setCookieRefreshToken(refreshToken, response);
 
-		// 로그인 응답 생성 (일반 로그인과 동일)
-		LoginResDto loginResDto = (profilesActive.equals(EnvType.LOCAL.getEnvType()) || clientEnvType.equals(EnvType.LOCAL.getEnvType()))
-			? LoginResDto.localReturn(user.getId(), accessToken, refreshToken, localToken)
-			: LoginResDto.nonLocalReturn(user.getId(), accessToken, refreshToken);
+		// 프론트엔드 도메인 가져오기
+		String frontendDomain = Domain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
+		
+		// 로그인 성공 시 토큰을 URL 파라미터로 전달하여 메인 페이지로 리다이렉트
+		String redirectUrl = String.format("%s/user/home?userId=%d&accessToken=%s",
+			frontendDomain,
+			user.getId(),
+			URLEncoder.encode(accessToken, StandardCharsets.UTF_8)
+		);
 
-		response.setContentType("application/json;charset=UTF-8");
-		response.setStatus(HttpServletResponse.SC_OK);
-		response.getWriter().write(objectMapper.writeValueAsString(loginResDto));
+		// 개발 환경인 경우 localToken도 추가
+		// if (profilesActive.equals(EnvType.LOCAL.getEnvType()) || clientEnvType.equals(EnvType.LOCAL.getEnvType())) {
+		// 	redirectUrl += "&localToken=" + URLEncoder.encode(localToken, StandardCharsets.UTF_8);
+		// }
+		
+		response.sendRedirect(redirectUrl);
 	}
 }
 
