@@ -35,6 +35,8 @@ public class ListConverter {
 			.error(PostQueryFacade.findErrorTag(post))
 			.techs(PostQueryFacade.findTopTechStackTags(post))
 			.isVisible(post.getIsVisible())
+			.starRating(
+				post.getStarRating() != null ? post.getStarRating().getValue() : null)
 			.summaries(summaries)
 			.build();
 	}
