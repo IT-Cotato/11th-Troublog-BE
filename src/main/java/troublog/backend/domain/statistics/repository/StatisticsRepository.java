@@ -1,5 +1,8 @@
 package troublog.backend.domain.statistics.repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,20 +12,28 @@ import troublog.backend.domain.statistics.dto.response.StatsResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.TagType;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Repository
 public interface StatisticsRepository extends JpaRepository<Post, Long> {
 
-	@Query(value = "SELECT DATE(p.completed_at) AS date, COUNT(*) AS count " +
-		"FROM posts p " +
-		"WHERE p.user_id = :userId AND p.completed_at BETWEEN :start AND :end " +
-		"GROUP BY DATE(p.completed_at) " +
-		"ORDER BY DATE(p.completed_at)", nativeQuery = true)
-	List<Object[]> findDailyPostCountByUser(@Param("userId") Long userId,
+	@Query(value =
+		"SELECT date, COUNT(DISTINCT post_id) AS count " +
+			"FROM (" +
+			"   SELECT p.post_id AS post_id, DATE(p.updated_at) AS date " +
+			"   FROM posts p " +
+			"   WHERE p.user_id = :userId AND p.updated_at BETWEEN :start AND :end " +
+			"   UNION " +
+			"   SELECT p.post_id AS post_id, DATE(p.completed_at) AS date " +
+			"   FROM posts p " +
+			"   WHERE p.user_id = :userId AND p.completed_at BETWEEN :start AND :end " +
+			") AS combined " +
+			"GROUP BY date " +
+			"ORDER BY date",
+		nativeQuery = true)
+	List<Object[]> findDailyPostCountByUser(
+		@Param("userId") Long userId,
 		@Param("start") LocalDateTime start,
-		@Param("end") LocalDateTime end);
+		@Param("end") LocalDateTime end
+	);
 
 	@Query("SELECT new troublog.backend.domain.statistics.dto.response.StatsResDto(t.name, COUNT(t)) " +
 		"FROM PostTag pt JOIN pt.post p JOIN pt.tag t " +
@@ -33,7 +44,8 @@ public interface StatisticsRepository extends JpaRepository<Post, Long> {
 		@Param("tagType") TagType tagType);
 
 	@Query(
-		"SELECT new troublog.backend.domain.statistics.dto.response.StatsResDto(CAST(ps.summaryType AS string), COUNT(ps)) " +
+		"SELECT new troublog.backend.domain.statistics.dto.response.StatsResDto(CAST(ps.summaryType AS string), COUNT(ps)) "
+			+
 			"FROM PostSummary ps " +
 			"WHERE ps.post.user.id = :userId " +
 			"GROUP BY CAST(ps.summaryType AS string) " +
