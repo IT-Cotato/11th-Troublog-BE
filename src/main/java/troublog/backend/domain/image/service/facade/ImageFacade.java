@@ -25,14 +25,14 @@ public class ImageFacade {
 
 	private final S3Uploader s3Uploader;
 
-	public CompletableFuture<String> uploadSingleImage(Long userId, MultipartFile image, String dirName) {
-		return s3Uploader.uploadSingleImage(userId, image, dirName)
+	public CompletableFuture<String> uploadSingleImage(MultipartFile image, String dirName) {
+		return s3Uploader.uploadSingleImage(image, dirName)
 			.orTimeout(UPLOAD_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 	}
 
-	public CompletableFuture<List<String>> uploadMultipleImages(Long userId, List<MultipartFile> images,
+	public CompletableFuture<List<String>> uploadMultipleImages(List<MultipartFile> images,
 		String dirName) {
-		return s3Uploader.uploadMultipleImages(userId, images, dirName)
+		return s3Uploader.uploadMultipleImages(images, dirName)
 			.orTimeout(UPLOAD_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 	}
 
@@ -46,28 +46,13 @@ public class ImageFacade {
 			.exceptionally(this::handleImageDeletionFailure);
 	}
 
-	public DeferredResult<ResponseEntity<BaseResponse<String>>> uploadSingleImageAsync(
-		Long userId, MultipartFile image, String dirName) {
-
-		DeferredResult<ResponseEntity<BaseResponse<String>>> deferredResult = new DeferredResult<>();
-
-		uploadSingleImage(userId, image, dirName)
-			.whenComplete((result, throwable) ->
-				handleUploadCompletion(deferredResult, result, throwable));
-
-		return deferredResult;
+	public String uploadSingleImageAsync(MultipartFile image, String dirName) {
+		return uploadSingleImage(image, dirName).join();
 	}
 
-	public DeferredResult<ResponseEntity<BaseResponse<List<String>>>> uploadMultipleImagesAsync(
-		Long userId, List<MultipartFile> images, String dirName) {
-
-		DeferredResult<ResponseEntity<BaseResponse<List<String>>>> deferredResult = new DeferredResult<>();
-
-		uploadMultipleImages(userId, images, dirName)
-			.whenComplete((result, throwable) ->
-				handleMultipleUploadCompletion(deferredResult, result, throwable));
-
-		return deferredResult;
+	public List<String> uploadMultipleImagesAsync(
+		List<MultipartFile> images, String dirName) {
+		return uploadMultipleImages(images, dirName).join();
 	}
 
 	private Void handleImageDeletionFailure(Throwable throwable) {
