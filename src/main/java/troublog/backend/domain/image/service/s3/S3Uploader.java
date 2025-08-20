@@ -30,7 +30,7 @@ public class S3Uploader {
 	private static final String AWS_S3_DOMAIN = "amazonaws.com/";
 	private static final String PATH_SEPARATOR = "/";
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-	public static final String POST_DIR_NAME = "/post/";
+	public static final String POST_DIR_NAME = "test/post/";
 
 	private final Executor imageExecutor;
 	private final S3Template s3Template;
@@ -41,14 +41,13 @@ public class S3Uploader {
 	/**
 	 * 단일 이미지 파일을 AWS S3에 비동기적으로 업로드합니다.
 	 *
-	 * @param userId  사용자 ID
 	 * @param file    업로드할 MultipartFile 객체
 	 * @param dirName S3에 업로드될 디렉토리 이름 (선택적, null이면 자동 생성)
 	 * @return 업로드된 파일의 S3 URL을 포함하는 CompletableFuture
 	 * @throws ImageException 파일이 유효하지 않거나 업로드 실패 시 발생
 	 */
-	public CompletableFuture<String> uploadSingleImage(Long userId, MultipartFile file, String dirName) {
-		String finalDirName = createDirectoryName(userId, dirName);
+	public CompletableFuture<String> uploadSingleImage(MultipartFile file, String dirName) {
+		String finalDirName = createDirectoryName(dirName);
 
 		return CompletableFuture.supplyAsync(
 				() -> {
@@ -67,17 +66,16 @@ public class S3Uploader {
 	/**
 	 * 여러 이미지 파일을 AWS S3에 비동기적으로 업로드합니다.
 	 *
-	 * @param userId   사용자 ID
 	 * @param fileList 업로드할 MultipartFile 객체 목록
 	 * @param dirName  S3에 업로드될 디렉토리 이름 (선택적, null이면 자동 생성)
 	 * @return 업로드된 모든 파일의 S3 URL 목록을 포함하는 CompletableFuture
 	 * @throws ImageException 파일 목록이 유효하지 않거나 업로드 실패 시 발생
 	 */
-	public CompletableFuture<List<String>> uploadMultipleImages(Long userId, List<MultipartFile> fileList,
+	public CompletableFuture<List<String>> uploadMultipleImages(List<MultipartFile> fileList,
 		String dirName) {
 		ImageValidator.validateFileList(fileList);
 
-		String finalDirName = createDirectoryName(userId, dirName);
+		String finalDirName = createDirectoryName(dirName);
 
 		List<CompletableFuture<String>> uploadFutures = fileList.stream()
 			.map(file -> uploadSingleFileInternal(file, finalDirName))
@@ -220,11 +218,10 @@ public class S3Uploader {
 	/**
 	 * userId와 오늘 날짜를 기반으로 디렉토리 이름을 생성합니다.
 	 *
-	 * @param userId        사용자 ID
 	 * @param customDirName 사용자 지정 디렉토리 이름 (선택적)
 	 * @return 생성된 디렉토리 이름 (형식: userId-YYYY-MM-DD 또는 customDirName)
 	 */
-	private String createDirectoryName(Long userId, String customDirName) {
+	private String createDirectoryName(String customDirName) {
 		// 사용자가 지정한 디렉토리 이름이 있으면 그대로 사용
 		if (StringUtils.hasText(customDirName)) {
 			return customDirName;
@@ -232,7 +229,7 @@ public class S3Uploader {
 
 		// userId와 오늘 날짜로 디렉토리 이름 생성
 		String todayDate = LocalDate.now().format(DATE_FORMATTER);
-		String generatedDirName = userId + POST_DIR_NAME + todayDate;
+		String generatedDirName = POST_DIR_NAME + todayDate;
 
 		log.debug("[S3] 자동 생성된 디렉토리: {}", generatedDirName);
 		return generatedDirName;
