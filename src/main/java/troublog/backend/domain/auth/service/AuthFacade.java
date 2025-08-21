@@ -152,7 +152,7 @@ public class AuthFacade {
 			Alert alert = AlertConverter.postTroubleshootingAlert(user, writingCount, targetUrl);
 			AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
-			if(alertSseUtil.sendAlert(user.getId(), alertResDto)) {
+			if (alertSseUtil.sendAlert(user.getId(), alertResDto)) {
 				alert.markAsSent();
 			}
 
@@ -199,13 +199,25 @@ public class AuthFacade {
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
 
+		User user = userQueryService.findUserById(oAuth2RegisterReqDto.userId());
+
 		// 닉네임 중복 체크
-		boolean isDuplicatedNickname = userQueryService.existsByNickname(oAuth2RegisterReqDto.nickname());
+		boolean isDuplicatedNickname = false;
+
+		// 카카오 닉네임과 임시저장된 유저 닉네임 비교
+		if (oAuth2RegisterReqDto.kakaoNickname().equals(user.getNickname())) {
+			// 유저가 입력한 닉네임의 중복여부 체크
+			if (!oAuth2RegisterReqDto.nickname().equals(user.getNickname())) {
+				isDuplicatedNickname = userQueryService.existsByNickname(oAuth2RegisterReqDto.nickname());
+			}
+		} else {
+			throw new UserException(ErrorCode.USER_INVALID_NICKNAME);
+		}
+
 		if (isDuplicatedNickname) {
 			throw new UserException(ErrorCode.DUPLICATED_NICKNAME);
 		}
 
-		User user = userQueryService.findUserById(oAuth2RegisterReqDto.userId());
 		user.updateOAuth2Info(oAuth2RegisterReqDto.nickname(), oAuth2RegisterReqDto.field(), oAuth2RegisterReqDto.bio(),
 			oAuth2RegisterReqDto.githubUrl());
 

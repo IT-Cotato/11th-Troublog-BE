@@ -14,7 +14,12 @@ public record OAuth2RegisterReqDto(
 	Long userId,
 
 	@NotBlank
-	@Schema(description = "닉네임")
+	@Schema(description = "카카오 닉네임")
+	@JsonProperty("kakaoNickname")
+	String kakaoNickname,
+
+	@NotBlank
+	@Schema(description = "사용자 입력 닉네임")
 	@JsonProperty("nickname")
 	String nickname,
 
