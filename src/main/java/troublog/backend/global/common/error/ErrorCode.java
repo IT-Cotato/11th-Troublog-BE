@@ -41,6 +41,7 @@ public enum ErrorCode {
 	USER_NOT_FOLLOWED(HttpStatus.BAD_REQUEST, "U-009", "팔로우하지 않은 유저입니다."),
 	MISSING_USER(HttpStatus.BAD_REQUEST, "U-0010", "사용자 정보가 누락되었습니다."),
 	USER_STATUS_INVALID(HttpStatus.BAD_REQUEST, "U-0011", "유효하지 않은 유저 상태입니다."),
+	USER_INVALID_NICKNAME(HttpStatus.BAD_REQUEST, "U-0012", "유효하지 않은 닉네임입니다."),
 
 	/**
 	 * Alert Error
