@@ -14,11 +14,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.project.dto.response.ProjectDetailResDto;
 import troublog.backend.domain.project.entity.Project;
-import troublog.backend.domain.project.enums.ProjectPostStatus;
 import troublog.backend.domain.project.service.query.ProjectQueryService;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
-import troublog.backend.domain.trouble.enums.SummaryType;
+import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.SortType;
+import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 
@@ -44,15 +44,16 @@ public class ProjectQueryFacade {
 		return projectQueryService.getAllProjects(userId, pageable);
 	}
 
-	public List<TroubleListResDto> getProjectTroubles(Long userId, Long projectId, ProjectPostStatus status,
+	public List<TroubleListResDto> getProjectTroubles(Long userId, Long projectId, PostStatus status,
 		SortType sort,
 		VisibilityType visibility, SummaryType summaryType) {
 		Project project = projectQueryService.findById(projectId);
 		validateProjectAuthorized(userId, project);
 
 		return switch (status) {
-			case ProjectPostStatus.COMPLETED -> postQueryService.getCompletedTroubles(projectId, sort, visibility);
-			case ProjectPostStatus.SUMMARIZED -> postQueryService.getSummarizedTroubles(projectId, sort, summaryType);
+			case PostStatus.WRITING, PostStatus.COMPLETED ->
+				postQueryService.getWritingAndCompletedTroubles(projectId, sort, visibility, status);
+			case PostStatus.SUMMARIZED -> postQueryService.getSummarizedTroubles(projectId, sort, summaryType);
 		};
 	}
 }

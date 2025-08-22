@@ -97,17 +97,22 @@ public class PostQueryService {
 		return page;
 	}
 
-	public List<TroubleListResDto> getCompletedTroubles(
-		Long projectId, SortType sort, VisibilityType visibility) {
+	public List<TroubleListResDto> getWritingAndCompletedTroubles(
+		Long projectId, SortType sort, VisibilityType visibility, PostStatus status) {
 		Boolean visible = mapVisibility(visibility);
 		List<Post> posts = (sort == SortType.IMPORTANT)
-			? postRepository.findByProjectCompletedImportant(projectId, PostStatus.COMPLETED, visible)
-			: postRepository.findByProjectCompleted(projectId, PostStatus.COMPLETED, visible,
-			Sort.by(DESC, "completedAt", "id"));
-		if (posts.isEmpty())
+			? postRepository.findByProjectImportant(projectId, status, visible)
+			: postRepository.findByProject(projectId, status, visible);
+		if (posts.isEmpty()) {
 			return List.of();
+		}
 
-		log.info("[Post] 작성완료된 트러블슈팅 문서 조회: postCount={}", posts.size());
+		if (status == PostStatus.WRITING) {
+			log.info("[Post] 작성중인 트러블슈팅 문서 조회: projectId={}, postCount={}", projectId, posts.size());
+		} else if (status == PostStatus.COMPLETED) {
+			log.info("[Post] 작성완료된 트러블슈팅 문서 조회: projectId={}, postCount={}", projectId, posts.size());
+		}
+
 		return posts.stream()
 			.map(ListConverter::toAllTroubleListResDto)
 			.toList();
@@ -150,5 +155,4 @@ public class PostQueryService {
 		log.info("[Post] 최근 열람 DB 조회: requested={}, found={}", ids.size(), posts.size());
 		return posts;
 	}
-
 }

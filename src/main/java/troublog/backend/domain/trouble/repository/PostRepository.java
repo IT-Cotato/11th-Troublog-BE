@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -118,12 +117,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		       and p.isDeleted = false
 		       and p.status = :status
 		       and (:visible is null or p.isVisible = :visible)
+			ORDER BY COALESCE(p.completedAt, p.updated_at) DESC, p.id DESC
 		""")
-	List<Post> findByProjectCompleted(
+	List<Post> findByProject(
 		@Param("projectId") Long projectId,
 		@Param("status") PostStatus status,
-		@Param("visible") Boolean visible,
-		Sort sort
+		@Param("visible") Boolean visible
 	);
 
 	@Query("""
@@ -133,18 +132,18 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		       and p.isDeleted = false
 		       and p.status = :status
 		       and (:visible is null or p.isVisible = :visible)
-		     order by
-		       case ORDINAL(p.starRating)
-		         when 5 then 5
-		         when 4 then 4
-		         when 3 then 3
-		         when 2 then 2
-		         when 1 then 1
-		         else 0
-		       end desc,
+		    order by
+		  case
+		    when p.starRating = troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS  then 5
+		    when p.starRating = troublog.backend.domain.trouble.enums.StarRating.FOUR_STARS  then 4
+		    when p.starRating = troublog.backend.domain.trouble.enums.StarRating.THREE_STARS then 3
+		    when p.starRating = troublog.backend.domain.trouble.enums.StarRating.TWO_STARS   then 2
+		    when p.starRating = troublog.backend.domain.trouble.enums.StarRating.ONE_STAR    then 1
+		    else 0
+		  end desc,
 		       p.id desc
 		""")
-	List<Post> findByProjectCompletedImportant(
+	List<Post> findByProjectImportant(
 		@Param("projectId") Long projectId,
 		@Param("status") PostStatus status,
 		@Param("visible") Boolean visible

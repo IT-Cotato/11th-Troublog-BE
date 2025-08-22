@@ -23,10 +23,10 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.project.dto.request.ProjectReqDto;
 import troublog.backend.domain.project.dto.response.ProjectDetailResDto;
 import troublog.backend.domain.project.dto.response.ProjectResDto;
-import troublog.backend.domain.project.enums.ProjectPostStatus;
 import troublog.backend.domain.project.service.facade.ProjectCommandFacade;
 import troublog.backend.domain.project.service.facade.ProjectQueryFacade;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
+import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
@@ -100,7 +100,7 @@ public class ProjectController {
 	public ResponseEntity<BaseResponse<List<TroubleListResDto>>> getProjectTroubles(
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable Long projectId,
-		@RequestParam ProjectPostStatus status,
+		@RequestParam PostStatus status,
 		@RequestParam(defaultValue = "LATEST") SortType sort,
 		@RequestParam(required = false) VisibilityType visibility,
 		@RequestParam(required = false) SummaryType summaryType
