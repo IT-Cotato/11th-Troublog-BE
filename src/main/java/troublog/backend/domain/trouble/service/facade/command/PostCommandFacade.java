@@ -44,8 +44,7 @@ public class PostCommandFacade {
 		Post foundPost = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
 		postRelationFacade.updateRelationsIfChanged(reqDto, foundPost);
-		Post savedPost = postCommandService.save(foundPost);
-		return PostConverter.toResponse(savedPost);
+		return PostConverter.toResponse(foundPost);
 	}
 
 	public void softDeletePost(Long userId, Long postId) {
