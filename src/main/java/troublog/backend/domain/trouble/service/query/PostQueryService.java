@@ -97,7 +97,7 @@ public class PostQueryService {
 		return page;
 	}
 
-	public List<TroubleListResDto> getWritingAndCompletedTroubles(
+	public List<TroubleListResDto> getProjectTroublesByStatus(
 		Long projectId, SortType sort, VisibilityType visibility, PostStatus status) {
 		Boolean visible = mapVisibility(visibility);
 		List<Post> posts = (sort == SortType.IMPORTANT)
@@ -107,11 +107,7 @@ public class PostQueryService {
 			return List.of();
 		}
 
-		if (status == PostStatus.WRITING) {
-			log.info("[Post] 작성중인 트러블슈팅 문서 조회: projectId={}, postCount={}", projectId, posts.size());
-		} else if (status == PostStatus.COMPLETED) {
-			log.info("[Post] 작성완료된 트러블슈팅 문서 조회: projectId={}, postCount={}", projectId, posts.size());
-		}
+		log.info("[Post] {} 트러블슈팅 문서 조회: projectId={}, postCount={}", status, projectId, posts.size());
 
 		return posts.stream()
 			.map(ListConverter::toAllTroubleListResDto)

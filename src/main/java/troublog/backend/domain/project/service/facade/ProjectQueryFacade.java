@@ -52,7 +52,7 @@ public class ProjectQueryFacade {
 
 		return switch (status) {
 			case PostStatus.WRITING, PostStatus.COMPLETED ->
-				postQueryService.getWritingAndCompletedTroubles(projectId, sort, visibility, status);
+				postQueryService.getProjectTroublesByStatus(projectId, sort, visibility, status);
 			case PostStatus.SUMMARIZED -> postQueryService.getSummarizedTroubles(projectId, sort, summaryType);
 		};
 	}

@@ -95,8 +95,8 @@ public class ProjectController {
 
 	@GetMapping("/{projectId}/troubles")
 	@Operation(summary = "프로젝트 내 트러블슈팅 목록 조회 API", description =
-		"작성 완료(COMPLETED)/요약 완료(SUMMARIZED) 상태를 포함한 다양한 조건을 필터링해 조회합니다."
-			+ "작성 완료 - visibility / 요약 완료 - summaryType 에 대해 필터링 가능합니다. ")
+		"작성 중(WRITING)/작성 완료(COMPLETED)/요약 완료(SUMMARIZED) 상태를 포함한 다양한 조건을 필터링해 조회합니다."
+			+ "작성 중/작성 완료 - visibility / 요약 완료 - summaryType 에 대해 필터링 가능합니다. ")
 	public ResponseEntity<BaseResponse<List<TroubleListResDto>>> getProjectTroubles(
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable Long projectId,
