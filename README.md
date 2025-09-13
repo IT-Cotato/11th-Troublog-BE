@@ -1,6 +1,6 @@
 <div align="center">
 
-# <img src="/src/main/resources/docs/images/icon.png" width="32" height="32" alt="Troublog Icon"/> Troublog BE
+# <img src="src/main/resources/docs/images/icon.png" width="32" height="32" alt="Troublog Icon"/> Troublog BE
 
 <!--배지-->
 ![Java](https://img.shields.io/badge/java-21-007396?style=flat&logo=java&logoColor=white)
@@ -21,41 +21,42 @@
 
 <!--프로젝트 대문 이미지-->
 
-![Troublog Banner](/src/main/resources/docs/images/banner.png)
+![Troublog Banner](src/main/resources/docs/images/banner.png)
 
 ## 📋 목차
 
 ### 🔍 프로젝트 소개
-- [📖 프로젝트 개요](#-프로젝트-개요)
-  - [✨ 주요 기능](#-주요-기능)
-  - [🖥️ 서비스 화면](#-서비스-화면)
+- [📖 프로젝트 개요](#프로젝트-개요)
+  - [✨ 주요 기능](#주요-기능)
+  - [🖥️ 서비스 화면](#서비스-화면)
 
 ### 🛠️ 기술 정보  
-- [⚙️ 기술 스택 & 아키텍처](#-기술-스택--아키텍처)
-  - [📦 기술 스택](#-기술-스택)
-  - [🏗️ 시스템 아키텍처](#-시스템-아키텍처)
+- [⚙️ 기술 스택 & 아키텍처](#기술-스택--아키텍처)
+  - [📦 기술 스택](#기술-스택)
+  - [🏗️ 시스템 아키텍처](#시스템-아키텍처)
 
 ### 🚀 시작하기
-- [⭐ 설치 및 실행](#-설치-및-실행)
-  - [📋 필수 환경](#-필수-환경)
-  - [💾 설치 과정](#-설치-과정)
-  - [🔧 환경 설정](#-환경-설정)
-  - [▶️ 앱 실행](#-앱-실행)
+- [⭐ 설치 및 실행](#설치-및-실행)
+  - [📋 필수 환경](#필수-환경)
+  - [💾 설치 과정](#설치-과정)
+  - [🔧 환경 설정](#환경-설정)
+  - [▶️ 앱 실행](#앱-실행)
 
 ### 📚 사용 가이드
-- [📖 API 문서](#-api-문서)
+- [📖 API 문서](#api-문서)
 
 ### 🔧 문제 해결 & 정보
-- [❗ 자주 발생하는 문제](#-자주-발생하는-문제)
-- [📝 커밋 컨벤션](#-커밋-컨벤션)
+- [❗ 자주 발생하는 문제](#자주-발생하는-문제)
+- [📝 커밋 컨벤션](#커밋-컨벤션)
 
 ---
 
 # 📖 프로젝트 개요
 
-**Troublog**는 개발자의 트러블슈팅이 성장으로 이어지는 곳입니다. <br>
-개발하다가 겪은 버그나 에러를 혼자만 해결하고 끝내는 게 아니라, 다른 개발자들도 비슷한 문제를 겪었을 때 도움받을 수 있도록 경험을 체계적으로 기록하고 공유하는 트러블슈팅 플랫폼입니다.
-
+> _**Troublog**는 개발자의 트러블슈팅이 성장으로 이어지는 곳입니다._ <br>
+> 개발자들이 프로젝트 진행 중 발생하는 문제와 해결 과정을 체계적으로 기록, 
+> 관리하고 이를 이력서 및 포트폴리오에 활용할 수 있도록 지원하는 플랫폼으로 개발자들이 트러블 슈팅 경험을 통해 
+> 성장하고 유사한 문제 발생 시 빠르게 대처할 수 있는 환경을 제공하는 서비스 입니다. 
 ## ✨ 주요 기능
 
 - 🐛 **트러블슈팅 포스트 작성**: 문제 상황부터 해결까지의 과정을 단계별로 기록
@@ -72,12 +73,12 @@
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src="/src/main/resources/docs/images/10.png" width="400" alt="프로젝트별 관리"/>
+      <img src="src/main/resources/docs/images/10.png" width="400" alt="프로젝트별 관리"/>
       <br/><b>프로젝트별 트러블슈팅 관리</b><br/>
       프로젝트별 트러블슈팅 관리 및 보관
     </td>
     <td align="center" width="50%">
-      <img src="/src/main/resources/docs/images/11.png" width="400" alt="가이드라인 관리"/>
+      <img src="src/main/resources/docs/images/11.png" width="400" alt="가이드라인 관리"/>
       <br/><b>가이드라인 기반 관리</b><br/>
       가이드라인에 따른 트러블슈팅 관리
     </td>
@@ -87,17 +88,17 @@
 <table>
   <tr>
     <td align="center" width="33%">
-      <img src="/src/main/resources/docs/images/12.png" width="280" alt="AI 요약"/>
+      <img src="src/main/resources/docs/images/12.png" width="280" alt="AI 요약"/>
       <br/><b>AI 템플릿 요약</b><br/>
       AI를 이용한 템플릿 요약
     </td>
     <td align="center" width="33%">
-      <img src="/src/main/resources/docs/images/13.png" width="280" alt="커뮤니티"/>
+      <img src="src/main/resources/docs/images/13.png" width="280" alt="커뮤니티"/>
       <br/><b>커뮤니티 기능</b><br/>
       개발자 간 소통 및 지식 공유
     </td>
     <td align="center" width="34%">
-      <img src="/src/main/resources/docs/images/14.png" width="280" alt="통계 분석"/>
+      <img src="src/main/resources/docs/images/14.png" width="280" alt="통계 분석"/>
       <br/><b>트러블슈팅 분석</b><br/>
       트러블슈팅 분석 및 통계
     </td>
@@ -108,7 +109,10 @@
 
 # ⚙️ 기술 스택 & 아키텍처
 
+
 ## 📦 기술 스택
+
+---
 
 ### Backend Framework
 ![Java](https://img.shields.io/badge/Java%2021-ED8B00?style=for-the-badge&logo=java&logoColor=white)
@@ -138,8 +142,10 @@
 
 ## 🏗️ 시스템 아키텍처
 
+---
+
 <div align="center">
-  <img src="/src/main/resources/docs/images/architecture.png" width="700" alt="시스템 아키텍처"/>
+  <img src="src/main/resources/docs/images/architecture.png" width="700" alt="시스템 아키텍처"/>
   <br/><b>Troublog 시스템 아키텍처</b>
 </div>
 
@@ -159,6 +165,8 @@
 
 ## 📋 필수 환경
 
+---
+
 > **Warning**  
 > 프로젝트 실행 전에 반드시 아래 환경을 확인해주세요.
 
@@ -176,6 +184,8 @@ git --version     # Git 2.0 이상
 
 ## 💾 설치 과정
 
+---
+
 1. **Repository 클론**
 ```bash
 git clone https://github.com/IT-Cotato/11th-Troublog-BE.git
@@ -191,6 +201,8 @@ EXIT;
 ```
 
 ## 🔧 환경 설정
+
+---
 
 > **Note**  
 > 보안을 위해 실제 키 값들은 별도로 관리해주세요.
@@ -223,6 +235,8 @@ openai:
 
 ## ▶️ 앱 실행
 
+---
+
 **개발 모드 실행**
 ```bash
 # Gradle을 통한 개발 서버 실행
@@ -245,9 +259,14 @@ java -jar build/libs/troublog-*.jar --spring.profiles.active=prod
 
 # 📖 API 문서
 
-- 📖 **[Swagger UI](http://localhost:8080/swagger-ui.html)** - 
+---
+
+- 📖 **[API 명세서](https://troublog.shop/swagger-ui/index.html#/)** 
 
 ## 💡 핵심 기능 API
+
+---
+
 
 ### 🔐 인증 (JWT + OAuth 2.0)
 ```bash
@@ -277,16 +296,22 @@ POST /api/posts/{id}/like         # 좋아요/좋아요 취소
 POST /api/posts/{id}/comments     # 댓글 작성
 ```
 
-모든 API 엔드포인트와 상세 스펙은 **[API 명세서](docs/api/README.md)** 에서 확인하실 수 있습니다.
+모든 API 엔드포인트와 상세 스펙은 **[API 명세서](https://troublog.shop/swagger-ui/index.html#/)** 에서 확인하실 수 있습니다.
 
 ---
 
 # ❗ 자주 발생하는 문제
 
 ### 🔑 JWT Secret Key Missing
+
+---
+
 - **해결**: `application-local.yml`에 최소 256비트 `jwt.secret-key` 추가
 
 ### 🗄️ Database Connection Failed  
+
+---
+
 - **해결**: MySQL 서버 상태 및 연결 정보 확인
 ```bash
 systemctl status mysql  # Linux
@@ -294,14 +319,21 @@ net start mysql80       # Windows
 ```
 
 ### ☁️ S3 Upload Failed
-- **해결**: AWS IAM 사용자 S3 권한 확인 (`s3:PutObject`, `s3:GetObject`)
-
-### 🤖 OpenAI API Rate Limit
-- **해결**: API 키 사용량 확인 및 요청 빈도 조절
 
 ---
 
+- **해결**: AWS IAM 사용자 S3 권한 확인 (`s3:PutObject`, `s3:GetObject`)
+
+### 🤖 OpenAI API Rate Limit
+
+---
+
+- **해결**: API 키 사용량 확인 및 요청 빈도 조절
+
+
 # 📝 커밋 컨벤션
+
+---
 
 - ✨ `feat`: 새로운 기능 추가
 - 🐛 `fix`: 버그 수정 및 오류 해결  
@@ -315,6 +347,7 @@ net start mysql80       # Windows
 
 ## 🏢 BACKEND TEAM
 
+---
 <table>
   <tr>
     <td align="center" width="200px">
@@ -357,6 +390,8 @@ net start mysql80       # Windows
 
 # License
 
+---
+
 > 💡 이 프로젝트는 오픈소스 프로젝트로, MIT 라이선스 하에 자유롭게 사용하실 수 있습니다.
 
 ```
@@ -374,8 +409,6 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 ```
-
-자세한 라이선스 내용은 **[LICENSE](LICENSE)** 파일을 참고해주세요.
 
 ---
 
