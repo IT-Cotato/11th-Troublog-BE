@@ -26,37 +26,38 @@
 ## 📋 목차
 
 ### 🔍 프로젝트 소개
-- [📖 프로젝트 개요](#프로젝트-개요)
-  - [✨ 주요 기능](#주요-기능)
-  - [🖥️ 서비스 화면](#서비스-화면)
+- [📖 프로젝트 개요](#-프로젝트-개요)
+  - [✨ 주요 기능](#-주요-기능)
+  - [🖥️ 서비스 화면](#️-서비스-화면)
 
 ### 🛠️ 기술 정보  
-- [⚙️ 기술 스택 & 아키텍처](#기술-스택--아키텍처)
-  - [📦 기술 스택](#기술-스택)
-  - [🏗️ 시스템 아키텍처](#시스템-아키텍처)
+- [⚙️ 기술 스택 & 아키텍처](#️-기술-스택--아키텍처)
+  - [📦 기술 스택](#-기술-스택)
+  - [🏗️ 시스템 아키텍처](#️-시스템-아키텍처)
 
 ### 🚀 시작하기
-- [⭐ 설치 및 실행](#설치-및-실행)
-  - [📋 필수 환경](#필수-환경)
-  - [💾 설치 과정](#설치-과정)
-  - [🔧 환경 설정](#환경-설정)
-  - [▶️ 앱 실행](#앱-실행)
+- [⭐ 설치 및 실행](#-설치-및-실행)
+  - [📋 필수 환경](#-필수-환경)
+  - [💾 설치 과정](#-설치-과정)
+  - [🔧 환경 설정](#-환경-설정)
+  - [▶️ 앱 실행](#️-앱-실행)
 
 ### 📚 사용 가이드
-- [📖 API 문서](#api-문서)
+- [🔗 API 문서 및 예제](#-api-문서-및-예제)
 
 ### 🔧 문제 해결 & 정보
-- [❗ 자주 발생하는 문제](#자주-발생하는-문제)
-- [📝 커밋 컨벤션](#커밋-컨벤션)
-
----
+- [❗ 자주 발생하는 문제](#-자주-발생하는-문제)
+- [📝 커밋 컨벤션](#-커밋-컨벤션)
 
 # 📖 프로젝트 개요
 
-> _**Troublog**는 개발자의 트러블슈팅이 성장으로 이어지는 곳입니다._ <br>
-> 개발자들이 프로젝트 진행 중 발생하는 문제와 해결 과정을 체계적으로 기록, 
-> 관리하고 이를 이력서 및 포트폴리오에 활용할 수 있도록 지원하는 플랫폼으로 개발자들이 트러블 슈팅 경험을 통해 
-> 성장하고 유사한 문제 발생 시 빠르게 대처할 수 있는 환경을 제공하는 서비스 입니다. 
+> [!IMPORTANT]  
+> **Troublog**는 개발자의 트러블슈팅이 성장으로 이어지는 곳입니다.
+
+프로젝트를 진행하면서 마주치는 버그나 에러들, 너무나 소중한 경험이죠. 하지만 대부분 해결하고 나면 그냥 넘어가 버리는 경우가 많습니다. 
+
+Troublog는 이런 문제 해결 과정을 체계적으로 기록하고, 다른 개발자들과 공유할 수 있는 플랫폼입니다. 나의 문제 해결 경험이 누군가에게는 소중한 도움이 될 수 있으니까요. 
+
 ## ✨ 주요 기능
 
 - 🐛 **트러블슈팅 포스트 작성**: 문제 상황부터 해결까지의 과정을 단계별로 기록
@@ -70,49 +71,30 @@
 
 ## 🖥️ 서비스 화면
 
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <img src="src/main/resources/docs/images/10.png" width="400" alt="프로젝트별 관리"/>
-      <br/><b>프로젝트별 트러블슈팅 관리</b><br/>
-      프로젝트별 트러블슈팅 관리 및 보관
-    </td>
-    <td align="center" width="50%">
-      <img src="src/main/resources/docs/images/11.png" width="400" alt="가이드라인 관리"/>
-      <br/><b>가이드라인 기반 관리</b><br/>
-      가이드라인에 따른 트러블슈팅 관리
-    </td>
-  </tr>
-</table>
+<div align="center">
+  
+| 프로젝트별 트러블슈팅 관리 | 가이드라인 기반 관리 |
+|:---:|:---:|
+| <img src="src/main/resources/docs/images/10.png" width="450" alt="프로젝트별 관리"/> | <img src="src/main/resources/docs/images/11.png" width="450" alt="가이드라인 관리"/> |
+| 프로젝트별 트러블슈팅 관리 및 보관 | 가이드라인에 따른 트러블슈팅 관리 |
 
-<table>
-  <tr>
-    <td align="center" width="33%">
-      <img src="src/main/resources/docs/images/12.png" width="280" alt="AI 요약"/>
-      <br/><b>AI 템플릿 요약</b><br/>
-      AI를 이용한 템플릿 요약
-    </td>
-    <td align="center" width="33%">
-      <img src="src/main/resources/docs/images/13.png" width="280" alt="커뮤니티"/>
-      <br/><b>커뮤니티 기능</b><br/>
-      개발자 간 소통 및 지식 공유
-    </td>
-    <td align="center" width="34%">
-      <img src="src/main/resources/docs/images/14.png" width="280" alt="통계 분석"/>
-      <br/><b>트러블슈팅 분석</b><br/>
-      트러블슈팅 분석 및 통계
-    </td>
-  </tr>
-</table>
+</div>
 
----
+<div align="center">
+
+| AI 템플릿 요약 | 커뮤니티 기능 | 트러블슈팅 분석 |
+|:---:|:---:|:---:|
+| <img src="src/main/resources/docs/images/12.png" width="300" alt="AI 요약"/> | <img src="src/main/resources/docs/images/13.png" width="300" alt="커뮤니티"/> | <img src="src/main/resources/docs/images/14.png" width="300" alt="통계 분석"/> |
+| AI를 이용한 템플릿 요약 | 개발자 간 소통 및 지식 공유 | 트러블슈팅 분석 및 통계 |
+
+</div>
 
 # ⚙️ 기술 스택 & 아키텍처
 
-
 ## 📦 기술 스택
 
----
+> [!TIP]
+> 안정적이고 확장 가능한 백엔드 시스템을 위해 검증된 기술들로 구성했습니다.
 
 ### Backend Framework
 ![Java](https://img.shields.io/badge/Java%2021-ED8B00?style=for-the-badge&logo=java&logoColor=white)
@@ -149,7 +131,7 @@
   <br/><b>Troublog 시스템 아키텍처</b>
 </div>
 
-> **Note**  
+> [!NOTE]
 > 도메인 주도 설계(DDD)와 CQRS 패턴을 기반으로 한 확장 가능한 아키텍처를 적용했습니다.
 
 **주요 설계 원칙:**
@@ -167,7 +149,7 @@
 
 ---
 
-> **Warning**  
+> [!WARNING]
 > 프로젝트 실행 전에 반드시 아래 환경을 확인해주세요.
 
 **필수 환경:**
@@ -204,7 +186,7 @@ EXIT;
 
 ---
 
-> **Note**  
+> [!IMPORTANT]
 > 보안을 위해 실제 키 값들은 별도로 관리해주세요.
 
 `src/main/resources/application-local.yml` 파일을 생성하고 다음 설정을 추가하세요:
@@ -252,7 +234,7 @@ openai:
 java -jar build/libs/troublog-*.jar --spring.profiles.active=prod
 ```
 
-> **Note**  
+> [!NOTE]  
 > 애플리케이션이 성공적으로 실행되면 `http://localhost:8080`에서 확인할 수 있습니다.
 
 ---
