@@ -10,9 +10,9 @@
 ![GitHub Stars](https://img.shields.io/github/stars/IT-Cotato/11th-Troublog-BE)
 
 <!--프로젝트 버튼-->
-[![배포 링크][deploy-shield]][deploy-url] 
-[![API 문서][api-docs-shield]][api-docs-url] 
-[![이슈 신고][report-bug-shield]][report-bug-url] 
+[![배포 링크][deploy-shield]][deploy-url]
+[![API 문서][api-docs-shield]][api-docs-url]
+[![이슈 신고][report-bug-shield]][report-bug-url]
 [![기능 요청][request-feature-shield]][request-feature-url]
 
 ### ✨ 개발자의 트러블슈팅이 성장으로 이어지는 곳 ✨
@@ -26,26 +26,31 @@
 ## 📋 목차
 
 ### 🔍 프로젝트 소개
-- [📖 프로젝트 개요](#-프로젝트-개요)
-  - [✨ 주요 기능](#-주요-기능)
-  - [🖥️ 서비스 화면](#️-서비스-화면)
 
-### 🛠️ 기술 정보  
+- [📖 프로젝트 개요](#-프로젝트-개요)
+    - [✨ 주요 기능](#-주요-기능)
+    - [🖥️ 서비스 화면](#️-서비스-화면)
+
+### 🛠️ 기술 정보
+
 - [⚙️ 기술 스택 & 아키텍처](#️-기술-스택--아키텍처)
-  - [📦 기술 스택](#-기술-스택)
-  - [🏗️ 시스템 아키텍처](#️-시스템-아키텍처)
+    - [📦 기술 스택](#-기술-스택)
+    - [🏗️ 시스템 아키텍처](#️-시스템-아키텍처)
 
 ### 🚀 시작하기
+
 - [⭐ 설치 및 실행](#-설치-및-실행)
-  - [📋 필수 환경](#-필수-환경)
-  - [💾 설치 과정](#-설치-과정)
-  - [🔧 환경 설정](#-환경-설정)
-  - [▶️ 앱 실행](#️-앱-실행)
+    - [📋 필수 환경](#-필수-환경)
+    - [💾 설치 과정](#-설치-과정)
+    - [🔧 환경 설정](#-환경-설정)
+    - [▶️ 앱 실행](#️-앱-실행)
 
 ### 📚 사용 가이드
+
 - [🔗 API 문서 및 예제](#-api-문서-및-예제)
 
 ### 🔧 문제 해결 & 정보
+
 - [❗ 자주 발생하는 문제](#-자주-발생하는-문제)
 - [📝 커밋 컨벤션](#-커밋-컨벤션)
 
@@ -54,15 +59,16 @@
 > [!IMPORTANT]  
 > **Troublog**는 개발자의 트러블슈팅이 성장으로 이어지는 곳입니다.
 
-프로젝트를 진행하면서 마주치는 버그나 에러들, 너무나 소중한 경험이죠. 하지만 대부분 해결하고 나면 그냥 넘어가 버리는 경우가 많습니다. 
-
-Troublog는 이런 문제 해결 과정을 체계적으로 기록하고, 다른 개발자들과 공유할 수 있는 플랫폼입니다. 나의 문제 해결 경험이 누군가에게는 소중한 도움이 될 수 있으니까요. 
+프로젝트를 진행하면서 마주치는 버그나 에러들, 너무나 소중한 경험이죠. 하지만 대부분 해결하고 나면 그냥 넘어가 버리는 경우가 많습니다.
+개발자들이 프로젝트 진행 중 발생하는 문제와 해결 과정을 체계적으로 기록하고 관리할 수 있는 플랫폼이 있다면 어떨까요? 이런 경험들을 이력서나 포트폴리오에도 활용할 수 있고, 트러블슈팅 경험을 통해 성장할 수
+있겠죠.
+그리고 유사한 문제가 발생했을 때 빠르게 대처할 수 있는 환경을 제공하는 서비스라면 정말 유용할 것 같습니다. 나의 문제 해결 경험이 누군가에게는 소중한 도움이 될 수 있으니까요.
 
 ## ✨ 주요 기능
 
 - 🐛 **트러블슈팅 포스트 작성**: 문제 상황부터 해결까지의 과정을 단계별로 기록
 - 🏷️ **태그 시스템**: 기술 스택별, 문제 유형별 분류로 원하는 글을 빠르게 검색
-- ⭐ **평가 기능**: 다른 개발자들이 해결책의 유용성을 별점으로 평가 
+- ⭐ **평가 기능**: 다른 개발자들이 해결책의 유용성을 별점으로 평가
 - 👥 **팔로우 시스템**: 관심있는 개발자의 트러블슈팅 경험을 지속적으로 확인
 - 📊 **프로젝트별 관리**: 진행중인 프로젝트에서 발생한 문제들을 모아서 관리
 - ❤️ **좋아요 & 댓글**: 도움이 된 글에 반응하고 추가 정보나 의견 공유
@@ -72,20 +78,20 @@ Troublog는 이런 문제 해결 과정을 체계적으로 기록하고, 다른 
 ## 🖥️ 서비스 화면
 
 <div align="center">
-  
-| 프로젝트별 트러블슈팅 관리 | 가이드라인 기반 관리 |
-|:---:|:---:|
-| <img src="src/main/resources/docs/images/10.png" width="450" alt="프로젝트별 관리"/> | <img src="src/main/resources/docs/images/11.png" width="450" alt="가이드라인 관리"/> |
-| 프로젝트별 트러블슈팅 관리 및 보관 | 가이드라인에 따른 트러블슈팅 관리 |
+
+|                                가이드라인 기반 관리                                 |                                  AI 템플릿 요약                                  |
+|:--------------------------------------------------------------------------:|:---------------------------------------------------------------------------:|
+| <img src="src/main/resources/docs/images/11.png" width="450" alt="AI 요약"/> | <img src="src/main/resources/docs/images/12.png" width="450" alt="템플릿 요야"/> |
+|                             가이드라인에 따른 트러블슈팅 관리                             |                               AI를 이용한 템플릿 요약                                |
 
 </div>
 
 <div align="center">
 
-| AI 템플릿 요약 | 커뮤니티 기능 | 트러블슈팅 분석 |
-|:---:|:---:|:---:|
-| <img src="src/main/resources/docs/images/12.png" width="300" alt="AI 요약"/> | <img src="src/main/resources/docs/images/13.png" width="300" alt="커뮤니티"/> | <img src="src/main/resources/docs/images/14.png" width="300" alt="통계 분석"/> |
-| AI를 이용한 템플릿 요약 | 개발자 간 소통 및 지식 공유 | 트러블슈팅 분석 및 통계 |
+|                                프로젝트별 트러블슈팅 관리                                 |                                  커뮤니티 기능                                  |                                  트러블슈팅 분석                                  |
+|:-----------------------------------------------------------------------------:|:-------------------------------------------------------------------------:|:--------------------------------------------------------------------------:|
+| <img src="src/main/resources/docs/images/10.png" width="300" alt="프로젝트별 관리"/> | <img src="src/main/resources/docs/images/13.png" width="300" alt="커뮤니티"/> | <img src="src/main/resources/docs/images/14.png" width="300" alt="통계 분석"/> |
+|                              프로젝트별 트러블슈팅 관리 및 보관                              |                             개발자 간 소통 및 지식 공유                              |                               트러블슈팅 분석 및 통계                                |
 
 </div>
 
@@ -97,6 +103,7 @@ Troublog는 이런 문제 해결 과정을 체계적으로 기록하고, 다른 
 > 안정적이고 확장 가능한 백엔드 시스템을 위해 검증된 기술들로 구성했습니다.
 
 ### Backend Framework
+
 ![Java](https://img.shields.io/badge/Java%2021-ED8B00?style=for-the-badge&logo=java&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot%203.5.0-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![Spring Security](https://img.shields.io/badge/Spring%20Security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)
@@ -104,27 +111,29 @@ Troublog는 이런 문제 해결 과정을 체계적으로 기록하고, 다른 
 ![Spring AI](https://img.shields.io/badge/Spring%20AI-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
 
 ### Database & Storage
+
 ![MySQL](https://img.shields.io/badge/MySQL%208.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![AWS S3](https://img.shields.io/badge/AWS%20S3-569A31?style=for-the-badge&logo=amazons3&logoColor=white)
 
 ### Infrastructure & DevOps
+
 ![AWS EC2](https://img.shields.io/badge/AWS%20EC2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white)
 ![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
 
 ### Security & Authentication
+
 ![OAuth 2.0](https://img.shields.io/badge/OAuth%202.0-3423A6?style=for-the-badge&logo=auth0&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
 
 ### Development Tools
+
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
 ![CodeRabbit](https://img.shields.io/badge/CodeRabbit-FF6B6B?style=for-the-badge&logo=robot&logoColor=white)
 
 ## 🏗️ 시스템 아키텍처
-
----
 
 <div align="center">
   <img src="src/main/resources/docs/images/architecture.png" width="700" alt="시스템 아키텍처"/>
@@ -135,10 +144,11 @@ Troublog는 이런 문제 해결 과정을 체계적으로 기록하고, 다른 
 > 도메인 주도 설계(DDD)와 CQRS 패턴을 기반으로 한 확장 가능한 아키텍처를 적용했습니다.
 
 **주요 설계 원칙:**
+
 - **도메인별 패키지 분리**: trouble, user, auth, project, like, image, statistics
 - **계층형 아키텍처**: Controller → Service → Repository → Entity
 - **CQRS 패턴**: 명령과 조회 작업 분리
-- **Facade 패턴**: 복잡한 비즈니스 로직 통합 관리 
+- **Facade 패턴**: 복잡한 비즈니스 로직 통합 관리
 - **Soft Delete**: 데이터 안전성을 위한 논리 삭제
 
 ---
@@ -147,12 +157,11 @@ Troublog는 이런 문제 해결 과정을 체계적으로 기록하고, 다른 
 
 ## 📋 필수 환경
 
----
-
 > [!WARNING]
 > 프로젝트 실행 전에 반드시 아래 환경을 확인해주세요.
 
 **필수 환경:**
+
 - **Java 21** - [OpenJDK 21 다운로드](https://openjdk.org/projects/jdk/21/)
 - **MySQL 8.0** - [MySQL Community Server](https://dev.mysql.com/downloads/mysql/)
 - **Git** - 버전 관리 및 소스코드 클론
@@ -166,15 +175,15 @@ git --version     # Git 2.0 이상
 
 ## 💾 설치 과정
 
----
-
 1. **Repository 클론**
+
 ```bash
 git clone https://github.com/IT-Cotato/11th-Troublog-BE.git
 cd 11th-Troublog-BE
 ```
 
 2. **데이터베이스 준비**
+
 ```bash
 # MySQL 서버 시작 후 데이터베이스 생성
 mysql -u root -p
@@ -183,8 +192,6 @@ EXIT;
 ```
 
 ## 🔧 환경 설정
-
----
 
 > [!IMPORTANT]
 > 보안을 위해 실제 키 값들은 별도로 관리해주세요.
@@ -217,15 +224,15 @@ openai:
 
 ## ▶️ 앱 실행
 
----
-
 **개발 모드 실행**
+
 ```bash
 # Gradle을 통한 개발 서버 실행
 ./gradlew bootRun --args='--spring.profiles.active=local'
 ```
 
 **프로덕션 빌드 및 실행**
+
 ```bash
 # JAR 파일 빌드
 ./gradlew clean build
@@ -241,16 +248,12 @@ java -jar build/libs/troublog-*.jar --spring.profiles.active=prod
 
 # 📖 API 문서
 
----
-
-- 📖 **[API 명세서](https://troublog.shop/swagger-ui/index.html#/)** 
+- 📖 **[API 명세서](https://troublog.shop/swagger-ui/index.html#/)**
 
 ## 💡 핵심 기능 API
 
----
-
-
 ### 🔐 인증 (JWT + OAuth 2.0)
+
 ```bash
 POST /auth/login              # 일반 로그인
 POST /auth/oauth/google       # 구글 소셜 로그인  
@@ -258,6 +261,7 @@ POST /auth/refresh            # 토큰 갱신
 ```
 
 ### 📝 트러블슈팅 포스트
+
 ```bash
 GET  /api/posts               # 포스트 목록 조회
 POST /api/posts               # 새 포스트 작성
@@ -265,6 +269,7 @@ GET  /api/posts/{id}          # 상세 조회
 ```
 
 ### 🤖 AI 요약 기능 (핵심)
+
 ```bash
 POST /api/ai/summarize        # 트러블슈팅 내용 AI 요약
 POST /api/ai/suggest-tags     # AI 기반 태그 추천  
@@ -272,6 +277,7 @@ POST /api/ai/similar-posts    # 유사 포스트 추천
 ```
 
 ### 👥 소셜 기능
+
 ```bash
 POST /api/users/follow/{userId}    # 팔로우/언팔로우
 POST /api/posts/{id}/like         # 좋아요/좋아요 취소
@@ -286,15 +292,12 @@ POST /api/posts/{id}/comments     # 댓글 작성
 
 ### 🔑 JWT Secret Key Missing
 
----
-
 - **해결**: `application-local.yml`에 최소 256비트 `jwt.secret-key` 추가
 
-### 🗄️ Database Connection Failed  
-
----
+### 🗄️ Database Connection Failed
 
 - **해결**: MySQL 서버 상태 및 연결 정보 확인
+
 ```bash
 systemctl status mysql  # Linux
 net start mysql80       # Windows
@@ -302,84 +305,80 @@ net start mysql80       # Windows
 
 ### ☁️ S3 Upload Failed
 
----
-
 - **해결**: AWS IAM 사용자 S3 권한 확인 (`s3:PutObject`, `s3:GetObject`)
 
 ### 🤖 OpenAI API Rate Limit
 
----
-
 - **해결**: API 키 사용량 확인 및 요청 빈도 조절
-
 
 # 📝 커밋 컨벤션
 
----
-
 - ✨ `feat`: 새로운 기능 추가
-- 🐛 `fix`: 버그 수정 및 오류 해결  
+- 🐛 `fix`: 버그 수정 및 오류 해결
 - 📝 `docs`: 문서 개선 및 업데이트
 - 🔨 `refactor`: 코드 리팩토링 및 구조 개선
 - ⚡ `perf`: 성능 향상 및 최적화
 
-상세한 컨벤션은 **[트러블로그 BE 커밋 컨벤션](https://wary-hockey-4ec.notion.site/1cc5424182c7804fb249f2f4963eb4c6?source=copy_link)** 를 참고하세요.
+상세한 컨벤션은 **[트러블로그 BE 커밋 컨벤션](https://wary-hockey-4ec.notion.site/1cc5424182c7804fb249f2f4963eb4c6?source=copy_link)** 를
+참고하세요.
 
 ---
 
 ## 🏢 BACKEND TEAM
 
----
 <table>
   <tr>
-    <td align="center" width="200px">
+    <td align="center" width="250px">
       <a href="https://github.com/supsup-hae" target="_blank">
-        <img src="https://avatars.githubusercontent.com/u/54024213?v=4" alt="신윤섭" width="120" height="120" style="border-radius: 50%;" />
+        <img src="https://avatars.githubusercontent.com/u/54024213?v=4" alt="신윤섭" width="150" height="150" style="border-radius: 50%; border: 4px solid #e1e4e8; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+      </a>
+      <br><br>
+      <a href="https://github.com/supsup-hae" target="_blank" style="text-decoration: none;">
+        <h3 style="margin: 8px 0 4px 0; color: #0366d6;">신윤섭</h3>
+        <p style="margin: 4px 0; color: #586069; font-weight: 500;">🔧 Backend Team Leader</p>
+        <p style="margin: 0; color: #959da5; font-size: 14px;">@supsup-hae</p>
       </a>
     </td>
-    <td align="center" width="200px">
+    <td align="center" width="250px">
       <a href="https://github.com/jay91537" target="_blank">
-        <img src="https://avatars.githubusercontent.com/u/147643018?v=4" alt="임재현" width="120" height="120" style="border-radius: 50%;" />
+        <img src="https://avatars.githubusercontent.com/u/147643018?v=4" alt="임재현" width="150" height="150" style="border-radius: 50%; border: 4px solid #e1e4e8; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+      </a>
+      <br><br>
+      <a href="https://github.com/jay91537" target="_blank" style="text-decoration: none;">
+        <h3 style="margin: 8px 0 4px 0; color: #0366d6;">임재현</h3>
+        <p style="margin: 4px 0; color: #586069; font-weight: 500;">💻 Backend Developer</p>
+        <p style="margin: 0; color: #959da5; font-size: 14px;">@jay91537</p>
       </a>
     </td>
-    <td align="center" width="200px">
+    <td align="center" width="250px">
       <a href="https://github.com/marshmallowing" target="_blank">
-        <img src="https://avatars.githubusercontent.com/u/114673063?v=4" alt="Youjin" width="120" height="120" style="border-radius: 50%;" />
+        <img src="https://avatars.githubusercontent.com/u/114673063?v=4" alt="Youjin" width="150" height="150" style="border-radius: 50%; border: 4px solid #e1e4e8; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
       </a>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/supsup-hae" target="_blank">
-        <h3>신윤섭</h3>
-        <p>Backend Team Leader</p>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/jay91537" target="_blank">
-        <h3>임재현</h3>
-        <p>Backend Developer</p>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/marshmallowing" target="_blank">
-        <h3>Youjin</h3>
-        <p>Backend Developer</p>
+      <br><br>
+      <a href="https://github.com/marshmallowing" target="_blank" style="text-decoration: none;">
+        <h3 style="margin: 8px 0 4px 0; color: #0366d6;">Youjin</h3>
+        <p style="margin: 4px 0; color: #586069; font-weight: 500;">⚡ Backend Developer</p>
+        <p style="margin: 0; color: #959da5; font-size: 14px;">@marshmallowing</p>
       </a>
     </td>
   </tr>
 </table>
 
-# License
+# 📄 라이선스
 
----
+> [!NOTE]
+> 이 프로젝트는 오픈소스 프로젝트로, MIT 라이선스 하에 자유롭게 사용하실 수 있습니다.
+>
+> **주요 권한**: 상업적 사용, 수정, 배포, 개인적 사용 가능  
+> **조건**: 저작권 고지 및 라이선스 고지 포함  
+> **제한**: 책임 및 보증 없음
 
-> 💡 이 프로젝트는 오픈소스 프로젝트로, MIT 라이선스 하에 자유롭게 사용하실 수 있습니다.
+## MIT License
 
-```
+```text
 MIT License
 
-Copyright (c) 2025 IT-Cotato Troublog Team
+Copyright (c) 2024-2025 IT-Cotato Troublog Team
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -390,9 +389,15 @@ furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-```
 
----
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
 <div align="center">
 
@@ -405,13 +410,21 @@ copies or substantial portions of the Software.
 </div>
 
 <!--URL for Badges-->
+
 [deploy-shield]: https://img.shields.io/badge/-troublog.kr-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white
+
 [api-docs-shield]: https://img.shields.io/badge/-API%20문서-85EA2D?style=for-the-badge&logo=swagger&logoColor=white
+
 [report-bug-shield]: https://img.shields.io/badge/-🐞%20버그%20신고-F5A9A9?style=for-the-badge
+
 [request-feature-shield]: https://img.shields.io/badge/-✨%20기능%20요청-A9D0F5?style=for-the-badge
 
 <!--URL for Links-->
+
 [deploy-url]: https://troublog.vercel.app
+
 [api-docs-url]: https://troublog.shop/swagger-ui/index.html#/
+
 [report-bug-url]: https://github.com/IT-Cotato/11th-Troublog-BE/issues
+
 [request-feature-url]: https://github.com/IT-Cotato/11th-Troublog-BE/issues
