@@ -4,7 +4,7 @@ branches:
     prefix: 'hotfix/'
   - label: '*'
     prefix: 'feature/'
-commentMessage: '🌱 브랜치 ${branchName} 생성 완료!
+commentMessage: '🌱 브랜치 ${branchName} 생성 완료!'
 openDraftPR: false
 autoCloseIssue: true
 copyIssueLabelsToPR: true
