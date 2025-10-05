@@ -5,7 +5,7 @@ branches:
 
   - label: '*'
     prefix: 'feature/'
-commentMessage: '🌱 브랜치 ${branchName} 생성 완료! 이슈: ${issue.title}'
+commentMessage: '🌱 브랜치 ${branchName} 생성 완료!
 openDraftPR: false
 autoCloseIssue: true
 copyIssueLabelsToPR: true
