@@ -8,12 +8,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import troublog.backend.domain.policy.exception.PolicyException;
 import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.AiTaskException;
 import troublog.backend.global.common.error.exception.AlertException;
 import troublog.backend.global.common.error.exception.AuthException;
 import troublog.backend.global.common.error.exception.BusinessException;
 import troublog.backend.global.common.error.exception.PostException;
-import troublog.backend.global.common.error.exception.AiTaskException;
 import troublog.backend.global.common.error.exception.UserException;
 import troublog.backend.global.common.response.BaseResponse;
 import troublog.backend.global.common.response.ErrorResponse;
@@ -71,9 +72,17 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(AiTaskException.class)
-	public ResponseEntity<BaseResponse<ErrorResponse>> handleSummaryException(AiTaskException e,
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleAiTaskException(AiTaskException e,
 		HttpServletRequest request) {
-		LoggingUtil.logException("SummaryException 발생", e, request);
+		LoggingUtil.logException("AiTaskException 발생", e, request);
+		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
+		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
+	}
+
+	@ExceptionHandler(PolicyException.class)
+	public ResponseEntity<BaseResponse<ErrorResponse>> handlePolicyException(PolicyException e,
+		HttpServletRequest request) {
+		LoggingUtil.logException("PolicyException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
