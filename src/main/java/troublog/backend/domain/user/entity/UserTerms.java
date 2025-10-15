@@ -18,8 +18,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import troublog.backend.domain.policy.entity.Policy;
-import troublog.backend.domain.policy.exception.PolicyException;
+import troublog.backend.domain.terms.entity.Terms;
+import troublog.backend.domain.terms.exception.TermsException;
 import troublog.backend.global.common.entity.BaseEntity;
 import troublog.backend.global.common.error.ErrorCode;
 
@@ -28,10 +28,10 @@ import troublog.backend.global.common.error.ErrorCode;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user_policy", indexes = {
-	@Index(name = "idx_userpolicy_updated_at", columnList = "updated_at, is_agreed")
+@Table(name = "user_terms", indexes = {
+	@Index(name = "idx_userterms_updated_at", columnList = "updated_at, is_agreed")
 })
-public class UserPolicy extends BaseEntity {
+public class UserTerms extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,15 +44,17 @@ public class UserPolicy extends BaseEntity {
 
 	@NotNull
 	@Builder.Default
-	@OneToMany(mappedBy = "userPolicy", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Policy> policies = new ArrayList<>();
+	@OneToMany(mappedBy = "userTerms", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Terms> termsList = new ArrayList<>();
 
-	public void addPolicy(Policy policy) {
-		if (Objects.isNull(policy)) {
-			throw new PolicyException(ErrorCode.MISSING_POLICY);
+	// TODO: User 엔티티와의 연관관계 추가 필요
+
+	public void addTerms(Terms terms) {
+		if (Objects.isNull(terms)) {
+			throw new TermsException(ErrorCode.MISSING_TERMS);
 		}
-		this.policies.add(policy);
-		policy.assignUserPolicy(this);
+		this.termsList.add(terms);
+		terms.assignUserTerms(this);
 	}
 
 }

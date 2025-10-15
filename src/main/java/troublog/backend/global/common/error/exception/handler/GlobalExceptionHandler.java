@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.policy.exception.PolicyException;
+import troublog.backend.domain.terms.exception.TermsException;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.AiTaskException;
 import troublog.backend.global.common.error.exception.AlertException;
@@ -79,10 +79,10 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
 
-	@ExceptionHandler(PolicyException.class)
-	public ResponseEntity<BaseResponse<ErrorResponse>> handlePolicyException(PolicyException e,
+	@ExceptionHandler(TermsException.class)
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleTermsException(TermsException e,
 		HttpServletRequest request) {
-		LoggingUtil.logException("PolicyException 발생", e, request);
+		LoggingUtil.logException("TermsException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}

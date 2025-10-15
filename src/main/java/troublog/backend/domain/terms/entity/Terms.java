@@ -1,4 +1,4 @@
-package troublog.backend.domain.policy.entity;
+package troublog.backend.domain.terms.entity;
 
 import java.util.Objects;
 
@@ -20,9 +20,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import troublog.backend.domain.policy.enums.PolicyType;
-import troublog.backend.domain.policy.exception.PolicyException;
-import troublog.backend.domain.user.entity.UserPolicy;
+import troublog.backend.domain.terms.enums.TermsType;
+import troublog.backend.domain.terms.exception.TermsException;
+import troublog.backend.domain.user.entity.UserTerms;
 import troublog.backend.global.common.entity.BaseEntity;
 import troublog.backend.global.common.error.ErrorCode;
 
@@ -31,20 +31,20 @@ import troublog.backend.global.common.error.ErrorCode;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "policy", indexes = {
-	@Index(name = "idx_policy_title_body_version", columnList = "title, body, version")
+@Table(name = "terms", indexes = {
+	@Index(name = "idx_terms_title_body_version", columnList = "title, body, version")
 })
-public class Policy extends BaseEntity {
+public class Terms extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "policy_id")
+	@Column(name = "terms_id")
 	private Long id;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Column(name = "policy_type")
-	private PolicyType policyType;
+	@Column(name = "terms_type")
+	private TermsType termsType;
 
 	@NotNull
 	@Column(name = "title")
@@ -64,13 +64,13 @@ public class Policy extends BaseEntity {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_policy_id")
-	private UserPolicy userPolicy;
+	@JoinColumn(name = "user_terms_id")
+	private UserTerms userTerms;
 
-	public void assignUserPolicy(UserPolicy userPolicy) {
-		if (Objects.isNull(userPolicy)) {
-			throw new PolicyException(ErrorCode.MISSING_USER_POLICY);
+	public void assignUserTerms(UserTerms userTerms) {
+		if (Objects.isNull(userTerms)) {
+			throw new TermsException(ErrorCode.MISSING_USER_TERMS);
 		}
-		this.userPolicy = userPolicy;
+		this.userTerms = userTerms;
 	}
 }

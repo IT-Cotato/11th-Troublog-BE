@@ -144,10 +144,10 @@ public enum ErrorCode {
 	TASK_POST_MISMATCH(HttpStatus.BAD_REQUEST, "AI-005", "작업과 게시물이 일치하지 않습니다."),
 
 	/**
-	 * Policy Error
+	 * Terms Error
 	 */
-	MISSING_POLICY(HttpStatus.BAD_REQUEST, "PO-001", "약관을 찾을 수 없습니다."),
-	MISSING_USER_POLICY(HttpStatus.BAD_REQUEST, "PO-002", "유저 약관 내역을 찾을 수 없습니다.");
+	MISSING_TERMS(HttpStatus.BAD_REQUEST, "T-001", "약관을 찾을 수 없습니다."),
+	MISSING_USER_TERMS(HttpStatus.BAD_REQUEST, "T-002", "유저 약관 내역을 찾을 수 없습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;
