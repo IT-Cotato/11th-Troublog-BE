@@ -1,44 +1,47 @@
 package troublog.backend.domain.terms.entity;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import troublog.backend.domain.terms.enums.TermsType;
 import troublog.backend.domain.terms.exception.TermsException;
-import troublog.backend.domain.user.entity.UserTerms;
 import troublog.backend.global.common.entity.BaseEntity;
 import troublog.backend.global.common.error.ErrorCode;
 
 @Getter
 @Entity
-@Builder
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @AllArgsConstructor
-@NoArgsConstructor
-@Table(name = "terms", indexes = {
-	@Index(name = "idx_terms_title_body_version", columnList = "title, body, version")
-})
+@Builder
+@Table(name = "terms",
+	uniqueConstraints = {
+		@UniqueConstraint(name = "uk_terms_type_version",
+			columnNames = {"terms_type", "version"})
+	},
+	indexes = {
+		@Index(name = "idx_terms_type_current",
+			columnList = "terms_type, is_current, is_deleted"),
+		@Index(name = "idx_terms_version", columnList = "version"),
+		@Index(name = "idx_terms_is_deleted", columnList = "is_deleted")
+	}
+)
 public class Terms extends BaseEntity {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "terms_id")
 	private Long id;
 
 	@NotNull
@@ -47,30 +50,42 @@ public class Terms extends BaseEntity {
 	private TermsType termsType;
 
 	@NotNull
-	@Column(name = "title")
 	private String title;
 
 	@NotNull
-	@Column(name = "body")
+	@Column(columnDefinition = "TEXT")
 	private String body;
 
-	@NonNull
-	@Column(name = "version")
-	private Integer version = 1;
+	@NotNull
+	private Integer version;
 
 	@NotNull
-	@Column(name = "is_required")
 	private Boolean isRequired;
 
 	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_terms_id")
-	private UserTerms userTerms;
+	@Column(name = "is_current")
+	private Boolean isCurrent = false;
 
-	public void assignUserTerms(UserTerms userTerms) {
-		if (Objects.isNull(userTerms)) {
-			throw new TermsException(ErrorCode.MISSING_USER_TERMS);
+	@Column(name = "is_deleted")
+	private Boolean isDeleted = false;
+
+	@Column(name = "deleted_at")
+	private LocalDateTime deletedAt;
+
+
+	public void markAsDeleted() {
+		if (isCurrent) {
+			throw new TermsException(ErrorCode.CANNOT_DELETE_CURRENT_TERMS);
 		}
-		this.userTerms = userTerms;
+		this.isDeleted = true;
+		this.deletedAt = LocalDateTime.now();
+	}
+
+	public void markAsCurrent() {
+		this.isCurrent = true;
+	}
+
+	public void markAsHistorical() {
+		this.isCurrent = false;
 	}
 }
