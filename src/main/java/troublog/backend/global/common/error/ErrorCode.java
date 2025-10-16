@@ -147,7 +147,13 @@ public enum ErrorCode {
 	 * Terms Error
 	 */
 	MISSING_TERMS(HttpStatus.BAD_REQUEST, "T-001", "약관을 찾을 수 없습니다."),
-	MISSING_USER_TERMS(HttpStatus.BAD_REQUEST, "T-002", "유저 약관 내역을 찾을 수 없습니다.");
+	CANNOT_DELETE_CURRENT_TERMS(HttpStatus.BAD_REQUEST, "T-002", "최신 버전 약관을 삭제할 수 없습니다."),
+	TERMS_NOT_FOUND(HttpStatus.NOT_FOUND, "T-003", "약관을 찾을 수 없습니다."),
+	TERMS_TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "T-004", "약관 제목은 필수입니다."),
+	TERMS_BODY_REQUIRED(HttpStatus.BAD_REQUEST, "T-005", "약관 본문은 필수입니다."),
+	TERMS_NOT_CURRENT(HttpStatus.BAD_REQUEST, "T-006", "현재 버전이 아닌 약관입니다."),
+	TERMS_DELETED(HttpStatus.BAD_REQUEST, "T-007", "삭제된 약관입니다."),
+		INVALID_CONSENT_DETAILS(HttpStatus.BAD_REQUEST,"T-008", "유효하지 않은 동의 내역입니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;
