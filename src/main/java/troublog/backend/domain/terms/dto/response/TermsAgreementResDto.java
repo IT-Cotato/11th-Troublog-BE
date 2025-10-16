@@ -1,6 +1,13 @@
 package troublog.backend.domain.terms.dto.response;
 
-// TODO: 특정 약관에 대한 동의 응답 필드 추가
+import java.util.List;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import troublog.backend.domain.terms.dto.response.common.UserConsentDto;
+
+@Schema(description = "약관 동의 응답")
 public record TermsAgreementResDto(
+	@Schema(description = "사용자 약관 동의 목록")
+	List<UserConsentDto> userConsentDtos
 ) {
 }
