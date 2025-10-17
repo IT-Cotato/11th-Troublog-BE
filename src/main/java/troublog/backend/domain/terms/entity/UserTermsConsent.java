@@ -54,15 +54,13 @@ public class UserTermsConsent extends BaseEntity {
 	private Boolean isAgreed;
 
 	@NotNull
-	@Builder.Default
 	@Column(name = "agreed_at")
-	private LocalDateTime agreedAt = LocalDateTime.now();
+	private LocalDateTime agreedAt;
 
 	@NotNull
 	@Column(name = "is_current")
 	private Boolean isCurrent;
 
-	// 쿼리 효율성을 위한 비정규화 필드
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "terms_type")

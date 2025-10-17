@@ -16,6 +16,7 @@ import troublog.backend.domain.terms.converter.TermsConverter;
 import troublog.backend.domain.terms.entity.Terms;
 import troublog.backend.domain.terms.entity.UserTermsConsent;
 import troublog.backend.domain.terms.exception.TermsException;
+import troublog.backend.domain.terms.factory.TermsFactory;
 import troublog.backend.domain.terms.service.command.UserTermsConsentCommandService;
 import troublog.backend.domain.terms.service.query.TermsQueryService;
 import troublog.backend.domain.terms.validator.TermsValidator;
@@ -30,6 +31,7 @@ public class AgreeToTermsUseCase {
 	private final UserQueryService userQueryService;
 	private final TermsQueryService termsQueryService;
 	private final UserTermsConsentCommandService commandService;
+	private final TermsFactory termsFactory;
 
 	@Transactional
 	public List<UserTermsConsent> execute(Map<Long, Boolean> termsAgreements, Long userId) {
@@ -49,7 +51,7 @@ public class AgreeToTermsUseCase {
 					.findFirst()
 					.orElseThrow(() -> new TermsException(ErrorCode.INVALID_CONSENT_DETAILS));
 
-				return TermsConverter.toUserTermsConsent(user, terms, entry.getValue());
+				return termsFactory.createUserTermsConsent(user, terms, entry.getValue());
 			})
 			.toList();
 

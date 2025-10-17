@@ -54,17 +54,4 @@ public class TermsConverter {
 			.userConsentDtos(userConsentDtoList)
 			.build();
 	}
-
-	public UserTermsConsent toUserTermsConsent(User user, Terms terms, Boolean isAgreed) {
-		return UserTermsConsent.builder()
-			.user(user)
-			.terms(terms)
-			.isAgreed(isAgreed)
-			.isCurrent(true)
-			.termsType(terms.getTermsType())
-			.expirationAt(terms.getExpirationPeriod() != null ?
-				LocalDateTime.now().plusYears(terms.getExpirationPeriod()) : null)
-			.build();
-	}
-
 }
