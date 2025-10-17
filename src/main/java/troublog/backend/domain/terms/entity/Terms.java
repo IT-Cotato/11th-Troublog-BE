@@ -74,6 +74,8 @@ public class Terms extends BaseEntity {
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
 
+	@Column(name = "expiration_period")
+	private Integer expirationPeriod;
 
 	public void markAsDeleted() {
 		if (isCurrent) {

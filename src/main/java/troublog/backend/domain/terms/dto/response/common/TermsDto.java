@@ -20,6 +20,10 @@ public record TermsDto(
 	String body,
 
 	@Schema(description = "필수 동의 여부", example = "true")
-	Boolean isRequired
-) {
+	Boolean isRequired,
+
+	@Schema(description = "보관 기간(년)", example = "1")
+	Integer expirationPeriod
+
+	) {
 }

@@ -2,6 +2,7 @@ package troublog.backend.domain.terms.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -49,18 +50,25 @@ public class UserTermsConsent extends BaseEntity {
 	private Terms terms;
 
 	@NotNull
+	@Column(name = "is_agreed")
 	private Boolean isAgreed;
 
 	@NotNull
 	@Builder.Default
+	@Column(name = "agreed_at")
 	private LocalDateTime agreedAt = LocalDateTime.now();
 
 	@NotNull
+	@Column(name = "is_current")
 	private Boolean isCurrent;
 
 	// 쿼리 효율성을 위한 비정규화 필드
 	@NotNull
 	@Enumerated(EnumType.STRING)
+	@Column(name = "terms_type")
 	private TermsType termsType;
 
+	@NotNull
+	@Column(name = "expiration_at")
+	LocalDateTime expirationAt;
 }

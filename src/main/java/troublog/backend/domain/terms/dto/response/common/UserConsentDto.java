@@ -22,6 +22,9 @@ public record UserConsentDto(
 	Boolean isAgreed,
 
 	@Schema(description = "동의 일시", example = "2024-01-01T12:00:00")
-	LocalDateTime agreedAt
+	LocalDateTime agreedAt,
+
+	@Schema(description = "만료 일시", example = "2024-01-01T12:00:00")
+	LocalDateTime expirationAt
 ) {
 }
