@@ -19,7 +19,10 @@ import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
-import troublog.backend.domain.auth.event.UserRegisteredEvent;
+import troublog.backend.domain.auth.dto.RegisterResDto;
+import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
+import troublog.backend.domain.terms.facade.command.TermsCommandFacade;
+import troublog.backend.domain.terms.facade.query.TermsQueryFacade;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.UserConverter;
@@ -42,6 +45,8 @@ public class AuthFacade {
 	private final UserQueryService userQueryService;
 	private final UserCommandService userCommandService;
 	private final PostQueryService postQueryService;
+	private final TermsQueryFacade termsQueryFacade;
+	private final TermsCommandFacade termsCommandFacade;
 
 	private final AlertCommandService alertCommandService;
 
@@ -55,7 +60,7 @@ public class AuthFacade {
 	private String profilesActive;
 
 	@Transactional
-	public Long register(RegisterReqDto registerReqDto, HttpServletRequest request) {
+	public RegisterResDto register(RegisterReqDto registerReqDto, HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
@@ -77,14 +82,15 @@ public class AuthFacade {
 		User user = UserConverter.toEntity(registerReqDto, encodedPassword);
 		userCommandService.save(user);
 
-		UserRegisteredEvent event = UserRegisteredEvent.builder()
+		TermsAgreementResDto termsAgreementResDto = termsCommandFacade.agreeToTerms(
+			registerReqDto.termsAgreements(),
+			user.getId()
+		);
+
+		return RegisterResDto.builder()
 			.userId(user.getId())
-			.termsAgreements(registerReqDto.termsAgreements())
+			.termsAgreement(termsAgreementResDto)
 			.build();
-
-		eventPublisher.publishEvent(event);
-
-		return user.getId();
 	}
 
 	@Transactional
@@ -202,7 +208,7 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public Long oAuthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
+	public RegisterResDto oAuthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader("EnvType");
 
@@ -231,14 +237,14 @@ public class AuthFacade {
 		user.updateOAuth2Info(oAuth2RegisterReqDto.nickname(), oAuth2RegisterReqDto.field(), oAuth2RegisterReqDto.bio(),
 			oAuth2RegisterReqDto.githubUrl());
 
+		TermsAgreementResDto termsAgreementResDto = termsCommandFacade.agreeToTerms(
+			oAuth2RegisterReqDto.termsAgreements(),
+			user.getId()
+		);
 
-		UserRegisteredEvent event = UserRegisteredEvent.builder()
+		return RegisterResDto.builder()
 			.userId(user.getId())
-			.termsAgreements(oAuth2RegisterReqDto.termsAgreements())
+			.termsAgreement(termsAgreementResDto)
 			.build();
-
-		eventPublisher.publishEvent(event);
-
-		return user.getId();
 	}
 }
