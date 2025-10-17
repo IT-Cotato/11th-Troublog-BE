@@ -7,11 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.terms.converter.TermsConverter;
 import troublog.backend.domain.terms.dto.response.LatestTermsResDto;
 import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
 import troublog.backend.domain.terms.entity.Terms;
 import troublog.backend.domain.terms.entity.UserTermsConsent;
-import troublog.backend.domain.terms.mapper.TermsMapper;
 import troublog.backend.domain.terms.usecase.GetLatestTermsUseCase;
 import troublog.backend.domain.terms.usecase.GetUserTermsHistoryUseCase;
 
@@ -26,12 +26,12 @@ public class TermsQueryFacadeImpl implements TermsQueryFacade {
 	@Override
 	public LatestTermsResDto getLatestTerms() {
 		List<Terms> result = getLatestTermsUseCase.execute();
-		return TermsMapper.INSTANCE.toLatestTermsResDto(result);
+		return TermsConverter.toLatestTermsResDto(result);
 	}
 
 	@Override
 	public TermsAgreementResDto getUserTermsHistory(Long userId) {
 		List<UserTermsConsent> result = getUserTermsHistoryUseCase.execute(userId);
-		return TermsMapper.INSTANCE.toTermsAgreementResDto(result);
+		return TermsConverter.toTermsAgreementResDto(result);
 	}
 }

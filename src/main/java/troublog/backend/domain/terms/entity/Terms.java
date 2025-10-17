@@ -63,9 +63,11 @@ public class Terms extends BaseEntity {
 	private Boolean isRequired;
 
 	@NotNull
+	@Builder.Default
 	@Column(name = "is_current")
 	private Boolean isCurrent = false;
 
+	@Builder.Default
 	@Column(name = "is_deleted")
 	private Boolean isDeleted = false;
 

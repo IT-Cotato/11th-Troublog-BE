@@ -52,7 +52,8 @@ public class UserTermsConsent extends BaseEntity {
 	private Boolean isAgreed;
 
 	@NotNull
-	private LocalDateTime agreedAt;
+	@Builder.Default
+	private LocalDateTime agreedAt = LocalDateTime.now();
 
 	@NotNull
 	private Boolean isCurrent;

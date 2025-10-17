@@ -3,8 +3,10 @@ package troublog.backend.domain.terms.dto.response.common;
 import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import troublog.backend.domain.terms.enums.TermsType;
 
+@Builder
 @Schema(description = "사용자 약관 동의 정보")
 public record UserConsentDto(
 	@Schema(description = "사용자 ID", example = "1")

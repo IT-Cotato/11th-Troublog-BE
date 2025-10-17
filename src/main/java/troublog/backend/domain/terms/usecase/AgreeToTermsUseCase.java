@@ -1,6 +1,5 @@
 package troublog.backend.domain.terms.usecase;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +12,10 @@ import org.springframework.util.CollectionUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import troublog.backend.domain.terms.converter.TermsConverter;
 import troublog.backend.domain.terms.entity.Terms;
 import troublog.backend.domain.terms.entity.UserTermsConsent;
 import troublog.backend.domain.terms.exception.TermsException;
-import troublog.backend.domain.terms.mapper.TermsMapper;
 import troublog.backend.domain.terms.service.command.UserTermsConsentCommandService;
 import troublog.backend.domain.terms.service.query.TermsQueryService;
 import troublog.backend.domain.terms.validator.TermsValidator;
@@ -50,7 +49,7 @@ public class AgreeToTermsUseCase {
 					.findFirst()
 					.orElseThrow(() -> new TermsException(ErrorCode.INVALID_CONSENT_DETAILS));
 
-				return TermsMapper.INSTANCE.toUserTermsConsent(user, terms, entry.getValue());
+				return TermsConverter.toUserTermsConsent(user, terms, entry.getValue());
 			})
 			.toList();
 

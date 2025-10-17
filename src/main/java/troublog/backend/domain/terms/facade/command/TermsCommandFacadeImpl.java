@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.terms.converter.TermsConverter;
 import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
 import troublog.backend.domain.terms.entity.UserTermsConsent;
-import troublog.backend.domain.terms.mapper.TermsMapper;
 import troublog.backend.domain.terms.usecase.AgreeToTermsUseCase;
 
 @Component
@@ -23,6 +23,6 @@ public class TermsCommandFacadeImpl implements TermsCommandFacade {
 	@Override
 	public TermsAgreementResDto agreeToTerms(Map<Long, Boolean> termsAgreements, Long userId) {
 		List<UserTermsConsent> result = agreeToTermsUseCase.execute(termsAgreements, userId);
-		return TermsMapper.INSTANCE.toTermsAgreementResDto(result);
+		return TermsConverter.toTermsAgreementResDto(result);
 	}
 }

@@ -1,8 +1,10 @@
 package troublog.backend.domain.terms.dto.response.common;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import troublog.backend.domain.terms.enums.TermsType;
 
+@Builder
 @Schema(description = "약관 정보")
 public record TermsDto(
 	@Schema(description = "약관 ID", example = "1")
