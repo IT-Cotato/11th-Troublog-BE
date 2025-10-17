@@ -33,8 +33,8 @@ import troublog.backend.global.common.error.ErrorCode;
 			columnNames = {"terms_type", "version"})
 	},
 	indexes = {
-		@Index(name = "idx_terms_type_current",
-			columnList = "terms_type, is_current, is_deleted"),
+		@Index(name = "idx_terms_current_only", columnList = "is_current, is_deleted"),
+		@Index(name = "idx_terms_type_current", columnList = "terms_type, is_current"),
 		@Index(name = "idx_terms_version", columnList = "version"),
 		@Index(name = "idx_terms_is_deleted", columnList = "is_deleted")
 	}
