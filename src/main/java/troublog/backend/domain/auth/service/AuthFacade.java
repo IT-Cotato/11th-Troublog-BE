@@ -1,7 +1,6 @@
 package troublog.backend.domain.auth.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +21,7 @@ import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterResDto;
 import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
 import troublog.backend.domain.terms.facade.command.TermsCommandFacade;
-import troublog.backend.domain.terms.facade.query.TermsQueryFacade;
+import troublog.backend.domain.terms.service.query.TermsQueryService;
 import troublog.backend.domain.terms.validator.TermsValidator;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
@@ -46,8 +45,8 @@ public class AuthFacade {
 	private final UserQueryService userQueryService;
 	private final UserCommandService userCommandService;
 	private final PostQueryService postQueryService;
-	private final TermsQueryFacade termsQueryFacade;
 	private final TermsCommandFacade termsCommandFacade;
+	private final TermsQueryService termsQueryService;
 
 	private final AlertCommandService alertCommandService;
 
@@ -55,7 +54,6 @@ public class AuthFacade {
 	private final AuthenticationManager authenticationManager;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtProvider jwtProvider;
-	private final ApplicationEventPublisher eventPublisher;
 
 	@Value("${spring.profiles.active}")
 	private String profilesActive;
@@ -80,7 +78,7 @@ public class AuthFacade {
 		// 비밀번호 인코딩
 		String encodedPassword = passwordEncoder.encode(registerReqDto.password());
 
-		TermsValidator.validateTermsAgreements(registerReqDto.termsAgreements());
+		TermsValidator.validateForRegistration(registerReqDto.termsAgreements(), termsQueryService);
 		User user = UserConverter.toEntity(registerReqDto, encodedPassword);
 		userCommandService.save(user);
 

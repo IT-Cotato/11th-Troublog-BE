@@ -154,7 +154,8 @@ public enum ErrorCode {
 	TERMS_NOT_CURRENT(HttpStatus.BAD_REQUEST, "TR-006", "현재 버전이 아닌 약관입니다."),
 	TERMS_DELETED(HttpStatus.BAD_REQUEST, "TR-007", "삭제된 약관입니다."),
 	INVALID_CONSENT_DETAILS(HttpStatus.BAD_REQUEST,"TR-008", "유효하지 않은 동의 내역입니다."),
-	REQUIRED_TERMS_NOT_AGREED(HttpStatus.BAD_REQUEST, "TR-009", "필수 약관에 동의하지 않았습니다.");
+	REQUIRED_TERMS_NOT_AGREED(HttpStatus.BAD_REQUEST, "TR-009", "필수 약관에 동의하지 않았습니다."),
+		NO_ACTIVE_TERMS(HttpStatus.NOT_FOUND, "TR-010", "활성화된 약관을 찾지 못했습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;

@@ -6,9 +6,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.util.CollectionUtils;
+
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.terms.entity.Terms;
 import troublog.backend.domain.terms.exception.TermsException;
+import troublog.backend.domain.terms.service.query.TermsQueryService;
 import troublog.backend.global.common.error.ErrorCode;
 
 @UtilityClass
@@ -52,7 +55,7 @@ public class TermsValidator {
 		}
 	}
 
-	public void validateTermsIds(List<Terms> currentActiveTerms, Map<Long, Boolean> termsAgreements) {
+	public void validateAllTermsProvided(List<Terms> currentActiveTerms, Map<Long, Boolean> termsAgreements) {
 		HashSet<Long> currentTermsIds = currentActiveTerms.stream()
 			.map(Terms::getId)
 			.collect(Collectors.toCollection(HashSet::new));
@@ -60,6 +63,22 @@ public class TermsValidator {
 		boolean allIdsMatch = currentTermsIds.containsAll(termsAgreements.keySet());
 
 		if (!allIdsMatch) {
+			throw new TermsException(ErrorCode.INVALID_CONSENT_DETAILS);
+		}
+	}
+
+	public void validateForRegistration(Map<Long, Boolean> termsAgreements, TermsQueryService termsQueryService) {
+		List<Terms> currentActiveTerms = termsQueryService.getCurrentActiveTerms();
+		validateEmptyTerms(currentActiveTerms, termsAgreements);
+		validateAllTermsProvided(currentActiveTerms, termsAgreements);
+
+		currentActiveTerms.stream()
+			.filter(Terms::getIsRequired)
+			.forEach(requiredTerm -> validateRequiredTermsAgreement(termsAgreements, requiredTerm));
+	}
+
+	private static void validateEmptyTerms(List<Terms> currentActiveTerms, Map<Long, Boolean> termsAgreements) {
+		if (CollectionUtils.isEmpty(termsAgreements) || CollectionUtils.isEmpty(currentActiveTerms)) {
 			throw new TermsException(ErrorCode.INVALID_CONSENT_DETAILS);
 		}
 	}

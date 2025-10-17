@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,15 +31,9 @@ public class AgreeToTermsUseCase {
 
 	@Transactional
 	public List<UserTermsConsent> execute(Map<Long, Boolean> termsAgreements, Long userId) {
-		if (CollectionUtils.isEmpty(termsAgreements)) {
-			throw new TermsException(ErrorCode.INVALID_CONSENT_DETAILS);
-		}
 		User user = userQueryService.findUserById(userId);
-
 		List<Terms> currentActiveTerms = termsQueryService.getCurrentActiveTerms();
-		currentActiveTerms.forEach(TermsValidator::validate);
-		TermsValidator.validateTermsIds(currentActiveTerms, termsAgreements);
-		validateRequiredConsentDetails(termsAgreements);
+		validateAndGetActiveTerms(termsAgreements, currentActiveTerms);
 
 		List<UserTermsConsent> userTermsConsentList = termsAgreements.entrySet().stream()
 			.map(entry -> {
@@ -61,5 +54,12 @@ public class AgreeToTermsUseCase {
 			.stream()
 			.filter(Terms::getIsRequired)
 			.forEach(requiredTerm -> TermsValidator.validateRequiredTermsAgreement(termsAgreements, requiredTerm));
+	}
+
+	private List<Terms> validateAndGetActiveTerms(Map<Long, Boolean> termsAgreements, List<Terms> currentActiveTerms) {
+		currentActiveTerms.forEach(TermsValidator::validate);
+		TermsValidator.validateAllTermsProvided(currentActiveTerms, termsAgreements);
+		validateRequiredConsentDetails(termsAgreements);
+		return currentActiveTerms;
 	}
 }
