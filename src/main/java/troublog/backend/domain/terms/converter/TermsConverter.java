@@ -1,6 +1,5 @@
 package troublog.backend.domain.terms.converter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.experimental.UtilityClass;
@@ -10,7 +9,6 @@ import troublog.backend.domain.terms.dto.response.common.TermsDto;
 import troublog.backend.domain.terms.dto.response.common.UserConsentDto;
 import troublog.backend.domain.terms.entity.Terms;
 import troublog.backend.domain.terms.entity.UserTermsConsent;
-import troublog.backend.domain.user.entity.User;
 
 @UtilityClass
 public class TermsConverter {

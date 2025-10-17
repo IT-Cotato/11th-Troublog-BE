@@ -12,7 +12,6 @@ import org.springframework.util.CollectionUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.terms.converter.TermsConverter;
 import troublog.backend.domain.terms.entity.Terms;
 import troublog.backend.domain.terms.entity.UserTermsConsent;
 import troublog.backend.domain.terms.exception.TermsException;
