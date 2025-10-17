@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import troublog.backend.domain.terms.entity.Terms;
 
 public interface TermsRepository extends JpaRepository<Terms, Long> {
-	List<Terms> findAllByIsCurrentAndIsDeleted(Boolean isCurrent, Boolean isDeleted);
-
 	@Query("SELECT T FROM Terms T WHERE T.isCurrent = TRUE AND T.isDeleted = FALSE")
 	List<Terms> findActiveTerms();
 

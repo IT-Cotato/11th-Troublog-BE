@@ -20,7 +20,7 @@ public class GetLatestTermsUseCase {
 
 	public List<Terms> execute() {
 		List<Terms> currentActiveTerms = service.getCurrentActiveTerms();
-		currentActiveTerms.forEach(TermsValidator::validate);
+			currentActiveTerms.forEach(TermsValidator::validate);
 		return currentActiveTerms;
 	}
 }

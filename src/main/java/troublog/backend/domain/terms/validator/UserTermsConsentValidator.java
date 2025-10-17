@@ -7,17 +7,25 @@ import lombok.experimental.UtilityClass;
 import troublog.backend.domain.terms.entity.UserTermsConsent;
 import troublog.backend.domain.terms.exception.TermsException;
 import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.UserException;
 
 @UtilityClass
 public class UserTermsConsentValidator {
 
 	public void validate(UserTermsConsent userTermsConsent, Long userId) {
+		validateUserId(userId);
 		validateConsentNotNull(userTermsConsent);
 		validateTerms(userTermsConsent);
 		validateUser(userTermsConsent);
 		validateUserConsentDate(userTermsConsent);
 		validateTermsConsentBelongToUser(userTermsConsent, userId);
 		validateAgreeToRequiredItems(userTermsConsent);
+	}
+
+	private static void validateUserId(Long userId) {
+		if (Objects.isNull(userId)) {
+			throw new UserException(ErrorCode.USER_NOT_FOUND);
+		}
 	}
 
 	private static void validateConsentNotNull(UserTermsConsent userTermsConsent) {

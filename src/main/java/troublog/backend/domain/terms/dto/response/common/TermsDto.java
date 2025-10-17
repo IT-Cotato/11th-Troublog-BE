@@ -12,7 +12,7 @@ public record TermsDto(
 
 	@Schema(
 		description = "약관 타입 (PRIVACY_POLICY: 개인정보처리방침, TERMS_OF_USE: 이용약관)",
-		example = "PRIVACY"
+		example = "PRIVACY_POLICY"
 	)
 	TermsType termsType,
 

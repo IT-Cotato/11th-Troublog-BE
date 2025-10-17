@@ -60,7 +60,6 @@ public class TermsConverter {
 			.user(user)
 			.terms(terms)
 			.isAgreed(isAgreed)
-			.agreedAt(LocalDateTime.now())
 			.isCurrent(true)
 			.termsType(terms.getTermsType())
 			.expirationAt(terms.getExpirationPeriod() != null ?
