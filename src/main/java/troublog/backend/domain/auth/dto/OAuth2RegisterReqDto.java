@@ -1,5 +1,7 @@
 package troublog.backend.domain.auth.dto;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,6 +37,11 @@ public record OAuth2RegisterReqDto(
 
 	@Schema(description = "깃허브 주소")
 	@JsonProperty("githubUrl")
-	String githubUrl
+	String githubUrl,
+
+	@NotNull
+	@Schema(description = "이용약관 동의 내역")
+	@JsonProperty("agreementReqDto")
+	Map<Long, Boolean> termsAgreements
 ) {
 }

@@ -1,8 +1,7 @@
 package troublog.backend.domain.auth.service;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +19,7 @@ import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
+import troublog.backend.domain.auth.event.UserRegisteredEvent;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.UserConverter;
@@ -38,6 +38,7 @@ import troublog.backend.global.common.util.JwtProvider;
 @RequiredArgsConstructor
 public class AuthFacade {
 
+	public static final String ENV_TYPE_HEADER = "EnvType";
 	private final UserQueryService userQueryService;
 	private final UserCommandService userCommandService;
 	private final PostQueryService postQueryService;
@@ -48,6 +49,7 @@ public class AuthFacade {
 	private final AuthenticationManager authenticationManager;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtProvider jwtProvider;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Value("${spring.profiles.active}")
 	private String profilesActive;
@@ -55,7 +57,7 @@ public class AuthFacade {
 	@Transactional
 	public Long register(RegisterReqDto registerReqDto, HttpServletRequest request) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -73,8 +75,16 @@ public class AuthFacade {
 		String encodedPassword = passwordEncoder.encode(registerReqDto.password());
 
 		User user = UserConverter.toEntity(registerReqDto, encodedPassword);
+		userCommandService.save(user);
 
-		return userCommandService.save(user).getId();
+		UserRegisteredEvent event = UserRegisteredEvent.builder()
+			.userId(user.getId())
+			.termsAgreements(registerReqDto.termsAgreements())
+			.build();
+
+		eventPublisher.publishEvent(event);
+
+		return user.getId();
 	}
 
 	@Transactional
@@ -220,6 +230,14 @@ public class AuthFacade {
 
 		user.updateOAuth2Info(oAuth2RegisterReqDto.nickname(), oAuth2RegisterReqDto.field(), oAuth2RegisterReqDto.bio(),
 			oAuth2RegisterReqDto.githubUrl());
+
+
+		UserRegisteredEvent event = UserRegisteredEvent.builder()
+			.userId(user.getId())
+			.termsAgreements(oAuth2RegisterReqDto.termsAgreements())
+			.build();
+
+		eventPublisher.publishEvent(event);
 
 		return user.getId();
 	}
