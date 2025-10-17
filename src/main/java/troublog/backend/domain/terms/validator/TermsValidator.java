@@ -23,6 +23,13 @@ public class TermsValidator {
 		validateActiveTerms(terms);
 	}
 
+	public void validateTermsAgreement(List<Terms> activeTerms, Map<Long, Boolean> agreements) {
+		validateActiveTermsExist(activeTerms);
+		activeTerms.forEach(TermsValidator::validate);
+		validateAllTermsProvided(activeTerms, agreements);
+		validateRequiredTermsAgreed(activeTerms, agreements);
+	}
+
 	private void validateTermsNotNull(Terms terms) {
 		if (Objects.isNull(terms)) {
 			throw new TermsException(ErrorCode.TERMS_NOT_FOUND);
@@ -80,6 +87,25 @@ public class TermsValidator {
 	private static void validateEmptyTerms(List<Terms> currentActiveTerms, Map<Long, Boolean> termsAgreements) {
 		if (CollectionUtils.isEmpty(termsAgreements) || CollectionUtils.isEmpty(currentActiveTerms)) {
 			throw new TermsException(ErrorCode.INVALID_CONSENT_DETAILS);
+		}
+	}
+
+
+	public void validateActiveTermsExist(List<Terms> currentActiveTerms) {
+		if (CollectionUtils.isEmpty(currentActiveTerms)) {
+			throw new TermsException(ErrorCode.NO_ACTIVE_TERMS);
+		}
+	}
+
+
+	public void validateRequiredTermsAgreed(List<Terms> activeTerms, Map<Long, Boolean> agreements) {
+		List<Terms> missingRequired = activeTerms.stream()
+			.filter(Terms::getIsRequired)
+			.filter(term -> !Boolean.TRUE.equals(agreements.get(term.getId())))
+			.toList();
+
+		if (!missingRequired.isEmpty()) {
+			throw new TermsException(ErrorCode.REQUIRED_TERMS_NOT_AGREED);
 		}
 	}
 }
