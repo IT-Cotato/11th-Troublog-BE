@@ -68,5 +68,5 @@ public class UserTermsConsent extends BaseEntity {
 
 	@NotNull
 	@Column(name = "expiration_at")
-	LocalDateTime expirationAt;
+	private LocalDateTime expirationAt;
 }
