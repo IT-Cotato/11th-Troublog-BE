@@ -3,6 +3,7 @@ package troublog.backend.domain.terms.usecase;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import troublog.backend.domain.terms.validator.TermsValidator;
 
 @Slf4j
 @Component
+@Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class GetLatestTermsUseCase {
 
