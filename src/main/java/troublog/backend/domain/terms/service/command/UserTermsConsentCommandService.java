@@ -21,4 +21,8 @@ public class UserTermsConsentCommandService {
 	public List<UserTermsConsent> saveAll(List<UserTermsConsent> userTermsConsentList) {
 		return userTermsConsentRepository.saveAll(userTermsConsentList);
 	}
+
+	public UserTermsConsent save(UserTermsConsent userTermsConsent) {
+		return userTermsConsentRepository.save(userTermsConsent);
+	}
 }
