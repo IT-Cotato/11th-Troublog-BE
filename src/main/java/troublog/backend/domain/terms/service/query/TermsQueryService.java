@@ -1,6 +1,7 @@
 package troublog.backend.domain.terms.service.query;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,5 +22,9 @@ public class TermsQueryService {
 
 	public List<Terms> getCurrentActiveTerms() {
 		return termsRepository.findActiveTerms();
+	}
+
+	public List<Terms> findTermsByIds(Set<Long> termsIds) {
+		return termsRepository.findAllById(termsIds);
 	}
 }

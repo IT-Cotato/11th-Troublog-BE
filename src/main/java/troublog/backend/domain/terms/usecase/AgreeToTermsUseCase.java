@@ -1,9 +1,7 @@
 package troublog.backend.domain.terms.usecase;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +39,8 @@ public class AgreeToTermsUseCase {
 
 		List<Terms> currentActiveTerms = termsQueryService.getCurrentActiveTerms();
 		currentActiveTerms.forEach(TermsValidator::validate);
-		validateTermsIds(currentActiveTerms, termsAgreements);
+		TermsValidator.validateTermsIds(currentActiveTerms, termsAgreements);
+		validateRequiredConsentDetails(termsAgreements);
 
 		List<UserTermsConsent> userTermsConsentList = termsAgreements.entrySet().stream()
 			.map(entry -> {
@@ -57,15 +56,10 @@ public class AgreeToTermsUseCase {
 		return commandService.saveAll(userTermsConsentList);
 	}
 
-	private void validateTermsIds(List<Terms> currentActiveTerms, Map<Long, Boolean> termsAgreements) {
-		HashSet<Long> currentTermsIds = currentActiveTerms.stream()
-			.map(Terms::getId)
-			.collect(Collectors.toCollection(HashSet::new));
-
-		boolean allIdsMatch = currentTermsIds.containsAll(termsAgreements.keySet());
-
-		if (!allIdsMatch) {
-			throw new TermsException(ErrorCode.INVALID_CONSENT_DETAILS);
-		}
+	private void validateRequiredConsentDetails(Map<Long, Boolean> termsAgreements) {
+		termsQueryService.findTermsByIds(termsAgreements.keySet())
+			.stream()
+			.filter(Terms::getIsRequired)
+			.forEach(requiredTerm -> TermsValidator.validateRequiredTermsAgreement(termsAgreements, requiredTerm));
 	}
 }

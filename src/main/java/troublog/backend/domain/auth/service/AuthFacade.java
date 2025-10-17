@@ -23,6 +23,7 @@ import troublog.backend.domain.auth.dto.RegisterResDto;
 import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
 import troublog.backend.domain.terms.facade.command.TermsCommandFacade;
 import troublog.backend.domain.terms.facade.query.TermsQueryFacade;
+import troublog.backend.domain.terms.validator.TermsValidator;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.UserConverter;
@@ -79,6 +80,7 @@ public class AuthFacade {
 		// 비밀번호 인코딩
 		String encodedPassword = passwordEncoder.encode(registerReqDto.password());
 
+		TermsValidator.validateTermsAgreements(registerReqDto.termsAgreements());
 		User user = UserConverter.toEntity(registerReqDto, encodedPassword);
 		userCommandService.save(user);
 
