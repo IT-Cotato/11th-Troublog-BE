@@ -14,7 +14,8 @@ public enum TagCategory {
 	DATABASE("데이터베이스 기술"),
 	DEVOPS("데브옵스 기술"),
 	INFRA("인프라 기술"),
-	TOOL("개발 도구 및 공통 기술");
+	TOOL("개발 도구 및 공통 기술"),
+	NONE("분류 없음");
 
 	private final String description;
 
