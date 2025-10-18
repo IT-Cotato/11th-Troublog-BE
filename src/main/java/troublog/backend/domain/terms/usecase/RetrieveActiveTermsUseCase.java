@@ -16,11 +16,11 @@ import troublog.backend.domain.terms.validator.TermsValidator;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class GetLatestTermsUseCase {
+public class RetrieveActiveTermsUseCase {
 
 	private final TermsQueryService service;
 
-	public List<Terms> execute() {
+	public List<Terms> retrieveActiveTerms() {
 		List<Terms> currentActiveTerms = service.getCurrentActiveTerms();
 			currentActiveTerms.forEach(TermsValidator::validate);
 		return currentActiveTerms;

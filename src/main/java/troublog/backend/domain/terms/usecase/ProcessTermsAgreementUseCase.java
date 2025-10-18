@@ -25,14 +25,14 @@ import troublog.backend.global.common.error.ErrorCode;
 @Slf4j
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class AgreeToTermsUseCase {
+public class ProcessTermsAgreementUseCase {
 	private final UserQueryService userQueryService;
 	private final TermsQueryService termsQueryService;
 	private final UserTermsConsentCommandService commandService;
 	private final TermsFactory termsFactory;
 
 	@Transactional
-	public List<UserTermsConsent> execute(Map<Long, Boolean> termsAgreements, Long userId) {
+	public List<UserTermsConsent> processAgreement(Map<Long, Boolean> termsAgreements, Long userId) {
 		User user = userQueryService.findUserById(userId);
 		List<Terms> currentActiveTerms = termsQueryService.getCurrentActiveTerms();
 

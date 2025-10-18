@@ -16,11 +16,11 @@ import troublog.backend.domain.terms.validator.UserTermsConsentValidator;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class GetUserTermsHistoryUseCase {
+public class RetrieveUserConsentHistoryUseCase {
 
 	private final UserTermsConsentQueryService queryService;
 
-	public List<UserTermsConsent> execute(Long userId) {
+	public List<UserTermsConsent> retrieveConsentHistory(Long userId) {
 		List<UserTermsConsent> consentList = queryService.findAllByUserId(userId);
 		consentList.forEach(userTermsConsent -> UserTermsConsentValidator.validate(userTermsConsent, userId));
 		return consentList;

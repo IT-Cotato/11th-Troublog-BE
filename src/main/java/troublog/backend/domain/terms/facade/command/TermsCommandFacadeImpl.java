@@ -11,18 +11,18 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.terms.converter.TermsConverter;
 import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
 import troublog.backend.domain.terms.entity.UserTermsConsent;
-import troublog.backend.domain.terms.usecase.AgreeToTermsUseCase;
+import troublog.backend.domain.terms.usecase.ProcessTermsAgreementUseCase;
 
 @Component
 @Transactional
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class TermsCommandFacadeImpl implements TermsCommandFacade {
 
-	private final AgreeToTermsUseCase agreeToTermsUseCase;
+	private final ProcessTermsAgreementUseCase processTermsAgreementUseCase;
 
 	@Override
 	public TermsAgreementResDto agreeToTerms(Map<Long, Boolean> termsAgreements, Long userId) {
-		List<UserTermsConsent> result = agreeToTermsUseCase.execute(termsAgreements, userId);
+		List<UserTermsConsent> result = processTermsAgreementUseCase.processAgreement(termsAgreements, userId);
 		return TermsConverter.toTermsAgreementResDto(result);
 	}
 }

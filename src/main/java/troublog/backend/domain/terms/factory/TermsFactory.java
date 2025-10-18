@@ -23,8 +23,7 @@ public class TermsFactory {
 			.isCurrent(true)
 			.agreedAt(now)
 			.termsType(terms.getTermsType())
-			.expirationAt(terms.getExpirationPeriod() != null ?
-				now.plusYears(terms.getExpirationPeriod()) : null)
+			.expirationAt(now.plusYears(terms.getExpirationPeriod()))
 			.build();
 	}
 }
