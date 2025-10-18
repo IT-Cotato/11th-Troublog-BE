@@ -45,6 +45,6 @@ public record RegisterReqDto(
 	@NotNull
 	@NotEmpty
 	@Schema(description = "이용약관 동의 내역")
-	@JsonProperty("agreementReqDto")
+	@JsonProperty("termsAgreements")
 	Map<Long, Boolean> termsAgreements
 ) {}
