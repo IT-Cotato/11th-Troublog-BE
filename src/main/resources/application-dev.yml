@@ -24,3 +24,45 @@ spring:
     redis:
       host: redis # redis container 이름
       port: 6379
+
+# Actuator 모니터링 설정 (Dev)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,loggers
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5, 0.95, 0.99
+    tags:
+      application: ${spring.application.name}
+      environment: development
+
+# 로그 설정 (Dev)
+logging:
+  level:
+    troublog.backend: INFO
+    org.springframework.web: INFO
+    org.hibernate: INFO
+  pattern:
+    file: '{"timestamp":"%d{ISO8601}","level":"%level","thread":"%thread","logger":"%logger{36}","message":"%msg","exception":"%ex{full}"}%n'
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: /app/logs/troublog.log  # Docker 컨테이너 내부 경로
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+      max-history: 15
+      total-size-cap: 1GB

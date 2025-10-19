@@ -35,6 +35,7 @@ jobs:
           mkdir deploy
           mv .env deploy/
           cp docker-compose.yml deploy/
+          cp -r monitoring deploy/  # 모니터링 설정 파일 포함
           tar -czvf deploy.tar.gz -C deploy .
         shell: bash
 
@@ -88,6 +89,16 @@ jobs:
           source: ".env"
           target: "/home/ubuntu/troublog/"
 
+      - name: Copy monitoring configs to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: "monitoring"
+          target: "/home/ubuntu/troublog/"
+
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
@@ -98,8 +109,24 @@ jobs:
           command_timeout: 30m
           script: |
             cd /home/ubuntu/troublog
+
+            # logs 디렉토리 생성 (없는 경우)
+            mkdir -p logs
+
+            # Docker 로그인
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            sudo docker-compose pull       # 새 이미지 받기
-            sudo docker-compose down || true  # 컨테이너 종료
-            sudo docker-compose up -d # 재실행
-            sudo docker image prune -f # 안 쓰는 이미지 정리
+
+            # 기존 컨테이너 종료
+            sudo docker-compose down || true
+
+            # 새 이미지 받기
+            sudo docker-compose pull
+
+            # 모니터링 포함하여 전체 스택 재실행
+            sudo docker-compose up -d
+
+            # 안 쓰는 이미지 정리
+            sudo docker image prune -f
+
+            # 컨테이너 상태 확인
+            sudo docker-compose ps
