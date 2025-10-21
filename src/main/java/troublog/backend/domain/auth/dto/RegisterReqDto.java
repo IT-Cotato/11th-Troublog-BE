@@ -1,9 +1,14 @@
 package troublog.backend.domain.auth.dto;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record RegisterReqDto(
@@ -35,6 +40,11 @@ public record RegisterReqDto(
 
 	@Schema(description = "깃허브 주소")
 	@JsonProperty("githubUrl")
-	String githubUrl
+	String githubUrl,
 
+	@NotNull
+	@NotEmpty
+	@Schema(description = "이용약관 동의 내역")
+	@JsonProperty("termsAgreements")
+	Map<Long, Boolean> termsAgreements
 ) {}
