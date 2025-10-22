@@ -141,7 +141,22 @@ public enum ErrorCode {
 	TASK_UPDATE_FAILED(HttpStatus.BAD_REQUEST, "AI-002", "잘못된 작업 업데이트 요청입니다."),
 	TASK_CANNOT_BE_CANCELLED(HttpStatus.BAD_REQUEST, "AI-003", "이미 완료된 작업입니다."),
 	PROMPT_NOT_FOUND(HttpStatus.NOT_FOUND, "AI-004", "프롬프트를 찾을 수 없습니다."),
-	TASK_POST_MISMATCH(HttpStatus.BAD_REQUEST, "AI-005", "작업과 게시물이 일치하지 않습니다.");
+	TASK_POST_MISMATCH(HttpStatus.BAD_REQUEST, "AI-005", "작업과 게시물이 일치하지 않습니다."),
+
+	/**
+	 * Terms Error
+	 */
+	MISSING_TERMS(HttpStatus.BAD_REQUEST, "TR-001", "약관을 찾을 수 없습니다."),
+	CANNOT_DELETE_CURRENT_TERMS(HttpStatus.BAD_REQUEST, "TR-002", "최신 버전 약관을 삭제할 수 없습니다."),
+	TERMS_NOT_FOUND(HttpStatus.NOT_FOUND, "TR-003", "약관을 찾을 수 없습니다."),
+	TERMS_TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "TR-004", "약관 제목은 필수입니다."),
+	TERMS_BODY_REQUIRED(HttpStatus.BAD_REQUEST, "TR-005", "약관 본문은 필수입니다."),
+	TERMS_NOT_CURRENT(HttpStatus.BAD_REQUEST, "TR-006", "현재 버전이 아닌 약관입니다."),
+	TERMS_DELETED(HttpStatus.BAD_REQUEST, "TR-007", "삭제된 약관입니다."),
+	INVALID_CONSENT_DETAILS(HttpStatus.BAD_REQUEST,"TR-008", "유효하지 않은 동의 내역입니다."),
+	REQUIRED_TERMS_NOT_AGREED(HttpStatus.BAD_REQUEST, "TR-009", "필수 약관에 동의하지 않았습니다."),
+	NO_ACTIVE_TERMS(HttpStatus.NOT_FOUND, "TR-010", "활성화된 약관을 찾지 못했습니다.");
+
 	private final HttpStatus httpStatus;
 	private final String code;
 	private final String message;
