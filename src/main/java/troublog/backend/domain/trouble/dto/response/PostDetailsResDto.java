@@ -32,6 +32,9 @@ public record PostDetailsResDto(
 	@Schema(description = "좋아요 여부", example = "true")
 	boolean liked,
 
+	@Schema(description = "썸네일 이미지 URL")
+	String thumbnailImageUrl,
+
 	@Schema(description = "요약 생성 여부", example = "false")
 	boolean isSummaryCreated,
 

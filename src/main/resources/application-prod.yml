@@ -13,9 +13,9 @@ spring:
   jpa:
     properties:
       hibernate:
-        show_sql: true
-        format_sql: true
-        use_sql_comments: true
+        show_sql: false  # 프로덕션에서는 SQL 로깅 비활성화
+        format_sql: false
+        use_sql_comments: false
         hbm2ddl:
           auto: update
         default_batch_fetch_size: 1000
@@ -25,3 +25,45 @@ spring:
     redis:
       host: redis # redis container 이름
       port: 6379
+
+# Actuator 모니터링 설정 (프로덕션)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized  # 프로덕션: 인증된 경우만 상세정보 노출
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5, 0.95, 0.99
+    tags:
+      application: ${spring.application.name}
+      environment: production
+
+# 로그 설정 (프로덕션)
+logging:
+  level:
+    troublog.backend: INFO
+    org.springframework.web: WARN
+    org.hibernate: WARN
+  pattern:
+    file: '{"timestamp":"%d{ISO8601}","level":"%level","thread":"%thread","logger":"%logger{36}","message":"%msg","exception":"%ex{full}"}%n'
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: /app/logs/troublog.log  # Docker 컨테이너 내부 경로
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+      max-history: 30
+      total-size-cap: 3GB  # 프로덕션: 더 많은 로그 보관

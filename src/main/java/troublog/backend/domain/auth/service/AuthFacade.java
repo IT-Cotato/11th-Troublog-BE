@@ -1,7 +1,5 @@
 package troublog.backend.domain.auth.service;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -20,6 +18,11 @@ import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
+import troublog.backend.domain.auth.dto.RegisterResDto;
+import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
+import troublog.backend.domain.terms.facade.command.TermsCommandFacade;
+import troublog.backend.domain.terms.service.query.TermsQueryService;
+import troublog.backend.domain.terms.validator.TermsValidator;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.UserConverter;
@@ -38,9 +41,12 @@ import troublog.backend.global.common.util.JwtProvider;
 @RequiredArgsConstructor
 public class AuthFacade {
 
+	public static final String ENV_TYPE_HEADER = "EnvType";
 	private final UserQueryService userQueryService;
 	private final UserCommandService userCommandService;
 	private final PostQueryService postQueryService;
+	private final TermsCommandFacade termsCommandFacade;
+	private final TermsQueryService termsQueryService;
 
 	private final AlertCommandService alertCommandService;
 
@@ -53,9 +59,9 @@ public class AuthFacade {
 	private String profilesActive;
 
 	@Transactional
-	public Long register(RegisterReqDto registerReqDto, HttpServletRequest request) {
+	public RegisterResDto register(RegisterReqDto registerReqDto, HttpServletRequest request) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -72,9 +78,19 @@ public class AuthFacade {
 		// 비밀번호 인코딩
 		String encodedPassword = passwordEncoder.encode(registerReqDto.password());
 
+		TermsValidator.validateForRegistration(registerReqDto.termsAgreements(), termsQueryService);
 		User user = UserConverter.toEntity(registerReqDto, encodedPassword);
+		userCommandService.save(user);
 
-		return userCommandService.save(user).getId();
+		TermsAgreementResDto termsAgreementResDto = termsCommandFacade.agreeToTerms(
+			registerReqDto.termsAgreements(),
+			user.getId()
+		);
+
+		return RegisterResDto.builder()
+			.userId(user.getId())
+			.termsAgreement(termsAgreementResDto)
+			.build();
 	}
 
 	@Transactional
@@ -152,7 +168,7 @@ public class AuthFacade {
 			Alert alert = AlertConverter.postTroubleshootingAlert(user, writingCount, targetUrl);
 			AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
-			if(alertSseUtil.sendAlert(user.getId(), alertResDto)) {
+			if (alertSseUtil.sendAlert(user.getId(), alertResDto)) {
 				alert.markAsSent();
 			}
 
@@ -192,23 +208,43 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public Long oAuthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
+	public RegisterResDto oAuthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader("EnvType");
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
 
+		User user = userQueryService.findUserById(oAuth2RegisterReqDto.userId());
+
 		// 닉네임 중복 체크
-		boolean isDuplicatedNickname = userQueryService.existsByNickname(oAuth2RegisterReqDto.nickname());
+		boolean isDuplicatedNickname = false;
+
+		// 카카오 닉네임과 임시저장된 유저 닉네임 비교
+		if (oAuth2RegisterReqDto.kakaoNickname().equals(user.getNickname())) {
+			// 유저가 입력한 닉네임의 중복여부 체크
+			if (!oAuth2RegisterReqDto.nickname().equals(user.getNickname())) {
+				isDuplicatedNickname = userQueryService.existsByNickname(oAuth2RegisterReqDto.nickname());
+			}
+		} else {
+			throw new UserException(ErrorCode.USER_INVALID_NICKNAME);
+		}
+
 		if (isDuplicatedNickname) {
 			throw new UserException(ErrorCode.DUPLICATED_NICKNAME);
 		}
 
-		User user = userQueryService.findUserById(oAuth2RegisterReqDto.userId());
 		user.updateOAuth2Info(oAuth2RegisterReqDto.nickname(), oAuth2RegisterReqDto.field(), oAuth2RegisterReqDto.bio(),
 			oAuth2RegisterReqDto.githubUrl());
 
-		return user.getId();
+		TermsAgreementResDto termsAgreementResDto = termsCommandFacade.agreeToTerms(
+			oAuth2RegisterReqDto.termsAgreements(),
+			user.getId()
+		);
+
+		return RegisterResDto.builder()
+			.userId(user.getId())
+			.termsAgreement(termsAgreementResDto)
+			.build();
 	}
 }

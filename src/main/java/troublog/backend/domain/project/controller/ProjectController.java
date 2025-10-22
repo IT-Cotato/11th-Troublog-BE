@@ -23,10 +23,10 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.project.dto.request.ProjectReqDto;
 import troublog.backend.domain.project.dto.response.ProjectDetailResDto;
 import troublog.backend.domain.project.dto.response.ProjectResDto;
-import troublog.backend.domain.project.enums.ProjectPostStatus;
 import troublog.backend.domain.project.service.facade.ProjectCommandFacade;
 import troublog.backend.domain.project.service.facade.ProjectQueryFacade;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
+import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
@@ -95,12 +95,12 @@ public class ProjectController {
 
 	@GetMapping("/{projectId}/troubles")
 	@Operation(summary = "프로젝트 내 트러블슈팅 목록 조회 API", description =
-		"작성 완료(COMPLETED)/요약 완료(SUMMARIZED) 상태를 포함한 다양한 조건을 필터링해 조회합니다."
-			+ "작성 완료 - visibility / 요약 완료 - summaryType 에 대해 필터링 가능합니다. ")
+		"작성 중(WRITING)/작성 완료(COMPLETED)/요약 완료(SUMMARIZED) 상태를 포함한 다양한 조건을 필터링해 조회합니다."
+			+ "작성 중/작성 완료 - visibility / 요약 완료 - summaryType 에 대해 필터링 가능합니다. ")
 	public ResponseEntity<BaseResponse<List<TroubleListResDto>>> getProjectTroubles(
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable Long projectId,
-		@RequestParam ProjectPostStatus status,
+		@RequestParam PostStatus status,
 		@RequestParam(defaultValue = "LATEST") SortType sort,
 		@RequestParam(required = false) VisibilityType visibility,
 		@RequestParam(required = false) SummaryType summaryType

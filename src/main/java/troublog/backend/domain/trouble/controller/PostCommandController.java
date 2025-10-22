@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -54,7 +55,7 @@ public class PostCommandController {
 		return ResponseUtils.created(response);
 	}
 
-	@PutMapping(path = "/{postId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(path = "/{postId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "트러블슈팅 문서 수정 API", description = "트러블슈팅 문서를 수정한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))

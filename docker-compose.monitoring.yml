@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # Prometheus - 메트릭 수집
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: troublog-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - monitoring
+
+  # Grafana - 시각화
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: troublog-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=${GRAFANA_ALLOW_SIGNUP}
+    networks:
+      - monitoring
+
+  # Loki - 로그 저장소
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: troublog-loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./monitoring/loki/loki-config.yml:/etc/loki/local-config.yaml
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - monitoring
+
+  # Promtail - 로그 수집
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: troublog-promtail
+    ports:
+      - "9080:9080"
+    volumes:
+      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/config.yml
+      - ./logs:/var/log/troublog  # Spring Boot 로그 디렉토리 마운트
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    driver: bridge
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  loki_data:
