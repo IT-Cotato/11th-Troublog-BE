@@ -15,7 +15,8 @@ services:
       - app-network
       - monitoring
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
 
   redis:
     image: redis:8.2.2
@@ -23,11 +24,19 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - redis_data:/data
+      - redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
     networks:
       - app-network
       - monitoring
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   nginx:
      container_name: nginx
