@@ -12,7 +12,7 @@ spring:
       api-key: ${OPEN_AI_API_KEY}
       chat:
         options:
-          model: ${OPENAI_MODEL:gpt-4.1-nano}
+          model: ${OPENAI_MODEL}
   mvc:
     log-resolved-exception: false
   cloud:
@@ -45,11 +45,11 @@ spring:
 
 ai:
   prompts:
-    system: classpath:prompts/system.st
-    resume: classpath:prompts/resume.st
-    interview: classpath:prompts/interview.st
-    blog: classpath:prompts/blog.st
-    issue-management: classpath:prompts/issue-management.st
+    system: ${AI_PROMPT_SYSTEM:classpath:prompts/system.st}
+    resume: ${AI_PROMPT_RESUME:classpath:prompts/resume.st}
+    interview: ${AI_PROMPT_INTERVIEW:classpath:prompts/interview.st}
+    blog: ${AI_PROMPT_BLOG:classpath:prompts/blog.st}
+    issue-management: ${AI_PROMPT_ISSUE_MANAGEMENT:classpath:prompts/issue-management.st}
 
 springdoc:
   swagger-ui:
