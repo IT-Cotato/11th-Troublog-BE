@@ -35,7 +35,8 @@ jobs:
           mkdir deploy
           mv .env deploy/
           cp docker-compose.yml deploy/
-          cp -r monitoring deploy/  # 모니터링 설정 파일 포함
+          cp redis.conf deploy/       # Redis 설정 파일 포함
+          cp -r monitoring deploy/    # 모니터링 설정 파일 포함
           tar -czvf deploy.tar.gz -C deploy .
         shell: bash
 
@@ -97,6 +98,16 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           source: "monitoring"
+          target: "/home/ubuntu/troublog/"
+
+      - name: Copy redis.conf to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: "redis.conf"
           target: "/home/ubuntu/troublog/"
 
       - name: Deploy to EC2
