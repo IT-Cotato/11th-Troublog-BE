@@ -9,8 +9,14 @@ services:
       - .env
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}
+      - AI_PROMPT_SYSTEM=file:/app/prompts/system.st
+      - AI_PROMPT_RESUME=file:/app/prompts/resume.st
+      - AI_PROMPT_INTERVIEW=file:/app/prompts/interview.st
+      - AI_PROMPT_BLOG=file:/app/prompts/blog.st
+      - AI_PROMPT_ISSUE_MANAGEMENT=file:/app/prompts/issue-management.st
     volumes:
       - ${LOG_DIR:-./logs}:/app/logs  # 로그 파일 공유
+      - ./prompts:/app/prompts
     networks:
       - app-network
       - monitoring
