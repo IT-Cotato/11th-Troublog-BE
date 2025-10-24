@@ -39,4 +39,7 @@ out/
 /.nb-gradle/
 
 ### VS Code ###
-.vscode/
+*.pem
+
+### AI Prompts (Security) ###
+src/main/resources/prompts/

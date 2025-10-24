@@ -25,6 +25,15 @@ spring:
       host: redis # redis container 이름
       port: 6379
 
+# Prompt 설정 (Dev)
+ai:
+  prompts:
+    system: ${AI_PROMPT_SYSTEM}
+    resume: ${AI_PROMPT_RESUME}
+    interview: ${AI_PROMPT_INTERVIEW}
+    blog: ${AI_PROMPT_BLOG}
+    issue-management: ${AI_PROMPT_ISSUE_MANAGEMENT}
+
 # Actuator 모니터링 설정 (Dev)
 management:
   endpoints:
