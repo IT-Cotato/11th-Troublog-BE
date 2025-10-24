@@ -10,15 +10,15 @@ import troublog.backend.global.common.error.exception.AuthException;
 public enum Domain {
 
 	LOCAL("http://localhost:5173"),
-	DEV("https://troublog.vercel.app")
+	DEV("https://www.troublog.com")
 	;
 
-	private final String domain;
+	private final String url;
 
 	public static String fromEnvType(EnvType envType) {
 		return switch (envType) {
-			case LOCAL -> LOCAL.getDomain();
-			case DEV -> DEV.getDomain();
+			case LOCAL -> LOCAL.getUrl();
+			case DEV -> DEV.getUrl();
 			default -> throw new AuthException(ErrorCode.WRONG_ENVIRONMENT);
 		};
 	}
