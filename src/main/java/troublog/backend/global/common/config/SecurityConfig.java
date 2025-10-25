@@ -40,7 +40,8 @@ public class SecurityConfig {
 		"/v3/api-docs/**",
 		"/error",
 		"/image",
-        "/grafana"
+        "/grafana",
+		"/grafana/**"
 	};
 
 	@Bean
