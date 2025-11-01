@@ -41,7 +41,8 @@ public class SecurityConfig {
 		"/error",
 		"/image",
         "/grafana",
-		"/grafana/**"
+		"/grafana/**",
+        "/terms/latest"
 	};
 
 	@Bean
