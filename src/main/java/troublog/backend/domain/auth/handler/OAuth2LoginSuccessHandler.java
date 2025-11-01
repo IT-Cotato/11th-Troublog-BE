@@ -26,7 +26,9 @@ import troublog.backend.global.common.constant.Domain;
 import troublog.backend.global.common.constant.EnvType;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.util.JwtProvider;
+
 import org.springframework.beans.factory.annotation.Value;
+
 import java.util.UUID;
 
 @Slf4j
@@ -37,7 +39,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 	private final UserQueryService userQueryService;
 	private final UserCommandService userCommandService;
 	private final JwtProvider jwtProvider;
-	private final ObjectMapper objectMapper;
 	private final PasswordEncoder passwordEncoder;
 
 	@Value("${spring.profiles.active}")
@@ -58,7 +59,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
 		if (isNewUser) {
 			// 신규 유저: 프론트엔드 회원가입 완료 페이지로 리다이렉트
-			handleNewUserRedirect(response, user, clientEnvType);
+			handleNewUserRedirect(response, user);
 		} else {
 			// 기존 유저: 프론트엔드 메인 페이지로 토큰과 함께 리다이렉트
 			handleExistingUserRedirect(response, user, clientEnvType);
@@ -83,10 +84,10 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 			.orElseGet(() -> {
 				// 닉네임 중복 체크 및 처리
 				String uniqueNickname = generateUniqueNickname(nickname);
-				
-				log.info("신규 카카오 사용자 등록: socialId={}, originalNickname={}, uniqueNickname={}", 
+
+				log.info("신규 카카오 사용자 등록: socialId={}, originalNickname={}, uniqueNickname={}",
 					socialId, nickname, uniqueNickname);
-				
+
 				return userCommandService.save(
 					User.builder()
 						.email("kakao_" + socialId + "@social.temp") // 카카오 socialId 기반 임시 이메일
@@ -110,20 +111,20 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 	private String generateUniqueNickname(String originalNickname) {
 		String nickname = originalNickname;
 		int counter = 1;
-		
+
 		// 닉네임이 중복되면 숫자를 붙여서 유니크하게 만듦
 		while (userQueryService.existsByNickname(nickname)) {
 			nickname = originalNickname + "_" + counter;
 			counter++;
 		}
-		
+
 		return nickname;
 	}
 
-
-	private void handleNewUserRedirect(HttpServletResponse response, User user, String clientEnvType) throws IOException {
+	private void handleNewUserRedirect(HttpServletResponse response, User user) throws
+		IOException {
 		log.info("신규 카카오 유저 회원가입 완료: userId={}", user.getId());
-		
+
 		// 프론트엔드 도메인 가져오기
 		String frontendDomain = Domain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
 
@@ -138,13 +139,14 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		response.sendRedirect(redirectUrl);
 	}
 
-	private void handleExistingUserRedirect(HttpServletResponse response, User user, String clientEnvType) throws IOException {
+	private void handleExistingUserRedirect(HttpServletResponse response, User user, String clientEnvType) throws
+		IOException {
 		log.info("기존 카카오 유저 로그인: userId={}", user.getId());
 
 		// CustomAuthenticationToken 생성 (일반 로그인과 동일)
 		CustomAuthenticationToken authenticationToken = CustomAuthenticationToken.unauthenticated(
-			user.getEmail(), 
-			user.getPassword(), 
+			user.getEmail(),
+			user.getPassword(),
 			user.getId(),
 			clientEnvType,
 			user.getNickname()
@@ -152,7 +154,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
 		// 토큰 생성 (jwtProvider 사용)
 		String accessToken = jwtProvider.createAuthToken(authenticationToken);
-		String localToken = jwtProvider.createAuthToken(authenticationToken);
 		String refreshToken = jwtProvider.createRefreshToken(authenticationToken);
 
 		// 리프레시 토큰 Set-Cookie로 설정
@@ -160,7 +161,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
 		// 프론트엔드 도메인 가져오기
 		String frontendDomain = Domain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
-		
+
 		// 로그인 성공 시 토큰을 URL 파라미터로 전달하여 메인 페이지로 리다이렉트
 		String redirectUrl = String.format("%s/user/home?userId=%d&accessToken=%s",
 			frontendDomain,
@@ -172,7 +173,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		// if (profilesActive.equals(EnvType.LOCAL.getEnvType()) || clientEnvType.equals(EnvType.LOCAL.getEnvType())) {
 		// 	redirectUrl += "&localToken=" + URLEncoder.encode(localToken, StandardCharsets.UTF_8);
 		// }
-		
+
 		response.sendRedirect(redirectUrl);
 	}
 }

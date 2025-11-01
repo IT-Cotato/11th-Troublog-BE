@@ -42,14 +42,14 @@ public class User extends BaseEntity {
 	private Long id;
 
 	@NotNull
-	@Column(name = "email", unique = true)
+	@Column(name = "email")
 	private String email;
 
 	@NotNull
 	@Column(name = "password")
 	private String password;
 
-	@Column(name = "nickname", unique = true)
+	@Column(name = "nickname")
 	private String nickname;
 
 	@Column(name = "field")
