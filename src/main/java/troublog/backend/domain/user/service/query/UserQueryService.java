@@ -28,7 +28,7 @@ public class UserQueryService {
 
 	public User findUserByEmail(String email) {
 
-		return userRepository.findByEmail(email)
+		return userRepository.findByEmailAndIsDeletedFalse(email)
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 	}
 
@@ -45,7 +45,7 @@ public class UserQueryService {
 
 	public User findUserByEmailAndIsDeletedFalseAndStatusActive(String email) {
 
-		User user = userRepository.findByEmail(email)
+		User user = userRepository.findByEmailAndIsDeletedFalse(email)
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 
 		UserValidator.validateUserDeleted(user);
@@ -60,16 +60,16 @@ public class UserQueryService {
 
 	public boolean existsByEmail(String email) {
 
-		return userRepository.existsByEmail(email);
+		return userRepository.existsByEmailAndIsDeletedFalse(email);
 	}
 
 	public boolean existsByNickname(String nickname) {
 
-		return userRepository.existsByNickname(nickname);
+		return userRepository.existsByNicknameAndIsDeletedFalse(nickname);
 	}
 
 	public Optional<User> findUserBySocialId(String socialId) {
 
-	return userRepository.findBySocialId(socialId);
+	return userRepository.findBySocialIdAndIsDeletedFalse(socialId);
 	}
 }
