@@ -8,16 +8,15 @@ import lombok.Builder;
 import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
 
-
 @Builder
-public record PostDetailsResDto(
+public record CommunityPostDetailsResDto(
 	@Schema(description = "사용자 정보")
 	UserInfoResDto userInfoResDto,
 
 	@Schema(description = "게시글 ID", example = "1")
 	Long postId,
 
-	@Schema(defaultValue = "프로젝트 ID" , example = "2")
+	@Schema(description = "프로젝트 ID", example = "2")
 	Long projectId,
 
 	@Schema(description = "게시글 제목", example = "Spring Boot 환경설정 트러블슈팅")
@@ -35,20 +34,11 @@ public record PostDetailsResDto(
 	@Schema(description = "좋아요 여부", example = "true")
 	Boolean liked,
 
-	@Schema(defaultValue = "공개 여부", example = "true")
-	Boolean isVisible,
-
 	@Schema(description = "썸네일 이미지 URL")
 	String thumbnailImageUrl,
 
-	@Schema(description = "요약 생성 여부", example = "false")
-	Boolean isSummaryCreated,
-
 	@Schema(description = "게시글 상태", example = "COMPLETED")
 	String postStatus,
-
-	@Schema(description = "별점", example = "1")
-	Integer starRating,
 
 	@Schema(description = "템플릿 정보", example = "FREE_FORM")
 	String templateType,
@@ -77,5 +67,5 @@ public record PostDetailsResDto(
 	@Schema(description = "게시글 내용 목록")
 	List<ContentInfoDto> contents
 ) {
-
 }
+
