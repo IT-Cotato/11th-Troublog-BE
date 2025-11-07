@@ -54,6 +54,11 @@
 - [❗ 자주 발생하는 문제](#-자주-발생하는-문제)
 - [📝 커밋 컨벤션](#-커밋-컨벤션)
 
+### 👥 팀 & 프로젝트
+
+- [📊 프로젝트 관리](#-프로젝트-관리)
+- [👥 Team Members](#-team-members)
+
 # 📖 프로젝트 개요
 
 > [!IMPORTANT]  
@@ -324,6 +329,17 @@ net start mysql80       # Windows
 
 ---
 
+## 📊 프로젝트 관리
+
+> [!NOTE]
+> 이 프로젝트는 **GitHub Projects Kanban Board**를 활용하여 작업을 체계적으로 관리하고 있습니다.
+> 각 작업의 진행 상태(Todo, In Progress, Done)와 담당자를 실시간으로 확인할 수 있습니다.
+
+### 🔗 Kanban Board 바로가기
+
+**📋 [전체 프로젝트 보드](https://github.com/orgs/IT-Cotato/projects/14)** - 모든 작업 현황을 한눈에 확인
+
+---
 
 ## 👥 Team Members
 
@@ -363,8 +379,24 @@ net start mysql80       # Windows
       <sub>@marshmallowing</sub>
     </td>
   </tr>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/orgs/IT-Cotato/projects/14/views/3?sliceBy%5Bvalue%5D=supsup-hae">
+        📋 작업 현황
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/orgs/IT-Cotato/projects/14/views/3?sliceBy%5Bvalue%5D=jay91537">
+        📋 작업 현황
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/orgs/IT-Cotato/projects/14/views/3?sliceBy%5Bvalue%5D=marshmallowing">
+        📋 작업 현황
+      </a>
+    </td>
+  </tr>
 </table>
-
 
 # 📄 라이선스
 
@@ -413,7 +445,7 @@ SOFTWARE.
 
 <!--URL for Badges-->
 
-[deploy-shield]: https://img.shields.io/badge/-troublog.kr-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white
+[deploy-shield]: https://img.shields.io/badge/-troublog.com-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white
 
 [api-docs-shield]: https://img.shields.io/badge/-API%20문서-85EA2D?style=for-the-badge&logo=swagger&logoColor=white
 
@@ -423,7 +455,7 @@ SOFTWARE.
 
 <!--URL for Links-->
 
-[deploy-url]: https://troublog.vercel.app
+[deploy-url]: https://troublog.com
 
 [api-docs-url]: https://troublog.shop/swagger-ui/index.html#/
 
