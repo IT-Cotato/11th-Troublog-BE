@@ -48,7 +48,7 @@ public class Post extends BaseEntity {
 	private Long id;
 
 	@NotNull
-	@Column(name = "title")
+	@Column(name = "title", nullable = false)
 	private String title;
 
 	@Column(name = "introduction")
@@ -57,11 +57,13 @@ public class Post extends BaseEntity {
 	@Column(name = "thumbnail_url")
 	private String thumbnailUrl;
 
-	@Column(name = "like_count")
+    @NotNull
+	@Column(name = "like_count", nullable = false)
     @Builder.Default
 	private Integer likeCount = 0;
 
-	@Column(name = "comment_count")
+    @NotNull
+	@Column(name = "comment_count", nullable = false)
     @Builder.Default
 	private Integer commentCount = 0;
 
@@ -101,12 +103,12 @@ public class Post extends BaseEntity {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "project_id")
+	@JoinColumn(name = "project_id", nullable = false)
 	private Project project;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@Builder.Default
