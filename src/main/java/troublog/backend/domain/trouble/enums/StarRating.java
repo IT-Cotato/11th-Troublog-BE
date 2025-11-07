@@ -18,7 +18,7 @@ public enum StarRating {
 
 	private final int value;
 
-	public static StarRating from(int value) {
+	public static StarRating from(final int value) {
 		for (StarRating starRating : values()) {
 			if (starRating.value == value) {
 				return starRating;
