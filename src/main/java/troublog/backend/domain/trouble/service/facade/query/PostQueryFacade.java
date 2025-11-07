@@ -21,6 +21,7 @@ import troublog.backend.domain.trouble.converter.ListConverter;
 import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.converter.PostSummaryConverter;
 import troublog.backend.domain.trouble.dto.response.CombineResDto;
+import troublog.backend.domain.trouble.dto.response.CommunityPostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostCardResDto;
 import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
@@ -148,13 +149,13 @@ public class PostQueryFacade {
 		return posts.map(ListConverter::toAllTroubleListResDto);
 	}
 
-	public PostDetailsResDto findCommunityPostDetailsById(Long userId, Long postId) {
+	public CommunityPostDetailsResDto findCommunityPostDetailsById(Long userId, Long postId) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
 		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId(), userId);
 		boolean liked = likeQueryService.findByUserAndPost(userId, postId).isPresent();
 		recentPostCommandFacade.recordPostView(userId, postId);
-		return PostConverter.toPostDetailsResponse(userInfo, post, liked);
+		return PostConverter.toCommunityPostDetailsResponse(userInfo, post, liked);
 	}
 
 	public Page<PostCardResDto> getCommunityPosts(Pageable pageable) {
