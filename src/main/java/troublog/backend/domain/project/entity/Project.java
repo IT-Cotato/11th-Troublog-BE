@@ -58,6 +58,7 @@ public class Project extends BaseEntity {
 	@Column(name = "thumbnail_image_url")
 	private String thumbnailImageUrl;
 
+	@Builder.Default
 	@Column(name = "is_deleted", nullable = false)
 	private Boolean isDeleted = false;
 
