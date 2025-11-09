@@ -20,7 +20,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import troublog.backend.domain.trouble.enums.TagCategory;
 import troublog.backend.domain.trouble.enums.TagType;
 import troublog.backend.global.common.entity.BaseEntity;
 import troublog.backend.global.common.error.ErrorCode;
@@ -48,20 +47,22 @@ public class Tag extends BaseEntity {
 	private Long id;
 
 	@NotNull
-	@Column(unique = true)
+	@Column(name = "tag_name", nullable = false)
 	private String name;
 
 	@NotNull
-	@Enumerated(EnumType.STRING)
-	@Column(name = "tag_type")
-	private TagType tagType;
-
-	private String description;
+	@Column(name = "tag_normalized_name", nullable = false)
+	private String normalizedName;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Column(name = "tag_category")
-	private TagCategory tagCategory;
+	@Column(name = "tag_type", nullable = false)
+	private TagType tagType;
+
+	@NotNull
+	@Builder.Default
+	@Column(name = "usage_count", nullable = false)
+	private Integer usageCount = 0;
 
 	@Builder.Default
 	@OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)

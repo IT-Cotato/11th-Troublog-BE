@@ -31,7 +31,6 @@ import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostSummary;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;
-import troublog.backend.domain.trouble.enums.TagCategory;
 import troublog.backend.domain.trouble.enums.TagType;
 import troublog.backend.domain.trouble.service.facade.command.RecentPostCommandFacade;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
@@ -106,14 +105,6 @@ public class PostQueryFacade {
 	public List<PostResDto> findDeletedPosts() {
 		List<Post> posts = postQueryService.findAllDeletedPosts();
 		return PostConverter.toResponseList(posts);
-	}
-
-	public List<String> findPostTagsByCategory(String category) {
-		TagCategory tagCategory = TagCategory.from(category);
-		List<Tag> techStacks = tagQueryService.findTechStackTagsByCategory(tagCategory);
-		return techStacks.stream()
-			.map(Tag::getName)
-			.toList();
 	}
 
 	public List<String> findPostTagsByName(String name) {
