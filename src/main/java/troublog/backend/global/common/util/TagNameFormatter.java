@@ -1,8 +1,6 @@
 package troublog.backend.global.common.util;
 
 import com.google.common.base.CaseFormat;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -12,7 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @UtilityClass
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TagNameFormatter {
 
     public static final String OPERATOR = "-";
