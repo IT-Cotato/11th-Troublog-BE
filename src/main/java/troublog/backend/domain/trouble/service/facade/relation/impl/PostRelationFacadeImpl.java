@@ -1,10 +1,15 @@
 package troublog.backend.domain.trouble.service.facade.relation.impl;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.project.service.query.ProjectQueryService;
@@ -12,7 +17,11 @@ import troublog.backend.domain.trouble.converter.ContentConverter;
 import troublog.backend.domain.trouble.converter.TagConverter;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.request.common.ContentDto;
-import troublog.backend.domain.trouble.entity.*;
+import troublog.backend.domain.trouble.entity.Content;
+import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.entity.PostSummary;
+import troublog.backend.domain.trouble.entity.PostTag;
+import troublog.backend.domain.trouble.entity.Tag;
 import troublog.backend.domain.trouble.service.command.ContentCommandService;
 import troublog.backend.domain.trouble.service.command.PostTagCommandService;
 import troublog.backend.domain.trouble.service.command.TagCommandService;
@@ -23,10 +32,6 @@ import troublog.backend.domain.trouble.service.query.TagQueryService;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.global.common.util.TagNameFormatter;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @Transactional
@@ -146,13 +151,16 @@ public class PostRelationFacadeImpl implements PostRelationFacade {
                 ));
     }
 
-    private Tag findOrCreateTechStackTag(final String normalizedName) {
-        return tagQueryService.findTechStackTagByNormalizedName(normalizedName)
-                .orElseGet(() -> {
-                    Tag newTag = TagConverter.toEntity(TagNameFormatter.toCamelCaseName(normalizedName), normalizedName);
-                    return tagCommandService.save(newTag);
-                });
-    }
+	private Tag findOrCreateTechStackTag(final String normalizedName) {
+		return tagQueryService.findTechStackTagByNormalizedName(normalizedName)
+			.map(tag -> {
+				tag.increaseUsageCount();
+				return tag;
+			}).orElseGet(() -> {
+				Tag newTag = TagConverter.toEntity(TagNameFormatter.toCamelCaseName(normalizedName), normalizedName);
+				return tagCommandService.save(newTag);
+			});
+	}
 
     private void deleteAllTagByPostId(final Long postId) {
         List<PostTag> postTags = postTagQueryService.findAllByPostId(postId);

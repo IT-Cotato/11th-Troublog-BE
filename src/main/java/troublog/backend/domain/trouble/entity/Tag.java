@@ -57,11 +57,18 @@ public class Tag extends BaseEntity {
 	@NotNull
 	@Builder.Default
 	@Column(name = "tag_usage_count", nullable = false)
-	private Integer usageCount = 0;
+	private Integer usageCount = 1;
 
 	@Builder.Default
 	@OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PostTag> postTags = new ArrayList<>();
+
+	public void increaseUsageCount() {
+		if (usageCount == null) {
+			throw new PostException(ErrorCode.BAD_REQUEST);
+		}
+		this.usageCount++;
+	}
 
 	public boolean isSameType(TagType tagType) {
 		return this.tagType == tagType;
