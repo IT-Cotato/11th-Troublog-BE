@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import troublog.backend.domain.trouble.service.query.PostTagQueryService;
 import troublog.backend.domain.trouble.service.query.TagQueryService;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
+import troublog.backend.global.common.util.TagNameFormatter;
 
 @Component
 @Transactional
@@ -69,14 +71,14 @@ public class PostRelationFacadeImpl implements PostRelationFacade {
 	}
 
 	public void setContentRelations(final Post post, final List<ContentDto> contentDtoList) {
-		if (PostFactory.hasContents(contentDtoList)) {
+		if (CollectionUtils.isEmpty(contentDtoList)) {
 			List<Content> contents = saveAllContent(contentDtoList);
 			contents.forEach(post::addContent);
 		}
 	}
 
 	private void setTechStackTagRelations(final Post post, final List<String> techStackTags) {
-		if (PostFactory.hasTechStackTag(techStackTags)) {
+		if (CollectionUtils.isEmpty(techStackTags)) {
 			List<PostTag> techStackPostTags = saveTechStackPostTags(techStackTags, post);
 			techStackPostTags.forEach(post::addPostTag);
 		}
@@ -125,13 +127,18 @@ public class PostRelationFacadeImpl implements PostRelationFacade {
 		setTechStackTagRelations(post, techStackTags);
 	}
 
-	private List<PostTag> saveTechStackPostTags(final List<String> tagNames, final Post post) {
-		List<Tag> techStackTags = tagQueryService.findTechStackTagsByNames(tagNames);
+	private List<PostTag> saveTechStackPostTags(final List<String> displayNames, final Post post) {
+		List<String> normalizedNames = TagNameFormatter.toNormalizedNames(displayNames);
+		//TODO 태그들이 중복되는 경우에는 어디서 전처리르 진행하는게 좋을까?
+		//TODO 정규화된 이름으로 Tag를 탐색 - displayNames와 연계하여 Post와의 연관관계 지정
+
+		List<Tag> techStackTags = tagQueryService.findTechStackTagsByNames(displayNames);
 		List<PostTag> postTags = techStackTags.stream()
 			.map(tag -> postFactory.createPostTag(tag, post))
 			.toList();
 		return postTagCommandService.saveAll(postTags);
 	}
+
 
 	private void deleteAllTagByPostId(final Long postId) {
 		List<PostTag> postTags = postTagQueryService.findAllByPostId(postId);

@@ -29,7 +29,7 @@ public final class TagNameFormatter {
 			.toList();
 	}
 
-	public String toDisplayName(final String normalizedName) {
+	private String toDisplayName(final String normalizedName) {
 		if (!StringUtils.hasText(normalizedName)) {
 			return normalizedName;
 		}
@@ -51,7 +51,7 @@ public final class TagNameFormatter {
 			.toList();
 	}
 
-	public String toNormalizedName(final String displayName) {
+	private String toNormalizedName(final String displayName) {
 		if (!StringUtils.hasText(displayName)) {
 			return displayName;
 		}
