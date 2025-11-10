@@ -28,15 +28,14 @@ public class TagQueryService {
                 .orElseThrow(() -> new PostException(ErrorCode.TAG_NOT_FOUND));
     }
 
-    public Optional<Tag> findTechStackTagByName(String normalizedName) {
-        log.info("[Tag] 기술 스택 태그 조회: normalizedName={}", normalizedName);
-        return tagRepository.findTagByNameAndTagType(normalizedName, TagType.TECH_STACK);
+    public Optional<Tag> findTechStackTagByNormalizedName(String normalizedName) {
+        log.info("[Tag] 기술 스택 태그 조회 (normalizedName): normalizedName={}", normalizedName);
+        return tagRepository.findTagByNormalizedNameAndTagType(normalizedName, TagType.TECH_STACK);
     }
 
-
-    public List<Tag> findTechStackTagsByNames(List<String> tagNames) {
-        List<Tag> tags = tagRepository.findByNameInAndTagType(tagNames, TagType.TECH_STACK);
-        log.info("[Tag] 기술 스택 태그 조회 결과: requestedCount={}, foundCount={}", tagNames.size(), tags.size());
+    public List<Tag> findTechStackTagsByNormalizedNames(List<String> normalizedNames) {
+        List<Tag> tags = tagRepository.findByNormalizedNameInAndTagType(normalizedNames, TagType.TECH_STACK);
+        log.info("[Tag] 기술 스택 태그 조회 결과: requestedCount={}, foundCount={}", normalizedNames.size(), tags.size());
         return tags;
     }
 

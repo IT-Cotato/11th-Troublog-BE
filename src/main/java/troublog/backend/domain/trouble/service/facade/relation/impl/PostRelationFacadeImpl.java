@@ -86,7 +86,7 @@ public class PostRelationFacadeImpl implements PostRelationFacade {
 
     private PostTag saveErrorPostTag(final String tagName, final Post post) {
         Tag errorTag = tagQueryService.findErrorTagByName(tagName);
-        PostTag postTag = postFactory.createPostTag(errorTag, post, errorTag.getName());
+        PostTag postTag = postFactory.createPostTag(errorTag, post);
         return postTagCommandService.save(postTag);
     }
 
@@ -131,8 +131,8 @@ public class PostRelationFacadeImpl implements PostRelationFacade {
         List<String> normalizedNames = TagNameFormatter.toNormalizedNames(displayNames);
         Map<String, Tag> tagNameMap = matchWithTagName(normalizedNames);
 
-        List<PostTag> postTags = tagNameMap.entrySet().stream()
-                .map(entry -> postFactory.createPostTag(entry.getValue(), post, entry.getKey()))
+        List<PostTag> postTags = tagNameMap.values().stream()
+                .map(tag -> postFactory.createPostTag(tag, post))
                 .toList();
 
         return postTagCommandService.saveAll(postTags);
@@ -147,7 +147,7 @@ public class PostRelationFacadeImpl implements PostRelationFacade {
     }
 
     private Tag findOrCreateTechStackTag(final String normalizedName) {
-        return tagQueryService.findTechStackTagByName(normalizedName)
+        return tagQueryService.findTechStackTagByNormalizedName(normalizedName)
                 .orElseGet(() -> {
                     Tag newTag = TagConverter.toEntity(TagNameFormatter.toCamelCaseName(normalizedName), normalizedName);
                     return tagCommandService.save(newTag);

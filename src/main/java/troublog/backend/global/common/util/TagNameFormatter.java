@@ -16,17 +16,7 @@ public final class TagNameFormatter {
     public static final String SPACE = " ";
     public static final String WHITESPACE_CHARACTERS = "\\s+";
 
-    public List<String> toDisplayNames(final List<String> normalizedNames) {
-        if (CollectionUtils.isEmpty(normalizedNames)) {
-            return normalizedNames;
-        }
-
-        return normalizedNames.stream()
-                .map(TagNameFormatter::toDisplayName)
-                .toList();
-    }
-
-    private String toDisplayName(final String normalizedName) {
+    public String toDisplayName(final String normalizedName) {
         if (!StringUtils.hasText(normalizedName)) {
             return normalizedName;
         }
@@ -40,7 +30,7 @@ public final class TagNameFormatter {
 
     public List<String> toNormalizedNames(final List<String> displayNames) {
         if (CollectionUtils.isEmpty(displayNames)) {
-            return displayNames;
+            return List.of();
         }
 
         return displayNames.stream()
