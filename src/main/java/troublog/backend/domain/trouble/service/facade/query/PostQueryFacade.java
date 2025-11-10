@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -182,25 +183,25 @@ public class PostQueryFacade {
 	}
 
 	public static String findErrorTag(Post post) {
-		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
-			return null;
+		if (ObjectUtils.isEmpty(post)) {
+			throw new PostException(ErrorCode.MISSING_ERROR_TAG);
 		}
 		return post.getPostTags().stream()
-			.map(PostTag::getTag)
-			.filter(tag -> tag != null && tag.getTagType() == TagType.ERROR)
-			.map(Tag::getName)
+			.filter(Objects::nonNull)
+			.filter(postTag -> postTag.getTag().getTagType() == TagType.ERROR)
+			.map(PostTag::getDisplayName)
 			.findFirst()
-			.orElse(null);
+			.orElseThrow(() -> new PostException(ErrorCode.MISSING_ERROR_TAG));
 	}
 
 	public static List<String> findTechStackTags(Post post) {
-		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
+		if (ObjectUtils.isEmpty(post)) {
 			return List.of();
 		}
 		return post.getPostTags().stream()
-			.map(PostTag::getTag)
-			.filter(tag -> tag != null && tag.getTagType() == TagType.TECH_STACK)
-			.map(Tag::getName)
+			.filter(Objects::nonNull)
+			.filter(postTag -> postTag.getTag().getTagType() == TagType.TECH_STACK)
+			.map(PostTag::getDisplayName)
 			.toList();
 	}
 
