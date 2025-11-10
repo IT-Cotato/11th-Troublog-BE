@@ -57,6 +57,9 @@ public class PostTag extends BaseEntity {
 	@JoinColumn(name = "tag_id")
 	private Tag tag;
 
+	@Column(name = "post_tag_display_name", nullable = false, length = 100)
+	private String displayName;
+
 	// 연관관계 편의 메서드
 	public void assignPost(Post post) {
 		if (post == null) {

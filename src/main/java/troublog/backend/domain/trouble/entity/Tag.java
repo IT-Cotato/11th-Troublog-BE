@@ -30,15 +30,10 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(
-	name = "tags",
-	indexes = {
-		@Index(
-			name = "idx_tags_name",
-			columnList = "name"
-		)
-	}
-)
+@Table(name = "tags", indexes = {
+	@Index(name = "idx_normalized_name", columnList = "normalizedName", unique = true),
+	@Index(name = "idx_tag_type", columnList = "tagType")
+})
 public class Tag extends BaseEntity {
 
 	@Id
@@ -47,11 +42,11 @@ public class Tag extends BaseEntity {
 	private Long id;
 
 	@NotNull
-	@Column(name = "tag_name", nullable = false)
+	@Column(name = "tag_name", length = 100, nullable = false)
 	private String name;
 
 	@NotNull
-	@Column(name = "tag_normalized_name", nullable = false)
+	@Column(name = "tag_normalized_name", length = 100, nullable = false, unique = true)
 	private String normalizedName;
 
 	@NotNull
@@ -61,7 +56,7 @@ public class Tag extends BaseEntity {
 
 	@NotNull
 	@Builder.Default
-	@Column(name = "usage_count", nullable = false)
+	@Column(name = "tag_usage_count", nullable = false)
 	private Integer usageCount = 0;
 
 	@Builder.Default
