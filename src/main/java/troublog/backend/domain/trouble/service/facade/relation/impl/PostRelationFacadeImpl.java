@@ -92,6 +92,7 @@ public class PostRelationFacadeImpl implements PostRelationFacade {
 	private PostTag saveErrorPostTag(final String tagName, final Post post) {
 		Tag errorTag = tagQueryService.findErrorTagByName(tagName);
 		PostTag postTag = postFactory.createPostTag(errorTag, post);
+		errorTag.increaseUsageCount();
 		return postTagCommandService.save(postTag);
 	}
 

@@ -76,7 +76,7 @@ public class PostQueryFacade {
 	}
 
 	public static List<ContentInfoDto> findContents(final Post post) {
-		if (Collections.isEmpty(post.getComments())) {
+		if (Collections.isEmpty(post.getContents())) {
 			return List.of();
 		}
 		return ContentConverter.toResponseList(post.getContents());
