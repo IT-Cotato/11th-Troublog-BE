@@ -188,6 +188,7 @@ public class PostQueryFacade {
 		}
 		return post.getPostTags().stream()
 			.filter(Objects::nonNull)
+			.filter(postTag -> postTag.getTag() != null)
 			.filter(postTag -> postTag.getTag().getTagType() == TagType.ERROR)
 			.map(PostTag::getDisplayName)
 			.findFirst()
@@ -200,6 +201,7 @@ public class PostQueryFacade {
 		}
 		return post.getPostTags().stream()
 			.filter(Objects::nonNull)
+			.filter(postTag -> postTag.getTag() != null)
 			.filter(postTag -> postTag.getTag().getTagType() == TagType.TECH_STACK)
 			.map(PostTag::getDisplayName)
 			.toList();
