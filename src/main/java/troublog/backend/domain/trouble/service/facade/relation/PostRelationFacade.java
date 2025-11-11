@@ -22,4 +22,6 @@ public interface PostRelationFacade {
 	void setContentRelations(Post post, List<ContentDto> contentDtoList);
 
 	void setPostSummaryRelation(Post post, PostSummary postSummary, SummaryTask summaryTask);
+
+	void updateRelationsIfChanged(PostReqDto postReqDto, Post foundPost);
 }
