@@ -31,8 +31,8 @@ import troublog.backend.global.common.error.exception.PostException;
 @Builder
 @Getter
 @Table(name = "tags", indexes = {
-	@Index(name = "idx_normalized_name", columnList = "normalizedName", unique = true),
-	@Index(name = "idx_tag_type", columnList = "tagType")
+	@Index(name = "idx_normalized_name", columnList = "tag_normalized_name", unique = true),
+	@Index(name = "idx_tag_type", columnList = "tag_type")
 })
 public class Tag extends BaseEntity {
 
