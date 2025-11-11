@@ -21,20 +21,21 @@ import troublog.backend.global.common.error.exception.PostException;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class TagQueryService {
 
-    private final TagRepository tagRepository;
+	private final TagRepository tagRepository;
 
-    public Tag findErrorTagByName(final String tagName) {
-        log.info("[Tag] 에러 태그 조회: tagName={}", tagName);
-        return tagRepository.findTagByNameAndTagType(tagName, TagType.ERROR)
-                .orElseThrow(() -> new PostException(ErrorCode.TAG_NOT_FOUND));
-    }
+	public Tag findErrorTagByName(final String tagName) {
+		log.info("[Tag] 에러 태그 조회: tagName={}", tagName);
+		return tagRepository.findTagByNameAndTagType(tagName, TagType.ERROR)
+			.orElseThrow(() -> new PostException(ErrorCode.TAG_NOT_FOUND));
+	}
 
-    public Optional<Tag> findTechStackTagByNormalizedName(String normalizedName) {
-        log.info("[Tag] 기술 스택 태그 조회 (normalizedName): normalizedName={}", normalizedName);
-        return tagRepository.findTagByNormalizedNameAndTagType(normalizedName, TagType.TECH_STACK);
-    }
+	public Optional<Tag> findTechStackTagByNormalizedName(final String normalizedName) {
+		log.info("[Tag] 기술 스택 태그 조회 (normalizedName): normalizedName={}", normalizedName);
+		return tagRepository.findTagByNormalizedNameAndTagType(normalizedName, TagType.TECH_STACK);
+	}
 
-    public List<Tag> findTechStackTagContainsName(String keyword) {
-        return tagRepository.findTagByNameContaining(keyword);
-    }
+	public List<Tag> findTechStackTagContainsName(final String keyword) {
+		log.info("[Tag] 키워드 기반 태그 조회: keyword={}", keyword);
+		return tagRepository.findTagByNameContaining(keyword);
+	}
 }

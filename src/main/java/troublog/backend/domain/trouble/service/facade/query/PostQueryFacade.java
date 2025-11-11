@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import io.jsonwebtoken.lang.Collections;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.converter.ContentConverter;
@@ -60,28 +61,28 @@ public class PostQueryFacade {
 	private final RecentPostQueryService recentPostQueryService;
 	private final PostSummaryQueryService postSummaryQueryService;
 
-	public Post findPostEntityById(Long id, Long userId) {
-		Post post = postQueryService.findById(id);
+	public Post findPostEntityById(final Long postId, final Long userId) {
+		Post post = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, post);
 		return post;
 	}
 
-	public PostDetailsResDto findPostById(Long id, Long userId) {
-		Post post = postQueryService.findById(id);
+	public PostDetailsResDto findPostById(final Long postId, final Long userId) {
+		Post post = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, post);
 		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId(), userId);
 		boolean liked = likeQueryService.findByUserAndPost(userId, post.getId()).isPresent();
 		return PostConverter.toPostDetailsResponse(userInfo, post, liked);
 	}
 
-	public static List<ContentInfoDto> findContents(Post post) {
-		if (post.getContents() == null || post.getContents().isEmpty()) {
+	public static List<ContentInfoDto> findContents(final Post post) {
+		if (Collections.isEmpty(post.getComments())) {
 			return List.of();
 		}
 		return ContentConverter.toResponseList(post.getContents());
 	}
 
-	public CombineResDto findPostDetailsWithSummaryById(Long userId, Long postId, Long summaryId) {
+	public CombineResDto findPostDetailsWithSummaryById(final Long userId, final Long postId, final Long summaryId) {
 		Post post = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, post);
 
@@ -108,40 +109,26 @@ public class PostQueryFacade {
 		return PostConverter.toResponseList(posts);
 	}
 
-	public List<String> findPostTagsByName(String name) {
-		List<Tag> techStacks = tagQueryService.findTechStackTagContainsName(name);
+	public List<String> findPostTagsByName(final String keyword) {
+		List<Tag> techStacks = tagQueryService.findTechStackTagContainsName(keyword);
 		return techStacks.stream()
 			.map(Tag::getName)
 			.toList();
 	}
 
-	public Page<PostCardResDto> searchUserPostByKeyword(Long userId, String keyword, Pageable pageable) {
-		Page<Post> posts = postQueryService.searchUserPostByKeyword(userId, keyword, pageable);
-		Set<Long> userIds = posts.getContent().stream()
-			.map(post -> post.getUser().getId())
-			.collect(Collectors.toSet());
-
-		Map<Long, PostCardUserInfoResDto> userInfoMap = userFacade.getUserInfoMap(userIds);
-
-		return posts.map(post -> {
-			PostCardUserInfoResDto userInfo = userInfoMap.get(post.getUser().getId());
-			return PostConverter.toCommunityListResponse(userInfo, post);
-		});
-	}
-
-	public Page<PostResDto> searchPostByKeyword(String keyword, Pageable pageable) {
+	public Page<PostResDto> searchPostByKeyword(final String keyword, final Pageable pageable) {
 		Page<Post> posts = postQueryService.searchPostByKeyword(keyword, pageable);
 		return posts.map(PostConverter::toResponse);
 	}
 
-	public Page<TroubleListResDto> getAllTroubles(Long userId, Pageable pageable) {
+	public Page<TroubleListResDto> getAllTroubles(final Long userId, final Pageable pageable) {
 		Page<Post> posts = isSortByStarRating(pageable)
 			? postQueryService.getAllTroublesOrderByStarRating(userId, pageable)
 			: postQueryService.getAllTroubles(userId, pageable);
 		return posts.map(ListConverter::toAllTroubleListResDto);
 	}
 
-	public CommunityPostDetailsResDto findCommunityPostDetailsById(Long userId, Long postId) {
+	public CommunityPostDetailsResDto findCommunityPostDetailsById(final Long userId, final Long postId) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
 		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId(), userId);
@@ -150,13 +137,26 @@ public class PostQueryFacade {
 		return PostConverter.toCommunityPostDetailsResponse(userInfo, post, liked);
 	}
 
-	public Page<PostCardResDto> getCommunityPosts(Pageable pageable) {
-		Page<Post> posts = postQueryService.getCommunityPosts(pageable);
+	public Page<PostCardResDto> searchUserPostByKeyword(final Long userId, final String keyword,
+		final Pageable pageable) {
+		Page<Post> posts = postQueryService.searchUserPostByKeyword(userId, keyword, pageable);
+		Set<Long> userIds = getDeduplicationUserId(posts);
+		return convertToPostCardsWithUserInfo(userIds, posts);
+	}
 
-		Set<Long> userIds = posts.getContent().stream()
+	public Page<PostCardResDto> getCommunityPosts(final Pageable pageable) {
+		Page<Post> posts = postQueryService.getCommunityPosts(pageable);
+		Set<Long> userIds = getDeduplicationUserId(posts);
+		return convertToPostCardsWithUserInfo(userIds, posts);
+	}
+
+	private Set<Long> getDeduplicationUserId(final Page<Post> posts) {
+		return posts.getContent().stream()
 			.map(post -> post.getUser().getId())
 			.collect(Collectors.toSet());
+	}
 
+	private Page<PostCardResDto> convertToPostCardsWithUserInfo(final Set<Long> userIds, final Page<Post> posts) {
 		Map<Long, PostCardUserInfoResDto> userInfoMap = userFacade.getUserInfoMap(userIds);
 
 		return posts.map(post -> {
@@ -165,15 +165,15 @@ public class PostQueryFacade {
 		});
 	}
 
-	public Pageable getPageable(int page, int size) {
+	public Pageable getPageable(final int page, final int size) {
 		return PageRequest.of(Math.max(0, page - 1), size);
 	}
 
-	public PageRequest getPageableWithSorting(int page, int size, String sortBy) {
+	public PageRequest getPageableWithSorting(final int page, final int size, final String sortBy) {
 		return PageRequest.of(Math.max(0, page - 1), size, getSortByCriteria(sortBy));
 	}
 
-	private Sort getSortByCriteria(String sortBy) {
+	private Sort getSortByCriteria(final String sortBy) {
 		return switch (sortBy.toLowerCase()) {
 			case "likes" -> Sort.by(Sort.Direction.DESC, "likeCount");
 			case "important" -> Sort.by(Sort.Direction.DESC, "starRating");
@@ -182,7 +182,7 @@ public class PostQueryFacade {
 		};
 	}
 
-	public static String findErrorTag(Post post) {
+	public static String findErrorTag(final Post post) {
 		if (ObjectUtils.isEmpty(post)) {
 			throw new PostException(ErrorCode.MISSING_ERROR_TAG);
 		}
@@ -195,7 +195,7 @@ public class PostQueryFacade {
 			.orElseThrow(() -> new PostException(ErrorCode.MISSING_ERROR_TAG));
 	}
 
-	public static List<String> findTechStackTags(Post post) {
+	public static List<String> findTechStackTags(final Post post) {
 		if (ObjectUtils.isEmpty(post)) {
 			return List.of();
 		}
@@ -207,13 +207,14 @@ public class PostQueryFacade {
 			.toList();
 	}
 
-	public static List<String> findTopTechStackTags(Post post) {
+	public static List<String> findTopTechStackTags(final Post post) {
 		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
 			return List.of();
 		}
 		return post.getPostTags().stream()
 			.map(PostTag::getTag)
-			.filter(t -> t != null && t.getTagType() == TagType.TECH_STACK)
+			.filter(Objects::nonNull)
+			.filter(tag -> tag.isSameType(TagType.TECH_STACK))
 			.collect(Collectors.groupingBy(Tag::getName, Collectors.counting()))
 			.entrySet().stream()
 			.sorted(Map.Entry.<String, Long>comparingByValue().reversed())
@@ -222,7 +223,7 @@ public class PostQueryFacade {
 			.toList();
 	}
 
-	public Page<PostResDto> getRecentlyViewedPosts(Long userId, Pageable pageable) {
+	public Page<PostResDto> getRecentlyViewedPosts(final Long userId, final Pageable pageable) {
 		long offset = pageable.getOffset();
 		int size = pageable.getPageSize();
 
@@ -250,7 +251,7 @@ public class PostQueryFacade {
 		return new PageImpl<>(content, pageable, total);
 	}
 
-	private boolean isSortByStarRating(Pageable pageable) {
+	private boolean isSortByStarRating(final Pageable pageable) {
 		return pageable.getSort().getOrderFor("starRating") != null;
 	}
 }
