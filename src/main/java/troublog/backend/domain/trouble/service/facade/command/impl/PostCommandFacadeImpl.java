@@ -17,7 +17,7 @@ import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.service.command.PostCommandService;
 import troublog.backend.domain.trouble.service.facade.command.PostCommandFacade;
-import troublog.backend.domain.trouble.service.facade.relation.impl.PostRelationFacadeImpl;
+import troublog.backend.domain.trouble.service.facade.relation.PostRelationFacade;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.usecase.PostCreateUseCase;
@@ -30,7 +30,7 @@ public class PostCommandFacadeImpl implements PostCommandFacade {
 	private final PostCreateUseCase postCreateUseCase;
 	private final PostCommandService postCommandService;
 	private final PostQueryService postQueryService;
-	private final PostRelationFacadeImpl postRelationFacade;
+	private final PostRelationFacade postRelationFacade;
 	private final PostSummaryService postSummaryService;
 	private final SummaryTaskFacade summaryTaskFacade;
 
