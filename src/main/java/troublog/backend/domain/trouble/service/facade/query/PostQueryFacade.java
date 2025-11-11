@@ -14,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -183,7 +182,7 @@ public class PostQueryFacade {
 	}
 
 	public static String findErrorTag(final Post post) {
-		if (ObjectUtils.isEmpty(post)) {
+		if (post == null) {
 			throw new PostException(ErrorCode.MISSING_ERROR_TAG);
 		}
 		return post.getPostTags().stream()
@@ -196,7 +195,7 @@ public class PostQueryFacade {
 	}
 
 	public static List<String> findTechStackTags(final Post post) {
-		if (ObjectUtils.isEmpty(post)) {
+		if (post == null) {
 			return List.of();
 		}
 		return post.getPostTags().stream()
