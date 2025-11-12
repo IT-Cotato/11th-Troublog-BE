@@ -79,28 +79,6 @@ public class PostQueryController {
 		return ResponseUtils.ok(response);
 	}
 
-	@GetMapping("/tags/category")
-	@Operation(summary = "트러블슈팅 기술 태그 조회 API (카테고리)", description = "태그 카테고리 기반 기술태그를 조회한다.")
-	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class))))
-	public ResponseEntity<BaseResponse<List<String>>> findPostTags(
-		@Schema(
-			defaultValue = "FRONTEND",
-			allowableValues = {
-				"FRONTEND",
-				"BACKEND",
-				"DATABASE",
-				"DEVOPS",
-				"INFRA",
-				"TOOL"
-			}
-		)
-		@RequestParam(defaultValue = "FRONTEND") String tagCategory
-	) {
-		List<String> response = postQueryFacade.findPostTagsByCategory(tagCategory);
-		return ResponseUtils.ok(response);
-	}
-
 	@GetMapping("/tags")
 	@Operation(summary = "트러블슈팅 기술 태그 조회 API (키워드)", description = "키워드 기반 기술태그를 조회한다.")
 	@ApiResponse(responseCode = "200", description = "OK",

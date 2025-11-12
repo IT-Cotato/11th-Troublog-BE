@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,7 +39,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "트러블슈팅", description = "트러블슈팅 문서 관련 엔드포인트")
 public class PostCommandController {
 
-	private final PostCommandFacade postCommandFacade;
+	private final PostCommandFacade commandFacade;
 	private final SummaryTaskFacade summaryTaskFacade;
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,7 +50,7 @@ public class PostCommandController {
 		@Authentication CustomAuthenticationToken token,
 		@Valid @RequestBody PostReqDto postReqDto
 	) {
-		PostResDto response = postCommandFacade.createPost(token.getUserId(), postReqDto);
+		PostResDto response = commandFacade.createPost(token.getUserId(), postReqDto);
 		return ResponseUtils.created(response);
 	}
 
@@ -64,7 +63,7 @@ public class PostCommandController {
 		@PathVariable Long postId,
 		@Valid @RequestBody PostReqDto postReqDto
 	) {
-		PostResDto response = postCommandFacade.updatePost(token.getUserId(), postId, postReqDto);
+		PostResDto response = commandFacade.updatePost(token.getUserId(), postId, postReqDto);
 		return ResponseUtils.ok(response);
 	}
 
@@ -76,7 +75,7 @@ public class PostCommandController {
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
-		postCommandFacade.softDeletePost(token.getUserId(), postId);
+		commandFacade.softDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
 	}
 
@@ -86,7 +85,7 @@ public class PostCommandController {
 	public ResponseEntity<BaseResponse<Void>> hardDeletePost(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId) {
-		postCommandFacade.hardDeletePost(token.getUserId(), postId);
+		commandFacade.hardDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
 	}
 
@@ -99,7 +98,7 @@ public class PostCommandController {
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
-		PostResDto response = postCommandFacade.restorePost(token.getUserId(), postId);
+		PostResDto response = commandFacade.restorePost(token.getUserId(), postId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -112,7 +111,7 @@ public class PostCommandController {
 		@PathVariable Long postId,
 		@RequestParam SummaryType summaryType
 	) {
-		return ResponseUtils.ok(postCommandFacade.startSummary(token.getUserId(), summaryType, postId));
+		return ResponseUtils.ok(commandFacade.startSummary(token.getUserId(), summaryType, postId));
 	}
 
 	@GetMapping("/{postId}/summary/{taskId}")
