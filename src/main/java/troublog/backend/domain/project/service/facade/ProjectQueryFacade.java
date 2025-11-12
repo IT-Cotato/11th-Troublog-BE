@@ -16,10 +16,10 @@ import troublog.backend.domain.project.dto.response.ProjectDetailResDto;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.project.service.query.ProjectQueryService;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
-import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
+import troublog.backend.domain.trouble.enums.WritingStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 
 @Service
@@ -47,13 +47,13 @@ public class ProjectQueryFacade {
 	public List<TroubleListResDto> getProjectTroubles(
 		final Long userId,
 		final Long projectId,
-		final PostStatus status,
+		final WritingStatus statusType,
 		final SortType sort,
 		final VisibilityType visibility
 	) {
 		Project project = projectQueryService.findById(projectId);
 		validateProjectAuthorized(userId, project);
-		return postQueryService.getProjectTroublesByStatus(projectId, sort, visibility, status);
+		return postQueryService.getProjectTroublesByStatus(projectId, sort, visibility, statusType);
 	}
 
 	public List<TroubleListResDto> getProjectTroubleSummaries(

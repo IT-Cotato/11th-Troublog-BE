@@ -22,6 +22,7 @@ import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
+import troublog.backend.domain.trouble.enums.WritingStatus;
 import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.domain.trouble.repository.PostSummaryRepository;
 import troublog.backend.global.common.error.ErrorCode;
@@ -82,7 +83,6 @@ public class PostQueryService {
 		return posts;
 	}
 
-	@Transactional(readOnly = true)
 	public Page<Post> getAllTroubles(Long userId, Pageable pageable) {
 		Page<Post> page = postRepository.findAllByUser_IdAndIsDeletedFalse(userId, pageable);
 		log.info("[Post] 전체 트러블 조회: userId={}, total={}, page={}, size={}, elementsInPage={}",
@@ -90,7 +90,6 @@ public class PostQueryService {
 		return page;
 	}
 
-	@Transactional(readOnly = true)
 	public Page<Post> getAllTroublesOrderByStarRating(Long userId, Pageable pageable) {
 		Page<Post> page = postRepository.findTroublesByUserOrderByStarRating(userId, pageable);
 		log.info("[Post] 전체 트러블 조회 (중요도순): userId={}, total={}, page={}, size={}, elementsInPage={}",
@@ -102,13 +101,16 @@ public class PostQueryService {
 		final Long projectId,
 		final SortType sort,
 		final VisibilityType type,
-		final PostStatus status
+		final WritingStatus statusType
 	) {
 		Boolean visible = VisibilityType.of(type);
+		List<PostStatus> statuses = statusType.toPostStatuses();
+
 		List<Post> posts = (sort == SortType.IMPORTANT)
-			? postRepository.findByProjectImportant(projectId, status, visible)
-			: postRepository.findByProject(projectId, status, visible);
-		log.info("[Post] {} 트러블슈팅 문서 조회: projectId={}, postCount={}", status, projectId, posts.size());
+			? postRepository.findByProjectImportantWithStatuses(projectId, statuses, visible)
+			: postRepository.findByProjectWithStatuses(projectId, statuses, visible);
+
+		log.info("[Post] {} 트러블슈팅 문서 조회: projectId={}, postCount={}", statusType.getMessage(), projectId, posts.size());
 		return posts.stream()
 			.map(ListConverter::toAllTroubleListResDto)
 			.toList();
