@@ -6,6 +6,7 @@ import java.util.Set;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,9 @@ public class RecentPostQueryService {
 		long end = offset + size - 1;
 
 		Set<Object> range = redisTemplate.opsForZSet().reverseRange(key, offset, end);
-		if (range == null || range.isEmpty())
+		if (CollectionUtils.isEmpty(range)) {
 			return List.of();
+		}
 
 		return range.stream()
 			.map(id -> (id instanceof Number) ? ((Number)id).longValue()

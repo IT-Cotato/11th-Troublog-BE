@@ -5,13 +5,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import troublog.backend.domain.user.entity.User;
 
-@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-	Optional<User> findByEmail(String email);
 
 	Optional<User> findByEmailAndIsDeletedFalse(String email);
 
@@ -20,8 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	boolean existsByNicknameAndIsDeletedFalse(String nickname);
 
 	Optional<User> findBySocialIdAndIsDeletedFalse(String socialId);
-
-	Optional<User> findBySocialId(String socialId);
 
 	List<User> findAllByIdInAndIsDeletedFalse(Set<Long> userIds);
 }

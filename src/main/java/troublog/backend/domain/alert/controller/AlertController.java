@@ -23,7 +23,6 @@ import troublog.backend.domain.alert.service.AlertFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
-import troublog.backend.global.common.util.AlertSseUtil;
 import troublog.backend.global.common.util.ResponseUtils;
 
 @RestController
@@ -48,11 +47,9 @@ public class AlertController {
 		return ResponseUtils.ok(alertFacade.getAlerts(auth.getUserId(), alertType));
 	}
 
-	@DeleteMapping("")
+	@DeleteMapping
 	@Operation(summary = "알림 삭제 API", description = "알림 삭제")
-	public ResponseEntity<BaseResponse<Void>> deleteAlert(
-		@Authentication CustomAuthenticationToken auth,
-		@RequestParam Long alertId) {
+	public ResponseEntity<BaseResponse<Void>> deleteAlert(@RequestParam Long alertId) {
 
 		alertFacade.deleteAlert(alertId);
 		return ResponseUtils.noContent();

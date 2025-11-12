@@ -87,16 +87,16 @@ public class AuthFacade {
 			user.getId()
 		);
 
-		return RegisterResDto.builder()
-			.userId(user.getId())
-			.termsAgreement(termsAgreementResDto)
-			.build();
+		return RegisterResDto.of(
+			user.getId(),
+			termsAgreementResDto
+		);
 	}
 
 	@Transactional
 	public LoginResDto login(LoginReqDto loginReqDto, HttpServletRequest request, HttpServletResponse response) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -126,7 +126,7 @@ public class AuthFacade {
 		// 리프레시 토큰 Set-Cookie로 내려줌
 		jwtProvider.setCookieRefreshToken(refreshToken, response);
 
-		return (profilesActive.equals(EnvType.LOCAL.getEnvType()) || clientEnvType.equals(EnvType.LOCAL.getEnvType()))
+		return (profilesActive.equals(EnvType.LOCAL.getValue()) || clientEnvType.equals(EnvType.LOCAL.getValue()))
 			? LoginResDto.localReturn(user.getId(), accessToken, refreshToken, localToken)
 			: LoginResDto.nonLocalReturn(user.getId(), accessToken, refreshToken);
 	}
@@ -134,7 +134,7 @@ public class AuthFacade {
 	@Transactional
 	public String reissueAccessToken(HttpServletRequest request) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -181,7 +181,7 @@ public class AuthFacade {
 
 	@Transactional
 	public void logout(HttpServletRequest request, HttpServletResponse response) {
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -196,7 +196,7 @@ public class AuthFacade {
 	@Transactional(readOnly = true)
 	public void checkDuplicateEmail(String email, HttpServletRequest request) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -210,7 +210,7 @@ public class AuthFacade {
 	@Transactional
 	public RegisterResDto oAuthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -242,9 +242,9 @@ public class AuthFacade {
 			user.getId()
 		);
 
-		return RegisterResDto.builder()
-			.userId(user.getId())
-			.termsAgreement(termsAgreementResDto)
-			.build();
+		return RegisterResDto.of(
+			user.getId(),
+			termsAgreementResDto
+		);
 	}
 }

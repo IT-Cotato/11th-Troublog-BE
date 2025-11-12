@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.terms.exception.TermsException;
+import troublog.backend.global.common.error.exception.TermsException;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.AiTaskException;
 import troublog.backend.global.common.error.exception.AlertException;

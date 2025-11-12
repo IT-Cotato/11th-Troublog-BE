@@ -32,7 +32,7 @@ import troublog.backend.domain.trouble.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.dto.response.LikeResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.service.facade.command.CommentCommandFacade;
-import troublog.backend.domain.trouble.service.facade.command.LikeCommandFacade;
+import troublog.backend.domain.trouble.service.facade.command.LikeFacade;
 import troublog.backend.domain.trouble.service.facade.query.CommentQueryFacade;
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.global.common.annotation.Authentication;
@@ -49,7 +49,7 @@ public class CommunityController {
 
 	private final CommentCommandFacade commentCommandFacade;
 	private final CommentQueryFacade commentQueryFacade;
-	private final LikeCommandFacade likeCommandFacade;
+	private final LikeFacade likeFacade;
 	private final PostQueryFacade postQueryFacade;
 
 	@GetMapping("/{postId}")
@@ -165,7 +165,7 @@ public class CommunityController {
 	@Operation(summary = "포스트 좋아요 API", description = "해당하는 포스트에 좋아요한다. 만약 좋아요가 눌러져 있을 시 자동으로 삭제된다. (like true 시 좋아요 눌러진 것/ false는 취소된 것")
 	public ResponseEntity<BaseResponse<LikeResDto>> postLike(@PathVariable Long postId,
 		@Authentication CustomAuthenticationToken auth) {
-		LikeResDto response = likeCommandFacade.postLike(postId, auth.getUserId(), auth.getEnvType());
+		LikeResDto response = likeFacade.postLike(postId, auth.getUserId(), auth.getEnvType());
 		return ResponseUtils.created(response);
 	}
 
@@ -176,7 +176,7 @@ public class CommunityController {
 		@RequestParam(defaultValue = "1") @Min(1) int page,
 		@RequestParam(defaultValue = "10") @Min(1) int size) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
-		Page<LikePostResDto> likedPosts = likeCommandFacade.getLikedPostsByUser(auth.getUserId(), pageable);
+		Page<LikePostResDto> likedPosts = likeFacade.getLikedPostsByUser(auth.getUserId(), pageable);
 		return ResponseUtils.page(likedPosts);
 	}
 

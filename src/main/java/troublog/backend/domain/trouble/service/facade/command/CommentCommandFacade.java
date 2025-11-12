@@ -40,6 +40,8 @@ public class CommentCommandFacade {
 
 	private final AlertSseUtil alertSseUtil;
 
+	public static final String COMMUNITY_REDIRECT_URL = "/user/community/";
+
 	public CommentResDto createComment(Long userId, Long postId, CommentReqDto commentReqDto, String clientEnvType) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
@@ -50,7 +52,7 @@ public class CommentCommandFacade {
 		Comment savedComment = commentCommandService.save(newComment);
 
 		// 알림 전송
-		String targetUrl = Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + "/user/community/" + post.getId();
+		String targetUrl = Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + COMMUNITY_REDIRECT_URL + post.getId();
 
 		Alert alert = AlertConverter.postCommentAlert(post.getUser(), user.getNickname(), targetUrl);
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
@@ -79,7 +81,7 @@ public class CommentCommandFacade {
 		Comment savedComment = commentCommandService.save(newChildComment);
 
 		// 알림 전송
-		String targetUrl = Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + "/user/community/" + post.getId();
+		String targetUrl = Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + COMMUNITY_REDIRECT_URL + post.getId();
 
 		Alert alert = AlertConverter.postChildCommentAlert(parentComment.getUser(), user.getNickname(), targetUrl);
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);

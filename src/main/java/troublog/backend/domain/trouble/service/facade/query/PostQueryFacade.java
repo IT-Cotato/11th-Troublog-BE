@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -74,7 +75,7 @@ public class PostQueryFacade {
 	}
 
 	public static List<ContentInfoDto> findContents(Post post) {
-		if (post.getContents() == null || post.getContents().isEmpty()) {
+		if (CollectionUtils.isEmpty(post.getContents())) {
 			return List.of();
 		}
 		return ContentConverter.toResponseList(post.getContents());
@@ -190,7 +191,7 @@ public class PostQueryFacade {
 	}
 
 	public static String findErrorTag(Post post) {
-		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
+		if (CollectionUtils.isEmpty(post.getPostTags())) {
 			return null;
 		}
 		return post.getPostTags().stream()
@@ -202,7 +203,7 @@ public class PostQueryFacade {
 	}
 
 	public static List<String> findTechStackTags(Post post) {
-		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
+		if (CollectionUtils.isEmpty(post.getPostTags())) {
 			return List.of();
 		}
 		return post.getPostTags().stream()
@@ -213,7 +214,7 @@ public class PostQueryFacade {
 	}
 
 	public static List<String> findTopTechStackTags(Post post) {
-		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
+		if (CollectionUtils.isEmpty(post.getPostTags())) {
 			return List.of();
 		}
 		return post.getPostTags().stream()

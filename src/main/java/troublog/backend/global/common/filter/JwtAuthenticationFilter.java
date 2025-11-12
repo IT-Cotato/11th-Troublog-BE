@@ -22,7 +22,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
-	private static final String ENVTYPE = "EnvType";
+	private static final String ENV_TYPE = "EnvType";
 
 	private static final String[] EXCLUDE_PATHS = {
 		"/auth/register",
@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		ServletException, IOException {
 
 		String accessToken = DataUtil.getValueFromRequest(request, AUTHORIZATION);
-		String clientEnvType = DataUtil.getValueFromRequest(request, ENVTYPE);
+		String clientEnvType = DataUtil.getValueFromRequest(request, ENV_TYPE);
 
 		if (accessToken != null && jwtProvider.validateToken(accessToken) && jwtProvider.isNotExpired(accessToken)) {
 

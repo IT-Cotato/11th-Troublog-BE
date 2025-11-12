@@ -10,7 +10,7 @@ import org.springframework.util.CollectionUtils;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.terms.entity.Terms;
-import troublog.backend.domain.terms.exception.TermsException;
+import troublog.backend.global.common.error.exception.TermsException;
 import troublog.backend.domain.terms.service.query.TermsQueryService;
 import troublog.backend.global.common.error.ErrorCode;
 

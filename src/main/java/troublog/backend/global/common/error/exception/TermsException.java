@@ -1,7 +1,6 @@
-package troublog.backend.domain.terms.exception;
+package troublog.backend.global.common.error.exception;
 
 import troublog.backend.global.common.error.ErrorCode;
-import troublog.backend.global.common.error.exception.BusinessException;
 
 public class TermsException extends BusinessException {
 
