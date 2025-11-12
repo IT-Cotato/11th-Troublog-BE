@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
 import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.domain.trouble.repository.PostSummaryRepository;
+import troublog.backend.domain.user.entity.User;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
 
@@ -51,6 +53,12 @@ public class PostQueryService {
 		List<Post> posts = postRepository.findByIsDeletedFalse();
 		log.info("[Post] 삭제되지 않은 트러블슈팅 문서 조회: postCount={}", posts.size());
 		return posts;
+	}
+
+	public List<Post> findAllNotDeletedPostsByUser(User user) {
+		List<Post> postList = postRepository.findAllByUserAndIsDeletedFalse(user);
+		log.info("[Post] 특정 유저의 삭제되지 않은 트러블슈팅 문서 조회");
+		return postList;
 	}
 
 	public List<Post> findAllDeletedPosts() {
@@ -143,7 +151,7 @@ public class PostQueryService {
 	}
 
 	public List<Post> findByIds(List<Long> ids) {
-		if (ids == null || ids.isEmpty()) {
+		if (CollectionUtils.isEmpty(ids)) {
 			log.info("[Post] 최근 열람 DB 조회: requested=0, found=0");
 			return List.of();
 		}

@@ -1,5 +1,7 @@
 package troublog.backend.domain.trouble.service.command;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,5 +27,9 @@ public class PostCommandService {
 	public void delete(Post post) {
 		log.info("[Post] 트러블슈팅 문서 삭제: postId={}, title={}", post.getId(), post.getTitle());
 		postRepository.delete(post);
+	}
+
+	public void softDeleteAll(List<Post> postList) {
+		postList.forEach(Post::markAsDeleted);
 	}
 }

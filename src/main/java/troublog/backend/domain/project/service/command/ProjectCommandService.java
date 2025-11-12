@@ -1,5 +1,7 @@
 package troublog.backend.domain.project.service.command;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,5 +29,10 @@ public class ProjectCommandService {
 		Long projectId = project.getId();
 		log.info("[Project] 프로젝트 하드 삭제: projectId={}", projectId);
 		projectRepository.delete(project);
+	}
+
+	public void deleteAll(List<Project> projectList) {
+		log.info("[Project] 프로젝트 리스트 하드 삭제:  projectList={}", projectList);
+		projectRepository.deleteAll(projectList);
 	}
 }

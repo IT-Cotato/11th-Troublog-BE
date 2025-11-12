@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.enums.TagType;
+import troublog.backend.domain.user.entity.User;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 	@Query("""
@@ -27,4 +28,5 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
 	Page<Project> findAllByUserIdAndIsDeletedFalse(Long userId, Pageable pageable);
 
+	List<Project> findAllByUserAndIsDeletedFalse(User user);
 }

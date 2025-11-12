@@ -1,5 +1,7 @@
 package troublog.backend.domain.trouble.service.command;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,4 +39,7 @@ public class CommentCommandService {
 		commentRepository.delete(comment);
 	}
 
+	public void softDeleteAll(List<Comment> commentList) {
+		commentList.forEach(Comment::markAsDeleted);
+	}
 }

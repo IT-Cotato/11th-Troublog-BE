@@ -40,5 +40,7 @@ public class FollowQueryService {
 		return followRepository.findFollowings(userId);
 	}
 
-
+	public List<Follow> findAllByFollowerOrFollowing(User user) {
+		return followRepository.findAllByFollowerOrFollowing(user);
+	}
 }

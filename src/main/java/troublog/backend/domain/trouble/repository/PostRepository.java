@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.PostStatus;
+import troublog.backend.domain.user.entity.User;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 	Optional<Post> findByIdAndIsDeletedFalse(Long id);
@@ -196,4 +197,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	List<Post> findByUserIdAndIsDeletedFalse(Long userId);
 
 	List<Post> findByIdIn(Collection<Long> recentIds);
+
+	List<Post> findAllByUserAndIsDeletedFalse(User user);
 }
