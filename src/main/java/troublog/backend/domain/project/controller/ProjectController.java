@@ -102,11 +102,23 @@ public class ProjectController {
 		@PathVariable Long projectId,
 		@RequestParam PostStatus status,
 		@RequestParam(defaultValue = "LATEST") SortType sort,
-		@RequestParam(required = false) VisibilityType visibility,
-		@RequestParam(required = false) SummaryType summaryType
+		@RequestParam(required = false) VisibilityType visibility
 	) {
 		List<TroubleListResDto> response = projectQueryFacade.getProjectTroubles(auth.getUserId(), projectId, status,
-			sort, visibility, summaryType);
+			sort, visibility);
+		return ResponseUtils.ok(response);
+	}
+
+	@GetMapping("/{projectId}/summaries")
+	@Operation(summary = "프로젝트 내 요약본 목록 조회 API", description = "프로젝트내 존재하는 요약본을 요약 타입을 필터링해 조회합니다.")
+	public ResponseEntity<BaseResponse<List<TroubleListResDto>>> getProjectSummaries(
+		@Authentication CustomAuthenticationToken auth,
+		@PathVariable Long projectId,
+		@RequestParam(defaultValue = "LATEST") SortType sort,
+		@RequestParam(required = false) SummaryType summaryType
+	) {
+		List<TroubleListResDto> response = projectQueryFacade.getProjectTroubleSummaries(auth.getUserId(), projectId,
+			sort, summaryType);
 		return ResponseUtils.ok(response);
 	}
 }

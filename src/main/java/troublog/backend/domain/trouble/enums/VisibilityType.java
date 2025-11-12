@@ -23,4 +23,12 @@ public enum VisibilityType {
 		}
 		throw new PostException(ErrorCode.INVALID_VALUE);
 	}
+
+	public static Boolean of(final VisibilityType type) {
+		return switch (type) {
+			case PUBLIC -> Boolean.TRUE;
+			case PRIVATE -> Boolean.FALSE;
+			default -> throw new PostException(ErrorCode.MISSING_VISIBILITY);
+		};
+	}
 }
