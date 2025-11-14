@@ -35,7 +35,6 @@ import troublog.backend.global.common.error.exception.PostException;
 			name = "idx_post_tags_tag_id",
 			columnList = "tag_id"
 		),
-		// 복합 인덱스 (유니크 제약조건도 함께)
 		@Index(
 			name = "idx_post_tags_composite",
 			columnList = "post_id, tag_id",
@@ -57,6 +56,9 @@ public class PostTag extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tag_id")
 	private Tag tag;
+
+	@Column(name = "post_tag_display_name", nullable = false, length = 100)
+	private String displayName;
 
 	// 연관관계 편의 메서드
 	public void assignPost(Post post) {

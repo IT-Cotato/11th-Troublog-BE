@@ -70,7 +70,7 @@ public class PostConverter {
 			.checklistReason(JsonConverter.toJson(postReqDto.checklistReason()));
 	}
 
-	public PostResDto toResponse(Post post) {
+	public PostResDto toResponse(final Post post) {
 		return PostResDto.builder()
 			.id(post.getId())
 			.title(post.getTitle())
