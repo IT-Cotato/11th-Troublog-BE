@@ -26,10 +26,10 @@ import troublog.backend.domain.project.dto.response.ProjectResDto;
 import troublog.backend.domain.project.service.facade.ProjectCommandFacade;
 import troublog.backend.domain.project.service.facade.ProjectQueryFacade;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
+import troublog.backend.domain.trouble.enums.PostViewFilter;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
-import troublog.backend.domain.trouble.enums.WritingStatus;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -101,7 +101,7 @@ public class ProjectController {
 	public ResponseEntity<BaseResponse<List<TroubleListResDto>>> getProjectTroubles(
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable Long projectId,
-		@RequestParam WritingStatus status,
+		@RequestParam PostViewFilter status,
 		@RequestParam(defaultValue = "LATEST") SortType sort,
 		@RequestParam(required = false) VisibilityType visibility
 	) {

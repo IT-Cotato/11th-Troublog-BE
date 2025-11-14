@@ -10,7 +10,7 @@ import troublog.backend.global.common.error.exception.PostException;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum WritingStatus {
+public enum PostViewFilter {
 	WRITING("작성중"),
 	COMPLETED("작성완료");
 
@@ -23,8 +23,8 @@ public enum WritingStatus {
 		};
 	}
 
-	public static WritingStatus from(String status) {
-		for (WritingStatus type : values()) {
+	public static PostViewFilter from(String status) {
+		for (PostViewFilter type : values()) {
 			if (type.name().equals(status)) {
 				return type;
 			}

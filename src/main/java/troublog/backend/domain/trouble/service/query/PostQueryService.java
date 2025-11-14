@@ -19,10 +19,10 @@ import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostSummary;
 import troublog.backend.domain.trouble.enums.PostStatus;
+import troublog.backend.domain.trouble.enums.PostViewFilter;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
-import troublog.backend.domain.trouble.enums.WritingStatus;
 import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.domain.trouble.repository.PostSummaryRepository;
 import troublog.backend.global.common.error.ErrorCode;
@@ -101,7 +101,7 @@ public class PostQueryService {
 		final Long projectId,
 		final SortType sort,
 		final VisibilityType type,
-		final WritingStatus statusType
+		final PostViewFilter statusType
 	) {
 		Boolean visible = VisibilityType.of(type);
 		List<PostStatus> statuses = statusType.toPostStatuses();
