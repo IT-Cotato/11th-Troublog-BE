@@ -20,7 +20,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import troublog.backend.domain.trouble.enums.TagCategory;
 import troublog.backend.domain.trouble.enums.TagType;
 import troublog.backend.global.common.entity.BaseEntity;
 import troublog.backend.global.common.error.ErrorCode;
@@ -31,15 +30,10 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(
-	name = "tags",
-	indexes = {
-		@Index(
-			name = "idx_tags_name",
-			columnList = "name"
-		)
-	}
-)
+@Table(name = "tags", indexes = {
+	@Index(name = "idx_normalized_name", columnList = "tag_normalized_name", unique = true),
+	@Index(name = "idx_tag_type", columnList = "tag_type")
+})
 public class Tag extends BaseEntity {
 
 	@Id
@@ -48,24 +42,33 @@ public class Tag extends BaseEntity {
 	private Long id;
 
 	@NotNull
-	@Column(unique = true)
+	@Column(name = "tag_name", length = 100, nullable = false)
 	private String name;
 
 	@NotNull
-	@Enumerated(EnumType.STRING)
-	@Column(name = "tag_type")
-	private TagType tagType;
-
-	private String description;
+	@Column(name = "tag_normalized_name", length = 100, nullable = false, unique = true)
+	private String normalizedName;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Column(name = "tag_category")
-	private TagCategory tagCategory;
+	@Column(name = "tag_type", nullable = false)
+	private TagType tagType;
+
+	@NotNull
+	@Builder.Default
+	@Column(name = "tag_usage_count", nullable = false)
+	private Integer usageCount = 1;
 
 	@Builder.Default
 	@OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PostTag> postTags = new ArrayList<>();
+
+	public void increaseUsageCount() {
+		if (usageCount == null) {
+			throw new PostException(ErrorCode.BAD_REQUEST);
+		}
+		this.usageCount++;
+	}
 
 	public boolean isSameType(TagType tagType) {
 		return this.tagType == tagType;

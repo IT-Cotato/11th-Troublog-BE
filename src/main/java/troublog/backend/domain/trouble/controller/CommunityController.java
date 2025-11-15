@@ -26,10 +26,10 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.trouble.dto.request.CommentReqDto;
 import troublog.backend.domain.trouble.dto.response.CommentDetailResDto;
 import troublog.backend.domain.trouble.dto.response.CommentResDto;
-import troublog.backend.domain.trouble.dto.response.PostCardResDto;
-import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
+import troublog.backend.domain.trouble.dto.response.CommunityPostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.dto.response.LikeResDto;
+import troublog.backend.domain.trouble.dto.response.PostCardResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.service.facade.command.CommentCommandFacade;
 import troublog.backend.domain.trouble.service.facade.command.LikeFacade;
@@ -56,12 +56,12 @@ public class CommunityController {
 	@Operation(summary = "트러블슈팅 게시글 상세 조회 API", description =
 		"게시글 ID로 공개된 트러블슈팅 게시글의 상세 정보를 조회합니다. 댓글은 별도 API로 조회해야 합니다." + "이 API 호출 시 최근 읽은 포스트의 기록으로 저장됩니다.")
 	@ApiResponse(responseCode = "200", description = "OK",
-		content = @Content(schema = @Schema(implementation = PostDetailsResDto.class)))
-	public ResponseEntity<BaseResponse<PostDetailsResDto>> findCommunityPostDetailsOnly(
+		content = @Content(schema = @Schema(implementation = CommunityPostDetailsResDto.class)))
+	public ResponseEntity<BaseResponse<CommunityPostDetailsResDto>> findCommunityPostDetailsOnly(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
-		PostDetailsResDto response = postQueryFacade.findCommunityPostDetailsById(token.getUserId(), postId);
+		CommunityPostDetailsResDto response = postQueryFacade.findCommunityPostDetailsById(token.getUserId(), postId);
 		return ResponseUtils.ok(response);
 	}
 

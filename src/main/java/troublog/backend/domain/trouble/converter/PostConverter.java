@@ -6,6 +6,7 @@ import java.util.List;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
+import troublog.backend.domain.trouble.dto.response.CommunityPostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostCardResDto;
 import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
@@ -21,7 +22,6 @@ import troublog.backend.global.common.util.JsonConverter;
 @UtilityClass
 public class PostConverter {
 	private static final int DEFAULT_COUNT = 0;
-	private static final boolean DEFAULT_VISIBLE = false;
 	private static final boolean DEFAULT_SUMMARY_CREATED = false;
 	private static final boolean DEFAULT_DELETE_STATUS = false;
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
@@ -29,8 +29,8 @@ public class PostConverter {
 	public Post createWritingPost(PostReqDto postReqDto) {
 		return createBasePost(postReqDto)
 			.status(PostStatus.WRITING)
-			.isVisible(DEFAULT_VISIBLE)
-			.starRating(StarRating.NONE)
+			.isVisible(postReqDto.isVisible())
+			.starRating(StarRating.from(postReqDto.starRating()))
 			.isSummaryCreated(DEFAULT_SUMMARY_CREATED)
 			.build();
 	}
@@ -70,7 +70,7 @@ public class PostConverter {
 			.checklistReason(JsonConverter.toJson(postReqDto.checklistReason()));
 	}
 
-	public PostResDto toResponse(Post post) {
+	public PostResDto toResponse(final Post post) {
 		return PostResDto.builder()
 			.id(post.getId())
 			.title(post.getTitle())
@@ -99,12 +99,14 @@ public class PostConverter {
 	public PostDetailsResDto toPostDetailsResponse(UserInfoResDto userInfoResDto, Post post, boolean liked) {
 		return PostDetailsResDto.builder()
 			.userInfoResDto(userInfoResDto)
-			.id(post.getId())
+			.postId(post.getId())
+			.projectId(post.getProject().getId())
 			.title(post.getTitle())
 			.introduction(post.getIntroduction())
 			.likeCount(post.getLikeCount())
 			.commentCount(post.getCommentCount())
 			.liked(liked)
+			.isVisible(post.getIsVisible())
 			.isSummaryCreated(post.getIsSummaryCreated())
 			.thumbnailImageUrl(post.getThumbnailUrl() != null ? post.getThumbnailUrl() : null)
 			.postStatus(post.getStatus() != null ? String.valueOf(post.getStatus()) : null)
@@ -139,5 +141,29 @@ public class PostConverter {
 		return posts.stream()
 			.map(PostConverter::toResponse)
 			.toList();
+	}
+
+	public CommunityPostDetailsResDto toCommunityPostDetailsResponse(UserInfoResDto userInfoResDto, Post post, boolean liked) {
+		return CommunityPostDetailsResDto.builder()
+			.userInfoResDto(userInfoResDto)
+			.postId(post.getId())
+			.projectId(post.getProject().getId())
+			.title(post.getTitle())
+			.introduction(post.getIntroduction())
+			.likeCount(post.getLikeCount())
+			.commentCount(post.getCommentCount())
+			.liked(liked)
+			.thumbnailImageUrl(post.getThumbnailUrl() != null ? post.getThumbnailUrl() : null)
+			.postStatus(post.getStatus() != null ? String.valueOf(post.getStatus()) : null)
+			.templateType(post.getTemplateType() != null ? post.getTemplateType().toString() : null)
+			.checklistError(JsonConverter.toList(post.getChecklistError()))
+			.checklistReason(JsonConverter.toList(post.getChecklistReason()))
+			.errorTag(PostQueryFacade.findErrorTag(post))
+			.postTags(PostQueryFacade.findTechStackTags(post))
+			.contents(PostQueryFacade.findContents(post))
+			.createdAt(post.getCreated_at())
+			.updatedAt(post.getUpdated_at())
+			.completedAt(post.getCompletedAt() != null ? post.getCompletedAt().format(DATE_FORMATTER) : null)
+			.build();
 	}
 }

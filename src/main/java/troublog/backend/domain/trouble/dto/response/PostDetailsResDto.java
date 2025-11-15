@@ -15,7 +15,10 @@ public record PostDetailsResDto(
 	UserInfoResDto userInfoResDto,
 
 	@Schema(description = "게시글 ID", example = "1")
-	Long id,
+	Long postId,
+
+	@Schema(defaultValue = "프로젝트 ID" , example = "2")
+	Long projectId,
 
 	@Schema(description = "게시글 제목", example = "Spring Boot 환경설정 트러블슈팅")
 	String title,
@@ -24,19 +27,22 @@ public record PostDetailsResDto(
 	String introduction,
 
 	@Schema(description = "좋아요 수", example = "15")
-	int likeCount,
+	Integer likeCount,
 
 	@Schema(description = "댓글 수", example = "3")
-	int commentCount,
+	Integer commentCount,
 
 	@Schema(description = "좋아요 여부", example = "true")
-	boolean liked,
+	Boolean liked,
+
+	@Schema(defaultValue = "공개 여부", example = "true")
+	Boolean isVisible,
 
 	@Schema(description = "썸네일 이미지 URL")
 	String thumbnailImageUrl,
 
 	@Schema(description = "요약 생성 여부", example = "false")
-	boolean isSummaryCreated,
+	Boolean isSummaryCreated,
 
 	@Schema(description = "게시글 상태", example = "COMPLETED")
 	String postStatus,

@@ -53,6 +53,7 @@ public class Comment {
 	private String content;
 
 	@NotNull
+	@Builder.Default
 	@Column(name = "is_deleted", nullable = false)
 	private Boolean isDeleted = Boolean.FALSE;
 

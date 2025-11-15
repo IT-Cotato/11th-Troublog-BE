@@ -19,6 +19,7 @@ import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostSummary;
 import troublog.backend.domain.trouble.enums.PostStatus;
+import troublog.backend.domain.trouble.enums.PostViewFilter;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
@@ -89,7 +90,6 @@ public class PostQueryService {
 		return posts;
 	}
 
-	@Transactional(readOnly = true)
 	public Page<Post> getAllTroubles(Long userId, Pageable pageable) {
 		Page<Post> page = postRepository.findAllByUser_IdAndIsDeletedFalse(userId, pageable);
 		log.info("[Post] 전체 트러블 조회: userId={}, total={}, page={}, size={}, elementsInPage={}",
@@ -97,7 +97,6 @@ public class PostQueryService {
 		return page;
 	}
 
-	@Transactional(readOnly = true)
 	public Page<Post> getAllTroublesOrderByStarRating(Long userId, Pageable pageable) {
 		Page<Post> page = postRepository.findTroublesByUserOrderByStarRating(userId, pageable);
 		log.info("[Post] 전체 트러블 조회 (중요도순): userId={}, total={}, page={}, size={}, elementsInPage={}",
@@ -106,57 +105,54 @@ public class PostQueryService {
 	}
 
 	public List<TroubleListResDto> getProjectTroublesByStatus(
-		Long projectId, SortType sort, VisibilityType visibility, PostStatus status) {
-		Boolean visible = mapVisibility(visibility);
+		final Long projectId,
+		final SortType sort,
+		final VisibilityType type,
+		final PostViewFilter statusType
+	) {
+		Boolean visible = VisibilityType.of(type);
+		List<PostStatus> statuses = statusType.toPostStatuses();
+
 		List<Post> posts = (sort == SortType.IMPORTANT)
-			? postRepository.findByProjectImportant(projectId, status, visible)
-			: postRepository.findByProject(projectId, status, visible);
-		if (posts.isEmpty()) {
-			return List.of();
-		}
+			? postRepository.findByProjectImportantWithStatuses(projectId, statuses, visible)
+			: postRepository.findByProjectWithStatuses(projectId, statuses, visible);
 
-		log.info("[Post] {} 트러블슈팅 문서 조회: projectId={}, postCount={}", status, projectId, posts.size());
-
+		log.info("[Post] {} 트러블슈팅 문서 조회: projectId={}, postCount={}", statusType.getMessage(), projectId, posts.size());
 		return posts.stream()
 			.map(ListConverter::toAllTroubleListResDto)
 			.toList();
 	}
 
 	public List<TroubleListResDto> getSummarizedTroubles(
-		Long projectId, SortType sort, SummaryType summaryType
+		final Long projectId,
+		final SortType sort,
+		final SummaryType summaryType
 	) {
-		SummaryType st = (summaryType == SummaryType.NONE) ? null : summaryType;
+		SummaryType.validate(summaryType);
 		List<PostSummary> posts = (sort == SortType.IMPORTANT)
-			? postSummaryRepository.findByProjectSummarizedImportant(projectId, PostStatus.SUMMARIZED, st)
-			: postSummaryRepository.findByProjectSummarized(projectId, PostStatus.SUMMARIZED, st,
+			? postSummaryRepository.findByProjectSummarizedImportant(projectId, PostStatus.SUMMARIZED, summaryType)
+			: postSummaryRepository.findByProjectSummarized(projectId, PostStatus.SUMMARIZED, summaryType,
 			Sort.by(DESC, "created_at", "id"));
-
-		if (posts.isEmpty())
-			return List.of();
-
 		log.info("[Post] 요약완료된 트러블슈팅 문서 조회: postCount={}", posts.size());
 		return posts.stream()
 			.map(ListConverter::toAllSummerizedListResDto)
 			.toList();
 	}
 
-	private Boolean mapVisibility(VisibilityType v) {
-		if (v == null || v == VisibilityType.ALL)
-			return null;
-		return (v == VisibilityType.PUBLIC) ? Boolean.TRUE : Boolean.FALSE;
+	public Page<Post> getCommunityPosts(final Pageable pageable) {
+		Page<Post> page = postRepository.getCommunityPosts(pageable);
+		log.info("[Post] 커뮤니티 게시글 조회: total={}, page={}, size={}, elementsInPage={}", page.getTotalElements(),
+			page.getNumber(), page.getSize(), page.getNumberOfElements());
+		return page;
 	}
 
-	public Page<Post> getCommunityPosts(Pageable pageable) {
-		return postRepository.getCommunityPosts(pageable);
-	}
-
-	public List<Post> findByIds(List<Long> ids) {
-		if (CollectionUtils.isEmpty(ids)) {
+	public List<Post> findByIds(final List<Long> postIds) {
+		if (CollectionUtils.isEmpty(postIds)) {
 			log.info("[Post] 최근 열람 DB 조회: requested=0, found=0");
 			return List.of();
 		}
-		List<Post> posts = postRepository.findByIdIn(ids);
-		log.info("[Post] 최근 열람 DB 조회: requested={}, found={}", ids.size(), posts.size());
+		List<Post> posts = postRepository.findByIdIn(postIds);
+		log.info("[Post] 최근 열람 DB 조회: requested={}, found={}", postIds.size(), posts.size());
 		return posts;
 	}
 }

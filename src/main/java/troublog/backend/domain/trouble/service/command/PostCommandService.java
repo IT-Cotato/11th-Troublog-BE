@@ -19,12 +19,12 @@ public class PostCommandService {
 
 	private final PostRepository postRepository;
 
-	public Post save(Post post) {
+	public Post savePost(final Post post) {
 		log.info("[Post] 트러블슈팅 문서 저장: postId={}, title={}", post.getId(), post.getTitle());
 		return postRepository.save(post);
 	}
 
-	public void delete(Post post) {
+	public void deletePost(final Post post) {
 		log.info("[Post] 트러블슈팅 문서 삭제: postId={}, title={}", post.getId(), post.getTitle());
 		postRepository.delete(post);
 	}

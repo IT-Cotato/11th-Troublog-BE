@@ -33,6 +33,7 @@ public class RefreshToken extends BaseEntity {
 	@Column(name = "expired_at")
 	private Date expiredAt;
 
+	@Builder.Default
 	@Column(name = "is_revoked")
 	private boolean isRevoked = false;
 
