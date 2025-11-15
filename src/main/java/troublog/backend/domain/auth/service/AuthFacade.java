@@ -14,6 +14,8 @@ import troublog.backend.domain.alert.converter.AlertConverter;
 import troublog.backend.domain.alert.dto.response.AlertResDto;
 import troublog.backend.domain.alert.entity.Alert;
 import troublog.backend.domain.alert.service.AlertCommandService;
+import troublog.backend.domain.auth.dto.IntegrationKakaoRegisterReqDto;
+import troublog.backend.domain.auth.dto.IntegrationRegisterReqDto;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
@@ -23,12 +25,15 @@ import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
 import troublog.backend.domain.terms.facade.command.TermsCommandFacade;
 import troublog.backend.domain.terms.service.query.TermsQueryService;
 import troublog.backend.domain.terms.validator.TermsValidator;
+import troublog.backend.domain.trouble.enums.LoginType;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
+import troublog.backend.domain.user.entity.UserStatus;
 import troublog.backend.domain.user.service.command.UserCommandService;
 import troublog.backend.domain.user.service.query.UserQueryService;
+import troublog.backend.domain.user.validator.UserValidator;
 import troublog.backend.global.common.constant.Domain;
 import troublog.backend.global.common.constant.EnvType;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
@@ -47,6 +52,7 @@ public class AuthFacade {
 	private final PostQueryService postQueryService;
 	private final TermsCommandFacade termsCommandFacade;
 	private final TermsQueryService termsQueryService;
+	private final UserValidator userValidator;
 
 	private final AlertCommandService alertCommandService;
 
@@ -96,7 +102,7 @@ public class AuthFacade {
 	@Transactional
 	public LoginResDto login(LoginReqDto loginReqDto, HttpServletRequest request, HttpServletResponse response) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -134,7 +140,7 @@ public class AuthFacade {
 	@Transactional
 	public String reissueAccessToken(HttpServletRequest request) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -181,7 +187,7 @@ public class AuthFacade {
 
 	@Transactional
 	public void logout(HttpServletRequest request, HttpServletResponse response) {
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -196,13 +202,28 @@ public class AuthFacade {
 	@Transactional(readOnly = true)
 	public void checkDuplicateEmail(String email, HttpServletRequest request) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
 
-		boolean isDuplicated = userQueryService.existsByEmail(email);
+		if (!userQueryService.existsByEmail(email, UserStatus.ACTIVE)) {
+			return;
+		}
+
+		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(email);
+
+		boolean isDuplicated = user.getEmail().equals(email);
+		boolean isKaKaoRegistered =
+			user.getIsIntegrated().equals(Boolean.FALSE) && user.getLoginType().equals(LoginType.KAKAO.getValue());
+
+		// 이메일 중복
 		if (isDuplicated) {
+			// 이미 카카오로 회원가입됨 -> 통합 유도
+			if (isKaKaoRegistered) {
+				throw new UserException(ErrorCode.DUPLICATED_EMAIL_KAKAO);
+			}
+			// 일반회원가입으로 이미 가입되었거나 이미 통합된 계정중복
 			throw new UserException(ErrorCode.DUPLICATED_EMAIL);
 		}
 	}
@@ -210,12 +231,12 @@ public class AuthFacade {
 	@Transactional
 	public RegisterResDto oAuthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
 
-		User user = userQueryService.findUserById(oAuth2RegisterReqDto.userId());
+		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(oAuth2RegisterReqDto.userId());
 
 		// 닉네임 중복 체크
 		boolean isDuplicatedNickname = false;
@@ -246,5 +267,39 @@ public class AuthFacade {
 			.userId(user.getId())
 			.termsAgreement(termsAgreementResDto)
 			.build();
+	}
+
+	@Transactional
+	public void integrateUser(IntegrationRegisterReqDto integrationRegisterReqDto, HttpServletRequest request) {
+
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
+
+		// 프론트 환경변수 체크
+		jwtProvider.checkEnvType(clientEnvType);
+
+		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(integrationRegisterReqDto.email());
+
+		// 통합된 유저로 변경
+		user.updateIntegrateUser(passwordEncoder.encode(integrationRegisterReqDto.password()));
+	}
+
+	@Transactional
+	public void integrateKakaoUser(IntegrationKakaoRegisterReqDto integrationKakaoRegisterReqDto,
+		HttpServletRequest request) {
+
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
+
+		// 프론트 환경변수 체크
+		jwtProvider.checkEnvType(clientEnvType);
+
+		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(
+			integrationKakaoRegisterReqDto.email());
+
+		// 비밀번호 검증
+		userValidator.validateUserPassword(user, integrationKakaoRegisterReqDto.password());
+
+		// 통합된 유저로 변경
+		user.updateIntegrateKakaoUser(passwordEncoder.encode(integrationKakaoRegisterReqDto.password()),
+			integrationKakaoRegisterReqDto.socialId(), integrationKakaoRegisterReqDto.proflImgUrl());
 	}
 }

@@ -8,20 +8,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import troublog.backend.domain.user.entity.User;
+import troublog.backend.domain.user.entity.UserStatus;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-	Optional<User> findByEmail(String email);
-
 	Optional<User> findByEmailAndIsDeletedFalse(String email);
-
-	boolean existsByEmailAndIsDeletedFalse(String email);
 
 	boolean existsByNicknameAndIsDeletedFalse(String nickname);
 
-	Optional<User> findBySocialIdAndIsDeletedFalse(String socialId);
-
-	Optional<User> findBySocialId(String socialId);
-
 	List<User> findAllByIdInAndIsDeletedFalse(Set<Long> userIds);
+
+	boolean existsByEmailAndIsDeletedFalseAndStatus(String email, UserStatus userStatus);
+
+	Optional<User> findByEmailAndIsDeletedFalseAndStatus(String email, UserStatus userStatus);
 }
