@@ -27,6 +27,9 @@ public record UserProfileResDto(
 
 	@Schema(description = "깃허브 주소")
 	@JsonProperty("githubUrl")
-	String githubUrl
+	String githubUrl,
+
+	@Schema(description = "프로필이미지url")
+	String profileImgUrl
 ) {
 }
