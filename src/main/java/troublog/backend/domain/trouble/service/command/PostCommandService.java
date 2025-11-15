@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,11 @@ public class PostCommandService {
 	}
 
 	public void softDeleteAll(List<Post> postList) {
+		if(CollectionUtils.isEmpty(postList)) {
+			log.info("[Post] 삭제할 게시글 없음");
+			return;
+		}
+		log.info("[Post] 게시글 리스트 soft delete: postList={}", postList);
 		postList.forEach(Post::markAsDeleted);
 	}
 }

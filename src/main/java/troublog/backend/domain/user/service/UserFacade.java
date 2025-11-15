@@ -224,22 +224,22 @@ public class UserFacade {
 		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
 
 		// 사용자 삭제 (soft delete)
-		userCommandService.deleteUser(user);
+		userCommandService.softDeleteUser(user);
 
 		// 댓글 삭제 (soft delete)
 		List<Comment> commentList = commentQueryService.findCommentListByUserId(user);
 
 		commentCommandService.softDeleteAll(commentList);
 
+		// 프로젝트 삭제 (soft delete)
+		List<Project> projectList = projectQueryService.getAllProjectsByUser(user);
+
+		projectCommandService.softDeleteAll(projectList);
+
 		// 게시글 삭제 (soft delete)
 		List<Post> postList = postQueryService.findAllNotDeletedPostsByUser(user);
 
 		postCommandService.softDeleteAll(postList);
-
-		// 프로젝트 삭제 (hard delete)
-		List<Project> projectList = projectQueryService.getAllProjectsByUser(user);
-
-		projectCommandService.deleteAll(projectList);
 
 		// 팔로우 팔로잉 관계(내역) 삭제 (hard delete)
 		List<Follow> followList = followQueryService.findAllByFollowerOrFollowing(user);

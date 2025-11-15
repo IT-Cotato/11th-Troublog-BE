@@ -262,7 +262,7 @@ public class JwtProvider {
 		EnvType clientEnv = EnvType.valueOfEnvType(clientEnvType);
 
 		// 로컬 환경은 모든 요청 허용
-		if (serverEnv == null || serverEnv.isLocal()) {
+		if (serverEnv.isLocal()) {
 			return;
 		}
 

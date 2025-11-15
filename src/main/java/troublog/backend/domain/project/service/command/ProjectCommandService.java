@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +32,18 @@ public class ProjectCommandService {
 		projectRepository.delete(project);
 	}
 
-	public void deleteAll(List<Project> projectList) {
-		log.info("[Project] 프로젝트 리스트 하드 삭제:  projectList={}", projectList);
-		projectRepository.deleteAll(projectList);
+	public void softDelete(Project project) {
+		log.info("[Project] 프로젝트 soft delete: projectId={}", project.getId());
+		project.softDelete();
+	}
+
+	public void softDeleteAll(List<Project> projectList) {
+		if (CollectionUtils.isEmpty(projectList)) {
+			log.info("[Project] 삭제할 프로젝트 없음");
+			return;
+		}
+
+		log.info("[Project] 프로젝트 리스트 soft delete:  projectList={}", projectList);
+		projectList.forEach(Project::softDelete);
 	}
 }

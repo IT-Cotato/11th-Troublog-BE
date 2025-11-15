@@ -61,7 +61,7 @@ public class PostRelationFacadeImpl implements PostRelationFacade {
 	}
 
 	public void setProjectRelations(final Post post, final Long projectId) {
-		Project project = projectQueryService.findById(projectId);
+		Project project = projectQueryService.findByIdAndIsDeletedFalse(projectId);
 		project.addPost(post);
 	}
 

@@ -3,7 +3,7 @@ package troublog.backend.global.common.util;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -31,7 +31,7 @@ public class JsonConverter {
 
 	public List<Integer> toList(String json) {
 		String trimmed = (json == null) ? null : json.trim();
-		if (StringUtils.isEmpty(trimmed)
+		if (StringUtils.hasLength(trimmed)
 			|| SQUARE_BRACKETS.equals(trimmed)
 			|| "null".equalsIgnoreCase(trimmed)) {
 			return Collections.emptyList();

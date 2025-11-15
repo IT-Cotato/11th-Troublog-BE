@@ -49,6 +49,7 @@ public enum ErrorCode {
 
 	ALERT_NOT_FOUND(HttpStatus.NOT_FOUND, "AL-001", "알림을 찾을 수 없습니다."),
 	ALERT_TYPE_INVALID(HttpStatus.BAD_REQUEST, "AL-002", "유효하지 않은 알림 타입입니다."),
+	ALERT_SELF_DELETE_CHECK(HttpStatus.BAD_REQUEST, "AL-003", "자기자신의 알람만 삭제할 수 있습니다."),
 
 	/**
 	 * Project Error

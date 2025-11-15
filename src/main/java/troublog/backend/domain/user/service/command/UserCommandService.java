@@ -32,8 +32,8 @@ public class UserCommandService {
 		);
 	}
 
-	public void deleteUser(User user) {
-		user.deleteUser();
+	public void softDeleteUser(User user) {
 		log.info("[User] 사용자 삭제: userId={}", user.getId());
+		user.deleteUser();
 	}
 }

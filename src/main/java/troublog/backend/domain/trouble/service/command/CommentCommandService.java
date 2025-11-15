@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,12 @@ public class CommentCommandService {
 	}
 
 	public void softDeleteAll(List<Comment> commentList) {
+		if (CollectionUtils.isEmpty(commentList)) {
+			log.info("[Comment] 삭제할 댓글 없음");
+			return;
+		}
+
+		log.info("[Comment] 댓글 soft delete all: commentList={}", commentList);
 		commentList.forEach(Comment::markAsDeleted);
 	}
 }

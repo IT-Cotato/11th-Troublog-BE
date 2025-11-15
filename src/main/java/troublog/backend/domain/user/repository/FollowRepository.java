@@ -31,9 +31,9 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 	List<User> findFollowings(@Param("userId") Long userId);
 
 	@Query("""
-	SELECT f
-	FROM Follow f
-	WHERE f.follower = :user OR f.following = :user
-""")
+			SELECT f
+			FROM Follow f
+			WHERE f.follower = :user OR f.following = :user
+		""")
 	List<Follow> findAllByFollowerOrFollowing(@Param("user") User user);
 }
