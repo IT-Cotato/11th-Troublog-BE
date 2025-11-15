@@ -1,7 +1,6 @@
 package troublog.backend.domain.alert.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +12,7 @@ import troublog.backend.domain.alert.converter.AlertConverter;
 import troublog.backend.domain.alert.dto.response.AlertResDto;
 import troublog.backend.domain.alert.entity.Alert;
 import troublog.backend.domain.alert.entity.AlertType;
+import troublog.backend.domain.alert.validator.AlertValidator;
 import troublog.backend.global.common.util.AlertSseUtil;
 
 @Service
@@ -32,13 +32,16 @@ public class AlertFacade {
 
 		return alertQueryService.getAlerts(userId, type).stream()
 			.map(AlertConverter::convertToAlertResDto)
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	@Transactional
-	public void deleteAlert(Long alertId) {
+	public void deleteAlert(Long alertId, Long userId) {
 
 		Alert alert = alertQueryService.getAlertById(alertId);
+
+		// 자기자신의 알람인지 확인
+		AlertValidator.validateUserAlarm(alert, userId);
 
 		alertCommandService.deleteAlert(alert);
 	}

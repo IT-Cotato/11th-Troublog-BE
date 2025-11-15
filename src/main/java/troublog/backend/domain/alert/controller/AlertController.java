@@ -49,9 +49,10 @@ public class AlertController {
 
 	@DeleteMapping
 	@Operation(summary = "알림 삭제 API", description = "알림 삭제")
-	public ResponseEntity<BaseResponse<Void>> deleteAlert(@RequestParam Long alertId) {
+	public ResponseEntity<BaseResponse<Void>> deleteAlert(@RequestParam Long alertId,
+		@Authentication CustomAuthenticationToken auth) {
 
-		alertFacade.deleteAlert(alertId);
+		alertFacade.deleteAlert(alertId, auth.getUserId());
 		return ResponseUtils.noContent();
 	}
 
