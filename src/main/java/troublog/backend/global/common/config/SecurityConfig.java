@@ -1,6 +1,7 @@
 package troublog.backend.global.common.config;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
+
 import troublog.backend.domain.auth.handler.OAuth2LoginSuccessHandler;
 import troublog.backend.global.common.filter.ExceptionHandlerFilter;
 import troublog.backend.global.common.filter.JwtAuthenticationFilter;
@@ -36,13 +38,16 @@ public class SecurityConfig {
 		"/auth/refresh",
 		"/auth/email-check",
 		"/auth/oauth-register",
+		"/auth/find-password",
+		"auth/check-code",
+		"auth/change-password",
 		"/swagger-ui/**",
 		"/v3/api-docs/**",
 		"/error",
 		"/image",
-        "/grafana",
+		"/grafana",
 		"/grafana/**",
-        "/terms/latest"
+		"/terms/latest"
 	};
 
 	@Bean
