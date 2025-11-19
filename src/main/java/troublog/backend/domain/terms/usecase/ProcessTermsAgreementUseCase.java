@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.terms.entity.Terms;
 import troublog.backend.domain.terms.entity.UserTermsConsent;
-import troublog.backend.domain.terms.exception.TermsException;
+import troublog.backend.global.common.error.exception.TermsException;
 import troublog.backend.domain.terms.factory.TermsFactory;
 import troublog.backend.domain.terms.service.command.UserTermsConsentCommandService;
 import troublog.backend.domain.terms.service.query.TermsQueryService;

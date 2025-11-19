@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import troublog.backend.domain.trouble.enums.PostStatus;
@@ -25,6 +26,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -85,7 +87,7 @@ public class UserController {
 		return ResponseUtils.ok(userFacade.getUserInfo(userId, auth.getUserId()));
 	}
 
-	@GetMapping("")
+	@GetMapping
 	@Operation(summary = "내 프로필 조회", description = "마이페이지 내 프로필 조회")
 	@ApiResponse(responseCode = "200", description = "성공",
 		content = @Content(schema = @Schema(implementation = UserProfileResDto.class)))
@@ -107,7 +109,7 @@ public class UserController {
 		return ResponseUtils.ok(userFacade.getMyPostStatus(postStatus, auth.getUserId()));
 	}
 
-	@PatchMapping("")
+	@PatchMapping
 	@Operation(summary = "내 프로필 수정", description = "마이페이지 내 프로필 수정")
 	public ResponseEntity<BaseResponse<Void>> updateMyProfile(
 		@Valid @RequestBody UserProfileUpdateReqDto userProfileUpdateReqDto,
@@ -118,7 +120,7 @@ public class UserController {
 		return ResponseUtils.noContent();
 	}
 
-	@DeleteMapping("")
+	@DeleteMapping
 	@Operation(summary = "회원 탈퇴", description = "마이페이지 회원 탈퇴")
 	public ResponseEntity<BaseResponse<Void>> deleteMyProfile(
 		@Authentication CustomAuthenticationToken auth) {

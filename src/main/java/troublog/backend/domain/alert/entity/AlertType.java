@@ -1,10 +1,12 @@
 package troublog.backend.domain.alert.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.AlertException;
 
 @Getter
+@AllArgsConstructor
 public enum AlertType {
 
 	// 알림 타입
@@ -14,11 +16,6 @@ public enum AlertType {
 
 	private final String name;
 	private final String description;
-
-	AlertType(String name, String description) {
-		this.name = name;
-		this.description = description;
-	}
 
 	public static AlertType fromString(String alertType) {
 		for (AlertType type : AlertType.values()) {

@@ -18,11 +18,11 @@ public enum EnvType {
 	// 테스트는 임시로
 	TEST("test");
 
-	private final String envType;
+	private final String value;
 
 	public static EnvType valueOfEnvType(String inputEnvType) {
 		return Arrays.stream(values())
-			.filter(et -> et.envType.equals(inputEnvType))
+			.filter(et -> et.value.equals(inputEnvType))
 			.findFirst()
 			.orElseThrow(() -> new AuthException(ErrorCode.WRONG_ENVIRONMENT));
 	}

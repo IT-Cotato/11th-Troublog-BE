@@ -9,12 +9,18 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import troublog.backend.domain.project.entity.Project;
+import troublog.backend.domain.project.service.command.ProjectCommandService;
+import troublog.backend.domain.project.service.query.ProjectQueryService;
+import troublog.backend.domain.trouble.entity.Comment;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.PostStatus;
+import troublog.backend.domain.trouble.service.command.CommentCommandService;
+import troublog.backend.domain.trouble.service.command.PostCommandService;
+import troublog.backend.domain.trouble.service.query.CommentQueryService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.FollowConverter;
 import troublog.backend.domain.user.converter.UserConverter;
@@ -44,6 +50,11 @@ public class UserFacade {
 	private final FollowCommandService followCommandService;
 	private final FollowQueryService followQueryService;
 	private final PostQueryService postQueryService;
+	private final CommentCommandService commentCommandService;
+	private final ProjectCommandService projectCommandService;
+	private final CommentQueryService commentQueryService;
+	private final ProjectQueryService projectQueryService;
+	private final PostCommandService postCommandService;
 
 	@Transactional
 	public void followUser(Long followerId, Long followingId) {
@@ -212,7 +223,27 @@ public class UserFacade {
 		// 사용자 (본인) 조회
 		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
 
-		// 사용자 삭제
-		userCommandService.deleteUser(user);
+		// 사용자 삭제 (soft delete)
+		userCommandService.softDeleteUser(user);
+
+		// 댓글 삭제 (soft delete)
+		List<Comment> commentList = commentQueryService.findCommentListByUserId(user);
+
+		commentCommandService.softDeleteAll(commentList);
+
+		// 프로젝트 삭제 (soft delete)
+		List<Project> projectList = projectQueryService.getAllProjectsByUser(user);
+
+		projectCommandService.softDeleteAll(projectList);
+
+		// 게시글 삭제 (soft delete)
+		List<Post> postList = postQueryService.findAllNotDeletedPostsByUser(user);
+
+		postCommandService.softDeleteAll(postList);
+
+		// 팔로우 팔로잉 관계(내역) 삭제 (hard delete)
+		List<Follow> followList = followQueryService.findAllByFollowerOrFollowing(user);
+
+		followCommandService.deleteAll(followList);
 	}
 }

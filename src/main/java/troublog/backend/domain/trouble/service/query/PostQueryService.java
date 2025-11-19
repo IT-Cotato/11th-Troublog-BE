@@ -25,6 +25,7 @@ import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
 import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.domain.trouble.repository.PostSummaryRepository;
+import troublog.backend.domain.user.entity.User;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
 
@@ -53,6 +54,12 @@ public class PostQueryService {
 		List<Post> posts = postRepository.findByIsDeletedFalse();
 		log.info("[Post] 삭제되지 않은 트러블슈팅 문서 조회: postCount={}", posts.size());
 		return posts;
+	}
+
+	public List<Post> findAllNotDeletedPostsByUser(User user) {
+		List<Post> postList = postRepository.findAllByUserAndIsDeletedFalse(user);
+		log.info("[Post] 특정 유저의 삭제되지 않은 트러블슈팅 문서 조회");
+		return postList;
 	}
 
 	public List<Post> findAllDeletedPosts() {

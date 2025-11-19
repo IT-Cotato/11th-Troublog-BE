@@ -1,5 +1,7 @@
 package troublog.backend.domain.trouble.service.query;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.trouble.entity.Comment;
 import troublog.backend.domain.trouble.repository.CommentRepository;
+import troublog.backend.domain.user.entity.User;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
 
@@ -30,5 +33,11 @@ public class CommentQueryService {
 		Page<Comment> comments = commentRepository.findByPostIdAndIsDeletedFalseOrderByCreatedAtDesc(postId, pageable);
 		log.info("[Post] 전체 댓글 조회: postId={} size={}", postId, comments.getTotalElements());
 		return comments;
+	}
+
+	public List<Comment> findCommentListByUserId(User user) {
+		List<Comment> commentList = commentRepository.findAllByUserAndIsDeletedFalse(user);
+		log.info("[User] 특정 사용자의 전체 댓글 조회: userId={}, size={}", user.getId(), commentList.size());
+		return commentList;
 	}
 }

@@ -1,6 +1,7 @@
 package troublog.backend.domain.auth.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ import troublog.backend.domain.auth.service.AuthFacade;
 import troublog.backend.global.common.response.BaseResponse;
 import troublog.backend.global.common.util.ResponseUtils;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
