@@ -15,7 +15,6 @@ import troublog.backend.domain.alert.dto.response.AlertResDto;
 import troublog.backend.domain.alert.entity.Alert;
 import troublog.backend.domain.alert.service.AlertCommandService;
 import troublog.backend.domain.auth.dto.IntegrationKakaoRegisterReqDto;
-import troublog.backend.domain.auth.dto.IntegrationRegisterReqDto;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
@@ -25,7 +24,6 @@ import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
 import troublog.backend.domain.terms.facade.command.TermsCommandFacade;
 import troublog.backend.domain.terms.service.query.TermsQueryService;
 import troublog.backend.domain.terms.validator.TermsValidator;
-import troublog.backend.domain.trouble.enums.LoginType;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.UserConverter;
@@ -78,7 +76,7 @@ public class AuthFacade {
 			throw new UserException(ErrorCode.DUPLICATED_NICKNAME);
 		}
 
-		// 비밀번호 중복 체크
+		// 이메일 중복 체크
 		checkDuplicateEmail(registerReqDto.email(), request);
 
 		// 비밀번호 인코딩
@@ -207,23 +205,8 @@ public class AuthFacade {
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
 
-		if (!userQueryService.existsByEmail(email, UserStatus.ACTIVE)) {
-			return;
-		}
-
-		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(email);
-
-		boolean isDuplicated = user.getEmail().equals(email);
-		boolean isKaKaoRegistered =
-			user.getIsIntegrated().equals(Boolean.FALSE) && user.getLoginType().equals(LoginType.KAKAO.getValue());
-
-		// 이메일 중복
-		if (isDuplicated) {
-			// 이미 카카오로 회원가입됨 -> 통합 유도
-			if (isKaKaoRegistered) {
-				throw new UserException(ErrorCode.DUPLICATED_EMAIL_KAKAO);
-			}
-			// 일반회원가입으로 이미 가입되었거나 이미 통합된 계정중복
+		// 이메일 중복이면 에러 던짐
+		if (userQueryService.existsByEmail(email, UserStatus.ACTIVE)) {
 			throw new UserException(ErrorCode.DUPLICATED_EMAIL);
 		}
 	}
@@ -267,20 +250,6 @@ public class AuthFacade {
 			.userId(user.getId())
 			.termsAgreement(termsAgreementResDto)
 			.build();
-	}
-
-	@Transactional
-	public void integrateUser(IntegrationRegisterReqDto integrationRegisterReqDto, HttpServletRequest request) {
-
-		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
-
-		// 프론트 환경변수 체크
-		jwtProvider.checkEnvType(clientEnvType);
-
-		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(integrationRegisterReqDto.email());
-
-		// 통합된 유저로 변경
-		user.updateIntegrateUser(passwordEncoder.encode(integrationRegisterReqDto.password()));
 	}
 
 	@Transactional

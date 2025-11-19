@@ -30,12 +30,6 @@ public class UserQueryService {
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 	}
 
-	public User findUserByEmail(String email) {
-
-		return userRepository.findByEmailAndIsDeletedFalse(email)
-			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
-	}
-
 	public User findUserByIdAndIsDeletedFalseAndStatusActive(Long userId) {
 
 		User user = userRepository.findById(userId)

@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.enums;
+package troublog.backend.domain.auth.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

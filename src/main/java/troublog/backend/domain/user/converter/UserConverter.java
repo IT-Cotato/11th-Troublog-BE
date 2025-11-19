@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
-import troublog.backend.domain.trouble.enums.LoginType;
+import troublog.backend.domain.auth.entity.LoginType;
 import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;

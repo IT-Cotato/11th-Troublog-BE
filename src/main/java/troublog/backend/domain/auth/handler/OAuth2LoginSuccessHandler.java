@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.trouble.enums.LoginType;
+import troublog.backend.domain.auth.entity.LoginType;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.entity.UserStatus;
 import troublog.backend.domain.user.service.query.UserQueryService;
@@ -39,6 +39,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 	private final UserCommandService userCommandService;
 	private final JwtProvider jwtProvider;
 	private final PasswordEncoder passwordEncoder;
+
+	public static final String OAUTH2_KAKAO = "KAKAO_";
+	public static final String EMAIL_DOMAIN_TEMP = "_@social.temp";
 
 	@Value("${spring.profiles.active}")
 	private String profilesActive;
@@ -146,7 +149,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 			return email;
 		}
 
-		return "kakao_" + socialId + "@social.temp";
+		return OAUTH2_KAKAO + socialId + EMAIL_DOMAIN_TEMP;
 	}
 
 	/**
@@ -213,12 +216,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 			user.getId(),
 			URLEncoder.encode(accessToken, StandardCharsets.UTF_8)
 		);
-
-		// 개발 환경인 경우 localToken도 추가
-		// if (profilesActive.equals(EnvType.LOCAL.getEnvType()) || clientEnvType.equals(EnvType.LOCAL.getEnvType())) {
-		// 	redirectUrl += "&localToken=" + URLEncoder.encode(localToken, StandardCharsets.UTF_8);
-		// }
-
 		response.sendRedirect(redirectUrl);
 	}
 
@@ -236,7 +233,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 			frontendDomain,
 			user.getId(),
 			URLEncoder.encode(socialId, StandardCharsets.UTF_8),
-			URLEncoder.encode(profileImgUrl, StandardCharsets.UTF_8)
+			profileImgUrl != null ? URLEncoder.encode(profileImgUrl, StandardCharsets.UTF_8) : ""
 		);
 		response.sendRedirect(redirectUrl);
 	}
