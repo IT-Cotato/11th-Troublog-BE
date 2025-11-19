@@ -67,14 +67,16 @@ public enum ErrorCode {
 	POST_NOT_VISIBLE(HttpStatus.FORBIDDEN, "P-006", "공개되지 않은 게시물입니다."),
 	JSON_PARSING_ERROR(HttpStatus.BAD_REQUEST, "J-007", "JSON 파싱 중 오류가 발생했습니다."),
 	SUMMARY_NOT_FOUND(HttpStatus.NOT_FOUND, "P-008", "요약본을 찾을 수 없습니다."),
+	MISSING_VISIBILITY(HttpStatus.NOT_FOUND,"P-009" , "공개 여부를 확인할 수 없습니다."),
 
 	/**
 	 * Post Summary Error
 	 */
 	MISSING_POST_SUMMARY(HttpStatus.BAD_REQUEST, "PS-001", "요약본 정보가 누락되었습니다."),
 	MISSING_SUMMARY_CONTENT(HttpStatus.BAD_REQUEST, "PS-002", "요약본 콘텐츠 정보가 누락되었습니다."),
-	POST_SUMMARY_NOT_FOUND(HttpStatus.NOT_FOUND, "PS-003", "요약본을 찾지 못했습니다."),
-	USER_SUMMARY_MISMATCH(HttpStatus.FORBIDDEN, "PS-004", "해당 요약본과 소유자가 일치하지 않습니다."),
+	MISSING_SUMMARY_TYPE(HttpStatus.BAD_REQUEST,"PS-003" , "잘못된 요약본 타입입니다."),
+	POST_SUMMARY_NOT_FOUND(HttpStatus.NOT_FOUND, "PS-004", "요약본을 찾지 못했습니다."),
+	USER_SUMMARY_MISMATCH(HttpStatus.FORBIDDEN, "PS-005", "해당 요약본과 소유자가 일치하지 않습니다."),
 	/**
 	 * Content Error
 	 */

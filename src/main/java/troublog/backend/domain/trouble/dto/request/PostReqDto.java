@@ -60,14 +60,14 @@ public record PostReqDto(
 		defaultValue = "false"
 	)
 	@NotNull(message = "공개 여부는 필수 값입니다.")
-	boolean isVisible,
+	Boolean isVisible,
 
 	@Schema(
 		description = "요약 생성 여부",
 		defaultValue = "false"
 	)
 	@NotNull(message = "요약 생성 여부는 필수 값입니다.")
-	boolean isSummaryCreated,
+	Boolean isSummaryCreated,
 
 	@Schema(
 		description = "작성 상태",

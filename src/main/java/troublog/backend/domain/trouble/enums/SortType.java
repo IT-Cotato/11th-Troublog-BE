@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum SortType {
 	IMPORTANT("recommended", Sort.by(Sort.Direction.DESC, "likeCount", "id")),
 	LIKES("likes", Sort.by(Sort.Direction.DESC, "likeCount", "id")),

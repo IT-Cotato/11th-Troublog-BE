@@ -33,4 +33,10 @@ public enum SummaryType {
 	public static String getName(SummaryType summaryType) {
 		return summaryType.name();
 	}
+
+	public static void validate(SummaryType summaryType) {
+		if (summaryType == null || summaryType.equals(SummaryType.NONE)) {
+			throw new PostException(ErrorCode.MISSING_SUMMARY_TYPE);
+		}
+	}
 }

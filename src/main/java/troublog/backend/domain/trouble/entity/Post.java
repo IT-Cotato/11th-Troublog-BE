@@ -1,31 +1,9 @@
 package troublog.backend.domain.trouble.entity;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.enums.PostStatus;
@@ -36,6 +14,10 @@ import troublog.backend.global.common.entity.BaseEntity;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
 import troublog.backend.global.common.util.JsonConverter;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -66,7 +48,7 @@ public class Post extends BaseEntity {
 	private Long id;
 
 	@NotNull
-	@Column(name = "title")
+	@Column(name = "title", nullable = false)
 	private String title;
 
 	@Column(name = "introduction")
@@ -75,11 +57,15 @@ public class Post extends BaseEntity {
 	@Column(name = "thumbnail_url")
 	private String thumbnailUrl;
 
-	@Column(name = "like_count")
-	private int likeCount;
+    @NotNull
+	@Column(name = "like_count", nullable = false)
+    @Builder.Default
+	private Integer likeCount = 0;
 
-	@Column(name = "comment_count")
-	private int commentCount;
+    @NotNull
+	@Column(name = "comment_count", nullable = false)
+    @Builder.Default
+	private Integer commentCount = 0;
 
 	@Column(name = "visible")
 	private Boolean isVisible;
@@ -117,12 +103,12 @@ public class Post extends BaseEntity {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "project_id")
+	@JoinColumn(name = "project_id", nullable = false)
 	private Project project;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@Builder.Default
