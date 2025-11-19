@@ -56,7 +56,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			  AND (
 			    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 			    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
-			    OR t.name LIKE CONCAT('%', :keyword, '%')
+			    OR t.tag_name LIKE CONCAT('%', :keyword, '%')
 			  )
 			""",
 		nativeQuery = true)
@@ -101,7 +101,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			  AND (
 			    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 			    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
-			    OR t.name LIKE CONCAT('%', :keyword, '%')
+			    OR t.tag_name LIKE CONCAT('%', :keyword, '%')
 			  )
 			""",
 		nativeQuery = true)
