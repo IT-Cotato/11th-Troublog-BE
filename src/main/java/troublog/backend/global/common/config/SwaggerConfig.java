@@ -3,8 +3,10 @@ package troublog.backend.global.common.config;
 import java.util.Collections;
 import java.util.List;
 
+import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 
 import io.swagger.v3.oas.models.Components;
@@ -77,5 +79,12 @@ public class SwaggerConfig {
 				.addSecuritySchemes("EnvType", securitySchemeEnvType))
 			.security(Collections.singletonList(securityRequirement))
 			.servers(List.of(server));
+	}
+
+	@Bean
+	@Primary
+	public SwaggerUiConfigProperties swaggerUiConfigProperties(SwaggerUiConfigProperties props) {
+		props.setPersistAuthorization(true);
+		return props;
 	}
 }
