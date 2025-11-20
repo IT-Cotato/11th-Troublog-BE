@@ -12,7 +12,7 @@ public enum SummaryType {
 	NONE("없음"),
 	RESUME("이력서"),
 	INTERVIEW("면접"),
-	BLOG("블로그"),
+	MEMOIRS("회고록"),
 	ISSUE_MANAGEMENT("이슈관리");
 
 	private final String description;

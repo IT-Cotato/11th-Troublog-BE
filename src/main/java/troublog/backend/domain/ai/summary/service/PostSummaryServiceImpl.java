@@ -126,7 +126,7 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 
 	private Resource selectPrompt(SummaryType summaryType) {
 		return switch (summaryType) {
-			case BLOG -> promptProperties.blog();
+			case MEMOIRS -> promptProperties.memoirs();
 			case RESUME -> promptProperties.resume();
 			case INTERVIEW -> promptProperties.interview();
 			case ISSUE_MANAGEMENT -> promptProperties.issueManagement();

@@ -31,7 +31,7 @@ ai:
     system: ${AI_PROMPT_SYSTEM}
     resume: ${AI_PROMPT_RESUME}
     interview: ${AI_PROMPT_INTERVIEW}
-    blog: ${AI_PROMPT_BLOG}
+    memoirs: ${AI_PROMPT_MEMOIRS}
     issue-management: ${AI_PROMPT_ISSUE_MANAGEMENT}
 
 # Actuator 모니터링 설정 (Dev)
