@@ -207,7 +207,7 @@ public class PostQueryFacade {
 	}
 
 	public static List<String> findTopTechStackTags(final Post post) {
-		if (post.getPostTags() == null || post.getPostTags().isEmpty()) {
+		if (CollectionUtils.isEmpty(post.getPostTags())) {
 			return List.of();
 		}
 		return post.getPostTags().stream()

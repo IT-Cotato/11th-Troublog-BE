@@ -26,6 +26,9 @@ public enum ErrorCode {
 	WRONG_ENVIRONMENT(HttpStatus.UNAUTHORIZED, "AU-005", "잘못된 환경으로 접근했습니다."),
 	TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AU-006", "토큰을 찾을 수 없습니다."),
 	TOKEN_NOT_EXPIRED(HttpStatus.CONFLICT, "AU-007", "만료되지 않은 토큰입니다."),
+	AUTH_CODE_EMPTY(HttpStatus.NOT_FOUND, "AU-008", "존재하지 않는 인증코드입니다."),
+	AUTH_CODE_NOT_LATEST(HttpStatus.BAD_REQUEST, "AU-009", "가장 최근에 전송한 인증코드를 입력해주세요"),
+	AUTH_CODE_INVALID(HttpStatus.BAD_REQUEST, "AU-010", "유효하지 않은 인증코드입니다."),
 
 	/**
 	 * User Error
@@ -42,6 +45,7 @@ public enum ErrorCode {
 	MISSING_USER(HttpStatus.BAD_REQUEST, "U-0010", "사용자 정보가 누락되었습니다."),
 	USER_STATUS_INVALID(HttpStatus.BAD_REQUEST, "U-0011", "유효하지 않은 유저 상태입니다."),
 	USER_INVALID_NICKNAME(HttpStatus.BAD_REQUEST, "U-0012", "유효하지 않은 닉네임입니다."),
+	USER_EMAIL_INVALID(HttpStatus.BAD_REQUEST, "U-0013", "존재하지 않는 이메일입니다"),
 
 	/**
 	 * Alert Error
@@ -49,6 +53,7 @@ public enum ErrorCode {
 
 	ALERT_NOT_FOUND(HttpStatus.NOT_FOUND, "AL-001", "알림을 찾을 수 없습니다."),
 	ALERT_TYPE_INVALID(HttpStatus.BAD_REQUEST, "AL-002", "유효하지 않은 알림 타입입니다."),
+	ALERT_SELF_DELETE_CHECK(HttpStatus.BAD_REQUEST, "AL-003", "자기자신의 알람만 삭제할 수 있습니다."),
 
 	/**
 	 * Project Error
@@ -67,14 +72,14 @@ public enum ErrorCode {
 	POST_NOT_VISIBLE(HttpStatus.FORBIDDEN, "P-006", "공개되지 않은 게시물입니다."),
 	JSON_PARSING_ERROR(HttpStatus.BAD_REQUEST, "J-007", "JSON 파싱 중 오류가 발생했습니다."),
 	SUMMARY_NOT_FOUND(HttpStatus.NOT_FOUND, "P-008", "요약본을 찾을 수 없습니다."),
-	MISSING_VISIBILITY(HttpStatus.NOT_FOUND,"P-009" , "공개 여부를 확인할 수 없습니다."),
+	MISSING_VISIBILITY(HttpStatus.NOT_FOUND, "P-009", "공개 여부를 확인할 수 없습니다."),
 
 	/**
 	 * Post Summary Error
 	 */
 	MISSING_POST_SUMMARY(HttpStatus.BAD_REQUEST, "PS-001", "요약본 정보가 누락되었습니다."),
 	MISSING_SUMMARY_CONTENT(HttpStatus.BAD_REQUEST, "PS-002", "요약본 콘텐츠 정보가 누락되었습니다."),
-	MISSING_SUMMARY_TYPE(HttpStatus.BAD_REQUEST,"PS-003" , "잘못된 요약본 타입입니다."),
+	MISSING_SUMMARY_TYPE(HttpStatus.BAD_REQUEST, "PS-003", "잘못된 요약본 타입입니다."),
 	POST_SUMMARY_NOT_FOUND(HttpStatus.NOT_FOUND, "PS-004", "요약본을 찾지 못했습니다."),
 	USER_SUMMARY_MISMATCH(HttpStatus.FORBIDDEN, "PS-005", "해당 요약본과 소유자가 일치하지 않습니다."),
 	/**
@@ -155,7 +160,7 @@ public enum ErrorCode {
 	TERMS_BODY_REQUIRED(HttpStatus.BAD_REQUEST, "TR-005", "약관 본문은 필수입니다."),
 	TERMS_NOT_CURRENT(HttpStatus.BAD_REQUEST, "TR-006", "현재 버전이 아닌 약관입니다."),
 	TERMS_DELETED(HttpStatus.BAD_REQUEST, "TR-007", "삭제된 약관입니다."),
-	INVALID_CONSENT_DETAILS(HttpStatus.BAD_REQUEST,"TR-008", "유효하지 않은 동의 내역입니다."),
+	INVALID_CONSENT_DETAILS(HttpStatus.BAD_REQUEST, "TR-008", "유효하지 않은 동의 내역입니다."),
 	REQUIRED_TERMS_NOT_AGREED(HttpStatus.BAD_REQUEST, "TR-009", "필수 약관에 동의하지 않았습니다."),
 	NO_ACTIVE_TERMS(HttpStatus.NOT_FOUND, "TR-010", "활성화된 약관을 찾지 못했습니다.");
 

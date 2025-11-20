@@ -18,7 +18,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import troublog.backend.domain.terms.enums.TermsType;
-import troublog.backend.domain.terms.exception.TermsException;
+import troublog.backend.global.common.error.exception.TermsException;
 import troublog.backend.global.common.entity.BaseEntity;
 import troublog.backend.global.common.error.ErrorCode;
 

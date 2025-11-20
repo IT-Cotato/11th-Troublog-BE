@@ -65,11 +65,11 @@ public class ProjectController {
 	}
 
 	@DeleteMapping("/{projectId}")
-	@Operation(summary = "프로젝트 삭제 API", description = "프로젝트를 삭제합니다.")
+	@Operation(summary = "프로젝트 soft delete API", description = "프로젝트를 삭제합니다.")
 	public ResponseEntity<BaseResponse<Void>> deleteProject(
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable long projectId) {
-		projectCommandFacade.hardDeleteProject(auth.getUserId(), projectId);
+		projectCommandFacade.softDeleteProject(auth.getUserId(), projectId);
 		return ResponseUtils.noContent();
 	}
 

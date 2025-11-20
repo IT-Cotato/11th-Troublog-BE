@@ -1,6 +1,7 @@
 package troublog.backend.domain.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
@@ -16,4 +17,11 @@ public record RegisterResDto(
 	@Schema(description = "이용약관 동의 내역")
 	@JsonProperty("termsAgreement")
 	TermsAgreementResDto termsAgreement
-) {}
+) {
+	public static RegisterResDto of(Long userId, TermsAgreementResDto termsAgreement) {
+		return RegisterResDto.builder()
+			.userId(userId)
+			.termsAgreement(termsAgreement)
+			.build();
+	}
+}

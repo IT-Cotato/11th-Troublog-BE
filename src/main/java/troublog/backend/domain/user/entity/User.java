@@ -160,4 +160,8 @@ public class User extends BaseEntity {
 		this.githubUrl = githubUrl;
 		this.status = UserStatus.ACTIVE;
 	}
+
+	public void updatePassword(String newPassword) {
+		this.password = newPassword;
+	}
 }

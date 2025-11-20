@@ -1,5 +1,8 @@
 package troublog.backend.domain.auth.service;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -17,8 +20,14 @@ import troublog.backend.domain.alert.service.AlertCommandService;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
+import troublog.backend.domain.auth.dto.PasswordAuthCodeCheckReq;
+import troublog.backend.domain.auth.dto.PasswordChangeReq;
+import troublog.backend.domain.auth.dto.PasswordEmailCheckReq;
+import troublog.backend.domain.auth.dto.PasswordEmailUUIDRes;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterResDto;
+import troublog.backend.domain.common.EmailQueryService;
+import troublog.backend.domain.common.entity.AuthCode;
 import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
 import troublog.backend.domain.terms.facade.command.TermsCommandFacade;
 import troublog.backend.domain.terms.service.query.TermsQueryService;
@@ -33,9 +42,11 @@ import troublog.backend.global.common.constant.Domain;
 import troublog.backend.global.common.constant.EnvType;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.AuthException;
 import troublog.backend.global.common.error.exception.UserException;
 import troublog.backend.global.common.util.AlertSseUtil;
 import troublog.backend.global.common.util.JwtProvider;
+import troublog.backend.global.common.util.MailUtil;
 
 @Service
 @RequiredArgsConstructor
@@ -47,9 +58,11 @@ public class AuthFacade {
 	private final PostQueryService postQueryService;
 	private final TermsCommandFacade termsCommandFacade;
 	private final TermsQueryService termsQueryService;
+	private final EmailQueryService emailQueryService;
 
 	private final AlertCommandService alertCommandService;
 
+	private final MailUtil mailUtil;
 	private final AlertSseUtil alertSseUtil;
 	private final AuthenticationManager authenticationManager;
 	private final PasswordEncoder passwordEncoder;
@@ -87,16 +100,16 @@ public class AuthFacade {
 			user.getId()
 		);
 
-		return RegisterResDto.builder()
-			.userId(user.getId())
-			.termsAgreement(termsAgreementResDto)
-			.build();
+		return RegisterResDto.of(
+			user.getId(),
+			termsAgreementResDto
+		);
 	}
 
 	@Transactional
 	public LoginResDto login(LoginReqDto loginReqDto, HttpServletRequest request, HttpServletResponse response) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -126,7 +139,7 @@ public class AuthFacade {
 		// 리프레시 토큰 Set-Cookie로 내려줌
 		jwtProvider.setCookieRefreshToken(refreshToken, response);
 
-		return (profilesActive.equals(EnvType.LOCAL.getEnvType()) || clientEnvType.equals(EnvType.LOCAL.getEnvType()))
+		return (profilesActive.equals(EnvType.LOCAL.getValue()) || clientEnvType.equals(EnvType.LOCAL.getValue()))
 			? LoginResDto.localReturn(user.getId(), accessToken, refreshToken, localToken)
 			: LoginResDto.nonLocalReturn(user.getId(), accessToken, refreshToken);
 	}
@@ -134,7 +147,7 @@ public class AuthFacade {
 	@Transactional
 	public String reissueAccessToken(HttpServletRequest request) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -181,7 +194,7 @@ public class AuthFacade {
 
 	@Transactional
 	public void logout(HttpServletRequest request, HttpServletResponse response) {
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -196,7 +209,7 @@ public class AuthFacade {
 	@Transactional(readOnly = true)
 	public void checkDuplicateEmail(String email, HttpServletRequest request) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -210,7 +223,7 @@ public class AuthFacade {
 	@Transactional
 	public RegisterResDto oAuthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
 
-		String clientEnvType = request.getHeader("EnvType");
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
@@ -242,9 +255,92 @@ public class AuthFacade {
 			user.getId()
 		);
 
-		return RegisterResDto.builder()
-			.userId(user.getId())
-			.termsAgreement(termsAgreementResDto)
+		return RegisterResDto.of(
+			user.getId(),
+			termsAgreementResDto
+		);
+	}
+
+	@Transactional
+	public PasswordEmailUUIDRes checkEmailForPassword(PasswordEmailCheckReq passwordEmailCheckReq,
+		HttpServletRequest request) {
+
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
+
+		// 프론트 환경변수 체크
+		jwtProvider.checkEnvType(clientEnvType);
+
+		// 이메일 존재여부 체크
+		boolean isDuplicatedEmail = userQueryService.existsByEmail(passwordEmailCheckReq.email());
+		if (!isDuplicatedEmail) {
+			throw new UserException(ErrorCode.USER_EMAIL_INVALID);
+		}
+
+		// 메일 전송
+		UUID randomString = mailUtil.sendMail(passwordEmailCheckReq.email());
+
+		return PasswordEmailUUIDRes.builder()
+			.randomString(randomString)
 			.build();
+	}
+
+	@Transactional
+	public void checkAuthCodePassword(PasswordAuthCodeCheckReq passwordAuthCodeCheckReq,
+		HttpServletRequest request) {
+
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
+
+		// 프론트 환경변수 체크
+		jwtProvider.checkEnvType(clientEnvType);
+
+		// 인증코드 체크
+		AuthCode authCode = checkAuthCode(passwordAuthCodeCheckReq.authCode(), passwordAuthCodeCheckReq.randomString());
+
+		// 인증처리
+		authCode.updateIsAuth();
+	}
+
+	@Transactional
+	public void changePassword(PasswordChangeReq passwordChangeReq, HttpServletRequest request) {
+
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
+
+		jwtProvider.checkEnvType(clientEnvType);
+
+		// 인증코드 확인
+		AuthCode authCode = emailQueryService.getAuthCodeWithoutAuth(passwordChangeReq.authCode());
+
+		// 인증된 코드인지 확인
+		if (!authCode.isAuth()) {
+			throw new AuthException(ErrorCode.AUTH_CODE_INVALID);
+		}
+
+		// 가장 최근에 보낸 인증코드인지 확인
+		if (!authCode.getRandomString().equals(passwordChangeReq.randomString())) {
+			throw new AuthException(ErrorCode.AUTH_CODE_NOT_LATEST);
+		}
+
+		// 이메일 존재여부 체크
+		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(passwordChangeReq.email());
+
+		// 비밀번호 재설정
+		user.updatePassword(passwordEncoder.encode(passwordChangeReq.password()));
+	}
+
+	private AuthCode checkAuthCode(String inputAuthCode, UUID randomString) {
+		// 인증코드 확인
+		AuthCode authCode = emailQueryService.getAuthCode(inputAuthCode);
+
+		// 가장 최근에 보낸 인증코드인지 확인
+		if (!authCode.getRandomString().equals(randomString)) {
+			throw new AuthException(ErrorCode.AUTH_CODE_NOT_LATEST);
+		}
+
+		// 인증코드가 입력값과 일치하고, 만료되지 않았는지 확인
+		if (!(authCode.getAuthCode().equals(inputAuthCode)) || LocalDateTime.now()
+			.isAfter(authCode.getExpireDate())) {
+			throw new AuthException(ErrorCode.AUTH_CODE_INVALID);
+		}
+		return authCode;
 	}
 }

@@ -42,7 +42,7 @@ public class JwtProvider {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    @Value("${spring.profiles.active}")
+	@Value("${spring.profiles.active}")
     private String profilesActive;
 
     @Value("${jwt.secret}")
@@ -68,7 +68,7 @@ public class JwtProvider {
             : null;
 
         // 로컬에서 서버 작업하거나 로컬에서 프론트 작업할 경우
-        if("local".equals(profilesActive) || "local".equals(envType)) {
+        if(EnvType.LOCAL.getValue().equals(profilesActive) || EnvType.LOCAL.getValue().equals(envType)) {
             return createToken(authentication, ENDLESS_TIME);
         } else {
             return createToken(authentication, accessTokenValidityInSeconds);
@@ -257,19 +257,25 @@ public class JwtProvider {
         return claims.getExpiration();
     }
 
-    public void checkEnvType(String clientEnvType) {
+	public void checkEnvType(String clientEnvType) {
+		EnvType serverEnv = EnvType.valueOfEnvType(profilesActive);
+		EnvType clientEnv = EnvType.valueOfEnvType(clientEnvType);
 
-        EnvType serverEnvType = EnvType.valueOfEnvType(profilesActive);
-        EnvType frontEnvType = EnvType.valueOfEnvType(clientEnvType);
+		// 로컬 환경은 모든 요청 허용
+		if (serverEnv.isLocal()) {
+			return;
+		}
 
-        if(serverEnvType != null &&
-            !serverEnvType.isLocal() &&
-            !(frontEnvType.isLocal() && serverEnvType.isDev()) &&
-            !EnvType.isEqualEnvType(serverEnvType, frontEnvType)) {
+		// dev 서버에서는 로컬 프론트엔드 접근 허용
+		if (serverEnv.isDev() && clientEnv.isLocal()) {
+			return;
+		}
 
-            throw new AuthException(ErrorCode.WRONG_ENVIRONMENT);
-        }
-    }
+		// 그 외 환경이 다르면 예외
+		if (!EnvType.isEqualEnvType(serverEnv, clientEnv)) {
+			throw new AuthException(ErrorCode.WRONG_ENVIRONMENT);
+		}
+	}
 
     // TODO : 실제 운영 시 사용
     private String extractRefreshTokenFromCookie(HttpServletRequest request) {

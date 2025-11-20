@@ -31,7 +31,7 @@ public class ProjectQueryFacade {
 	private final PostQueryService postQueryService;
 
 	public ProjectDetailResDto getDetailsProject(final Long userId, final long projectId) {
-		Project project = projectQueryService.findById(projectId);
+		Project project = projectQueryService.findByIdAndIsDeletedFalse(projectId);
 		validateProjectAuthorized(userId, project);
 		return projectQueryService.getDetails(project);
 	}
@@ -51,7 +51,7 @@ public class ProjectQueryFacade {
 		final SortType sort,
 		final VisibilityType visibility
 	) {
-		Project project = projectQueryService.findById(projectId);
+		Project project = projectQueryService.findByIdAndIsDeletedFalse(projectId);
 		validateProjectAuthorized(userId, project);
 		return postQueryService.getProjectTroublesByStatus(projectId, sort, visibility, statusType);
 	}
@@ -62,7 +62,7 @@ public class ProjectQueryFacade {
 		final SortType sort,
 		final SummaryType summaryType
 	) {
-		Project project = projectQueryService.findById(projectId);
+		Project project = projectQueryService.findByIdAndIsDeletedFalse(projectId);
 		validateProjectAuthorized(userId, project);
 		return postQueryService.getSummarizedTroubles(projectId, sort, summaryType);
 	}

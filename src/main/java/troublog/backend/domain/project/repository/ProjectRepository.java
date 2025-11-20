@@ -1,6 +1,7 @@
 package troublog.backend.domain.project.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.trouble.enums.TagType;
+import troublog.backend.domain.user.entity.User;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 	@Query("""
@@ -27,4 +29,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
 	Page<Project> findAllByUserIdAndIsDeletedFalse(Long userId, Pageable pageable);
 
+	List<Project> findAllByUserAndIsDeletedFalse(User user);
+
+	Optional<Project> findByIdAndIsDeletedFalse(long id);
 }

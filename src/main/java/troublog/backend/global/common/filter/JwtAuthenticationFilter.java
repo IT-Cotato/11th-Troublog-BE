@@ -5,10 +5,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import troublog.backend.global.common.util.DataUtil;
 import troublog.backend.global.common.util.JwtProvider;
 
@@ -22,7 +24,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
-	private static final String ENVTYPE = "EnvType";
+	private static final String ENV_TYPE = "EnvType";
 
 	private static final String[] EXCLUDE_PATHS = {
 		"/auth/register",
@@ -30,16 +32,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		"/auth/refresh",
 		"/auth/email-check",
 		"/auth/oauth-register",
+		"/auth/find-password",
+		"/auth/check-code",
+		"/auth/change-password",
 		"/swagger-ui/**",
 		"/v3/api-docs/**"
 	};
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+		FilterChain filterChain) throws
 		ServletException, IOException {
 
 		String accessToken = DataUtil.getValueFromRequest(request, AUTHORIZATION);
-		String clientEnvType = DataUtil.getValueFromRequest(request, ENVTYPE);
+		String clientEnvType = DataUtil.getValueFromRequest(request, ENV_TYPE);
 
 		if (accessToken != null && jwtProvider.validateToken(accessToken) && jwtProvider.isNotExpired(accessToken)) {
 
@@ -51,6 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		filterChain.doFilter(request, response);
 	}
+
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getRequestURI();

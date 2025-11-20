@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
-import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
@@ -70,6 +69,7 @@ public class UserConverter {
 			.userId(user.getId())
 			.nickname(user.getNickname())
 			.field(user.getField())
+			.profileUrl(user.getProfileUrl())
 			.githubUrl(user.getGithubUrl())
 			.bio(user.getBio())
 			.build();
