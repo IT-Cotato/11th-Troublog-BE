@@ -17,6 +17,7 @@ import troublog.backend.domain.alert.converter.AlertConverter;
 import troublog.backend.domain.alert.dto.response.AlertResDto;
 import troublog.backend.domain.alert.entity.Alert;
 import troublog.backend.domain.alert.service.AlertCommandService;
+import troublog.backend.domain.auth.dto.IntegrationKakaoRegisterReqDto;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
@@ -36,8 +37,10 @@ import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
+import troublog.backend.domain.user.entity.UserStatus;
 import troublog.backend.domain.user.service.command.UserCommandService;
 import troublog.backend.domain.user.service.query.UserQueryService;
+import troublog.backend.domain.user.validator.UserValidator;
 import troublog.backend.global.common.constant.Domain;
 import troublog.backend.global.common.constant.EnvType;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
@@ -58,6 +61,7 @@ public class AuthFacade {
 	private final PostQueryService postQueryService;
 	private final TermsCommandFacade termsCommandFacade;
 	private final TermsQueryService termsQueryService;
+	private final UserValidator userValidator;
 	private final EmailQueryService emailQueryService;
 
 	private final AlertCommandService alertCommandService;
@@ -85,7 +89,7 @@ public class AuthFacade {
 			throw new UserException(ErrorCode.DUPLICATED_NICKNAME);
 		}
 
-		// 비밀번호 중복 체크
+		// 이메일 중복 체크
 		checkDuplicateEmail(registerReqDto.email(), request);
 
 		// 비밀번호 인코딩
@@ -342,5 +346,25 @@ public class AuthFacade {
 			throw new AuthException(ErrorCode.AUTH_CODE_INVALID);
 		}
 		return authCode;
+	}
+
+	@Transactional
+	public void integrateKakaoUser(IntegrationKakaoRegisterReqDto integrationKakaoRegisterReqDto,
+		HttpServletRequest request) {
+
+		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
+
+		// 프론트 환경변수 체크
+		jwtProvider.checkEnvType(clientEnvType);
+
+		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(
+			integrationKakaoRegisterReqDto.email());
+
+		// 비밀번호 검증
+		userValidator.validateUserPassword(user, integrationKakaoRegisterReqDto.password());
+
+		// 통합된 유저로 변경
+		user.updateIntegrateKakaoUser(passwordEncoder.encode(integrationKakaoRegisterReqDto.password()),
+			integrationKakaoRegisterReqDto.socialId(), integrationKakaoRegisterReqDto.proflImgUrl());
 	}
 }

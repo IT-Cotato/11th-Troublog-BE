@@ -44,6 +44,7 @@ import troublog.backend.domain.user.validator.UserValidator;
 @RequiredArgsConstructor
 public class UserFacade {
 
+	private final UserValidator userValidator;
 	private final FollowValidator followValidator;
 	private final UserCommandService userCommandService;
 	private final UserQueryService userQueryService;
@@ -208,7 +209,7 @@ public class UserFacade {
 	public void updateMyProfile(Long userId, UserProfileUpdateReqDto userProfileUpdateReqDto) {
 
 		// 프로필 수정 요청 유효성 검사
-		UserValidator.validateProfileUpdateRequest(userId, userProfileUpdateReqDto.userId());
+		userValidator.validateProfileUpdateRequest(userId, userProfileUpdateReqDto.userId());
 
 		// 사용자 (본인) 조회
 		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);

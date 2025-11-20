@@ -95,6 +95,11 @@ public class User extends BaseEntity {
 	@Column(name = "is_deleted")
 	private Boolean isDeleted;
 
+	@NotNull
+	@Builder.Default
+	@Column(name = "is_integrated")
+	private Boolean isIntegrated = false;
+
 	public void addProject(Project project) {
 		this.projects.add(project);
 		project.assignUser(this);
@@ -159,6 +164,13 @@ public class User extends BaseEntity {
 		this.field = field;
 		this.githubUrl = githubUrl;
 		this.status = UserStatus.ACTIVE;
+	}
+
+	public void updateIntegrateKakaoUser(String password, String socialId, String profileUrl) {
+		this.isIntegrated = true;
+		this.password = password;
+		this.socialId = socialId;
+		this.profileUrl = profileUrl;
 	}
 
 	public void updatePassword(String newPassword) {

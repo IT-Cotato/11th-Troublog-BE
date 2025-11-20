@@ -46,6 +46,7 @@ public enum ErrorCode {
 	USER_STATUS_INVALID(HttpStatus.BAD_REQUEST, "U-0011", "유효하지 않은 유저 상태입니다."),
 	USER_INVALID_NICKNAME(HttpStatus.BAD_REQUEST, "U-0012", "유효하지 않은 닉네임입니다."),
 	USER_EMAIL_INVALID(HttpStatus.BAD_REQUEST, "U-0013", "존재하지 않는 이메일입니다"),
+	DUPLICATED_EMAIL_KAKAO(HttpStatus.CONFLICT, "U-0014", "이미 카카오로 가입한 이메일입니다."),
 
 	/**
 	 * Alert Error
