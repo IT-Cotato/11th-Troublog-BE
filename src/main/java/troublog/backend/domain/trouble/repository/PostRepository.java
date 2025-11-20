@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.PostStatus;
+import troublog.backend.domain.user.entity.User;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 	Optional<Post> findByIdAndIsDeletedFalse(Long id);
@@ -36,7 +37,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		    AND (
 		      MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 		      OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
-		      OR t.name LIKE CONCAT('%', :keyword, '%')
+		      OR t.tag_name LIKE CONCAT('%', :keyword, '%')
 		    )
 		  GROUP BY p.post_id, MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 		  ORDER BY total_score DESC, p.post_id DESC
@@ -56,7 +57,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			  AND (
 			    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 			    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
-			    OR t.name LIKE CONCAT('%', :keyword, '%')
+			    OR t.tag_name LIKE CONCAT('%', :keyword, '%')
 			  )
 			""",
 		nativeQuery = true)
@@ -82,7 +83,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		      AND (
 		        MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 		        OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
-		        OR t.name LIKE CONCAT('%', :keyword, '%')
+		        OR t.tag_name LIKE CONCAT('%', :keyword, '%')
 		      )
 		    GROUP BY p.post_id, MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 		    ORDER BY total_score DESC, p.post_id DESC
@@ -101,7 +102,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			  AND (
 			    MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 			    OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
-			    OR t.name LIKE CONCAT('%', :keyword, '%')
+			    OR t.tag_name LIKE CONCAT('%', :keyword, '%')
 			  )
 			""",
 		nativeQuery = true)
@@ -111,41 +112,41 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	);
 
 	@Query("""
-		    select p
-		      from Post p
-		     where p.project.id = :projectId
-		       and p.isDeleted = false
-		       and p.status = :status
-		       and (:visible is null or p.isVisible = :visible)
-			ORDER BY COALESCE(p.completedAt, p.updated_at) DESC, p.id DESC
+		SELECT p
+		FROM Post p
+		WHERE p.project.id = :projectId
+		AND p.isDeleted = FALSE
+		AND p.status IN :statuses
+		AND (:visible IS NULL OR p.isVisible = :visible)
+		ORDER BY COALESCE(p.completedAt, p.updated_at) DESC, p.id DESC
 		""")
-	List<Post> findByProject(
+	List<Post> findByProjectWithStatuses(
 		@Param("projectId") Long projectId,
-		@Param("status") PostStatus status,
+		@Param("statuses") List<PostStatus> statuses,
 		@Param("visible") Boolean visible
 	);
 
 	@Query("""
-		    select p
-		      from Post p
-		     where p.project.id = :projectId
-		       and p.isDeleted = false
-		       and p.status = :status
-		       and (:visible is null or p.isVisible = :visible)
-		    order by
-		  case
-		    when p.starRating = troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS  then 5
-		    when p.starRating = troublog.backend.domain.trouble.enums.StarRating.FOUR_STARS  then 4
-		    when p.starRating = troublog.backend.domain.trouble.enums.StarRating.THREE_STARS then 3
-		    when p.starRating = troublog.backend.domain.trouble.enums.StarRating.TWO_STARS   then 2
-		    when p.starRating = troublog.backend.domain.trouble.enums.StarRating.ONE_STAR    then 1
-		    else 0
-		  end desc,
-		       p.id desc
+		    SELECT p
+		      FROM Post p
+		     WHERE p.project.id = :projectId
+		       AND p.isDeleted = FALSE
+		       AND p.status IN :statuses
+		       AND (:visible IS NULL OR p.isVisible = :visible)
+		    ORDER BY
+		  CASE
+		    WHEN p.starRating = troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS  THEN 5
+		    WHEN p.starRating = troublog.backend.domain.trouble.enums.StarRating.FOUR_STARS  THEN 4
+		    WHEN p.starRating = troublog.backend.domain.trouble.enums.StarRating.THREE_STARS THEN 3
+		    WHEN p.starRating = troublog.backend.domain.trouble.enums.StarRating.TWO_STARS   THEN 2
+		    WHEN p.starRating = troublog.backend.domain.trouble.enums.StarRating.ONE_STAR    THEN 1
+		    ELSE 0
+		  END DESC,
+		       p.id DESC
 		""")
-	List<Post> findByProjectImportant(
+	List<Post> findByProjectImportantWithStatuses(
 		@Param("projectId") Long projectId,
-		@Param("status") PostStatus status,
+		@Param("statuses") List<PostStatus> statuses,
 		@Param("visible") Boolean visible
 	);
 
@@ -196,4 +197,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	List<Post> findByUserIdAndIsDeletedFalse(Long userId);
 
 	List<Post> findByIdIn(Collection<Long> recentIds);
+
+	List<Post> findAllByUserAndIsDeletedFalse(User user);
 }

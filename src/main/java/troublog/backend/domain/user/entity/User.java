@@ -172,4 +172,8 @@ public class User extends BaseEntity {
 		this.socialId = socialId;
 		this.profileUrl = profileUrl;
 	}
+
+	public void updatePassword(String newPassword) {
+		this.password = newPassword;
+	}
 }

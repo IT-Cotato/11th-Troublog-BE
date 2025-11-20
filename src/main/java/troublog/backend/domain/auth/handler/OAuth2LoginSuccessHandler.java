@@ -56,6 +56,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		// Oauth 유저 객체 꺼내기
 		OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
 
+		String clientEnvType = profilesActive;
 		// 유저 객체에서 사용자 정보 가져오기
 		Oauth2UserInfo oauth2UserInfo = getOauth2UserInfo(oAuth2User);
 
@@ -63,9 +64,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		User user = findOrCreateUserByEmail(oauth2UserInfo.nickname(), oauth2UserInfo.profileImageUrl(),
 			oauth2UserInfo.socialId(),
 			oauth2UserInfo.email());
-
-		// Oauth로그인 시 클라이언트 envtype은 서버와 동일하게 지정
-		String clientEnvType = String.valueOf(EnvType.valueOfEnvType(profilesActive));
 
 		// 유저 객체 가져오기
 		boolean isNewUser = user.getStatus() == UserStatus.INCOMPLETE;
@@ -205,7 +203,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		String refreshToken = jwtProvider.createRefreshToken(authenticationToken);
 
 		// 리프레시 토큰 Set-Cookie로 설정
-		jwtProvider.setCookieRefreshToken(refreshToken, response);
+		jwtProvider.setOauthCookieRefreshToken(refreshToken, response);
 
 		// 프론트엔드 도메인 가져오기
 		String frontendDomain = Domain.fromEnvType(EnvType.valueOfEnvType(profilesActive));

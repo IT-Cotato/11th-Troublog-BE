@@ -1,7 +1,5 @@
 package troublog.backend.domain.auth.service;
 
-import java.util.function.Supplier;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

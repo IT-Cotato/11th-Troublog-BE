@@ -29,7 +29,7 @@ import troublog.backend.global.common.util.AlertSseUtil;
 
 @Service
 @RequiredArgsConstructor
-public class LikeCommandFacade {
+public class LikeFacade {
 	private final PostQueryService postQueryService;
 	private final UserQueryService userQueryService;
 	private final LikeQueryService likeQueryService;

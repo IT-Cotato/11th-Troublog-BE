@@ -16,7 +16,7 @@ import troublog.backend.domain.project.dto.response.ProjectDetailResDto;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.domain.project.repository.ProjectRepository;
 import troublog.backend.domain.trouble.enums.TagType;
-import troublog.backend.domain.trouble.repository.PostRepository;
+import troublog.backend.domain.user.entity.User;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.ProjectException;
 
@@ -27,11 +27,16 @@ import troublog.backend.global.common.error.exception.ProjectException;
 public class ProjectQueryService {
 
 	private final ProjectRepository projectRepository;
-	private final PostRepository postRepository;
+
+	public Project findByIdAndIsDeletedFalse(long id) {
+		log.info("[Project] 프로젝트 조회: projectId={}", id);
+		return projectRepository.findByIdAndIsDeletedFalse(id)
+			.orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND));
+	}
 
 	public Project findById(long id) {
 		log.info("[Project] 프로젝트 조회: projectId={}", id);
-		return projectRepository.findById(id)
+		return  projectRepository.findById(id)
 			.orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND));
 	}
 
@@ -49,5 +54,11 @@ public class ProjectQueryService {
 		Page<Project> page = projectRepository.findAllByUserIdAndIsDeletedFalse(userId, pageable);
 		log.info("[Project] 전체 프로젝트 조회: userId={}, projectCount={}", userId, page.getSize());
 		return page.map(this::getDetails);
+	}
+
+	public List<Project> getAllProjectsByUser(User user) {
+		List<Project> projectList = projectRepository.findAllByUserAndIsDeletedFalse(user);
+		log.info("[Project] 특정 유저의 삭제되지 않은 프로젝트 조회: userId={}, projectCount={}", user.getId(), projectList.size());
+		return projectList;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -63,7 +64,7 @@ public class ImageValidator {
 	}
 
 	public void validateFileList(List<MultipartFile> fileList) {
-		if (fileList == null || fileList.isEmpty()) {
+		if (CollectionUtils.isEmpty(fileList)) {
 			throw new ImageException(ErrorCode.IMAGE_UPLOAD_FAILED);
 		}
 
