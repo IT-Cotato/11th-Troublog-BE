@@ -18,7 +18,12 @@ spring:
       chat:
         options:
           model: ${ANTHROPIC_MODEL}
-
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY}
+        chat:
+          options:
+            model: ${GEMINI_MODEL}
   mvc:
     log-resolved-exception: false
   cloud:

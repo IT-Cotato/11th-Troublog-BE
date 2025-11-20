@@ -9,6 +9,8 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.google.genai.GoogleGenAiChatModel;
+import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
@@ -19,11 +21,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.support.RetryTemplate;
 
+import com.google.genai.Client;
+
 import io.micrometer.observation.ObservationRegistry;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import troublog.backend.global.common.config.property.AnthropicProperties;
+import troublog.backend.global.common.config.property.GeminiProperties;
 import troublog.backend.global.common.config.property.OpenAiProperties;
 import troublog.backend.global.common.util.CustomLoggingAdvisor;
 
@@ -32,7 +37,8 @@ import troublog.backend.global.common.util.CustomLoggingAdvisor;
 @EnableConfigurationProperties({
 	PromptProperties.class,
 	OpenAiProperties.class,
-	AnthropicProperties.class
+	AnthropicProperties.class,
+	GeminiProperties.class
 })
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class AiConfig {
@@ -41,6 +47,7 @@ public class AiConfig {
 	private final CustomLoggingAdvisor customLoggingAdvisor;
 	private final OpenAiProperties openAiProperties;
 	private final AnthropicProperties anthropicProperties;
+	private final GeminiProperties geminiProperties;
 	private final RetryTemplate retryTemplate;
 
 	/**
@@ -86,11 +93,48 @@ public class AiConfig {
 				log.info("[AI] Claude ChatModel 생성");
 				yield createAnthropicChatModel();
 			}
-			default -> {
-				log.warn("[AI] 알 수 없는 프로바이더: {}, OpenAI 기본 사용", provider);
-				yield createOpenAiChatModel();
+			case "gemini" -> {
+				log.info("[AI] Gemini ChatModel 생성");
+				yield createGeminiChatModel();
 			}
+			default -> throw new IllegalStateException("Unexpected value: " + provider.toLowerCase());
 		};
+	}
+
+
+	/**
+	 * Gemini ChatModel 생성
+	 */
+	private ChatModel createGeminiChatModel() {
+		Client client = createGeminiClient();
+		GoogleGenAiChatOptions chatOptions = createGeminiChatOption();
+
+		return GoogleGenAiChatModel.builder()
+			.genAiClient(client)
+			.defaultOptions(chatOptions)
+			.toolCallingManager(toolCallingManager)
+			.observationRegistry(createObservationRegistry())
+			.retryTemplate(retryTemplate)
+			.build();
+	}
+
+	/**
+	 * Gemini API 클라이언트 생성
+	 */
+	private Client createGeminiClient() {
+		return Client.builder()
+			.apiKey(geminiProperties.apiKey())
+			.build();
+	}
+
+	/**
+	 * Gemini 채팅 옵션 생성
+	 */
+	private GoogleGenAiChatOptions createGeminiChatOption() {
+		return GoogleGenAiChatOptions.builder()
+			.model(geminiProperties.chat().options().model())
+			.maxOutputTokens(10000)
+			.build();
 	}
 
 	/**
@@ -179,7 +223,7 @@ public class AiConfig {
 	private ObservationRegistry createObservationRegistry() {
 		return ObservationRegistry.create();
 	}
-	
+
 	private String getModelName(String provider) {
 		return switch (provider.toLowerCase()) {
 			case "openai" -> openAiProperties.chat().options().model();
