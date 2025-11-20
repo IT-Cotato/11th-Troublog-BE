@@ -7,9 +7,12 @@ import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -52,6 +55,12 @@ public class AuthCode extends BaseEntity {
 	@Comment("임의문자열")
 	@Column(name = "random_string")
 	private UUID randomString;
+
+	@NotNull
+	@OneToOne(fetch = FetchType.LAZY)
+	@Comment("이메일")
+	@JoinColumn(name = "email_id")
+	private Email email;
 
 	public void updateIsAuth() {
 		this.isAuth = true;
