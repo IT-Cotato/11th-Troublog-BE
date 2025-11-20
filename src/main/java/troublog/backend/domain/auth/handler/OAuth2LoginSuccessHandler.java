@@ -49,7 +49,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		log.info("OAuth2 Login 성공!");
 		OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
 
-		String clientEnvType = String.valueOf(EnvType.valueOfEnvType(profilesActive));
+		String clientEnvType = profilesActive;
 
 		User user = processOAuth2User(oAuth2User);
 		boolean isNewUser = user.getStatus() == UserStatus.INCOMPLETE;
