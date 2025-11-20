@@ -43,6 +43,9 @@ import troublog.backend.global.common.util.CustomLoggingAdvisor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class AiConfig {
 
+	public static final String OPEN_AI = "openai";
+	public static final String ANTHROPIC = "claude";
+	public static final String GOOGLE_GEN_AI = "gemini";
 	private final ToolCallingManager toolCallingManager;
 	private final CustomLoggingAdvisor customLoggingAdvisor;
 	private final OpenAiProperties openAiProperties;
@@ -85,15 +88,15 @@ public class AiConfig {
 		log.info("[AI] ChatModel 생성 시작 - Provider: {}", provider);
 
 		return switch (provider.toLowerCase()) {
-			case "openai" -> {
+			case OPEN_AI -> {
 				log.info("[AI] OpenAI ChatModel 생성");
 				yield createOpenAiChatModel();
 			}
-			case "claude" -> {
+			case ANTHROPIC -> {
 				log.info("[AI] Claude ChatModel 생성");
 				yield createAnthropicChatModel();
 			}
-			case "gemini" -> {
+			case GOOGLE_GEN_AI -> {
 				log.info("[AI] Gemini ChatModel 생성");
 				yield createGeminiChatModel();
 			}
@@ -226,8 +229,9 @@ public class AiConfig {
 
 	private String getModelName(String provider) {
 		return switch (provider.toLowerCase()) {
-			case "openai" -> openAiProperties.chat().options().model();
-			case "claude" -> anthropicProperties.chat().options().model();
+			case OPEN_AI -> openAiProperties.chat().options().model();
+			case ANTHROPIC -> anthropicProperties.chat().options().model();
+			case GOOGLE_GEN_AI -> geminiProperties.chat().options().model();
 			default -> "unknown";
 		};
 	}
