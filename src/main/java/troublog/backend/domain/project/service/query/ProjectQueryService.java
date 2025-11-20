@@ -34,6 +34,12 @@ public class ProjectQueryService {
 			.orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND));
 	}
 
+	public Project findById(long id) {
+		log.info("[Project] 프로젝트 조회: projectId={}", id);
+		return  projectRepository.findById(id)
+			.orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND));
+	}
+
 	public ProjectDetailResDto getDetails(Project project) {
 		log.info("[Project] 상세조회: projectId={}, projectName={}", project.getId(), project.getName());
 

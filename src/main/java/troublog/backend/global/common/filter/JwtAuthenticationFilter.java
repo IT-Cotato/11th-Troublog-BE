@@ -5,10 +5,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import troublog.backend.global.common.util.DataUtil;
 import troublog.backend.global.common.util.JwtProvider;
 
@@ -30,12 +32,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		"/auth/refresh",
 		"/auth/email-check",
 		"/auth/oauth-register",
+		"/auth/find-password",
+		"/auth/check-code",
+		"/auth/change-password",
 		"/swagger-ui/**",
-		"/v3/api-docs/**"
+		"/v3/api-docs/**",
+		"/auth/integration/**"
 	};
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+		FilterChain filterChain) throws
 		ServletException, IOException {
 
 		String accessToken = DataUtil.getValueFromRequest(request, AUTHORIZATION);
@@ -51,6 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		filterChain.doFilter(request, response);
 	}
+
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getRequestURI();

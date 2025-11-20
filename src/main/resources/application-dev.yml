@@ -24,6 +24,12 @@ spring:
     redis:
       host: redis # redis container 이름
       port: 6379
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            redirect-uri: "https://troublog.shop/login/oauth2/code/kakao"
 
 # Prompt 설정 (Dev)
 ai:
