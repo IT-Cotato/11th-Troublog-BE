@@ -49,7 +49,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		log.info("OAuth2 Login 성공!");
 		OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
 
-		String clientEnvType = String.valueOf(EnvType.valueOfEnvType(profilesActive));
+		String clientEnvType = profilesActive;
 
 		User user = processOAuth2User(oAuth2User);
 		boolean isNewUser = user.getStatus() == UserStatus.INCOMPLETE;
@@ -154,7 +154,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		String refreshToken = jwtProvider.createRefreshToken(authenticationToken);
 
 		// 리프레시 토큰 Set-Cookie로 설정
-		jwtProvider.setCookieRefreshToken(refreshToken, response);
+		jwtProvider.setOauthCookieRefreshToken(refreshToken, response);
 
 		// 프론트엔드 도메인 가져오기
 		String frontendDomain = Domain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
