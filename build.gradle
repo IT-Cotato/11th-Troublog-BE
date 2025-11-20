@@ -36,7 +36,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    
+    implementation 'org.springframework.ai:spring-ai-starter-model-anthropic'
+
     // Micrometer Prometheus 메트릭 지원
     implementation 'io.micrometer:micrometer-registry-prometheus'
     compileOnly 'org.projectlombok:lombok'

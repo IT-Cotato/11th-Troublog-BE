@@ -13,6 +13,12 @@ spring:
       chat:
         options:
           model: ${OPENAI_MODEL}
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY}
+      chat:
+        options:
+          model: ${ANTHROPIC_MODEL}
+
   mvc:
     log-resolved-exception: false
   cloud:
@@ -44,6 +50,8 @@ spring:
       enabled: true
 
 ai:
+  provider:
+    default: claude
   prompts:
     system: ${AI_PROMPT_SYSTEM:classpath:prompts/system.st}
     resume: ${AI_PROMPT_RESUME:classpath:prompts/resume.st}
