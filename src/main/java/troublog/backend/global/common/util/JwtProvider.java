@@ -320,6 +320,18 @@ public class JwtProvider {
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
+	public void setOauthCookieRefreshToken(String refreshToken, HttpServletResponse response) {
+		ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+			.httpOnly(true)
+			.secure(true)
+			.path("/")
+			.maxAge(Duration.ofSeconds(86400))
+			.sameSite("None")
+			.build();
+
+		response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+	}
+
     public void deleteCookieRefreshToken(HttpServletResponse response) {
         ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
             .path("/")
