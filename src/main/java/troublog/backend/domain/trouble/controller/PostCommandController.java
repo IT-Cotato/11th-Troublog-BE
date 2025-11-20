@@ -23,7 +23,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.ai.summary.dto.response.TaskStartResDto;
 import troublog.backend.domain.ai.summary.dto.response.TaskStatusResDto;
-import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
+import troublog.backend.domain.ai.summary.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.enums.SummaryType;
