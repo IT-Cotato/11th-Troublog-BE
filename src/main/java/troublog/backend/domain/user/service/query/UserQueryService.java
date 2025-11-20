@@ -56,9 +56,9 @@ public class UserQueryService {
 		return userRepository.findAllByIdInAndIsDeletedFalse(userIds);
 	}
 
-	public boolean existsByEmail(String email, UserStatus userStatus) {
+	public boolean existsByEmail(String email) {
 
-		return userRepository.existsByEmailAndIsDeletedFalseAndStatus(email, userStatus);
+		return userRepository.existsByEmailAndIsDeletedFalse(email);
 	}
 
 	public boolean existsByNickname(String nickname) {
