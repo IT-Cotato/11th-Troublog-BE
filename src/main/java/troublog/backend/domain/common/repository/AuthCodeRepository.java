@@ -8,4 +8,6 @@ import troublog.backend.domain.common.entity.AuthCode;
 
 public interface AuthCodeRepository extends JpaRepository<AuthCode, Long> {
 	Optional<AuthCode> findByAuthCodeAndIsAuthFalse(String authCode);
+
+	Optional<AuthCode> findByAuthCode(String authCode);
 }

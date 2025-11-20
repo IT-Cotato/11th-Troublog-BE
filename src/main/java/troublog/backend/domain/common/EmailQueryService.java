@@ -22,4 +22,10 @@ public class EmailQueryService {
 		return authCodeRepository.findByAuthCodeAndIsAuthFalse(authCode)
 			.orElseThrow(() -> new AuthException(ErrorCode.AUTH_CODE_EMPTY));
 	}
+
+	public AuthCode getAuthCodeWithoutAuth(String authCode) {
+		return authCodeRepository.findByAuthCode(authCode)
+			.orElseThrow(() -> new AuthException(ErrorCode.AUTH_CODE_EMPTY));
+
+	}
 }

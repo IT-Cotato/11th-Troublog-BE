@@ -27,7 +27,7 @@ public enum ErrorCode {
 	TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AU-006", "토큰을 찾을 수 없습니다."),
 	TOKEN_NOT_EXPIRED(HttpStatus.CONFLICT, "AU-007", "만료되지 않은 토큰입니다."),
 	AUTH_CODE_EMPTY(HttpStatus.NOT_FOUND, "AU-008", "존재하지 않는 인증코드입니다."),
-	AUTH_CODE_NOT_LATEST(HttpStatus.BAD_REQUEST, "AU_009", "가장 최근에 전송한 인증코드를 입력해주세요"),
+	AUTH_CODE_NOT_LATEST(HttpStatus.BAD_REQUEST, "AU-009", "가장 최근에 전송한 인증코드를 입력해주세요"),
 	AUTH_CODE_INVALID(HttpStatus.BAD_REQUEST, "AU-010", "유효하지 않은 인증코드입니다."),
 
 	/**

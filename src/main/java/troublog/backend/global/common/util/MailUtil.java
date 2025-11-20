@@ -46,6 +46,8 @@ public class MailUtil {
 		String randomNumber = generateRandomNumber();
 		String emailBody = buildEmailBody(randomNumber);
 
+		sendEmail(receiverEmailAdr, emailBody);
+
 		Email email = Email.builder()
 			.emailTitle(MAIL_SUBJECT)
 			.emailBody(emailBody)
@@ -64,8 +66,6 @@ public class MailUtil {
 
 		emailRepository.save(email);
 		authCodeRepository.save(authCode);
-
-		sendEmail(receiverEmailAdr, emailBody);
 
 		return randomUUID;
 	}

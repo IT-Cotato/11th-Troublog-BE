@@ -307,6 +307,20 @@ public class AuthFacade {
 
 		jwtProvider.checkEnvType(clientEnvType);
 
+		// 인증코드 확인
+		AuthCode authCode = emailQueryService.getAuthCodeWithoutAuth(passwordChangeReq.authCode());
+
+		// 가장 최근에 보낸 인증코드인지 확인
+		if (!authCode.getRandomString().equals(passwordChangeReq.randomString())) {
+			throw new AuthException(ErrorCode.AUTH_CODE_NOT_LATEST);
+		}
+
+		// 인증코드가 입력값과 일치하고, 만료되지 않았는지 확인
+		if (!(authCode.getAuthCode().equals(passwordChangeReq.authCode())) || LocalDateTime.now()
+			.isAfter(authCode.getExpireDate())) {
+			throw new AuthException(ErrorCode.AUTH_CODE_INVALID);
+		}
+
 		// 이메일 존재여부 체크
 		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(passwordChangeReq.email());
 
