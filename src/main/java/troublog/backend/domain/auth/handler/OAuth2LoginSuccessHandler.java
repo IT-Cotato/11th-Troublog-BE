@@ -68,18 +68,20 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		// 유저 객체 가져오기
 		boolean isNewUser = user.getStatus() == UserStatus.INCOMPLETE;
 		boolean isIntegrated = user.getIsIntegrated();
+		String loginType = user.getLoginType();
 
 		if (isNewUser) {
 			// 신규 유저: 프론트엔드 회원가입 완료 페이지로 리다이렉트
 			handleNewUserRedirect(response, user);
 		} else {
-			if (isIntegrated) {
-				// 기존 유저: 프론트엔드 메인 페이지로 토큰과 함께 리다이렉트
-				handleExistingUserRedirect(response, user, clientEnvType);
-			} else {
+			// 통합이 되었거나, 통합이 되지 않아도 카카오 회원가입을 한 경우
+			if (!isIntegrated && loginType.equals(LoginType.NORMAL.getValue())) {
 				// 통합이 되지 않은 유저: 통합 연동하기 페이지로 리다이렉트
 				handleNotIntegratedUserRedirect(response, user, oauth2UserInfo.socialId(),
 					oauth2UserInfo.profileImageUrl());
+			} else {
+				// 기존 유저: 프론트엔드 메인 페이지로 토큰과 함께 리다이렉트
+				handleExistingUserRedirect(response, user, clientEnvType);
 			}
 		}
 	}
