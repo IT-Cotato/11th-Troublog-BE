@@ -87,5 +87,4 @@ public class SwaggerConfig {
 		props.setPersistAuthorization(true);
 		return props;
 	}
-
 }

@@ -8,13 +8,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.global.common.error.exception.TermsException;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.AiTaskException;
 import troublog.backend.global.common.error.exception.AlertException;
 import troublog.backend.global.common.error.exception.AuthException;
 import troublog.backend.global.common.error.exception.BusinessException;
+import troublog.backend.global.common.error.exception.ImageException;
 import troublog.backend.global.common.error.exception.PostException;
+import troublog.backend.global.common.error.exception.ProjectException;
+import troublog.backend.global.common.error.exception.TermsException;
 import troublog.backend.global.common.error.exception.UserException;
 import troublog.backend.global.common.response.BaseResponse;
 import troublog.backend.global.common.response.ErrorResponse;
@@ -83,6 +85,22 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<BaseResponse<ErrorResponse>> handleTermsException(TermsException e,
 		HttpServletRequest request) {
 		LoggingUtil.logException("TermsException 발생", e, request);
+		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
+		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
+	}
+
+	@ExceptionHandler(ImageException.class)
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleImageException(ImageException e,
+		HttpServletRequest request) {
+		LoggingUtil.logException("ImageException 발생", e, request);
+		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
+		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
+	}
+
+	@ExceptionHandler(ProjectException.class)
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleProjectException(ProjectException e,
+		HttpServletRequest request) {
+		LoggingUtil.logException("ProjectException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}

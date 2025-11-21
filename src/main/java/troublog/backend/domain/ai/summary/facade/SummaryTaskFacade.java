@@ -1,4 +1,4 @@
-package troublog.backend.domain.ai.summary.service.facade;
+package troublog.backend.domain.ai.summary.facade;
 
 import org.springframework.stereotype.Service;
 

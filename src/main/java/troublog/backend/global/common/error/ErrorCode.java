@@ -46,6 +46,7 @@ public enum ErrorCode {
 	USER_STATUS_INVALID(HttpStatus.BAD_REQUEST, "U-0011", "유효하지 않은 유저 상태입니다."),
 	USER_INVALID_NICKNAME(HttpStatus.BAD_REQUEST, "U-0012", "유효하지 않은 닉네임입니다."),
 	USER_EMAIL_INVALID(HttpStatus.BAD_REQUEST, "U-0013", "존재하지 않는 이메일입니다"),
+	DUPLICATED_EMAIL_KAKAO(HttpStatus.CONFLICT, "U-0014", "이미 카카오로 가입한 이메일입니다."),
 
 	/**
 	 * Alert Error
@@ -149,6 +150,7 @@ public enum ErrorCode {
 	TASK_CANNOT_BE_CANCELLED(HttpStatus.BAD_REQUEST, "AI-003", "이미 완료된 작업입니다."),
 	PROMPT_NOT_FOUND(HttpStatus.NOT_FOUND, "AI-004", "프롬프트를 찾을 수 없습니다."),
 	TASK_POST_MISMATCH(HttpStatus.BAD_REQUEST, "AI-005", "작업과 게시물이 일치하지 않습니다."),
+	CHAT_MODEL_NOT_FOUND(HttpStatus.NOT_FOUND, "AI-006", "Chat Model을 찾을 수 없습니다"),
 
 	/**
 	 * Terms Error
@@ -162,7 +164,8 @@ public enum ErrorCode {
 	TERMS_DELETED(HttpStatus.BAD_REQUEST, "TR-007", "삭제된 약관입니다."),
 	INVALID_CONSENT_DETAILS(HttpStatus.BAD_REQUEST, "TR-008", "유효하지 않은 동의 내역입니다."),
 	REQUIRED_TERMS_NOT_AGREED(HttpStatus.BAD_REQUEST, "TR-009", "필수 약관에 동의하지 않았습니다."),
-	NO_ACTIVE_TERMS(HttpStatus.NOT_FOUND, "TR-010", "활성화된 약관을 찾지 못했습니다.");
+	NO_ACTIVE_TERMS(HttpStatus.NOT_FOUND, "TR-010", "활성화된 약관을 찾지 못했습니다."),
+	;
 
 	private final HttpStatus httpStatus;
 	private final String code;

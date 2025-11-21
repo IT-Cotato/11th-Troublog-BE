@@ -103,7 +103,7 @@ public class ProjectController {
 		@PathVariable Long projectId,
 		@RequestParam PostViewFilter status,
 		@RequestParam(defaultValue = "LATEST") SortType sort,
-		@RequestParam(required = false) VisibilityType visibility
+		@RequestParam(defaultValue = "ALL", required = false) VisibilityType visibility
 	) {
 		List<TroubleListResDto> response = projectQueryFacade.getProjectTroubles(auth.getUserId(), projectId, status,
 			sort, visibility);
@@ -116,7 +116,7 @@ public class ProjectController {
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable Long projectId,
 		@RequestParam(defaultValue = "LATEST") SortType sort,
-		@RequestParam(required = false) SummaryType summaryType
+		@RequestParam(defaultValue = "NONE") SummaryType summaryType
 	) {
 		List<TroubleListResDto> response = projectQueryFacade.getProjectTroubleSummaries(auth.getUserId(), projectId,
 			sort, summaryType);

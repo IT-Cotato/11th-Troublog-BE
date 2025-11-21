@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import troublog.backend.domain.auth.dto.IntegrationKakaoRegisterReqDto;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
@@ -53,11 +54,22 @@ public class AuthController {
 	}
 
 	@PostMapping("/email-check")
-	@Operation(summary = "이메일 중복체크 API", description = "회원가입 첫번째 화면")
+	@Operation(summary = "이메일 중복체크 API", description = "회원가입 첫번째 화면 \n\n"
+		+ "이미 카카오로 가입된 계정인지, 일반 회원가입한 계정인지 구분")
 	public ResponseEntity<BaseResponse<Void>> checkDuplicateEmail(@RequestParam String email,
 		HttpServletRequest request) {
 
 		authFacade.checkDuplicateEmail(email, request);
+
+		return ResponseUtils.noContent();
+	}
+
+	@PostMapping("/integration/kakao")
+	@Operation(summary = "통합 회원가입 카카오 연동하기 API", description = "일반 회원가입을 먼저 한 사람이 카카오 로그인 시 redirect되는 페이지에서 호출하는 api")
+	public ResponseEntity<BaseResponse<Void>> userIntegrateKakao(
+		@Valid @RequestBody IntegrationKakaoRegisterReqDto integrationKakaoRegisterReqDto, HttpServletRequest request) {
+
+		authFacade.integrateKakaoUser(integrationKakaoRegisterReqDto, request);
 
 		return ResponseUtils.noContent();
 	}
