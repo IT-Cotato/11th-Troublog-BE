@@ -89,7 +89,7 @@ public enum ErrorCode {
 	CONTENT_LIST_IS_EMPTY(HttpStatus.BAD_REQUEST, "C-004", "콘텐츠 리스트가 비어있습니다."),
 	MISSING_CONTENT_LIST(HttpStatus.BAD_REQUEST, "C-005", "콘텐츠 리스트가 누락되었습니다."),
 	MISSING_CONTENT(HttpStatus.BAD_REQUEST, "C-006", "콘텐츠 정보가 누락되었습니다."),
-	SEQUENCE_NOT_VALID(HttpStatus.BAD_REQUEST,"C-007" , "시퀸스 넘버가 잘못되었습니다."),
+	SEQUENCE_NOT_VALID(HttpStatus.BAD_REQUEST,"C-007" , "시퀀스 넘버가 잘못되었습니다."),
 
 	/**
 	 * PostTag Error
