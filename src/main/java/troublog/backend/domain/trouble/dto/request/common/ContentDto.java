@@ -29,4 +29,8 @@ public record ContentDto(
 	@NotNull(message = "컨텐츠 순서는 null 값일 수 없습니다.")
 	Integer sequence
 ) {
+
+	public ContentDto withSubTitle(final String subTitle) {
+		return new ContentDto(subTitle, this.body, this.sequence);
+	}
 }
