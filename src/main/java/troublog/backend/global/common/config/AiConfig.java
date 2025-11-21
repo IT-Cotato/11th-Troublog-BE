@@ -6,8 +6,6 @@ import org.springframework.ai.anthropic.AnthropicChatModel;
 import org.springframework.ai.anthropic.AnthropicChatOptions;
 import org.springframework.ai.anthropic.api.AnthropicApi;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.google.genai.GoogleGenAiChatModel;
 import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
@@ -30,6 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 import troublog.backend.global.common.config.property.AnthropicProperties;
 import troublog.backend.global.common.config.property.GeminiProperties;
 import troublog.backend.global.common.config.property.OpenAiProperties;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.AiTaskException;
 import troublog.backend.global.common.util.CustomLoggingAdvisor;
 
 @Slf4j
@@ -46,6 +46,7 @@ public class AiConfig {
 	public static final String OPEN_AI = "openai";
 	public static final String ANTHROPIC = "claude";
 	public static final String GOOGLE_GEN_AI = "gemini";
+	public static final String NOT_DEFIEND = "unknown";
 	private final ToolCallingManager toolCallingManager;
 	private final CustomLoggingAdvisor customLoggingAdvisor;
 	private final OpenAiProperties openAiProperties;
@@ -100,7 +101,7 @@ public class AiConfig {
 				log.info("[AI] Gemini ChatModel 생성");
 				yield createGeminiChatModel();
 			}
-			default -> throw new IllegalStateException("Unexpected value: " + provider.toLowerCase());
+			default -> throw new AiTaskException(ErrorCode.CHAT_MODEL_NOT_FOUND);
 		};
 	}
 
@@ -186,6 +187,7 @@ public class AiConfig {
 		return AnthropicChatModel.builder()
 			.anthropicApi(anthropicApi)
 			.defaultOptions(chatOptions)
+			.toolCallingManager(toolCallingManager)
 			.observationRegistry(createObservationRegistry())
 			.retryTemplate(retryTemplate)
 			.build();
@@ -211,18 +213,6 @@ public class AiConfig {
 			.build();
 	}
 
-	@Bean
-	public MessageChatMemoryAdvisor chatMemoryAdvisor() {
-		MessageWindowChatMemory chatMemory = createMessageWindowChatMemory();
-		return MessageChatMemoryAdvisor.builder(chatMemory)
-			.build();
-	}
-
-	private MessageWindowChatMemory createMessageWindowChatMemory() {
-		return MessageWindowChatMemory.builder()
-			.build();
-	}
-
 	private ObservationRegistry createObservationRegistry() {
 		return ObservationRegistry.create();
 	}
@@ -232,7 +222,7 @@ public class AiConfig {
 			case OPEN_AI -> openAiProperties.chat().options().model();
 			case ANTHROPIC -> anthropicProperties.chat().options().model();
 			case GOOGLE_GEN_AI -> geminiProperties.chat().options().model();
-			default -> "unknown";
+			default -> NOT_DEFIEND;
 		};
 	}
 }
