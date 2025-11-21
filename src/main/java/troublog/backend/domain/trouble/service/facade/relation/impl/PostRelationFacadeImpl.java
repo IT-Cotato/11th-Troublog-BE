@@ -3,6 +3,7 @@ package troublog.backend.domain.trouble.service.facade.relation.impl;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,8 @@ import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostSummary;
 import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;
+import troublog.backend.domain.trouble.enums.GuidelineTitle;
+import troublog.backend.domain.trouble.enums.TemplateType;
 import troublog.backend.domain.trouble.service.command.ContentCommandService;
 import troublog.backend.domain.trouble.service.command.PostTagCommandService;
 import troublog.backend.domain.trouble.service.command.TagCommandService;
@@ -77,9 +80,22 @@ public class PostRelationFacadeImpl implements PostRelationFacade {
 
 	public void setContentRelations(final Post post, final List<ContentDto> contentDtoList) {
 		if (!CollectionUtils.isEmpty(contentDtoList)) {
-			List<Content> contents = saveAllContent(contentDtoList);
-			contents.forEach(post::addContent);
+			List<ContentDto> processedDtoList = isGuidelineTemplate(post)
+				? convertContentTitle(contentDtoList)
+				: contentDtoList;
+			saveAllContent(processedDtoList).forEach(post::addContent);
 		}
+	}
+
+	private boolean isGuidelineTemplate(final Post post) {
+		return post.getTemplateType() == TemplateType.GUIDELINE;
+	}
+
+	private List<ContentDto> convertContentTitle(final List<ContentDto> contentDtoList) {
+		return IntStream.range(0, contentDtoList.size())
+			.mapToObj(sequence -> contentDtoList.get(sequence)
+				.withSubTitle(GuidelineTitle.getSimplifiedTitleFromSequence(sequence)))
+			.toList();
 	}
 
 	private void setTechStackTagRelations(final Post post, final List<String> techStackTags) {
