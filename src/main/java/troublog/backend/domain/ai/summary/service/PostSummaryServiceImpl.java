@@ -16,7 +16,7 @@ import troublog.backend.domain.ai.summary.dto.common.ExtractedContentDto;
 import troublog.backend.domain.ai.summary.dto.response.SummarizedResDto;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
-import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
+import troublog.backend.domain.ai.summary.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.converter.ContentConverter;
 import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
@@ -126,7 +126,7 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 
 	private Resource selectPrompt(SummaryType summaryType) {
 		return switch (summaryType) {
-			case BLOG -> promptProperties.blog();
+			case MEMOIRS -> promptProperties.memoirs();
 			case RESUME -> promptProperties.resume();
 			case INTERVIEW -> promptProperties.interview();
 			case ISSUE_MANAGEMENT -> promptProperties.issueManagement();

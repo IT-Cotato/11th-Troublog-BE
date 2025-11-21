@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.ai.summary.dto.response.SummarizedResDto;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
-import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacade;
+import troublog.backend.domain.ai.summary.facade.SummaryTaskFacade;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostSummary;
 import troublog.backend.domain.trouble.service.facade.command.PostSummaryCommandFacade;
@@ -28,7 +28,6 @@ public class PostSummaryCompletionService {
 	private final PostRelationFacade postRelationFacade;
 	private final PostSummaryCommandFacade postSummaryCommandFacade;
 
-	@Transactional
 	public SummarizedResDto completeTask(SummaryTask summaryTask, SummarizedResDto result) {
 		Post foundPost = postQueryFacade.findPostEntityById(summaryTask.getPostId(), summaryTask.getUserId());
 		PostSummary postSummary = postSummaryCommandFacade.createPostSummary(summaryTask, result);

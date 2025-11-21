@@ -1,65 +1,78 @@
 package troublog.backend.global.common.config;
 
+import java.util.Objects;
+
+import org.springframework.ai.anthropic.AnthropicChatModel;
+import org.springframework.ai.anthropic.AnthropicChatOptions;
+import org.springframework.ai.anthropic.api.AnthropicApi;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.google.genai.GoogleGenAiChatModel;
+import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.support.RetryTemplate;
 
+import com.google.genai.Client;
+
 import io.micrometer.observation.ObservationRegistry;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import troublog.backend.global.common.config.property.AnthropicProperties;
+import troublog.backend.global.common.config.property.GeminiProperties;
 import troublog.backend.global.common.config.property.OpenAiProperties;
+import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.AiTaskException;
 import troublog.backend.global.common.util.CustomLoggingAdvisor;
 
-/**
- * Spring AI 및 OpenAI ChatClient 설정을 담당하는 구성 클래스
- * 주요 기능:
- * - OpenAI API 클라이언트 설정
- * - ChatClient 빈 생성 및 Advisor 구성
- * - 메모리 기반 대화 관리 설정
- */
+@Slf4j
 @Configuration
-@EnableConfigurationProperties({PromptProperties.class, OpenAiProperties.class})
+@EnableConfigurationProperties({
+	PromptProperties.class,
+	OpenAiProperties.class,
+	AnthropicProperties.class,
+	GeminiProperties.class
+})
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class AiConfig {
 
+	public static final String OPEN_AI = "openai";
+	public static final String ANTHROPIC = "claude";
+	public static final String GOOGLE_GEN_AI = "gemini";
+	public static final String NOT_DEFIEND = "unknown";
 	private final ToolCallingManager toolCallingManager;
 	private final CustomLoggingAdvisor customLoggingAdvisor;
 	private final OpenAiProperties openAiProperties;
+	private final AnthropicProperties anthropicProperties;
+	private final GeminiProperties geminiProperties;
 	private final RetryTemplate retryTemplate;
 
 	/**
-	 * 대화 메모리를 관리하는 Advisor를 생성합니다.
-	 * MessageWindowChatMemory를 사용하여 최근 대화 이력을 유지합니다.
-	 * 사용자 컨텍스트가 섞일 수 있어 현재는 비활성화 상태입니다.
-	 * @return MessageChatMemoryAdvisor 인스턴스
+	 * 기본 프로바이더 설정 (application.yml)
+	 * ai.provider.default: openai | claude
 	 */
-	@Bean
-	public MessageChatMemoryAdvisor chatMemoryAdvisor() {
-		MessageWindowChatMemory chatMemory = createMessageWindowChatMemory();
-		return MessageChatMemoryAdvisor.builder(chatMemory)
-			.build();
-	}
+	@Value("${ai.provider.default}")
+	private String defaultProvider;
 
 	/**
-	 * OpenAI ChatClient를 구성하고 생성합니다.
-	 * 로깅과 메모리 관리 기능을 포함한 ChatClient를 반환합니다.
+	 * 기본 ChatClient 빈 생성
+	 * 설정된 프로바이더에 따라 OpenAI 또는 Claude 모델 사용
 	 *
 	 * @return 완전히 구성된 ChatClient 인스턴스
 	 */
 	@Bean
 	public ChatClient chatClient() {
-		OpenAiApi openAiApi = createOpenAiApi();
-		OpenAiChatOptions chatOptions = createChatOptions();
-		ChatModel chatModel = createChatModel(openAiApi, chatOptions);
+		ChatModel chatModel = createChatModelByProvider(defaultProvider);
+
+		log.info("[AI] ChatClient 생성 완료 - Provider: {}, Model: {}",
+			defaultProvider, getModelName(defaultProvider));
 
 		return ChatClient.builder(chatModel)
 			.defaultAdvisors(customLoggingAdvisor)
@@ -67,35 +80,74 @@ public class AiConfig {
 	}
 
 	/**
-	 * OpenAI API 클라이언트를 생성합니다.
+	 * 프로바이더에 따라 적절한 ChatModel 생성
 	 *
-	 * @return 구성된 OpenAiApi 인스턴스
+	 * @param provider 프로바이더 이름 ("openai" 또는 "claude")
+	 * @return ChatModel 인스턴스
 	 */
-	private OpenAiApi createOpenAiApi() {
-		return OpenAiApi.builder()
-			.apiKey(openAiProperties.apiKey())
+	private ChatModel createChatModelByProvider(String provider) {
+		log.info("[AI] ChatModel 생성 시작 - Provider: {}", provider);
+
+		return switch (provider.toLowerCase()) {
+			case OPEN_AI -> {
+				log.info("[AI] OpenAI ChatModel 생성");
+				yield createOpenAiChatModel();
+			}
+			case ANTHROPIC -> {
+				log.info("[AI] Claude ChatModel 생성");
+				yield createAnthropicChatModel();
+			}
+			case GOOGLE_GEN_AI -> {
+				log.info("[AI] Gemini ChatModel 생성");
+				yield createGeminiChatModel();
+			}
+			default -> throw new AiTaskException(ErrorCode.CHAT_MODEL_NOT_FOUND);
+		};
+	}
+
+
+	/**
+	 * Gemini ChatModel 생성
+	 */
+	private ChatModel createGeminiChatModel() {
+		Client client = createGeminiClient();
+		GoogleGenAiChatOptions chatOptions = createGeminiChatOption();
+
+		return GoogleGenAiChatModel.builder()
+			.genAiClient(client)
+			.defaultOptions(chatOptions)
+			.toolCallingManager(toolCallingManager)
+			.observationRegistry(createObservationRegistry())
+			.retryTemplate(retryTemplate)
 			.build();
 	}
 
 	/**
-	 * OpenAI 채팅 옵션을 생성합니다.
-	 *
-	 * @return 구성된 OpenAiChatOptions 인스턴스
+	 * Gemini API 클라이언트 생성
 	 */
-	private OpenAiChatOptions createChatOptions() {
-		return OpenAiChatOptions.builder()
-			.model(openAiProperties.chat().options().model())
+	private Client createGeminiClient() {
+		return Client.builder()
+			.apiKey(geminiProperties.apiKey())
 			.build();
 	}
 
 	/**
-	 * OpenAI ChatModel을 생성합니다.
-	 *
-	 * @param openAiApi   OpenAI API 클라이언트
-	 * @param chatOptions 채팅 옵션
-	 * @return 구성된 ChatModel 인스턴스
+	 * Gemini 채팅 옵션 생성
 	 */
-	private ChatModel createChatModel(OpenAiApi openAiApi, OpenAiChatOptions chatOptions) {
+	private GoogleGenAiChatOptions createGeminiChatOption() {
+		return GoogleGenAiChatOptions.builder()
+			.model(geminiProperties.chat().options().model())
+			.maxOutputTokens(10000)
+			.build();
+	}
+
+	/**
+	 * OpenAI ChatModel 생성
+	 */
+	private ChatModel createOpenAiChatModel() {
+		OpenAiApi openAiApi = createOpenAiApi();
+		OpenAiChatOptions chatOptions = createOpenAiChatOptions();
+
 		return OpenAiChatModel.builder()
 			.openAiApi(openAiApi)
 			.defaultOptions(chatOptions)
@@ -105,12 +157,72 @@ public class AiConfig {
 			.build();
 	}
 
-	private MessageWindowChatMemory createMessageWindowChatMemory() {
-		return MessageWindowChatMemory.builder()
+	/**
+	 * OpenAI API 클라이언트 생성
+	 */
+	private OpenAiApi createOpenAiApi() {
+		return OpenAiApi.builder()
+			.apiKey(Objects.requireNonNull(openAiProperties.apiKey()))
+			.build();
+	}
+
+	/**
+	 * OpenAI 채팅 옵션 생성
+	 */
+	private OpenAiChatOptions createOpenAiChatOptions() {
+		String model = openAiProperties.chat().options().model();
+		return OpenAiChatOptions.builder()
+			.model(model)
+			.maxTokens(10000)
+			.build();
+	}
+
+	/**
+	 * Anthropic ChatModel 생성
+	 */
+	private ChatModel createAnthropicChatModel() {
+		AnthropicApi anthropicApi = createAnthropicApi();
+		AnthropicChatOptions chatOptions = createAnthropicChatOptions();
+
+		return AnthropicChatModel.builder()
+			.anthropicApi(anthropicApi)
+			.defaultOptions(chatOptions)
+			.toolCallingManager(toolCallingManager)
+			.observationRegistry(createObservationRegistry())
+			.retryTemplate(retryTemplate)
+			.build();
+	}
+
+	/**
+	 * Anthropic API 클라이언트 생성
+	 */
+	private AnthropicApi createAnthropicApi() {
+		return AnthropicApi.builder()
+			.apiKey(Objects.requireNonNull(anthropicProperties.apiKey()))
+			.build();
+	}
+
+	/**
+	 * Anthropic 채팅 옵션 생성
+	 */
+	private AnthropicChatOptions createAnthropicChatOptions() {
+		String model = anthropicProperties.chat().options().model();
+		return AnthropicChatOptions.builder()
+			.model(model)
+			.maxTokens(10000)
 			.build();
 	}
 
 	private ObservationRegistry createObservationRegistry() {
 		return ObservationRegistry.create();
+	}
+
+	private String getModelName(String provider) {
+		return switch (provider.toLowerCase()) {
+			case OPEN_AI -> openAiProperties.chat().options().model();
+			case ANTHROPIC -> anthropicProperties.chat().options().model();
+			case GOOGLE_GEN_AI -> geminiProperties.chat().options().model();
+			default -> NOT_DEFIEND;
+		};
 	}
 }

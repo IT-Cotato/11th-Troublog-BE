@@ -13,6 +13,17 @@ spring:
       chat:
         options:
           model: ${OPENAI_MODEL}
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY}
+      chat:
+        options:
+          model: ${ANTHROPIC_MODEL}
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY}
+        chat:
+          options:
+            model: ${GEMINI_MODEL}
   mvc:
     log-resolved-exception: false
   cloud:
@@ -54,11 +65,13 @@ spring:
       enabled: true
 
 ai:
+  provider:
+    default: ${DEFAULT_AI_MODEL}
   prompts:
     system: ${AI_PROMPT_SYSTEM:classpath:prompts/system.st}
     resume: ${AI_PROMPT_RESUME:classpath:prompts/resume.st}
     interview: ${AI_PROMPT_INTERVIEW:classpath:prompts/interview.st}
-    blog: ${AI_PROMPT_BLOG:classpath:prompts/blog.st}
+    memoirs: ${AI_PROMPT_MEMOIRS:classpath:prompts/memoirs.st}
     issue-management: ${AI_PROMPT_ISSUE_MANAGEMENT:classpath:prompts/issue-management.st}
 
 springdoc:

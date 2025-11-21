@@ -24,7 +24,7 @@ repositories {
 }
 
 ext {
-    set('springAiVersion', "1.0.3")
+    set('springAiVersion', "1.1.0")
 }
 
 dependencies {
@@ -36,8 +36,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Spring AI 모델
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+    implementation 'org.springframework.ai:spring-ai-starter-model-anthropic'
+    implementation 'org.springframework.ai:spring-ai-starter-model-google-genai'
+
     implementation 'org.springframework.boot:spring-boot-starter-mail'
-    
+
     // Micrometer Prometheus 메트릭 지원
     implementation 'io.micrometer:micrometer-registry-prometheus'
     compileOnly 'org.projectlombok:lombok'

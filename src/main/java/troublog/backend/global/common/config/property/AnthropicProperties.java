@@ -8,24 +8,23 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Validated
-@ConfigurationProperties("spring.cloud.aws")
-public record AwsProperties(
+@ConfigurationProperties("spring.ai.anthropic")
+public record AnthropicProperties(
+	@NotBlank
+	String apiKey,
 	@Valid
 	@NotNull
-	S3 s3,
-	@Valid
-	@NotNull
-	Credentials credentials
+	Chat chat
 ) {
-	public record S3(
-		@NotBlank
-		String region) {
+	public record Chat(
+		@Valid
+		@NotNull
+		Options options
+	) {
 	}
 
-	public record Credentials(
+	public record Options(
 		@NotBlank
-		String accessKey,
-		@NotBlank
-		String secretKey) {
+		String model) {
 	}
 }
