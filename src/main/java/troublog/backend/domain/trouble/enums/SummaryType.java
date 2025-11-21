@@ -17,7 +17,7 @@ public enum SummaryType {
 
 	private final String description;
 
-	public static SummaryType from(String type) {
+	public static SummaryType from(final String type) {
 		if (type == null) {
 			return NONE;
 		}
@@ -30,12 +30,12 @@ public enum SummaryType {
 		throw new PostException(ErrorCode.INVALID_VALUE);
 	}
 
-	public static String getName(SummaryType summaryType) {
+	public static String getName(final SummaryType summaryType) {
 		return summaryType.name();
 	}
 
-	public static void validate(SummaryType summaryType) {
-		if (summaryType == null || summaryType.equals(SummaryType.NONE)) {
+	public static void validate(final SummaryType summaryType) {
+		if (summaryType == null) {
 			throw new PostException(ErrorCode.MISSING_SUMMARY_TYPE);
 		}
 	}
