@@ -24,17 +24,17 @@ public class PostSummaryQueryFacade {
 
 	private final PostSummaryQueryService postSummaryQueryService;
 
-	public PostSummaryResDto findPostSummaryById(Long userId, Long summaryId) {
-		PostSummary postSummary = postSummaryQueryService.findById(summaryId);
-		PostValidator.validateSummaryBelongsToUser(userId, postSummary);
-		return PostSummaryConverter.toResponse(postSummary);
-	}
-
-	public static List<SummaryContentInfoDto> findSummaryContents(PostSummary postSummary) {
+	public static List<SummaryContentInfoDto> findSummaryContents(final PostSummary postSummary) {
 		if (CollectionUtils.isEmpty(postSummary.getSummaryContents())) {
 			return List.of();
 		}
 		List<SummaryContent> summaryContents = postSummary.getSummaryContents();
 		return SummaryContentConverter.toResponseList(summaryContents);
+	}
+
+	public PostSummaryResDto findPostSummaryById(final Long userId, final Long summaryId) {
+		PostSummary postSummary = postSummaryQueryService.findById(summaryId);
+		PostValidator.validateSummaryBelongsToUser(userId, postSummary);
+		return PostSummaryConverter.toResponse(postSummary);
 	}
 }
