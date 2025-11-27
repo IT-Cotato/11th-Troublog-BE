@@ -1,7 +1,6 @@
 package troublog.backend.domain.image.controller;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

@@ -170,8 +170,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			SELECT count(p) FROM Post p
 			WHERE p.user.id = :userId AND p.isDeleted = false
 			""")
-	Page<Post> findTroublesByUserOrderByStarRating(@Param("userId") Long userId,
-		Pageable pageable);
+	Page<Post> findTroublesByUserOrderByStarRating(
+		@Param("userId") Long userId,
+		Pageable pageable
+	);
 
 	@Query("""
 		  SELECT DISTINCT p

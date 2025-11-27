@@ -5,12 +5,12 @@ import lombok.Builder;
 
 @Builder
 @Schema(description = "통계 응답 DTO")
-public record StatsResDto (
+public record StatsResDto(
 
-        @Schema(description = "분석 결과 이름")
-        String name,
+	@Schema(description = "분석 결과 이름")
+	String name,
 
-        @Schema(description = "개수")
-        long count
-){
+	@Schema(description = "개수")
+	long count
+) {
 }

@@ -86,7 +86,8 @@ public class PostCommandController {
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> hardDeletePost(
 		@Authentication CustomAuthenticationToken token,
-		@PathVariable Long postId) {
+		@PathVariable Long postId
+	) {
 		postCommandFacade.hardDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
 	}
@@ -109,7 +110,8 @@ public class PostCommandController {
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> hardDeleteSummary(
 		@Authentication CustomAuthenticationToken token,
-		@PathVariable Long summaryId) {
+		@PathVariable Long summaryId
+	) {
 		postSummaryCommandFacade.hardDeletePostSummary(token.getUserId(), summaryId);
 		return ResponseUtils.noContent();
 	}

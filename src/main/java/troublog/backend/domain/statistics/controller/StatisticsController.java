@@ -29,7 +29,8 @@ public class StatisticsController {
 	@GetMapping("/daily")
 	@Operation(summary = "일일 트러블로그 활동 통계 API", description = "1회 이상일 때만 반환한다.")
 	public ResponseEntity<BaseResponse<List<DailyCountResDto>>> getUserDailyStats(
-		@Authentication CustomAuthenticationToken auth) {
+		@Authentication CustomAuthenticationToken auth
+	) {
 		Long userId = auth.getUserId();
 		List<DailyCountResDto> dailyList = statisticsService.getDailyPostCountByUser(userId);
 		return ResponseUtils.ok(dailyList);
@@ -38,7 +39,8 @@ public class StatisticsController {
 	@GetMapping("/tags")
 	@Operation(summary = "기술 태그별 통계 API", description = "가장 많이 사용한 기술 태그 상위 5개를 반환한다.")
 	public ResponseEntity<BaseResponse<List<StatsResDto>>> getTopTech(
-		@Authentication CustomAuthenticationToken auth) {
+		@Authentication CustomAuthenticationToken auth
+	) {
 		Long userId = auth.getUserId();
 		List<StatsResDto> tags = statisticsService.getTopTechStats(userId);
 		return ResponseUtils.ok(tags);
@@ -47,7 +49,8 @@ public class StatisticsController {
 	@GetMapping("/errors")
 	@Operation(summary = "에러 태그별 통계 API", description = "가장 많이 사용한 에러 태그 상위 3개를 반환한다.")
 	public ResponseEntity<BaseResponse<List<StatsResDto>>> getTopError(
-		@Authentication CustomAuthenticationToken auth) {
+		@Authentication CustomAuthenticationToken auth
+	) {
 		Long userId = auth.getUserId();
 		List<StatsResDto> errors = statisticsService.getTopErrorStats(userId);
 		return ResponseUtils.ok(errors);
@@ -56,7 +59,8 @@ public class StatisticsController {
 	@GetMapping("/summary")
 	@Operation(summary = "요약본 종류 통계 API", description = "요약본의 종류와 해당 개수를 반환한다.")
 	public ResponseEntity<BaseResponse<List<StatsResDto>>> getTopSummary(
-		@Authentication CustomAuthenticationToken auth) {
+		@Authentication CustomAuthenticationToken auth
+	) {
 		Long userId = auth.getUserId();
 		List<StatsResDto> summaries = statisticsService.getSummaryStats(userId);
 		return ResponseUtils.ok(summaries);

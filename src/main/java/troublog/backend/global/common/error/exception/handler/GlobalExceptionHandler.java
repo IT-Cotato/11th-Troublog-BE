@@ -34,80 +34,100 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(BusinessException.class)
-	public ResponseEntity<BaseResponse<ErrorResponse>> handleBusinessException(BusinessException e,
-		HttpServletRequest request) {
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleBusinessException(
+		BusinessException e,
+		HttpServletRequest request
+	) {
 		LoggingUtil.logException("BusinessException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
 
 	@ExceptionHandler(AuthException.class)
-	public ResponseEntity<BaseResponse<ErrorResponse>> handleAuthException(AuthException e,
-		HttpServletRequest request) {
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleAuthException(
+		AuthException e,
+		HttpServletRequest request
+	) {
 		LoggingUtil.logException("AuthException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
 
 	@ExceptionHandler(UserException.class)
-	public ResponseEntity<BaseResponse<ErrorResponse>> handleUserException(UserException e,
-		HttpServletRequest request) {
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleUserException(
+		UserException e,
+		HttpServletRequest request
+	) {
 		LoggingUtil.logException("UserException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
 
 	@ExceptionHandler(AlertException.class)
-	public ResponseEntity<BaseResponse<ErrorResponse>> handleAlertException(AlertException e,
-		HttpServletRequest request) {
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleAlertException(
+		AlertException e,
+		HttpServletRequest request
+	) {
 		LoggingUtil.logException("AlertException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
 
 	@ExceptionHandler(PostException.class)
-	public ResponseEntity<BaseResponse<ErrorResponse>> handlePostException(PostException e,
-		HttpServletRequest request) {
+	public ResponseEntity<BaseResponse<ErrorResponse>> handlePostException(
+		PostException e,
+		HttpServletRequest request
+	) {
 		LoggingUtil.logException("PostException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
 
 	@ExceptionHandler(AiTaskException.class)
-	public ResponseEntity<BaseResponse<ErrorResponse>> handleAiTaskException(AiTaskException e,
-		HttpServletRequest request) {
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleAiTaskException(
+		AiTaskException e,
+		HttpServletRequest request
+	) {
 		LoggingUtil.logException("AiTaskException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
 
 	@ExceptionHandler(TermsException.class)
-	public ResponseEntity<BaseResponse<ErrorResponse>> handleTermsException(TermsException e,
-		HttpServletRequest request) {
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleTermsException(
+		TermsException e,
+		HttpServletRequest request
+	) {
 		LoggingUtil.logException("TermsException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
 
 	@ExceptionHandler(ImageException.class)
-	public ResponseEntity<BaseResponse<ErrorResponse>> handleImageException(ImageException e,
-		HttpServletRequest request) {
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleImageException(
+		ImageException e,
+		HttpServletRequest request
+	) {
 		LoggingUtil.logException("ImageException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
 
 	@ExceptionHandler(ProjectException.class)
-	public ResponseEntity<BaseResponse<ErrorResponse>> handleProjectException(ProjectException e,
-		HttpServletRequest request) {
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleProjectException(
+		ProjectException e,
+		HttpServletRequest request
+	) {
 		LoggingUtil.logException("ProjectException 발생", e, request);
 		ErrorResponse response = ErrorResponse.of(e.getErrorCode(), request);
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<BaseResponse<ErrorResponse>> handleMethodArgumentNotValid(MethodArgumentNotValidException e,
-		HttpServletRequest request) {
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleMethodArgumentNotValid(
+		MethodArgumentNotValidException e,
+		HttpServletRequest request
+	) {
 		LoggingUtil.logValidationException(e, request);
 		ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT, request);
 		response.addValidationErrors(e.getBindingResult());

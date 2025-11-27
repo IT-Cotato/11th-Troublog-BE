@@ -1,6 +1,5 @@
 package troublog.backend.global.common.response;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import org.springframework.validation.FieldError;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Builder;
-import lombok.Getter;
 import troublog.backend.global.common.error.ErrorCode;
 
 @Builder

@@ -16,7 +16,6 @@ import troublog.backend.domain.trouble.service.facade.command.PostSummaryCommand
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.domain.trouble.service.facade.relation.PostRelationFacade;
 
-
 @Slf4j
 @Service
 @Transactional

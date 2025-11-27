@@ -1,7 +1,8 @@
 package troublog.backend.domain.user.validator;
 
-import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
+
+import jakarta.validation.constraints.NotNull;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.UserException;
 

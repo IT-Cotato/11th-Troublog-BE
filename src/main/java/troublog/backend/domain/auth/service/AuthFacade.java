@@ -37,7 +37,6 @@ import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
-import troublog.backend.domain.user.entity.UserStatus;
 import troublog.backend.domain.user.service.command.UserCommandService;
 import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.domain.user.validator.UserValidator;
@@ -266,8 +265,10 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public PasswordEmailUUIDRes checkEmailForPassword(PasswordEmailCheckReq passwordEmailCheckReq,
-		HttpServletRequest request) {
+	public PasswordEmailUUIDRes checkEmailForPassword(
+		PasswordEmailCheckReq passwordEmailCheckReq,
+		HttpServletRequest request
+	) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
@@ -289,8 +290,10 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public void checkAuthCodePassword(PasswordAuthCodeCheckReq passwordAuthCodeCheckReq,
-		HttpServletRequest request) {
+	public void checkAuthCodePassword(
+		PasswordAuthCodeCheckReq passwordAuthCodeCheckReq,
+		HttpServletRequest request
+	) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
@@ -349,8 +352,10 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public void integrateKakaoUser(IntegrationKakaoRegisterReqDto integrationKakaoRegisterReqDto,
-		HttpServletRequest request) {
+	public void integrateKakaoUser(
+		IntegrationKakaoRegisterReqDto integrationKakaoRegisterReqDto,
+		HttpServletRequest request
+	) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 

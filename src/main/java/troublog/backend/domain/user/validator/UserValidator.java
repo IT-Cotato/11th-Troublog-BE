@@ -15,12 +15,6 @@ public class UserValidator {
 
 	private final PasswordEncoder passwordEncoder;
 
-	public void validateProfileUpdateRequest(Long userId, Long requestingUserId) {
-		if (!userId.equals(requestingUserId)) {
-			throw new UserException(ErrorCode.USER_UPDATE_SELF);
-		}
-	}
-
 	public static void validateUserDeleted(User user) {
 		if (Boolean.TRUE.equals(user.getIsDeleted())) {
 			throw new UserException(ErrorCode.USER_DELETED);
@@ -30,6 +24,12 @@ public class UserValidator {
 	public static void validateUserStatus(User user) {
 		if (user.getStatus() != UserStatus.ACTIVE) {
 			throw new UserException(ErrorCode.USER_STATUS_INVALID);
+		}
+	}
+
+	public void validateProfileUpdateRequest(Long userId, Long requestingUserId) {
+		if (!userId.equals(requestingUserId)) {
+			throw new UserException(ErrorCode.USER_UPDATE_SELF);
 		}
 	}
 

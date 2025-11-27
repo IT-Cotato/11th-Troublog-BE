@@ -60,6 +60,54 @@ public class PostQueryFacade {
 	private final RecentPostQueryService recentPostQueryService;
 	private final PostSummaryQueryService postSummaryQueryService;
 
+	public static List<ContentInfoDto> findContents(final Post post) {
+		if (CollectionUtils.isEmpty(post.getContents())) {
+			return List.of();
+		}
+		return ContentConverter.toResponseList(post.getContents());
+	}
+
+	public static String findErrorTag(final Post post) {
+		if (post == null) {
+			throw new PostException(ErrorCode.MISSING_ERROR_TAG);
+		}
+		return post.getPostTags().stream()
+			.filter(Objects::nonNull)
+			.filter(postTag -> postTag.getTag() != null)
+			.filter(postTag -> postTag.getTag().getTagType() == TagType.ERROR)
+			.map(PostTag::getDisplayName)
+			.findFirst()
+			.orElseThrow(() -> new PostException(ErrorCode.MISSING_ERROR_TAG));
+	}
+
+	public static List<String> findTechStackTags(final Post post) {
+		if (post == null) {
+			return List.of();
+		}
+		return post.getPostTags().stream()
+			.filter(Objects::nonNull)
+			.filter(postTag -> postTag.getTag() != null)
+			.filter(postTag -> postTag.getTag().getTagType() == TagType.TECH_STACK)
+			.map(PostTag::getDisplayName)
+			.toList();
+	}
+
+	public static List<String> findTopTechStackTags(final Post post) {
+		if (CollectionUtils.isEmpty(post.getPostTags())) {
+			return List.of();
+		}
+		return post.getPostTags().stream()
+			.map(PostTag::getTag)
+			.filter(Objects::nonNull)
+			.filter(tag -> tag.isSameType(TagType.TECH_STACK))
+			.collect(Collectors.groupingBy(Tag::getName, Collectors.counting()))
+			.entrySet().stream()
+			.sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+			.limit(3)
+			.map(Map.Entry::getKey)
+			.toList();
+	}
+
 	public Post findPostEntityById(final Long postId, final Long userId) {
 		Post post = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, post);
@@ -72,13 +120,6 @@ public class PostQueryFacade {
 		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId(), userId);
 		boolean liked = likeQueryService.findByUserAndPost(userId, post.getId()).isPresent();
 		return PostConverter.toPostDetailsResponse(userInfo, post, liked);
-	}
-
-	public static List<ContentInfoDto> findContents(final Post post) {
-		if (CollectionUtils.isEmpty(post.getContents())) {
-			return List.of();
-		}
-		return ContentConverter.toResponseList(post.getContents());
 	}
 
 	public CombineResDto findPostDetailsWithSummaryById(final Long userId, final Long postId, final Long summaryId) {
@@ -136,8 +177,10 @@ public class PostQueryFacade {
 		return PostConverter.toCommunityPostDetailsResponse(userInfo, post, liked);
 	}
 
-	public Page<PostCardResDto> searchUserPostByKeyword(final Long userId, final String keyword,
-		final Pageable pageable) {
+	public Page<PostCardResDto> searchUserPostByKeyword(
+		final Long userId, final String keyword,
+		final Pageable pageable
+	) {
 		Page<Post> posts = postQueryService.searchUserPostByKeyword(userId, keyword, pageable);
 		Set<Long> userIds = getDeduplicationUserId(posts);
 		return convertToPostCardsWithUserInfo(userIds, posts);
@@ -179,47 +222,6 @@ public class PostQueryFacade {
 			case "latest" -> Sort.by(Sort.Direction.DESC, "completedAt", "id");
 			default -> throw new PostException(ErrorCode.INVALID_VALUE);
 		};
-	}
-
-	public static String findErrorTag(final Post post) {
-		if (post == null) {
-			throw new PostException(ErrorCode.MISSING_ERROR_TAG);
-		}
-		return post.getPostTags().stream()
-			.filter(Objects::nonNull)
-			.filter(postTag -> postTag.getTag() != null)
-			.filter(postTag -> postTag.getTag().getTagType() == TagType.ERROR)
-			.map(PostTag::getDisplayName)
-			.findFirst()
-			.orElseThrow(() -> new PostException(ErrorCode.MISSING_ERROR_TAG));
-	}
-
-	public static List<String> findTechStackTags(final Post post) {
-		if (post == null) {
-			return List.of();
-		}
-		return post.getPostTags().stream()
-			.filter(Objects::nonNull)
-			.filter(postTag -> postTag.getTag() != null)
-			.filter(postTag -> postTag.getTag().getTagType() == TagType.TECH_STACK)
-			.map(PostTag::getDisplayName)
-			.toList();
-	}
-
-	public static List<String> findTopTechStackTags(final Post post) {
-		if (CollectionUtils.isEmpty(post.getPostTags())) {
-			return List.of();
-		}
-		return post.getPostTags().stream()
-			.map(PostTag::getTag)
-			.filter(Objects::nonNull)
-			.filter(tag -> tag.isSameType(TagType.TECH_STACK))
-			.collect(Collectors.groupingBy(Tag::getName, Collectors.counting()))
-			.entrySet().stream()
-			.sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-			.limit(3)
-			.map(Map.Entry::getKey)
-			.toList();
 	}
 
 	public Page<PostResDto> getRecentlyViewedPosts(final Long userId, final Pageable pageable) {

@@ -36,50 +36,38 @@ import troublog.backend.global.common.error.exception.PostException;
 @Table(name = "users")
 public class User extends BaseEntity {
 
+	@Builder.Default
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	List<Project> projects = new ArrayList<>();
+	@Builder.Default
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	List<Post> posts = new ArrayList<>();
+	@Builder.Default
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	List<Like> likes = new ArrayList<>();
+	@Builder.Default
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	List<Comment> comments = new ArrayList<>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
 	private Long id;
-
 	@NotNull
 	@Column(name = "email")
 	private String email;
-
 	@NotNull
 	@Column(name = "password")
 	private String password;
-
 	@Column(name = "nickname")
 	private String nickname;
-
 	@Column(name = "field")
 	private String field;
-
 	@Column(name = "bio")
 	private String bio;
-
 	@Column(name = "profile_url")
 	private String profileUrl;
-
 	@Column(name = "github_url")
 	private String githubUrl;
-
-	@Builder.Default
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	List<Project> projects = new ArrayList<>();
-
-	@Builder.Default
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	List<Post> posts = new ArrayList<>();
-
-	@Builder.Default
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	List<Like> likes = new ArrayList<>();
-
-	@Builder.Default
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	List<Comment> comments = new ArrayList<>();
-
 	@Column(name = "login_type")
 	private String loginType;
 

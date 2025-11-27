@@ -26,12 +26,11 @@ import troublog.backend.global.common.error.exception.ImageException;
 @RequiredArgsConstructor
 @Component
 public class S3Uploader {
+	public static final String POST_DIR_NAME = "test/post/";
 	private static final long DEFAULT_TIMEOUT_SECONDS = 60;
 	private static final String AWS_S3_DOMAIN = "amazonaws.com/";
 	private static final String PATH_SEPARATOR = "/";
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-	public static final String POST_DIR_NAME = "test/post/";
-
 	private final Executor imageExecutor;
 	private final S3Template s3Template;
 
@@ -71,8 +70,10 @@ public class S3Uploader {
 	 * @return 업로드된 모든 파일의 S3 URL 목록을 포함하는 CompletableFuture
 	 * @throws ImageException 파일 목록이 유효하지 않거나 업로드 실패 시 발생
 	 */
-	public CompletableFuture<List<String>> uploadMultipleImages(List<MultipartFile> fileList,
-		String dirName) {
+	public CompletableFuture<List<String>> uploadMultipleImages(
+		List<MultipartFile> fileList,
+		String dirName
+	) {
 		ImageValidator.validateFileList(fileList);
 
 		String finalDirName = createDirectoryName(dirName);

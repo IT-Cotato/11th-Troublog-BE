@@ -38,8 +38,10 @@ public interface StatisticsRepository extends JpaRepository<Post, Long> {
 		"WHERE p.user.id = :userId AND t.tagType = :tagType " +
 		"GROUP BY t.name " +
 		"ORDER BY COUNT(t) DESC")
-	List<StatsResDto> findTopTagsByUser(@Param("userId") Long userId,
-		@Param("tagType") TagType tagType);
+	List<StatsResDto> findTopTagsByUser(
+		@Param("userId") Long userId,
+		@Param("tagType") TagType tagType
+	);
 
 	@Query(
 		"SELECT new troublog.backend.domain.statistics.dto.response.StatsResDto(CAST(ps.summaryType AS string), COUNT(ps)) "

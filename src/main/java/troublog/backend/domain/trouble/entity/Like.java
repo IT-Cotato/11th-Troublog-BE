@@ -53,11 +53,6 @@ public class Like {
 	@Column(name = "liked_at", updatable = false)
 	private LocalDateTime likedAt;
 
-	@PrePersist
-	protected void onCreate() {
-		this.likedAt = LocalDateTime.now();
-	}
-
 	public static Like createLike(User user, Post post) {
 		if (user == null)
 			throw new PostException(ErrorCode.MISSING_USER);
@@ -72,6 +67,11 @@ public class Like {
 		user.addLikeRef(like);
 		post.addLike(like);
 		return like;
+	}
+
+	@PrePersist
+	protected void onCreate() {
+		this.likedAt = LocalDateTime.now();
 	}
 
 	public void assignUser(User user) {

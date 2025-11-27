@@ -105,7 +105,6 @@ public class AiConfig {
 		};
 	}
 
-
 	/**
 	 * Gemini ChatModel 생성
 	 */

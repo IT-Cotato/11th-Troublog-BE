@@ -24,8 +24,10 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 		    GROUP BY t.name
 		    ORDER BY COUNT(t.name) DESC
 		""")
-	List<String> findTop2TagsByProjectId(@Param("projectId") Long projectId, @Param("tagType") TagType tagType,
-		Pageable pageable);
+	List<String> findTop2TagsByProjectId(
+		@Param("projectId") Long projectId, @Param("tagType") TagType tagType,
+		Pageable pageable
+	);
 
 	Page<Project> findAllByUserIdAndIsDeletedFalse(Long userId, Pageable pageable);
 

@@ -46,21 +46,24 @@ public class AuthController {
 		content = @Content(schema = @Schema(implementation = RegisterResDto.class)))
 	public ResponseEntity<BaseResponse<RegisterResDto>> register(
 		@Valid @RequestBody RegisterReqDto registerReqDto,
-		HttpServletRequest request) {
-
+		HttpServletRequest request
+	) {
 		RegisterResDto registerResDto = authFacade.register(registerReqDto, request);
-
 		return ResponseUtils.created(registerResDto);
 	}
 
 	@PostMapping("/email-check")
-	@Operation(summary = "이메일 중복체크 API", description = "회원가입 첫번째 화면 \n\n"
-		+ "이미 카카오로 가입된 계정인지, 일반 회원가입한 계정인지 구분")
-	public ResponseEntity<BaseResponse<Void>> checkDuplicateEmail(@RequestParam String email,
-		HttpServletRequest request) {
-
+	@Operation(summary = "이메일 중복체크 API", description =
+		"""
+		회원가입 첫번째 화면\s
+		이미 카카오로 가입된 계정인지, 일반 회원가입한 계정인지 구분
+		"""
+	)
+	public ResponseEntity<BaseResponse<Void>> checkDuplicateEmail(
+		@RequestParam String email,
+		HttpServletRequest request
+	) {
 		authFacade.checkDuplicateEmail(email, request);
-
 		return ResponseUtils.noContent();
 	}
 
@@ -68,9 +71,7 @@ public class AuthController {
 	@Operation(summary = "통합 회원가입 카카오 연동하기 API", description = "일반 회원가입을 먼저 한 사람이 카카오 로그인 시 redirect되는 페이지에서 호출하는 api")
 	public ResponseEntity<BaseResponse<Void>> userIntegrateKakao(
 		@Valid @RequestBody IntegrationKakaoRegisterReqDto integrationKakaoRegisterReqDto, HttpServletRequest request) {
-
 		authFacade.integrateKakaoUser(integrationKakaoRegisterReqDto, request);
-
 		return ResponseUtils.noContent();
 	}
 
@@ -81,10 +82,9 @@ public class AuthController {
 	public ResponseEntity<BaseResponse<LoginResDto>> login(
 		@Valid @RequestBody LoginReqDto loginReqDto,
 		HttpServletRequest request,
-		HttpServletResponse response) {
-
+		HttpServletResponse response
+	) {
 		LoginResDto loginResDto = authFacade.login(loginReqDto, request, response);
-
 		return ResponseUtils.ok(loginResDto);
 	}
 
@@ -94,9 +94,7 @@ public class AuthController {
 		content = @Content(schema = @Schema(implementation = String.class)))
 	@PostMapping("/refresh")
 	public ResponseEntity<BaseResponse<String>> reissueAccessToken(HttpServletRequest request) {
-
 		String accessToken = authFacade.reissueAccessToken(request);
-
 		return ResponseUtils.ok(accessToken);
 	}
 
@@ -104,9 +102,7 @@ public class AuthController {
 		+ ", 개발단계에서 refreshToken은 임시로 header에 담아 전달")
 	@PostMapping("/logout")
 	public ResponseEntity<BaseResponse<Void>> logout(HttpServletRequest request, HttpServletResponse response) {
-
 		authFacade.logout(request, response);
-
 		return ResponseUtils.noContent();
 	}
 
@@ -119,7 +115,6 @@ public class AuthController {
 		HttpServletRequest request
 	) {
 		RegisterResDto response = authFacade.oAuthRegister(oAuth2RegisterReqDto, request);
-
 		return ResponseUtils.created(response);
 	}
 
@@ -129,7 +124,6 @@ public class AuthController {
 		content = @Content(schema = @Schema(implementation = PasswordEmailUUIDRes.class)))
 	public ResponseEntity<BaseResponse<PasswordEmailUUIDRes>> findPassword(
 		@Valid @RequestBody PasswordEmailCheckReq passwordEmailCheckReq, HttpServletRequest request) {
-
 		PasswordEmailUUIDRes passwordEmailUUIDRes = authFacade.checkEmailForPassword(passwordEmailCheckReq, request);
 		return ResponseUtils.ok(passwordEmailUUIDRes);
 	}
@@ -139,7 +133,6 @@ public class AuthController {
 		+ "부터 받은 가장 최신의 UUID를 입력")
 	public ResponseEntity<BaseResponse<Void>> checkAuthCode(
 		@Valid @RequestBody PasswordAuthCodeCheckReq passwordAuthCodeCheckReq, HttpServletRequest request) {
-
 		authFacade.checkAuthCodePassword(passwordAuthCodeCheckReq, request);
 		return ResponseUtils.noContent();
 	}
@@ -148,7 +141,6 @@ public class AuthController {
 	@Operation(summary = "비밀번호 재설정")
 	public ResponseEntity<BaseResponse<Void>> changePassword(
 		@Valid @RequestBody PasswordChangeReq passwordChangeReq, HttpServletRequest request) {
-
 		authFacade.changePassword(passwordChangeReq, request);
 		return ResponseUtils.noContent();
 	}

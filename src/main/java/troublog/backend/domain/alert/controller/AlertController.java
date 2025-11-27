@@ -42,16 +42,17 @@ public class AlertController {
 		content = @Content(array = @ArraySchema(schema = @Schema(implementation = AlertResDto.class))))
 	public ResponseEntity<BaseResponse<List<AlertResDto>>> getAlerts(
 		@Authentication CustomAuthenticationToken auth,
-		@RequestParam(required = false) String alertType) {
-
+		@RequestParam(required = false) String alertType
+	) {
 		return ResponseUtils.ok(alertFacade.getAlerts(auth.getUserId(), alertType));
 	}
 
 	@DeleteMapping
 	@Operation(summary = "알림 삭제 API", description = "알림 삭제")
-	public ResponseEntity<BaseResponse<Void>> deleteAlert(@RequestParam Long alertId,
-		@Authentication CustomAuthenticationToken auth) {
-
+	public ResponseEntity<BaseResponse<Void>> deleteAlert(
+		@RequestParam Long alertId,
+		@Authentication CustomAuthenticationToken auth
+	) {
 		alertFacade.deleteAlert(alertId, auth.getUserId());
 		return ResponseUtils.noContent();
 	}
@@ -60,7 +61,6 @@ public class AlertController {
 	@Operation(summary = "SSE 연결 API", description = "실시간 알림을 위한 SSE 연결")
 	public SseEmitter connectSse(@Authentication CustomAuthenticationToken auth) {
 		Long userId = auth.getUserId();
-
 		return alertFacade.connect(userId);
 	}
 }

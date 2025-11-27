@@ -143,7 +143,11 @@ public class PostConverter {
 			.toList();
 	}
 
-	public CommunityPostDetailsResDto toCommunityPostDetailsResponse(UserInfoResDto userInfoResDto, Post post, boolean liked) {
+	public CommunityPostDetailsResDto toCommunityPostDetailsResponse(
+		UserInfoResDto userInfoResDto,
+		Post post,
+		boolean liked
+	) {
 		return CommunityPostDetailsResDto.builder()
 			.userInfoResDto(userInfoResDto)
 			.postId(post.getId())
