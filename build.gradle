@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.0'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'checkstyle'
 }
 
 group = 'troublog'
@@ -83,4 +84,23 @@ tasks.named('test') {
 // plain jar 파일 생성되지 않도록
 jar {
     enabled = false
+}
+
+checkstyle {
+    toolVersion = '10.12.4'
+    configFile = file('config/checkstyle/troublog-checkstyle-rules.xml')
+    configProperties = [
+            'suppressionFile': 'config/checkstyle/troublog-checkstyle-suppressions.xml'
+    ]
+    ignoreFailures = false
+    maxWarnings = 0
+    maxErrors = 0
+}
+
+checkstyleMain {
+    source = 'src/main/java'
+}
+
+checkstyleTest {
+    source = 'src/test/java'
 }
