@@ -21,10 +21,10 @@ import troublog.backend.domain.auth.dto.IntegrationKakaoRegisterReqDto;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
-import troublog.backend.domain.auth.dto.PasswordAuthCodeCheckReq;
-import troublog.backend.domain.auth.dto.PasswordChangeReq;
-import troublog.backend.domain.auth.dto.PasswordEmailCheckReq;
-import troublog.backend.domain.auth.dto.PasswordEmailUUIDRes;
+import troublog.backend.domain.auth.dto.PasswordAuthCodeCheckReqDto;
+import troublog.backend.domain.auth.dto.PasswordChangeReqDto;
+import troublog.backend.domain.auth.dto.PasswordEmailCheckReqDto;
+import troublog.backend.domain.auth.dto.PasswordEmailUUIDResDto;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterResDto;
 import troublog.backend.domain.auth.service.AuthFacade;
@@ -126,30 +126,30 @@ public class AuthController {
 	@PostMapping("/find-password")
 	@Operation(summary = "비밀번호 찾기 이메일 인증", description = "이메일 입력시 해당 이메일로 인증코드 전송")
 	@ApiResponse(responseCode = "200", description = "성공",
-		content = @Content(schema = @Schema(implementation = PasswordEmailUUIDRes.class)))
-	public ResponseEntity<BaseResponse<PasswordEmailUUIDRes>> findPassword(
-		@Valid @RequestBody PasswordEmailCheckReq passwordEmailCheckReq, HttpServletRequest request) {
+		content = @Content(schema = @Schema(implementation = PasswordEmailUUIDResDto.class)))
+	public ResponseEntity<BaseResponse<PasswordEmailUUIDResDto>> findPassword(
+		@Valid @RequestBody PasswordEmailCheckReqDto passwordEmailCheckReqDto, HttpServletRequest request) {
 
-		PasswordEmailUUIDRes passwordEmailUUIDRes = authFacade.checkEmailForPassword(passwordEmailCheckReq, request);
-		return ResponseUtils.ok(passwordEmailUUIDRes);
+		PasswordEmailUUIDResDto passwordEmailUUIDResDto = authFacade.checkEmailForPassword(passwordEmailCheckReqDto, request);
+		return ResponseUtils.ok(passwordEmailUUIDResDto);
 	}
 
 	@PostMapping("/check-code")
 	@Operation(summary = "비밀번호 찾기 인증번호 입력", description = "메일로 받은 6자리 인증번호와 서버로 "
 		+ "부터 받은 가장 최신의 UUID를 입력")
 	public ResponseEntity<BaseResponse<Void>> checkAuthCode(
-		@Valid @RequestBody PasswordAuthCodeCheckReq passwordAuthCodeCheckReq, HttpServletRequest request) {
+		@Valid @RequestBody PasswordAuthCodeCheckReqDto passwordAuthCodeCheckReqDto, HttpServletRequest request) {
 
-		authFacade.checkAuthCodePassword(passwordAuthCodeCheckReq, request);
+		authFacade.checkAuthCodePassword(passwordAuthCodeCheckReqDto, request);
 		return ResponseUtils.noContent();
 	}
 
 	@PostMapping("/change-password")
 	@Operation(summary = "비밀번호 재설정")
 	public ResponseEntity<BaseResponse<Void>> changePassword(
-		@Valid @RequestBody PasswordChangeReq passwordChangeReq, HttpServletRequest request) {
+		@Valid @RequestBody PasswordChangeReqDto passwordChangeReqDto, HttpServletRequest request) {
 
-		authFacade.changePassword(passwordChangeReq, request);
+		authFacade.changePassword(passwordChangeReqDto, request);
 		return ResponseUtils.noContent();
 	}
 }

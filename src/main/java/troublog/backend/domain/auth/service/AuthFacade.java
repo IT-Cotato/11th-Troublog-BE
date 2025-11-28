@@ -21,10 +21,10 @@ import troublog.backend.domain.auth.dto.IntegrationKakaoRegisterReqDto;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
-import troublog.backend.domain.auth.dto.PasswordAuthCodeCheckReq;
-import troublog.backend.domain.auth.dto.PasswordChangeReq;
-import troublog.backend.domain.auth.dto.PasswordEmailCheckReq;
-import troublog.backend.domain.auth.dto.PasswordEmailUUIDRes;
+import troublog.backend.domain.auth.dto.PasswordAuthCodeCheckReqDto;
+import troublog.backend.domain.auth.dto.PasswordChangeReqDto;
+import troublog.backend.domain.auth.dto.PasswordEmailCheckReqDto;
+import troublog.backend.domain.auth.dto.PasswordEmailUUIDResDto;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterResDto;
 import troublog.backend.domain.common.EmailQueryService;
@@ -37,7 +37,6 @@ import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
-import troublog.backend.domain.user.entity.UserStatus;
 import troublog.backend.domain.user.service.command.UserCommandService;
 import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.domain.user.validator.UserValidator;
@@ -266,7 +265,7 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public PasswordEmailUUIDRes checkEmailForPassword(PasswordEmailCheckReq passwordEmailCheckReq,
+	public PasswordEmailUUIDResDto checkEmailForPassword(PasswordEmailCheckReqDto passwordEmailCheckReqDto,
 		HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
@@ -275,21 +274,21 @@ public class AuthFacade {
 		jwtProvider.checkEnvType(clientEnvType);
 
 		// 이메일 존재여부 체크
-		boolean isDuplicatedEmail = userQueryService.existsByEmail(passwordEmailCheckReq.email());
+		boolean isDuplicatedEmail = userQueryService.existsByEmail(passwordEmailCheckReqDto.email());
 		if (!isDuplicatedEmail) {
 			throw new UserException(ErrorCode.USER_EMAIL_INVALID);
 		}
 
 		// 메일 전송
-		UUID randomString = mailUtil.sendMail(passwordEmailCheckReq.email());
+		UUID randomString = mailUtil.sendMail(passwordEmailCheckReqDto.email());
 
-		return PasswordEmailUUIDRes.builder()
+		return PasswordEmailUUIDResDto.builder()
 			.randomString(randomString)
 			.build();
 	}
 
 	@Transactional
-	public void checkAuthCodePassword(PasswordAuthCodeCheckReq passwordAuthCodeCheckReq,
+	public void checkAuthCodePassword(PasswordAuthCodeCheckReqDto passwordAuthCodeCheckReqDto,
 		HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
@@ -298,21 +297,21 @@ public class AuthFacade {
 		jwtProvider.checkEnvType(clientEnvType);
 
 		// 인증코드 체크
-		AuthCode authCode = checkAuthCode(passwordAuthCodeCheckReq.authCode(), passwordAuthCodeCheckReq.randomString());
+		AuthCode authCode = checkAuthCode(passwordAuthCodeCheckReqDto.authCode(), passwordAuthCodeCheckReqDto.randomString());
 
 		// 인증처리
 		authCode.updateIsAuth();
 	}
 
 	@Transactional
-	public void changePassword(PasswordChangeReq passwordChangeReq, HttpServletRequest request) {
+	public void changePassword(PasswordChangeReqDto passwordChangeReqDto, HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		jwtProvider.checkEnvType(clientEnvType);
 
 		// 인증코드 확인
-		AuthCode authCode = emailQueryService.getAuthCodeWithoutAuth(passwordChangeReq.authCode());
+		AuthCode authCode = emailQueryService.getAuthCodeWithoutAuth(passwordChangeReqDto.authCode());
 
 		// 인증된 코드인지 확인
 		if (!authCode.isAuth()) {
@@ -320,15 +319,15 @@ public class AuthFacade {
 		}
 
 		// 가장 최근에 보낸 인증코드인지 확인
-		if (!authCode.getRandomString().equals(passwordChangeReq.randomString())) {
+		if (!authCode.getRandomString().equals(passwordChangeReqDto.randomString())) {
 			throw new AuthException(ErrorCode.AUTH_CODE_NOT_LATEST);
 		}
 
 		// 이메일 존재여부 체크
-		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(passwordChangeReq.email());
+		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(passwordChangeReqDto.email());
 
 		// 비밀번호 재설정
-		user.updatePassword(passwordEncoder.encode(passwordChangeReq.password()));
+		user.updatePassword(passwordEncoder.encode(passwordChangeReqDto.password()));
 	}
 
 	private AuthCode checkAuthCode(String inputAuthCode, UUID randomString) {

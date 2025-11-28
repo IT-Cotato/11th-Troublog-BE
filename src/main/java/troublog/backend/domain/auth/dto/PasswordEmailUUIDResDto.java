@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
-public record PasswordEmailUUIDRes(
+public record PasswordEmailUUIDResDto(
 	@Schema(description = "랜덤문자열")
 	UUID randomString
 ) {

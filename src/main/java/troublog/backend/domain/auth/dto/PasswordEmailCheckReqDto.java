@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @Builder
-public record PasswordEmailCheckReq(
+public record PasswordEmailCheckReqDto(
 	@NotBlank
 	@Schema(description = "이메일")
 	String email
