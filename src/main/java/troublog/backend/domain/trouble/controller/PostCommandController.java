@@ -47,7 +47,7 @@ public class PostCommandController {
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "트러블슈팅 문서 생성 API", description = "트러블슈팅 문서를 새롭게 생성한다.")
 	@ApiResponse(responseCode = "201", description = "CREATED",
-			content = @Content(schema = @Schema(implementation = PostResDto.class)))
+		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> createPost(
 		@Authentication CustomAuthenticationToken token,
 		@Valid @RequestBody PostReqDto postReqDto
@@ -57,10 +57,10 @@ public class PostCommandController {
 	}
 
 	@PatchMapping(path = "/{postId}", consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE)
+		produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "트러블슈팅 문서 수정 API", description = "트러블슈팅 문서를 수정한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
-			content = @Content(schema = @Schema(implementation = PostResDto.class)))
+		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> updatePost(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId,
@@ -97,7 +97,7 @@ public class PostCommandController {
 	@PostMapping("/{postId}/restore")
 	@Operation(summary = "트러블슈팅 문서 복구 API", description = "임시 삭제된 트러블슈팅 문서를 복구한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
-			content = @Content(schema = @Schema(implementation = PostResDto.class)))
+		content = @Content(schema = @Schema(implementation = PostResDto.class)))
 	public ResponseEntity<BaseResponse<PostResDto>> restorePost(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
@@ -120,7 +120,7 @@ public class PostCommandController {
 	@PostMapping("/{postId}/summary")
 	@Operation(summary = "트러블슈팅 문서 AI 요약 작업 시작 API", description = "postId를 기반으로 트러블슈팅 문서 AI 요약 작업을 시작한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
-			content = @Content(schema = @Schema(implementation = TaskStartResDto.class)))
+		content = @Content(schema = @Schema(implementation = TaskStartResDto.class)))
 	public ResponseEntity<BaseResponse<TaskStartResDto>> startSummaryTask(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId,
@@ -131,9 +131,9 @@ public class PostCommandController {
 
 	@GetMapping("/{postId}/summary/{taskId}")
 	@Operation(summary = "트러블슈팅 문서 AI 요약 작업 상태 조회 API",
-			description = "진행중인 트러블슈팅 문서 AI 요약 작업을 postId, taskId를 기반으로 조회한다.")
+		description = "진행중인 트러블슈팅 문서 AI 요약 작업을 postId, taskId를 기반으로 조회한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
-			content = @Content(schema = @Schema(implementation = TaskStatusResDto.class)))
+		content = @Content(schema = @Schema(implementation = TaskStatusResDto.class)))
 	public ResponseEntity<BaseResponse<TaskStatusResDto>> getSummaryTaskStatus(
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable String taskId,

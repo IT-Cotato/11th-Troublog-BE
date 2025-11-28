@@ -45,17 +45,17 @@ import troublog.backend.global.common.util.JsonConverter;
 @Table(name = "posts",
 	indexes = {
 		@Index(
-				name = "idx_posts_user_deleted_title",
-				columnList = "user_id, is_deleted, title"
-			),
+			name = "idx_posts_user_deleted_title",
+			columnList = "user_id, is_deleted, title"
+		),
 		@Index(
-				name = "idx_posts_user_id",
-				columnList = "user_id"
-			),
+			name = "idx_posts_user_id",
+			columnList = "user_id"
+		),
 		@Index(
-				name = "idx_posts_is_deleted",
-				columnList = "is_deleted"
-			)
+			name = "idx_posts_is_deleted",
+			columnList = "is_deleted"
+		)
 	}
 )
 public class Post extends BaseEntity {

@@ -50,7 +50,7 @@ public class ImageController {
 	}
 
 	@PostMapping(path = "/multi", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-				produces = MediaType.APPLICATION_JSON_VALUE)
+		produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "다중 이미지 업로드", description = "다중 이미지를 S3에 업로드한다.")
 	public ResponseEntity<BaseResponse<List<String>>> uploadMultipleImage(
 		@Schema(description = "업로드할 이미지 파일 목록")
