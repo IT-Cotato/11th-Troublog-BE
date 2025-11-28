@@ -25,15 +25,7 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(
-	name = "contents",
-	indexes = {
-		@Index(
-			name = "idx_contents_post_id",
-			columnList = "post_id"
-		)
-	}
-)
+@Table(name = "contents", indexes = {@Index(name = "idx_contents_post_id", columnList = "post_id")})
 public class Content extends BaseEntity {
 
 	@Id
