@@ -20,8 +20,9 @@ public class RecentPostQueryService {
 
 	public List<Long> getRecentlyViewedPostIds(Long userId, long offset, int size) {
 		String key = "recent_posts:" + userId;
-		if (size <= 0)
+		if (size <= 0) {
 			return List.of();
+		}
 
 		long end = offset + size - 1;
 
@@ -31,8 +32,7 @@ public class RecentPostQueryService {
 		}
 
 		return range.stream()
-			.map(id -> (id instanceof Number) ? ((Number)id).longValue()
-				: Long.parseLong(id.toString()))
+			.map(id -> (id instanceof Number) ? ((Number)id).longValue() : Long.parseLong(id.toString()))
 			.toList();
 	}
 

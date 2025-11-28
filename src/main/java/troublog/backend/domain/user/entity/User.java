@@ -99,15 +99,17 @@ public class User extends BaseEntity {
 	}
 
 	public void addComment(Comment comment) {
-		if (comment == null)
+		if (comment == null) {
 			return;
+		}
 		this.comments.add(comment);
 		comment.assignUser(this);
 	}
 
 	public void removeComment(Comment comment) {
-		if (comment == null)
+		if (comment == null) {
 			return;
+		}
 		comments.remove(comment);
 		if (comment.getUser() == this) {
 			comment.assignUser(null);
@@ -127,8 +129,9 @@ public class User extends BaseEntity {
 	}
 
 	public void removeLikeRef(Like like) {
-		if (like == null)
+		if (like == null) {
 			return;
+		}
 		if (likes.contains(like)) {
 			like.unassignUser();
 		}

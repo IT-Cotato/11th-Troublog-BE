@@ -85,8 +85,8 @@ public class PostConverter {
 			.templateType(post.getTemplateType() != null ? post.getTemplateType().name() : null)
 			.checklistError(JsonConverter.toList(post.getChecklistError()))
 			.checklistReason(JsonConverter.toList(post.getChecklistReason()))
-			.createdAt(post.getCreated_at())
-			.updatedAt(post.getUpdated_at())
+			.createdAt(post.getCreatedAt())
+			.updatedAt(post.getUpdatedAt())
 			.userInfo(UserConverter.toPostCardUserInfoResDto(post.getUser()))
 			.projectId(post.getProject().getId())
 			.errorTag(PostQueryFacade.findErrorTag(post))
@@ -117,8 +117,8 @@ public class PostConverter {
 			.errorTag(PostQueryFacade.findErrorTag(post))
 			.postTags(PostQueryFacade.findTechStackTags(post))
 			.contents(PostQueryFacade.findContents(post))
-			.createdAt(post.getCreated_at())
-			.updatedAt(post.getUpdated_at())
+			.createdAt(post.getCreatedAt())
+			.updatedAt(post.getUpdatedAt())
 			.completedAt(post.getCompletedAt() != null ? post.getCompletedAt().format(DATE_FORMATTER) : null)
 			.build();
 	}
@@ -165,8 +165,8 @@ public class PostConverter {
 			.errorTag(PostQueryFacade.findErrorTag(post))
 			.postTags(PostQueryFacade.findTechStackTags(post))
 			.contents(PostQueryFacade.findContents(post))
-			.createdAt(post.getCreated_at())
-			.updatedAt(post.getUpdated_at())
+			.createdAt(post.getCreatedAt())
+			.updatedAt(post.getUpdatedAt())
 			.completedAt(post.getCompletedAt() != null ? post.getCompletedAt().format(DATE_FORMATTER) : null)
 			.build();
 	}

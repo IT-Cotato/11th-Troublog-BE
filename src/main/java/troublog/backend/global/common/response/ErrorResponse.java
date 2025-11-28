@@ -16,7 +16,7 @@ public record ErrorResponse(
 	HttpStatus status,
 	String message,
 	String method,
-	String requestURI,
+	String requestUri,
 	List<FieldErrorDetail> errors
 ) {
 
@@ -25,7 +25,7 @@ public record ErrorResponse(
 			.status(errorCode.getHttpStatus())
 			.message(errorCode.getMessage())
 			.method(request.getMethod())
-			.requestURI(request.getRequestURI())
+			.requestUri(request.getRequestURI())
 			.errors(new ArrayList<>())
 			.build();
 	}
@@ -35,7 +35,7 @@ public record ErrorResponse(
 			.status(errorCode.getHttpStatus())
 			.message(errorMessage)
 			.method(request.getMethod())
-			.requestURI(request.getRequestURI())
+			.requestUri(request.getRequestURI())
 			.errors(new ArrayList<>())
 			.build();
 	}

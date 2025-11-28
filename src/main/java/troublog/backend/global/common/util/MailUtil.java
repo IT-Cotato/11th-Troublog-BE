@@ -53,20 +53,20 @@ public class MailUtil {
 			.rcvrEmailAdr(receiverEmailAdr)
 			.build();
 
-		UUID randomUUID = UUID.randomUUID();
+		UUID randomUuid = UUID.randomUUID();
 
 		AuthCode authCode = AuthCode.builder()
 			.authCode(randomNumber)
 			.expireDate(LocalDateTime.now().plusMinutes(5))
 			.isAuth(false)
-			.randomString(randomUUID)
+			.randomString(randomUuid)
 			.email(email)
 			.build();
 
 		emailRepository.save(email);
 		authCodeRepository.save(authCode);
 
-		return randomUUID;
+		return randomUuid;
 	}
 
 	private void sendEmail(String receiverEmailAdr, String emailBody) {
@@ -117,18 +117,18 @@ public class MailUtil {
 
 		for (char c : authCode.toCharArray()) {
 			sb.append("""
-				    <span style="display:inline-block;
-				                 width:50px; height:60px;
-				                 line-height:60px; /* 세로 가운데 정렬 */
-				                 background-color:#f5edff;
-				                 border-radius:10px;
-				                 margin:0 6px;
-				                 font-size:28px;
-				                 font-weight:700;
-				                 color:#000000;
-				                 box-shadow:0 2px 6px rgba(0,0,0,0.05);">
-				        %s
-				    </span>
+					<span style="display:inline-block;
+									width:50px; height:60px;
+									line-height:60px; /* 세로 가운데 정렬 */
+									background-color:#f5edff;
+									border-radius:10px;
+									margin:0 6px;
+									font-size:28px;
+									font-weight:700;
+									color:#000000;
+									box-shadow:0 2px 6px rgba(0,0,0,0.05);">
+						%s
+					</span>
 				""".formatted(c));
 		}
 

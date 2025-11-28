@@ -26,7 +26,7 @@ public class ListConverter {
 			.id(post.getId())
 			.projectId(post.getProject().getId())
 			.title(post.getTitle())
-			.date(post.getCompletedAt() != null ? post.getCompletedAt() : post.getUpdated_at())
+			.date(post.getCompletedAt() != null ? post.getCompletedAt() : post.getUpdatedAt())
 			.status(String.valueOf(post.getStatus()))
 			.introduction(post.getIntroduction())
 			.likeCount(post.getLikeCount())
@@ -47,7 +47,7 @@ public class ListConverter {
 			.postSummaryId(postSummary.getId())
 			.projectId(postSummary.getPost().getProject().getId())
 			.title(postSummary.getPost().getTitle())
-			.date(postSummary.getCreated_at() != null ? postSummary.getCreated_at() : null)
+			.date(postSummary.getCreatedAt() != null ? postSummary.getCreatedAt() : null)
 			.status(String.valueOf(postSummary.getPost().getStatus()))
 			.starRating(
 				postSummary.getPost().getStarRating() != null ? postSummary.getPost().getStarRating().getValue() : null)

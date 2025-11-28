@@ -92,6 +92,7 @@ checkstyle {
     configProperties = [
             'suppressionFile': 'config/checkstyle/troublog-checkstyle-suppressions.xml'
     ]
+    sourceSets = [sourceSets.main]
     ignoreFailures = false
     maxWarnings = 0
     maxErrors = 0

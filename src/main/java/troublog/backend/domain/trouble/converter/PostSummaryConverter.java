@@ -26,7 +26,7 @@ public class PostSummaryConverter {
 			.postTags(PostQueryFacade.findTechStackTags(postSummary.getPost()))
 			.summaryId(postSummary.getId())
 			.summaryType(postSummary.getSummaryType().name())
-			.summaryCreatedAt(postSummary.getCreated_at())
+			.summaryCreatedAt(postSummary.getCreatedAt())
 			.summaryContents(PostSummaryQueryFacade.findSummaryContents(postSummary))
 			.build();
 	}

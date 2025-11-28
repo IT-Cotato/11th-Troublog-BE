@@ -1,6 +1,5 @@
 package troublog.backend.domain.trouble.service.query;
 
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

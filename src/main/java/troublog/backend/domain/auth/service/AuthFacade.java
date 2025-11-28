@@ -24,7 +24,7 @@ import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
 import troublog.backend.domain.auth.dto.PasswordAuthCodeCheckReq;
 import troublog.backend.domain.auth.dto.PasswordChangeReq;
 import troublog.backend.domain.auth.dto.PasswordEmailCheckReq;
-import troublog.backend.domain.auth.dto.PasswordEmailUUIDRes;
+import troublog.backend.domain.auth.dto.PasswordEmailUuidRes;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterResDto;
 import troublog.backend.domain.common.EmailQueryService;
@@ -224,7 +224,7 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public RegisterResDto oAuthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
+	public RegisterResDto oauthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
@@ -265,7 +265,7 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public PasswordEmailUUIDRes checkEmailForPassword(
+	public PasswordEmailUuidRes checkEmailForPassword(
 		PasswordEmailCheckReq passwordEmailCheckReq,
 		HttpServletRequest request
 	) {
@@ -284,7 +284,7 @@ public class AuthFacade {
 		// 메일 전송
 		UUID randomString = mailUtil.sendMail(passwordEmailCheckReq.email());
 
-		return PasswordEmailUUIDRes.builder()
+		return PasswordEmailUuidRes.builder()
 			.randomString(randomString)
 			.build();
 	}

@@ -24,7 +24,7 @@ import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
 import troublog.backend.domain.auth.dto.PasswordAuthCodeCheckReq;
 import troublog.backend.domain.auth.dto.PasswordChangeReq;
 import troublog.backend.domain.auth.dto.PasswordEmailCheckReq;
-import troublog.backend.domain.auth.dto.PasswordEmailUUIDRes;
+import troublog.backend.domain.auth.dto.PasswordEmailUuidRes;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterResDto;
 import troublog.backend.domain.auth.service.AuthFacade;
@@ -43,7 +43,7 @@ public class AuthController {
 	@PostMapping("/register")
 	@Operation(summary = "회원가입 API", description = "깃헙 주소는 선택, 나머지는 필수입력")
 	@ApiResponse(responseCode = "200", description = "성공",
-		content = @Content(schema = @Schema(implementation = RegisterResDto.class)))
+			content = @Content(schema = @Schema(implementation = RegisterResDto.class)))
 	public ResponseEntity<BaseResponse<RegisterResDto>> register(
 		@Valid @RequestBody RegisterReqDto registerReqDto,
 		HttpServletRequest request
@@ -55,9 +55,9 @@ public class AuthController {
 	@PostMapping("/email-check")
 	@Operation(summary = "이메일 중복체크 API", description =
 		"""
-		회원가입 첫번째 화면\s
-		이미 카카오로 가입된 계정인지, 일반 회원가입한 계정인지 구분
-		"""
+			회원가입 첫번째 화면\s
+			이미 카카오로 가입된 계정인지, 일반 회원가입한 계정인지 구분
+			"""
 	)
 	public ResponseEntity<BaseResponse<Void>> checkDuplicateEmail(
 		@RequestParam String email,
@@ -77,7 +77,7 @@ public class AuthController {
 
 	@Operation(summary = "로그인 API", description = "이메일과 비밀번호로 로그인")
 	@ApiResponse(responseCode = "200", description = "성공",
-		content = @Content(schema = @Schema(implementation = LoginResDto.class)))
+			content = @Content(schema = @Schema(implementation = LoginResDto.class)))
 	@PostMapping("/login")
 	public ResponseEntity<BaseResponse<LoginResDto>> login(
 		@Valid @RequestBody LoginReqDto loginReqDto,
@@ -91,7 +91,7 @@ public class AuthController {
 	@Operation(summary = "Access Token 재발급 API", description = "만료된 accessToken과 refreshToken을 통해 재발급"
 		+ ", 개발단계에서 refreshToken은 임시로 header에 담아 전달")
 	@ApiResponse(responseCode = "200", description = "성공",
-		content = @Content(schema = @Schema(implementation = String.class)))
+			content = @Content(schema = @Schema(implementation = String.class)))
 	@PostMapping("/refresh")
 	public ResponseEntity<BaseResponse<String>> reissueAccessToken(HttpServletRequest request) {
 		String accessToken = authFacade.reissueAccessToken(request);
@@ -109,23 +109,23 @@ public class AuthController {
 	@Operation(summary = "카카오 로그인 약관 동의 후 입력 란", description = "닉네임, 분야, 한 줄 소개, 깃허브 주소 입력")
 	@PostMapping("/oauth-register")
 	@ApiResponse(responseCode = "200", description = "성공",
-		content = @Content(schema = @Schema(implementation = Long.class)))
+			content = @Content(schema = @Schema(implementation = Long.class)))
 	public ResponseEntity<BaseResponse<RegisterResDto>> oauthRegister(
 		@Valid @RequestBody OAuth2RegisterReqDto oAuth2RegisterReqDto,
 		HttpServletRequest request
 	) {
-		RegisterResDto response = authFacade.oAuthRegister(oAuth2RegisterReqDto, request);
+		RegisterResDto response = authFacade.oauthRegister(oAuth2RegisterReqDto, request);
 		return ResponseUtils.created(response);
 	}
 
 	@PostMapping("/find-password")
 	@Operation(summary = "비밀번호 찾기 이메일 인증", description = "이메일 입력시 해당 이메일로 인증코드 전송")
 	@ApiResponse(responseCode = "200", description = "성공",
-		content = @Content(schema = @Schema(implementation = PasswordEmailUUIDRes.class)))
-	public ResponseEntity<BaseResponse<PasswordEmailUUIDRes>> findPassword(
+			content = @Content(schema = @Schema(implementation = PasswordEmailUuidRes.class)))
+	public ResponseEntity<BaseResponse<PasswordEmailUuidRes>> findPassword(
 		@Valid @RequestBody PasswordEmailCheckReq passwordEmailCheckReq, HttpServletRequest request) {
-		PasswordEmailUUIDRes passwordEmailUUIDRes = authFacade.checkEmailForPassword(passwordEmailCheckReq, request);
-		return ResponseUtils.ok(passwordEmailUUIDRes);
+		PasswordEmailUuidRes passwordEmailUuidRes = authFacade.checkEmailForPassword(passwordEmailCheckReq, request);
+		return ResponseUtils.ok(passwordEmailUuidRes);
 	}
 
 	@PostMapping("/check-code")
