@@ -112,7 +112,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		AND p.isDeleted = FALSE
 		AND p.status IN :statuses
 		AND (:visible IS NULL OR p.isVisible = :visible)
-		ORDER BY COALESCE(p.completedAt, p.updated_at) DESC, p.id DESC
+		ORDER BY COALESCE(p.completedAt, p.updatedAt) DESC, p.id DESC
 		""")
 	List<Post> findByProjectWithStatuses(
 		@Param("projectId") Long projectId,
