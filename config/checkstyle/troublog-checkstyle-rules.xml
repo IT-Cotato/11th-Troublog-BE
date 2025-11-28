@@ -85,7 +85,8 @@ The following rules in the Naver coding convention cannot be checked by this con
 
         <!-- [method-lower-camelcase] - Allow Korean characters -->
         <module name="MethodName">
-            <property name="format" value="^[a-z\u3130-\u318F\uAC00-\uD7A3][a-z0-9\u3130-\u318F\uAC00-\uD7A3][a-zA-Z0-9_\u3130-\u318F\uAC00-\uD7A3]*$"/>
+            <property name="format"
+                      value="^[a-z\u3130-\u318F\uAC00-\uD7A3][a-z0-9\u3130-\u318F\uAC00-\uD7A3][a-zA-Z0-9_\u3130-\u318F\uAC00-\uD7A3]*$"/>
             <message key="name.invalidPattern"
                      value="[method-lower-camelcase] Method name ''{0}'' must match pattern ''{1}'' (Korean characters allowed)."/>
         </module>
@@ -116,10 +117,10 @@ The following rules in the Naver coding convention cannot be checked by this con
         <!-- Start of Declarations chapter -->
 
         <!-- [1-top-level-class] -->
-        <module name="OneTopLevelClass"/>
-        <message key="name.invalidPattern"
-                 value="[1-top-level-class] one.top.level.class=Top-level class {0} has to reside in its own source file."/>
-
+        <module name="OneTopLevelClass">
+            <message key="name.invalidPattern"
+                     value="[1-top-level-class] one.top.level.class=Top-level class {0} has to reside in its own source file."/>
+        </module>
         <!-- [avoid-star-import] -->
         <module name="AvoidStarImport">
             <property name="allowStaticMemberImports" value="true"/>
@@ -145,7 +146,7 @@ The following rules in the Naver coding convention cannot be checked by this con
 
         <!-- [1-state-per-line] -->
         <module name="OneStatementPerLine">
-            <message key="needBraces"
+            <message key="multiple.statements.line"
                      value="[1-state-per-line] Only one statement per line allowed."/>
         </module>
 
@@ -211,7 +212,7 @@ The following rules in the Naver coding convention cannot be checked by this con
             <message key="line.alone"
                      value="[braces-knr-style] ''{0}'' at column {1} should be alone on a line."/>
             <message key="line.break.before"
-                     value="[braces-knr-style] =''{0}'' at column {1} should have line break before."/>
+                     value="[braces-knr-style] ''{0}'' at column {1} should have line break before."/>
             <message key="line.new"
                      value="[braces-knr-style] ''{0}'' at column {1} should be on a new line."/>
         </module>
