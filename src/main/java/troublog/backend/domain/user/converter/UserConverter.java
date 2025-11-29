@@ -87,11 +87,12 @@ public class UserConverter {
 	}
 
 	public static UserPostStatusResDto toUserPostStatusResDto(
-		Long userId, String postStatus, List<Long> postIdList) {
+		Long userId, String postStatus, List<Long> postIdList, List<Long> postSummaryIdList) {
 		return UserPostStatusResDto.builder()
 			.userId(userId)
 			.postStatus(postStatus)
 			.postIdList(postIdList)
+			.postSummaryIdList(postSummaryIdList)
 			.build();
 	}
 }
