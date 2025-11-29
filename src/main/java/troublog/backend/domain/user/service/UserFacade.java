@@ -177,7 +177,7 @@ public class UserFacade {
 
 		// 요약본이 필요할 경우, 게시글 ID에 맞는 요약본 가져오기
 		List<Long> postSummaryIdList = List.of();
-		if (postStatus==null || postStatus.equals(PostStatus.SUMMARIZED)) {
+		if (postStatus == null || postStatus.equals(PostStatus.SUMMARIZED)) {
 			postSummaryIdList = postSummaryQueryService.findAllByPostIdList(postIdList)
 				.stream()
 				.map(PostSummary::getId)
