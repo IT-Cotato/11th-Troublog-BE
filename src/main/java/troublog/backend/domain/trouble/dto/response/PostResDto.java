@@ -57,7 +57,7 @@ public record PostResDto(
 	LocalDateTime updatedAt,
 
 	PostCardUserInfoResDto userInfo,
-	
+
 	@Schema(description = "프로젝트 정보")
 	long projectId,
 

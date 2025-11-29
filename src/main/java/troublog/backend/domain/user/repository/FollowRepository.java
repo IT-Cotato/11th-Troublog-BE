@@ -16,17 +16,17 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 	Optional<Follow> findByFollowerAndFollowing(User follower, User following);
 
 	@Query("""
-		    SELECT f.following FROM Follow f
-		    WHERE f.follower.id = :targetUserId
-		    ORDER BY f.following.id DESC
+			SELECT f.following FROM Follow f
+			WHERE f.follower.id = :targetUserId
+			ORDER BY f.following.id DESC
 		""")
 	List<User> findFollowers(@Param("targetUserId") Long targetUserId);
 
 	// TODO : 추후 페이징 적용하기
 	@Query("""
-		    SELECT f.follower FROM Follow f
-		    WHERE f.following.id = :userId
-		    ORDER BY f.follower.id DESC
+			SELECT f.follower FROM Follow f
+			WHERE f.following.id = :userId
+			ORDER BY f.follower.id DESC
 		""")
 	List<User> findFollowings(@Param("userId") Long userId);
 

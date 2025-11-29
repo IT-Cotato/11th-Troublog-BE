@@ -93,8 +93,10 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 		return response;
 	}
 
-	private SummarizedResDto convertAiResponse(String aiResponse,
-		BeanOutputConverter<SummarizedResDto> converter) {
+	private SummarizedResDto convertAiResponse(
+		String aiResponse,
+		BeanOutputConverter<SummarizedResDto> converter
+	) {
 		try {
 			return converter.convert(aiResponse);
 		} catch (Exception e) {

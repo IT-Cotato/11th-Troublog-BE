@@ -10,8 +10,7 @@ import troublog.backend.global.common.error.exception.AuthException;
 public enum Domain {
 
 	LOCAL("http://localhost:5173"),
-	DEV("https://www.troublog.com")
-	;
+	DEV("https://www.troublog.com");
 
 	private final String url;
 

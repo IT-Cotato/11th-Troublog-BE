@@ -56,7 +56,8 @@ public class PostCommandController {
 		return ResponseUtils.created(response);
 	}
 
-	@PatchMapping(path = "/{postId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(path = "/{postId}", consumes = MediaType.APPLICATION_JSON_VALUE,
+		produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "트러블슈팅 문서 수정 API", description = "트러블슈팅 문서를 수정한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
@@ -86,7 +87,8 @@ public class PostCommandController {
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> hardDeletePost(
 		@Authentication CustomAuthenticationToken token,
-		@PathVariable Long postId) {
+		@PathVariable Long postId
+	) {
 		postCommandFacade.hardDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
 	}
@@ -109,7 +111,8 @@ public class PostCommandController {
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> hardDeleteSummary(
 		@Authentication CustomAuthenticationToken token,
-		@PathVariable Long summaryId) {
+		@PathVariable Long summaryId
+	) {
 		postSummaryCommandFacade.hardDeletePostSummary(token.getUserId(), summaryId);
 		return ResponseUtils.noContent();
 	}
@@ -127,7 +130,8 @@ public class PostCommandController {
 	}
 
 	@GetMapping("/{postId}/summary/{taskId}")
-	@Operation(summary = "트러블슈팅 문서 AI 요약 작업 상태 조회 API", description = "진행중인 트러블슈팅 문서 AI 요약 작업을 postId, taskId를 기반으로 조회한다.")
+	@Operation(summary = "트러블슈팅 문서 AI 요약 작업 상태 조회 API",
+		description = "진행중인 트러블슈팅 문서 AI 요약 작업을 postId, taskId를 기반으로 조회한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = TaskStatusResDto.class)))
 	public ResponseEntity<BaseResponse<TaskStatusResDto>> getSummaryTaskStatus(

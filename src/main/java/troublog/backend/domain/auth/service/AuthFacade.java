@@ -24,7 +24,7 @@ import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
 import troublog.backend.domain.auth.dto.PasswordAuthCodeCheckReq;
 import troublog.backend.domain.auth.dto.PasswordChangeReq;
 import troublog.backend.domain.auth.dto.PasswordEmailCheckReq;
-import troublog.backend.domain.auth.dto.PasswordEmailUUIDRes;
+import troublog.backend.domain.auth.dto.PasswordEmailUuidRes;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterResDto;
 import troublog.backend.domain.common.EmailQueryService;
@@ -37,7 +37,6 @@ import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
-import troublog.backend.domain.user.entity.UserStatus;
 import troublog.backend.domain.user.service.command.UserCommandService;
 import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.domain.user.validator.UserValidator;
@@ -225,7 +224,7 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public RegisterResDto oAuthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
+	public RegisterResDto oauthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
@@ -266,8 +265,10 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public PasswordEmailUUIDRes checkEmailForPassword(PasswordEmailCheckReq passwordEmailCheckReq,
-		HttpServletRequest request) {
+	public PasswordEmailUuidRes checkEmailForPassword(
+		PasswordEmailCheckReq passwordEmailCheckReq,
+		HttpServletRequest request
+	) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
@@ -283,14 +284,16 @@ public class AuthFacade {
 		// 메일 전송
 		UUID randomString = mailUtil.sendMail(passwordEmailCheckReq.email());
 
-		return PasswordEmailUUIDRes.builder()
+		return PasswordEmailUuidRes.builder()
 			.randomString(randomString)
 			.build();
 	}
 
 	@Transactional
-	public void checkAuthCodePassword(PasswordAuthCodeCheckReq passwordAuthCodeCheckReq,
-		HttpServletRequest request) {
+	public void checkAuthCodePassword(
+		PasswordAuthCodeCheckReq passwordAuthCodeCheckReq,
+		HttpServletRequest request
+	) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
@@ -349,8 +352,10 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public void integrateKakaoUser(IntegrationKakaoRegisterReqDto integrationKakaoRegisterReqDto,
-		HttpServletRequest request) {
+	public void integrateKakaoUser(
+		IntegrationKakaoRegisterReqDto integrationKakaoRegisterReqDto,
+		HttpServletRequest request
+	) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 

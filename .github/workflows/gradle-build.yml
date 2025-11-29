@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up JDK
         uses: actions/setup-java@v5
@@ -21,6 +21,9 @@ jobs:
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
         shell: bash
+
+      - name: Run CheckStyle
+        run: ./gradlew checkstyleMain checkstyleTest
 
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
