@@ -21,10 +21,10 @@ import troublog.backend.domain.auth.dto.IntegrationKakaoRegisterReqDto;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
-import troublog.backend.domain.auth.dto.PasswordAuthCodeCheckReq;
-import troublog.backend.domain.auth.dto.PasswordChangeReq;
-import troublog.backend.domain.auth.dto.PasswordEmailCheckReq;
-import troublog.backend.domain.auth.dto.PasswordEmailUuidRes;
+import troublog.backend.domain.auth.dto.PasswordAuthCodeCheckReqDto;
+import troublog.backend.domain.auth.dto.PasswordChangeReqDto;
+import troublog.backend.domain.auth.dto.PasswordEmailCheckReqDto;
+import troublog.backend.domain.auth.dto.PasswordEmailUuidResDto;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterResDto;
 import troublog.backend.domain.common.EmailQueryService;
@@ -265,8 +265,8 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public PasswordEmailUuidRes checkEmailForPassword(
-		PasswordEmailCheckReq passwordEmailCheckReq,
+	public PasswordEmailUuidResDto checkEmailForPassword(
+		PasswordEmailCheckReqDto passwordEmailCheckReq,
 		HttpServletRequest request
 	) {
 
@@ -284,14 +284,14 @@ public class AuthFacade {
 		// 메일 전송
 		UUID randomString = mailUtil.sendMail(passwordEmailCheckReq.email());
 
-		return PasswordEmailUuidRes.builder()
+		return PasswordEmailUuidResDto.builder()
 			.randomString(randomString)
 			.build();
 	}
 
 	@Transactional
 	public void checkAuthCodePassword(
-		PasswordAuthCodeCheckReq passwordAuthCodeCheckReq,
+		PasswordAuthCodeCheckReqDto passwordAuthCodeCheckReq,
 		HttpServletRequest request
 	) {
 
@@ -308,14 +308,14 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public void changePassword(PasswordChangeReq passwordChangeReq, HttpServletRequest request) {
+	public void changePassword(PasswordChangeReqDto passwordChangeReqDto, HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		jwtProvider.checkEnvType(clientEnvType);
 
 		// 인증코드 확인
-		AuthCode authCode = emailQueryService.getAuthCodeWithoutAuth(passwordChangeReq.authCode());
+		AuthCode authCode = emailQueryService.getAuthCodeWithoutAuth(passwordChangeReqDto.authCode());
 
 		// 인증된 코드인지 확인
 		if (!authCode.isAuth()) {
@@ -323,15 +323,15 @@ public class AuthFacade {
 		}
 
 		// 가장 최근에 보낸 인증코드인지 확인
-		if (!authCode.getRandomString().equals(passwordChangeReq.randomString())) {
+		if (!authCode.getRandomString().equals(passwordChangeReqDto.randomString())) {
 			throw new AuthException(ErrorCode.AUTH_CODE_NOT_LATEST);
 		}
 
 		// 이메일 존재여부 체크
-		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(passwordChangeReq.email());
+		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(passwordChangeReqDto.email());
 
 		// 비밀번호 재설정
-		user.updatePassword(passwordEncoder.encode(passwordChangeReq.password()));
+		user.updatePassword(passwordEncoder.encode(passwordChangeReqDto.password()));
 	}
 
 	private AuthCode checkAuthCode(String inputAuthCode, UUID randomString) {

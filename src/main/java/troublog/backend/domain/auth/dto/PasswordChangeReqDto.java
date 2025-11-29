@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record PasswordChangeReq(
+public record PasswordChangeReqDto(
 	@NotBlank
 	@Schema(description = "인증코드")
 	String authCode,
