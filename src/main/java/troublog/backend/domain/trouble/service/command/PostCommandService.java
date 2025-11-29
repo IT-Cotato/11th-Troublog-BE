@@ -31,7 +31,7 @@ public class PostCommandService {
 	}
 
 	public void softDeleteAll(List<Post> postList) {
-		if(CollectionUtils.isEmpty(postList)) {
+		if (CollectionUtils.isEmpty(postList)) {
 			log.info("[Post] 삭제할 게시글 없음");
 			return;
 		}

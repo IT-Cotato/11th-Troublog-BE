@@ -35,16 +35,14 @@ import troublog.backend.global.common.error.exception.ProjectException;
 @Table(name = "projects")
 public class Project extends BaseEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "project_id")
-	private Long id;
-
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	User user;
-
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "project_id")
+	private Long id;
 	@Column(name = "description")
 	private String description;
 

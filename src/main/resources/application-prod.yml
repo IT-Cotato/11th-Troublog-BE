@@ -17,7 +17,7 @@ spring:
         format_sql: false
         use_sql_comments: false
         hbm2ddl:
-          auto: update
+          auto: validate
         default_batch_fetch_size: 1000
         dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false

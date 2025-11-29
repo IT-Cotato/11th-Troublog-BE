@@ -18,8 +18,8 @@ import troublog.backend.global.common.error.exception.BusinessException;
 @UtilityClass
 public class JsonConverter {
 
-	private static final ObjectMapper MAPPER = new ObjectMapper();
 	public static final String SQUARE_BRACKETS = "[]";
+	private static final ObjectMapper MAPPER = new ObjectMapper();
 
 	public String toJson(List<Integer> scores) {
 		try {

@@ -14,7 +14,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		CustomAuthenticationToken token = (CustomAuthenticationToken) authentication;
+		CustomAuthenticationToken token = (CustomAuthenticationToken)authentication;
 
 		return CustomAuthenticationToken.authenticated(
 			token.getName(),

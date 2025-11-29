@@ -61,7 +61,8 @@ public class LikeFacade {
 		likeCommandService.save(Like.createLike(user, post));
 
 		// 좋아요 알림 전송
-		String targetUrl = Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + "/user/community/" + post.getId();
+		String targetUrl =
+			Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + "/user/community/" + post.getId();
 
 		Alert alert = AlertConverter.postLikesAlert(post.getUser(), user.getNickname(), targetUrl);
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);

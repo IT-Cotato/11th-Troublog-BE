@@ -22,6 +22,17 @@ public class CustomLoggingAdvisor implements CallAdvisor {
 	private static final String AI_TAG = "[AI]";
 	private static final String LOG_FORMAT = "{} {}";
 
+	private static void loggingRequest(ChatClientRequest request) {
+		if (log.isDebugEnabled()) {
+			log.debug("============== Request =============");
+			String contents = Optional.of(request.prompt())
+				.map(p -> String.valueOf(p.getContents()))
+				.orElse("(null)");
+			log.debug(LOG_FORMAT, AI_TAG, "Prompt: " + contents.replaceAll("(?i)sk-[A-Za-z0-9]{10,}", "***"));
+
+		}
+	}
+
 	@Override
 	public String getName() {
 		return "SimpleLoggingAdvisor";
@@ -58,16 +69,5 @@ public class CustomLoggingAdvisor implements CallAdvisor {
 
 		log.info("==================================");
 		return advisedResponse;
-	}
-
-	private static void loggingRequest(ChatClientRequest request) {
-		if (log.isDebugEnabled()) {
-			log.debug("============== Request =============");
-			String contents = Optional.of(request.prompt())
-				.map(p -> String.valueOf(p.getContents()))
-				.orElse("(null)");
-			log.debug(LOG_FORMAT, AI_TAG, "Prompt: " + contents.replaceAll("(?i)sk-[A-Za-z0-9]{10,}", "***"));
-
-		}
 	}
 }

@@ -1,7 +1,5 @@
 package troublog.backend.global.common.config;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 
+import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.auth.handler.OAuth2LoginSuccessHandler;
 import troublog.backend.global.common.filter.ExceptionHandlerFilter;
 import troublog.backend.global.common.filter.JwtAuthenticationFilter;
@@ -25,12 +24,6 @@ import troublog.backend.global.common.util.JwtAuthenticationProvider;
 @EnableWebSecurity(debug = false)
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-	private final JwtAuthenticationProvider jwtAuthenticationProvider;
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
-	private final ExceptionHandlerFilter exceptionHandlerFilter;
-	private final CorsConfig corsFilter;
 
 	private static final String[] WHITELIST = {
 		"/auth/register",
@@ -50,6 +43,15 @@ public class SecurityConfig {
 		"/grafana/**",
 		"/terms/latest"
 	};
+	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+	private final JwtAuthenticationProvider jwtAuthenticationProvider;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final ExceptionHandlerFilter exceptionHandlerFilter;
+	private final CorsConfig corsFilter;
+
+	private static void createSessionPolicy(SessionManagementConfigurer<HttpSecurity> session) {
+		session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	}
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -85,9 +87,5 @@ public class SecurityConfig {
 		AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
 		builder.authenticationProvider(jwtAuthenticationProvider);
 		return builder.build();
-	}
-
-	private static void createSessionPolicy(SessionManagementConfigurer<HttpSecurity> session) {
-		session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 }

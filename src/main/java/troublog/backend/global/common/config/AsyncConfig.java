@@ -19,8 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 @EnableAsync
 public class AsyncConfig implements AsyncConfigurer {
 
-	private static final String IMAGE_PREFIX = "Image";
 	public static final String SUMMARY_PREFIX = "AI-Summary";
+	private static final String IMAGE_PREFIX = "Image";
 
 	@Bean(name = "summaryExecutor")
 	public Executor summaryExecutor() {

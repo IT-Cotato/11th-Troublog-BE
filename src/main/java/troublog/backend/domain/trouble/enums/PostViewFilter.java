@@ -16,13 +16,6 @@ public enum PostViewFilter {
 
 	private final String message;
 
-	public List<PostStatus> toPostStatuses() {
-		return switch (this) {
-			case WRITING -> List.of(PostStatus.WRITING);
-			case COMPLETED -> List.of(PostStatus.COMPLETED, PostStatus.SUMMARIZED);
-		};
-	}
-
 	public static PostViewFilter from(String status) {
 		for (PostViewFilter type : values()) {
 			if (type.name().equals(status)) {
@@ -30,5 +23,12 @@ public enum PostViewFilter {
 			}
 		}
 		throw new PostException(ErrorCode.INVALID_VALUE);
+	}
+
+	public List<PostStatus> toPostStatuses() {
+		return switch (this) {
+			case WRITING -> List.of(PostStatus.WRITING);
+			case COMPLETED -> List.of(PostStatus.COMPLETED, PostStatus.SUMMARIZED);
+		};
 	}
 }

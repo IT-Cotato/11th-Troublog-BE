@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.terms.entity.UserTermsConsent;
-import troublog.backend.global.common.error.exception.TermsException;
 import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.TermsException;
 import troublog.backend.global.common.error.exception.UserException;
 
 @UtilityClass

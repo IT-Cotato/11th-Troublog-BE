@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,13 +28,8 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(
-	name = "likes",
-	uniqueConstraints = @jakarta.persistence.UniqueConstraint(
-		name = "uk_likes_user_post",
-		columnNames = {"user_id", "post_id"}
-	)
-)
+@Table(name = "likes", uniqueConstraints = @UniqueConstraint(name = "uk_likes_user_post", columnNames = {"user_id",
+	"post_id"}))
 public class Like {
 
 	@Id
@@ -53,16 +49,13 @@ public class Like {
 	@Column(name = "liked_at", updatable = false)
 	private LocalDateTime likedAt;
 
-	@PrePersist
-	protected void onCreate() {
-		this.likedAt = LocalDateTime.now();
-	}
-
 	public static Like createLike(User user, Post post) {
-		if (user == null)
+		if (user == null) {
 			throw new PostException(ErrorCode.MISSING_USER);
-		if (post == null)
+		}
+		if (post == null) {
 			throw new PostException(ErrorCode.MISSING_POST);
+		}
 
 		Like like = new Like();
 		like.assignUser(user);
@@ -72,6 +65,11 @@ public class Like {
 		user.addLikeRef(like);
 		post.addLike(like);
 		return like;
+	}
+
+	@PrePersist
+	protected void onCreate() {
+		this.likedAt = LocalDateTime.now();
 	}
 
 	public void assignUser(User user) {

@@ -34,7 +34,7 @@ public class PostCommandFacadeImpl implements PostCommandFacade {
 	private final PostSummaryService postSummaryService;
 	private final SummaryTaskFacade summaryTaskFacade;
 
-	public PostResDto createPost(final Long userId,final PostReqDto postReqDto) {
+	public PostResDto createPost(final Long userId, final PostReqDto postReqDto) {
 		return postCreateUseCase.createPost(userId, postReqDto);
 	}
 

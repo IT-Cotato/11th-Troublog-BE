@@ -24,7 +24,7 @@ public class SwaggerConfig {
 	private final Environment env;
 
 	@Bean
-	public OpenAPI customOpenAPI() {
+	public OpenAPI customOpenApi() {
 
 		// 현재 활성화된 profile 가져오기
 		String profile = env.getActiveProfiles().length > 0 ? env.getActiveProfiles()[0] : "local";

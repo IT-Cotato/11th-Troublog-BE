@@ -16,12 +16,12 @@ public interface PostSummaryRepository extends JpaRepository<PostSummary, Long> 
 
 	@EntityGraph(attributePaths = {"post", "post.project"})
 	@Query("""
-		    select ps
-		      from PostSummary ps
-		     where ps.post.project.id = :projectId
-		       and coalesce(ps.post.isDeleted, false) = false
-		       and (:status is null or ps.post.status = :status)  
-		       and (:summaryType is null or ps.summaryType = :summaryType)
+			select ps
+				from PostSummary ps
+			where ps.post.project.id = :projectId
+				and coalesce(ps.post.isDeleted, false) = false
+				and (:status is null or ps.post.status = :status)  
+				and (:summaryType is null or ps.summaryType = :summaryType)
 		""")
 	List<PostSummary> findByProjectSummarized(
 		@Param("projectId") Long projectId,
@@ -35,19 +35,19 @@ public interface PostSummaryRepository extends JpaRepository<PostSummary, Long> 
 		select ps
 		from PostSummary ps
 		where ps.post.project.id = :projectId
-		  and coalesce(ps.post.isDeleted, false) = false
-		  and (:status is null or ps.post.status = :status)
-		  and (:summaryType is null or ps.summaryType = :summaryType)
+			and coalesce(ps.post.isDeleted, false) = false
+			and (:status is null or ps.post.status = :status)
+			and (:summaryType is null or ps.summaryType = :summaryType)
 		order by
-		  case
-		    when ps.post.starRating = troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS  then 5
-		    when ps.post.starRating = troublog.backend.domain.trouble.enums.StarRating.FOUR_STARS  then 4
-		    when ps.post.starRating = troublog.backend.domain.trouble.enums.StarRating.THREE_STARS then 3
-		    when ps.post.starRating = troublog.backend.domain.trouble.enums.StarRating.TWO_STARS   then 2
-		    when ps.post.starRating = troublog.backend.domain.trouble.enums.StarRating.ONE_STAR    then 1
-		    else 0
-		  end desc,
-		  ps.id desc
+			case
+			when ps.post.starRating = troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS  then 5
+			when ps.post.starRating = troublog.backend.domain.trouble.enums.StarRating.FOUR_STARS  then 4
+			when ps.post.starRating = troublog.backend.domain.trouble.enums.StarRating.THREE_STARS then 3
+			when ps.post.starRating = troublog.backend.domain.trouble.enums.StarRating.TWO_STARS   then 2
+			when ps.post.starRating = troublog.backend.domain.trouble.enums.StarRating.ONE_STAR    then 1
+			else 0
+			end desc,
+			ps.id desc
 		""")
 	List<PostSummary> findByProjectSummarizedImportant(
 		@Param("projectId") Long projectId,

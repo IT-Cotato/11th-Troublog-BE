@@ -4,7 +4,6 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-import troublog.backend.domain.trouble.enums.PostStatus;
 
 @Builder
 public record UserPostStatusResDto(

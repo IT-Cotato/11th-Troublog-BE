@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -19,36 +21,32 @@ import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.auth.entity.LoginType;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.entity.UserStatus;
-import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.domain.user.service.command.UserCommandService;
+import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.global.common.constant.Domain;
 import troublog.backend.global.common.constant.EnvType;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.util.JwtProvider;
-
-import org.springframework.beans.factory.annotation.Value;
-
-import java.util.UUID;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+	public static final String OAUTH2_KAKAO = "KAKAO_";
+	public static final String EMAIL_DOMAIN_TEMP = "_@social.temp";
 	private final UserQueryService userQueryService;
 	private final UserCommandService userCommandService;
 	private final JwtProvider jwtProvider;
 	private final PasswordEncoder passwordEncoder;
-
-	public static final String OAUTH2_KAKAO = "KAKAO_";
-	public static final String EMAIL_DOMAIN_TEMP = "_@social.temp";
-
 	@Value("${spring.profiles.active}")
 	private String profilesActive;
 
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-		Authentication authentication) throws
+	public void onAuthenticationSuccess(
+		HttpServletRequest request, HttpServletResponse response,
+		Authentication authentication
+	) throws
 		IOException {
 
 		log.info("OAuth2 Login 성공!");
@@ -99,9 +97,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
 		String email = extractEmail(kakaoAccount);
 		return new Oauth2UserInfo(socialId, nickname, profileImageUrl, email);
-	}
-
-	private record Oauth2UserInfo(String socialId, String nickname, String profileImageUrl, String email) {
 	}
 
 	private String extractEmail(Map<String, Object> kakaoAccount) {
@@ -219,8 +214,10 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		response.sendRedirect(redirectUrl);
 	}
 
-	private void handleNotIntegratedUserRedirect(HttpServletResponse response, User user, String socialId,
-		String profileImgUrl) throws
+	private void handleNotIntegratedUserRedirect(
+		HttpServletResponse response, User user, String socialId,
+		String profileImgUrl
+	) throws
 		IOException {
 
 		log.info("통합 되지 않은 유저: userId={}", user.getId());
@@ -236,6 +233,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 			profileImgUrl != null ? URLEncoder.encode(profileImgUrl, StandardCharsets.UTF_8) : ""
 		);
 		response.sendRedirect(redirectUrl);
+	}
+
+	private record Oauth2UserInfo(String socialId, String nickname, String profileImageUrl, String email) {
 	}
 }
 

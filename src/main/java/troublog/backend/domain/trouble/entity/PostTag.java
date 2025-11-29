@@ -24,24 +24,9 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(
-	name = "post_tags",
-	indexes = {
-		@Index(
-			name = "idx_post_tags_post_id",
-			columnList = "post_id"
-		),
-		@Index(
-			name = "idx_post_tags_tag_id",
-			columnList = "tag_id"
-		),
-		@Index(
-			name = "idx_post_tags_composite",
-			columnList = "post_id, tag_id",
-			unique = true
-		)
-	}
-)
+@Table(name = "post_tags", indexes = {@Index(name = "idx_post_tags_post_id", columnList = "post_id"),
+	@Index(name = "idx_post_tags_tag_id", columnList = "tag_id"),
+	@Index(name = "idx_post_tags_composite", columnList = "post_id, tag_id", unique = true)})
 public class PostTag extends BaseEntity {
 
 	@Id

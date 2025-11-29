@@ -28,6 +28,7 @@ import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.service.facade.command.PostCommandFacade;
+import troublog.backend.domain.trouble.service.facade.command.PostSummaryCommandFacade;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -39,7 +40,8 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "트러블슈팅", description = "트러블슈팅 문서 관련 엔드포인트")
 public class PostCommandController {
 
-	private final PostCommandFacade commandFacade;
+	private final PostCommandFacade postCommandFacade;
+	private final PostSummaryCommandFacade postSummaryCommandFacade;
 	private final SummaryTaskFacade summaryTaskFacade;
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -50,11 +52,12 @@ public class PostCommandController {
 		@Authentication CustomAuthenticationToken token,
 		@Valid @RequestBody PostReqDto postReqDto
 	) {
-		PostResDto response = commandFacade.createPost(token.getUserId(), postReqDto);
+		PostResDto response = postCommandFacade.createPost(token.getUserId(), postReqDto);
 		return ResponseUtils.created(response);
 	}
 
-	@PatchMapping(path = "/{postId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(path = "/{postId}", consumes = MediaType.APPLICATION_JSON_VALUE,
+		produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "트러블슈팅 문서 수정 API", description = "트러블슈팅 문서를 수정한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = PostResDto.class)))
@@ -63,7 +66,7 @@ public class PostCommandController {
 		@PathVariable Long postId,
 		@Valid @RequestBody PostReqDto postReqDto
 	) {
-		PostResDto response = commandFacade.updatePost(token.getUserId(), postId, postReqDto);
+		PostResDto response = postCommandFacade.updatePost(token.getUserId(), postId, postReqDto);
 		return ResponseUtils.ok(response);
 	}
 
@@ -75,7 +78,7 @@ public class PostCommandController {
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
-		commandFacade.softDeletePost(token.getUserId(), postId);
+		postCommandFacade.softDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
 	}
 
@@ -84,8 +87,9 @@ public class PostCommandController {
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
 	public ResponseEntity<BaseResponse<Void>> hardDeletePost(
 		@Authentication CustomAuthenticationToken token,
-		@PathVariable Long postId) {
-		commandFacade.hardDeletePost(token.getUserId(), postId);
+		@PathVariable Long postId
+	) {
+		postCommandFacade.hardDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
 	}
 
@@ -98,8 +102,19 @@ public class PostCommandController {
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
-		PostResDto response = commandFacade.restorePost(token.getUserId(), postId);
+		PostResDto response = postCommandFacade.restorePost(token.getUserId(), postId);
 		return ResponseUtils.ok(response);
+	}
+
+	@DeleteMapping("/summary/{summaryId}")
+	@Operation(summary = "트러블슈팅 요약본 영구 삭제 API", description = "트러블슈팅 요약본을 영구적으로 삭제한다.")
+	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)
+	public ResponseEntity<BaseResponse<Void>> hardDeleteSummary(
+		@Authentication CustomAuthenticationToken token,
+		@PathVariable Long summaryId
+	) {
+		postSummaryCommandFacade.hardDeletePostSummary(token.getUserId(), summaryId);
+		return ResponseUtils.noContent();
 	}
 
 	@PostMapping("/{postId}/summary")
@@ -111,11 +126,12 @@ public class PostCommandController {
 		@PathVariable Long postId,
 		@RequestParam SummaryType summaryType
 	) {
-		return ResponseUtils.ok(commandFacade.startSummary(token.getUserId(), summaryType, postId));
+		return ResponseUtils.ok(postCommandFacade.startSummary(token.getUserId(), summaryType, postId));
 	}
 
 	@GetMapping("/{postId}/summary/{taskId}")
-	@Operation(summary = "트러블슈팅 문서 AI 요약 작업 상태 조회 API", description = "진행중인 트러블슈팅 문서 AI 요약 작업을 postId, taskId를 기반으로 조회한다.")
+	@Operation(summary = "트러블슈팅 문서 AI 요약 작업 상태 조회 API",
+		description = "진행중인 트러블슈팅 문서 AI 요약 작업을 postId, taskId를 기반으로 조회한다.")
 	@ApiResponse(responseCode = "200", description = "OK",
 		content = @Content(schema = @Schema(implementation = TaskStatusResDto.class)))
 	public ResponseEntity<BaseResponse<TaskStatusResDto>> getSummaryTaskStatus(

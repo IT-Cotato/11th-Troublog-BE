@@ -24,7 +24,7 @@ import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
 import troublog.backend.domain.auth.dto.PasswordAuthCodeCheckReqDto;
 import troublog.backend.domain.auth.dto.PasswordChangeReqDto;
 import troublog.backend.domain.auth.dto.PasswordEmailCheckReqDto;
-import troublog.backend.domain.auth.dto.PasswordEmailUUIDResDto;
+import troublog.backend.domain.auth.dto.PasswordEmailUuidResDto;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterResDto;
 import troublog.backend.domain.common.EmailQueryService;
@@ -224,7 +224,7 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public RegisterResDto oAuthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
+	public RegisterResDto oauthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
@@ -265,8 +265,10 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public PasswordEmailUUIDResDto checkEmailForPassword(PasswordEmailCheckReqDto passwordEmailCheckReqDto,
-		HttpServletRequest request) {
+	public PasswordEmailUuidResDto checkEmailForPassword(
+		PasswordEmailCheckReqDto passwordEmailCheckReq,
+		HttpServletRequest request
+	) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
@@ -274,22 +276,24 @@ public class AuthFacade {
 		jwtProvider.checkEnvType(clientEnvType);
 
 		// 이메일 존재여부 체크
-		boolean isDuplicatedEmail = userQueryService.existsByEmail(passwordEmailCheckReqDto.email());
+		boolean isDuplicatedEmail = userQueryService.existsByEmail(passwordEmailCheckReq.email());
 		if (!isDuplicatedEmail) {
 			throw new UserException(ErrorCode.USER_EMAIL_INVALID);
 		}
 
 		// 메일 전송
-		UUID randomString = mailUtil.sendMail(passwordEmailCheckReqDto.email());
+		UUID randomString = mailUtil.sendMail(passwordEmailCheckReq.email());
 
-		return PasswordEmailUUIDResDto.builder()
+		return PasswordEmailUuidResDto.builder()
 			.randomString(randomString)
 			.build();
 	}
 
 	@Transactional
-	public void checkAuthCodePassword(PasswordAuthCodeCheckReqDto passwordAuthCodeCheckReqDto,
-		HttpServletRequest request) {
+	public void checkAuthCodePassword(
+		PasswordAuthCodeCheckReqDto passwordAuthCodeCheckReq,
+		HttpServletRequest request
+	) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
@@ -297,7 +301,7 @@ public class AuthFacade {
 		jwtProvider.checkEnvType(clientEnvType);
 
 		// 인증코드 체크
-		AuthCode authCode = checkAuthCode(passwordAuthCodeCheckReqDto.authCode(), passwordAuthCodeCheckReqDto.randomString());
+		AuthCode authCode = checkAuthCode(passwordAuthCodeCheckReq.authCode(), passwordAuthCodeCheckReq.randomString());
 
 		// 인증처리
 		authCode.updateIsAuth();
@@ -348,8 +352,10 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public void integrateKakaoUser(IntegrationKakaoRegisterReqDto integrationKakaoRegisterReqDto,
-		HttpServletRequest request) {
+	public void integrateKakaoUser(
+		IntegrationKakaoRegisterReqDto integrationKakaoRegisterReqDto,
+		HttpServletRequest request
+	) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 

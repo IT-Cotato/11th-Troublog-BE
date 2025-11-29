@@ -22,7 +22,7 @@ public class RetrieveActiveTermsUseCase {
 
 	public List<Terms> retrieveActiveTerms() {
 		List<Terms> currentActiveTerms = service.getCurrentActiveTerms();
-			currentActiveTerms.forEach(TermsValidator::validate);
+		currentActiveTerms.forEach(TermsValidator::validate);
 		return currentActiveTerms;
 	}
 }

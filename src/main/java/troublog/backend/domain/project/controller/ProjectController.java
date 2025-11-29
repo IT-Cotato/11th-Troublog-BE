@@ -49,7 +49,8 @@ public class ProjectController {
 	@Operation(summary = "프로젝트 생성 API", description = "프로젝트를 생성합니다.")
 	public ResponseEntity<BaseResponse<ProjectResDto>> createProject(
 		@Authentication CustomAuthenticationToken auth,
-		@Valid @RequestBody ProjectReqDto reqDto) {
+		@Valid @RequestBody ProjectReqDto reqDto
+	) {
 		ProjectResDto response = projectCommandFacade.createProject(auth.getUserId(), reqDto);
 		return ResponseUtils.created(response);
 	}
@@ -59,7 +60,8 @@ public class ProjectController {
 	public ResponseEntity<BaseResponse<ProjectResDto>> updateProject(
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable long projectId,
-		@Valid @RequestBody ProjectReqDto reqDto) {
+		@Valid @RequestBody ProjectReqDto reqDto
+	) {
 		ProjectResDto response = projectCommandFacade.updateProject(auth.getUserId(), reqDto, projectId);
 		return ResponseUtils.ok(response);
 	}
@@ -68,7 +70,8 @@ public class ProjectController {
 	@Operation(summary = "프로젝트 soft delete API", description = "프로젝트를 삭제합니다.")
 	public ResponseEntity<BaseResponse<Void>> deleteProject(
 		@Authentication CustomAuthenticationToken auth,
-		@PathVariable long projectId) {
+		@PathVariable long projectId
+	) {
 		projectCommandFacade.softDeleteProject(auth.getUserId(), projectId);
 		return ResponseUtils.noContent();
 	}
@@ -77,7 +80,8 @@ public class ProjectController {
 	@Operation(summary = "프로젝트 상세 조회 API", description = "프로젝트 하나를 조회합니다.")
 	public ResponseEntity<BaseResponse<ProjectDetailResDto>> getProjectDetails(
 		@Authentication CustomAuthenticationToken auth,
-		@PathVariable long projectId) {
+		@PathVariable long projectId
+	) {
 		ProjectDetailResDto response = projectQueryFacade.getDetailsProject(auth.getUserId(), projectId);
 		return ResponseUtils.ok(response);
 	}
@@ -87,7 +91,8 @@ public class ProjectController {
 	public ResponseEntity<PageResponse<ProjectDetailResDto>> getProjects(
 		@Authentication CustomAuthenticationToken auth,
 		@RequestParam(defaultValue = "1") @Min(1) int page,
-		@RequestParam(defaultValue = "10") @Min(1) int size) {
+		@RequestParam(defaultValue = "10") @Min(1) int size
+	) {
 		Pageable pageable = projectQueryFacade.getPageable(page, size);
 		Page<ProjectDetailResDto> response = projectQueryFacade.getAllProjects(auth.getUserId(), pageable);
 		return ResponseUtils.page(response);

@@ -134,7 +134,7 @@ public class PostQueryService {
 		List<PostSummary> posts = (sort == SortType.IMPORTANT)
 			? postSummaryRepository.findByProjectSummarizedImportant(projectId, PostStatus.SUMMARIZED, filterType)
 			: postSummaryRepository.findByProjectSummarized(projectId, PostStatus.SUMMARIZED, filterType,
-			Sort.by(DESC, "created_at", "id"));
+			Sort.by(DESC, "createdAt", "id"));
 		log.info("[Post] 요약완료된 트러블슈팅 문서 조회: postCount={}, summaryType={}", posts.size(), summaryType);
 		return posts.stream()
 			.map(ListConverter::toAllSummerizedListResDto)

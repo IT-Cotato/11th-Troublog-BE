@@ -8,7 +8,6 @@ import lombok.Builder;
 import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
 
-
 @Builder
 public record PostDetailsResDto(
 	@Schema(description = "사용자 정보")
@@ -17,7 +16,7 @@ public record PostDetailsResDto(
 	@Schema(description = "게시글 ID", example = "1")
 	Long postId,
 
-	@Schema(defaultValue = "프로젝트 ID" , example = "2")
+	@Schema(defaultValue = "프로젝트 ID", example = "2")
 	Long projectId,
 
 	@Schema(description = "게시글 제목", example = "Spring Boot 환경설정 트러블슈팅")

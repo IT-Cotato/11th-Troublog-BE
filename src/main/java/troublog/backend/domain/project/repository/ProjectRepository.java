@@ -15,17 +15,20 @@ import troublog.backend.domain.user.entity.User;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 	@Query("""
-		    SELECT t.name
-		    FROM Post p
-		    JOIN PostTag pt ON p.id = pt.post.id
-		    JOIN Tag t ON pt.tag.id = t.id
-		    WHERE p.project.id = :projectId
-		      AND t.tagType = :tagType
-		    GROUP BY t.name
-		    ORDER BY COUNT(t.name) DESC
+		SELECT t.name
+		FROM Post p
+		JOIN PostTag pt ON p.id = pt.post.id
+		JOIN Tag t ON pt.tag.id = t.id
+		WHERE p.project.id = :projectId
+		AND t.tagType = :tagType
+		GROUP BY t.name
+		ORDER BY COUNT(t.name) DESC
 		""")
-	List<String> findTop2TagsByProjectId(@Param("projectId") Long projectId, @Param("tagType") TagType tagType,
-		Pageable pageable);
+	List<String> findTop2TagsByProjectId(
+		@Param("projectId") Long projectId,
+		@Param("tagType") TagType tagType,
+		Pageable pageable
+	);
 
 	Page<Project> findAllByUserIdAndIsDeletedFalse(Long userId, Pageable pageable);
 
