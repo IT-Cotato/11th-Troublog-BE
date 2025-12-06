@@ -27,6 +27,11 @@ public class PostCommandService {
 
 	public void deletePost(final Post post) {
 		log.info("[Post] 트러블슈팅 문서 삭제: postId={}, title={}", post.getId(), post.getTitle());
+		postRepository.hardDeletePost(post.getId());
+	}
+
+	public void softDelete(final Post post) {
+		log.info("[Post] 트러블슈팅 문서 soft delete: postId={}, title={}", post.getId(), post.getTitle());
 		postRepository.delete(post);
 	}
 
@@ -36,6 +41,6 @@ public class PostCommandService {
 			return;
 		}
 		log.info("[Post] 게시글 리스트 soft delete: postList={}", postList);
-		postList.forEach(Post::markAsDeleted);
+		postList.forEach(Post::markDeleted);
 	}
 }

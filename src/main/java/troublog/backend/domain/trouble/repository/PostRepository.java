@@ -2,11 +2,11 @@ package troublog.backend.domain.trouble.repository;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,11 +15,6 @@ import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.user.entity.User;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-	Optional<Post> findByIdAndIsDeletedFalse(Long id);
-
-	List<Post> findByIsDeletedFalse();
-
-	List<Post> findByIsDeletedTrue();
 
 	@Query(value = """
 		SELECT p.*
@@ -33,7 +28,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			LEFT JOIN post_tags pt ON p.post_id = pt.post_id
 			LEFT JOIN tags t ON pt.tag_id = t.tag_id
 			WHERE p.user_id = :userId
-			AND p.is_deleted = false
+			AND p.deleted_at IS NULL
 			AND (
 				MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 				OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -52,7 +47,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		LEFT JOIN post_tags pt ON p.post_id = pt.post_id
 		LEFT JOIN tags t ON pt.tag_id = t.tag_id
 		WHERE p.user_id = :userId
-			AND p.is_deleted = false
+			AND p.deleted_at IS NULL
 			AND (
 			MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 			OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -77,7 +72,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			LEFT JOIN contents c ON p.post_id = c.post_id
 			LEFT JOIN post_tags pt ON p.post_id = pt.post_id
 			LEFT JOIN tags t ON pt.tag_id = t.tag_id
-			WHERE p.is_deleted = false
+			WHERE p.deleted_at IS NULL
 				AND p.visible = true
 				AND (
 				MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -95,7 +90,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		LEFT JOIN contents c ON p.post_id = c.post_id
 		LEFT JOIN post_tags pt ON p.post_id = pt.post_id
 		LEFT JOIN tags t ON pt.tag_id = t.tag_id
-		WHERE p.is_deleted = false
+		WHERE p.deleted_at IS NULL
 			AND p.visible = true
 			AND (
 			MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -109,7 +104,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		SELECT p
 		FROM Post p
 		WHERE p.project.id = :projectId
-		AND p.isDeleted = FALSE
 		AND p.status IN :statuses
 		AND (:visible IS NULL OR p.isVisible = :visible)
 		ORDER BY COALESCE(p.completedAt, p.updatedAt) DESC, p.id DESC
@@ -124,7 +118,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			SELECT p
 				FROM Post p
 			WHERE p.project.id = :projectId
-				AND p.isDeleted = FALSE
 				AND p.status IN :statuses
 				AND (:visible IS NULL OR p.isVisible = :visible)
 			ORDER BY
@@ -144,11 +137,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		@Param("visible") Boolean visible
 	);
 
-	Page<Post> findAllByUser_IdAndIsDeletedFalse(Long userId, Pageable page);
+	Page<Post> findAllByUser_Id(Long userId, Pageable page);
 
 	@Query(value = """
 		SELECT p FROM Post p
-		WHERE p.user.id = :userId AND p.isDeleted = false
 		ORDER BY
 			CASE p.starRating
 				WHEN troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS THEN 5
@@ -161,15 +153,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			p.id DESC
 		""", countQuery = """
 		SELECT count(p) FROM Post p
-		WHERE p.user.id = :userId AND p.isDeleted = false
 		""")
 	Page<Post> findTroublesByUserOrderByStarRating(@Param("userId") Long userId, Pageable pageable);
 
 	@Query("""
 			SELECT DISTINCT p
 			FROM Post p
-			WHERE p.isDeleted = FALSE
-			AND p.isVisible = TRUE
+			WHERE p.isVisible = TRUE
 			AND p.status IN (
 				troublog.backend.domain.trouble.enums.PostStatus.COMPLETED,
 				troublog.backend.domain.trouble.enums.PostStatus.SUMMARIZED
@@ -182,13 +172,19 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			FROM Post p
 			WHERE p.user.id = :userId
 			AND (:status is null or p.status = :status)
-			AND p.isDeleted = FALSE
 		""")
-	List<Post> findByUserIdAndStatusAndIsDeletedFalse(@Param("userId") Long userId, @Param("status") PostStatus status);
+	List<Post> findByUserIdAndStatus(@Param("userId") Long userId, @Param("status") PostStatus status);
 
-	List<Post> findByUserIdAndIsDeletedFalse(Long userId);
+	List<Post> findByUserId(Long userId);
 
 	List<Post> findByIdIn(Collection<Long> recentIds);
 
-	List<Post> findAllByUserAndIsDeletedFalse(User user);
+	List<Post> findAllByUser(User user);
+
+	@Modifying
+	@Query("""
+		    delete from Post p
+		    where p.id = :postId
+		""")
+	void hardDeletePost(@Param("postId") Long postId);
 }

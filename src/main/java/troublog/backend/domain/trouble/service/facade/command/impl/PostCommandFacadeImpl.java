@@ -48,20 +48,21 @@ public class PostCommandFacadeImpl implements PostCommandFacade {
 	public void softDeletePost(Long userId, Long postId) {
 		Post foundPost = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
-		foundPost.markAsDeleted();
+		postCommandService.softDelete(foundPost);
 	}
 
 	public void hardDeletePost(Long userId, Long postId) {
 		Post foundPost = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
+		// Comment, Content, PostTag 를 순서대로 지우는 메서드를 호출해야 post를 지울 수 있음.
 		postCommandService.deletePost(foundPost);
 	}
 
 	public PostResDto restorePost(Long userId, Long postId) {
 		Post foundPost = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
-		PostFactory.validateIsDeleted(foundPost);
-		foundPost.restoreFromDeleted();
+		// PostFactory.validateIsDeleted(foundPost);
+		// foundPost.restoreFromDeleted();
 		return PostConverter.toResponse(foundPost);
 	}
 
