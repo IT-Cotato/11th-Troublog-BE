@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @MappedSuperclass
-public abstract class SoftDeleteBaseEntity extends BaseEntity {
+public class SoftDeleteEntity extends BaseEntity {
 
 	@Column(name = "deleted_at")
 	protected LocalDateTime deletedAt;

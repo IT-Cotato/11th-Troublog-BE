@@ -34,7 +34,7 @@ import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
 import troublog.backend.domain.trouble.enums.TemplateType;
 import troublog.backend.domain.user.entity.User;
-import troublog.backend.global.common.entity.SoftDeleteBaseEntity;
+import troublog.backend.global.common.entity.SoftDeleteEntity;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
 import troublog.backend.global.common.util.JsonConverter;
@@ -50,7 +50,7 @@ import troublog.backend.global.common.util.JsonConverter;
 	@Index(name = "idx_posts_user_deleted_title", columnList = "user_id, deleted_at, title"),
 	@Index(name = "idx_posts_user_id", columnList = "user_id"),
 	@Index(name = "idx_posts_deleted_at", columnList = "deleted_at")})
-public class Post extends SoftDeleteBaseEntity {
+public class Post extends SoftDeleteEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,9 +82,6 @@ public class Post extends SoftDeleteBaseEntity {
 
 	@Column(name = "summary_created")
 	private Boolean isSummaryCreated;
-
-	@Column(name = "is_deleted")
-	private Boolean isDeleted;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "post_Status")
@@ -246,16 +243,6 @@ public class Post extends SoftDeleteBaseEntity {
 
 	public void updateThumbnailUrl(String thumbnailUrl) {
 		this.thumbnailUrl = thumbnailUrl;
-	}
-
-	public void markAsDeleted() {
-		this.isDeleted = true;
-		this.deletedAt = LocalDateTime.now();
-	}
-
-	public void restoreFromDeleted() {
-		this.isDeleted = false;
-		this.deletedAt = null;
 	}
 
 	public void updateCommonInfo(PostReqDto postReqDto) {
