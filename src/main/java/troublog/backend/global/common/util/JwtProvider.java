@@ -42,6 +42,7 @@ import troublog.backend.global.common.error.exception.AuthException;
 public class JwtProvider {
 
 	private static final long ENDLESS_TIME = 999999999; // local 개발 용 토큰 무한 사용 (11574일)
+	public static final String PREFIX = "Bearer ";
 	private final RefreshTokenRepository refreshTokenRepository;
 	@Value("${spring.profiles.active}")
 	private String profilesActive;
@@ -342,5 +343,19 @@ public class JwtProvider {
 			.build();
 
 		response.setHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+	}
+
+	public String extractUserIdFromRequest(HttpServletRequest request) {
+		try {
+			String authHeader = request.getHeader(AUTHORIZATION);
+			if (authHeader != null && authHeader.startsWith(PREFIX)) {
+				String token = authHeader.substring(7);
+				Claims claims = getClaimsWithoutExp(token);
+				Long userId = claims.get("userId", Long.class);
+				return userId != null ? userId.toString() : null;
+			}
+		} catch (Exception e) {
+		}
+		return null;
 	}
 }
