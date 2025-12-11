@@ -6,7 +6,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.project.entity.Project;
 import troublog.backend.global.common.error.ErrorCode;
-import troublog.backend.global.common.error.exception.PostException;
+import troublog.backend.global.common.error.exception.ProjectException;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -15,7 +15,7 @@ public class ProjectFactory {
 	public static void validateProjectAuthorized(Long requestUserID, Project project) {
 		Long registeredUserID = project.getUser().getId();
 		if (!registeredUserID.equals(requestUserID)) {
-			throw new PostException(ErrorCode.POST_ACCESS_DENIED);
+			throw new ProjectException(ErrorCode.PROJECT_ACCESS_DENIED);
 		}
 	}
 }

@@ -21,7 +21,7 @@ import troublog.backend.domain.common.entity.Email;
 import troublog.backend.domain.common.repository.AuthCodeRepository;
 import troublog.backend.domain.common.repository.EmailRepository;
 import troublog.backend.global.common.error.ErrorCode;
-import troublog.backend.global.common.error.exception.UserException;
+import troublog.backend.global.common.error.exception.BusinessException;
 
 @Slf4j
 @Service
@@ -82,7 +82,7 @@ public class MailUtil {
 			mailSender.send(message);
 		} catch (Exception exception) {
 			log.error("메일 전송 실패 {}", receiverEmailAdr, exception);
-			throw new UserException(ErrorCode.INTERNAL_SERVER_ERROR);
+			throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class MailUtil {
 			ClassPathResource resource = new ClassPathResource(path);
 			return new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 		} catch (IOException e) {
-			throw new RuntimeException("템플릿 로딩 실패: " + path, e);
+			throw new BusinessException(ErrorCode.TEMPLATE_LOADING_FAILED);
 		}
 	}
 

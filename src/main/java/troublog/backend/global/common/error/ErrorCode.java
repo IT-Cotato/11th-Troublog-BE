@@ -17,6 +17,7 @@ public enum ErrorCode {
 	INVALID_INPUT(HttpStatus.BAD_REQUEST, "C-003", "유효하지 않은 입력값입니다."),
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C-004", "서버 오류가 발생했습니다."),
 	JSON_PARSING_ERROR(HttpStatus.BAD_REQUEST, "C-005", "JSON 파싱 중 오류가 발생했습니다."),
+	TEMPLATE_LOADING_FAILED(HttpStatus.NOT_FOUND, "C-006", "템플릿 로딩에 실패했습니다."),
 
 	/**
 	 * Auth Error (AU-xxx)
@@ -36,18 +37,19 @@ public enum ErrorCode {
 	 * User Error (U-xxx)
 	 */
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U-001", "유저를 찾을 수 없습니다."),
-	INVALID_USER(HttpStatus.NOT_FOUND, "U-002", "아이디 또는 비밀번호가 일치하지 않습니다."),
-	DUPLICATED_EMAIL(HttpStatus.CONFLICT, "U-003", "중복된 이메일입니다."),
-	DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "U-004", "중복된 닉네임입니다."),
-	USER_DELETED(HttpStatus.BAD_REQUEST, "U-005", "삭제된 유저입니다."),
-	USER_FOLLOW_SELF(HttpStatus.BAD_REQUEST, "U-006", "자기자신을 팔로우/언팔로우 할 수 없습니다."),
-	USER_UPDATE_SELF(HttpStatus.BAD_REQUEST, "U-007", "자기자신의 정보만 수정할 수 있습니다."),
-	DUPLICATED_FOLLOWED(HttpStatus.CONFLICT, "U-008", "이미 팔로우한 유저입니다."),
-	USER_NOT_FOLLOWED(HttpStatus.BAD_REQUEST, "U-009", "팔로우하지 않은 유저입니다."),
-	MISSING_USER(HttpStatus.BAD_REQUEST, "U-010", "사용자 정보가 누락되었습니다."),
-	USER_STATUS_INVALID(HttpStatus.BAD_REQUEST, "U-011", "유효하지 않은 유저 상태입니다."),
-	USER_INVALID_NICKNAME(HttpStatus.BAD_REQUEST, "U-012", "유효하지 않은 닉네임입니다."),
-	USER_EMAIL_INVALID(HttpStatus.BAD_REQUEST, "U-013", "존재하지 않는 이메일입니다."),
+	USER_LIKE_NOT_FOUND(HttpStatus.BAD_REQUEST, "U-002", "사용자의 좋아요 정보가 누락되었습니다."),
+	INVALID_USER(HttpStatus.NOT_FOUND, "U-003", "아이디 또는 비밀번호가 일치하지 않습니다."),
+	DUPLICATED_EMAIL(HttpStatus.CONFLICT, "U-004", "중복된 이메일입니다."),
+	DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "U-005", "중복된 닉네임입니다."),
+	USER_DELETED(HttpStatus.BAD_REQUEST, "U-006", "삭제된 유저입니다."),
+	USER_FOLLOW_SELF(HttpStatus.BAD_REQUEST, "U-007", "자기자신을 팔로우/언팔로우 할 수 없습니다."),
+	USER_UPDATE_SELF(HttpStatus.BAD_REQUEST, "U-008", "자기자신의 정보만 수정할 수 있습니다."),
+	DUPLICATED_FOLLOWED(HttpStatus.CONFLICT, "U-009", "이미 팔로우한 유저입니다."),
+	USER_NOT_FOLLOWED(HttpStatus.BAD_REQUEST, "U-010", "팔로우하지 않은 유저입니다."),
+	MISSING_USER(HttpStatus.BAD_REQUEST, "U-011", "사용자 정보가 누락되었습니다."),
+	USER_STATUS_INVALID(HttpStatus.BAD_REQUEST, "U-012", "유효하지 않은 유저 상태입니다."),
+	USER_INVALID_NICKNAME(HttpStatus.BAD_REQUEST, "U-013", "유효하지 않은 닉네임입니다."),
+	USER_EMAIL_INVALID(HttpStatus.BAD_REQUEST, "U-014", "존재하지 않는 이메일입니다."),
 
 	/**
 	 * Alert Error (AL-xxx)
@@ -61,6 +63,7 @@ public enum ErrorCode {
 	 */
 	PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "PR-001", "프로젝트를 찾지 못했습니다."),
 	MISSING_PROJECT(HttpStatus.BAD_REQUEST, "PR-002", "프로젝트 정보가 누락되었습니다."),
+	PROJECT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "PR-003", "접근 불가능한 프로젝트입니다."),
 
 	/**
 	 * Post Error (P-xxx)
