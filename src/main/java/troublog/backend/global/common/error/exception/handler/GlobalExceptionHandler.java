@@ -99,7 +99,7 @@ public class GlobalExceptionHandler {
 		HttpServletRequest request
 	) {
 		LoggingUtil.logException("HttpRequestMethodNotSupportedException 발생", ex, request);
-		ErrorResponse response = ErrorResponse.of(ErrorCode.BAD_REQUEST, request);
+		ErrorResponse response = ErrorResponse.of(ErrorCode.METHOD_NOT_ALLOWED, request);
 		return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(BaseResponse.fail(response));
 	}
 
@@ -109,7 +109,7 @@ public class GlobalExceptionHandler {
 		HttpServletRequest request
 	) {
 		LoggingUtil.logException("HttpMediaTypeNotSupportedException 발생", ex, request);
-		ErrorResponse response = ErrorResponse.of(ErrorCode.BAD_REQUEST, request);
+		ErrorResponse response = ErrorResponse.of(ErrorCode.UNSUPPORTED_MEDIA_TYPE, request);
 		return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(BaseResponse.fail(response));
 	}
 
@@ -119,7 +119,7 @@ public class GlobalExceptionHandler {
 		HttpServletRequest request
 	) {
 		LoggingUtil.logException("DataIntegrityViolationException 발생", ex, request);
-		ErrorResponse response = ErrorResponse.of(ErrorCode.BAD_REQUEST, request);
+		ErrorResponse response = ErrorResponse.of(ErrorCode.DATA_INTEGRITY_VIOLATION, request);
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(BaseResponse.fail(response));
 	}
 
