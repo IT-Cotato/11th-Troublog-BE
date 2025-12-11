@@ -349,12 +349,13 @@ public class JwtProvider {
 		try {
 			String authHeader = request.getHeader(AUTHORIZATION);
 			if (authHeader != null && authHeader.startsWith(PREFIX)) {
-				String token = authHeader.substring(7);
+				String token = authHeader.substring(PREFIX.length());
 				Claims claims = getClaimsWithoutExp(token);
 				Long userId = claims.get("userId", Long.class);
 				return userId != null ? userId.toString() : null;
 			}
 		} catch (Exception e) {
+			log.debug("사용자 요청에서 ID를 추출하지 못했습니다: {}", e.getMessage());
 		}
 		return null;
 	}
