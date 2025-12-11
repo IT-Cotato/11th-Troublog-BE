@@ -8,6 +8,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.MailParseException;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -20,8 +22,7 @@ import troublog.backend.domain.common.entity.AuthCode;
 import troublog.backend.domain.common.entity.Email;
 import troublog.backend.domain.common.repository.AuthCodeRepository;
 import troublog.backend.domain.common.repository.EmailRepository;
-import troublog.backend.global.common.error.ErrorCode;
-import troublog.backend.global.common.error.exception.BusinessException;
+
 
 @Slf4j
 @Service
@@ -82,7 +83,7 @@ public class MailUtil {
 			mailSender.send(message);
 		} catch (Exception exception) {
 			log.error("메일 전송 실패 {}", receiverEmailAdr, exception);
-			throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
+			throw new MailSendException("메일 전송에 실패했습니다: " + receiverEmailAdr, exception);
 		}
 	}
 
@@ -97,7 +98,7 @@ public class MailUtil {
 			ClassPathResource resource = new ClassPathResource(path);
 			return new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 		} catch (IOException e) {
-			throw new BusinessException(ErrorCode.TEMPLATE_LOADING_FAILED);
+			throw new MailParseException("메일 템플릿 로딩에 실패했습니다: " + path, e);
 		}
 	}
 

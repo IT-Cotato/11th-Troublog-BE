@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.mail.MailException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -138,9 +139,20 @@ public class GlobalExceptionHandler {
 		HttpServletRequest request
 	) {
 		LoggingUtil.logException("AccessDeniedException 발생", ex, request);
-		ErrorResponse response = ErrorResponse.of(ErrorCode.UNAUTHORIZED, request);
+		ErrorResponse response = ErrorResponse.of(ErrorCode.ACCESS_DENIED, request);
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseResponse.fail(response));
 	}
+
+	@ExceptionHandler(MailException.class)
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleMailException(
+		MailException ex,
+		HttpServletRequest request
+	) {
+		LoggingUtil.logException("MailException 발생", ex, request);
+		ErrorResponse response = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR, request);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseResponse.fail(response));
+	}
+
 
 	@ExceptionHandler(AuthException.class)
 	public ResponseEntity<BaseResponse<ErrorResponse>> handleAuthException(

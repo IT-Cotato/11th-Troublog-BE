@@ -18,6 +18,7 @@ public enum ErrorCode {
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C-004", "서버 오류가 발생했습니다."),
 	JSON_PARSING_ERROR(HttpStatus.BAD_REQUEST, "C-005", "JSON 파싱 중 오류가 발생했습니다."),
 	TEMPLATE_LOADING_FAILED(HttpStatus.NOT_FOUND, "C-006", "템플릿 로딩에 실패했습니다."),
+	ACCESS_DENIED(HttpStatus.FORBIDDEN, "C-007", " 요청한 리소스에 접근할 수 없습니다."),
 
 	/**
 	 * Auth Error (AU-xxx)
@@ -69,7 +70,7 @@ public enum ErrorCode {
 	 * Post Error (P-xxx)
 	 */
 	POST_NOT_FOUND(HttpStatus.NOT_FOUND, "P-001", "트러블슈팅 문서를 찾지 못했습니다."),
-	POST_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "P-002", "접근 불가능한 트러블슈팅 문서입니다."),
+	POST_ACCESS_DENIED(HttpStatus.FORBIDDEN, "P-002", "접근 불가능한 트러블슈팅 문서입니다."),
 	POST_NOT_DELETED(HttpStatus.BAD_GATEWAY, "P-003", "삭제되지 않은 트러블슈팅 문서입니다."),
 	MISSING_POST(HttpStatus.BAD_REQUEST, "P-004", "트러블 슈팅 문서가 누락되었습니다."),
 	INVALID_VALUE(HttpStatus.BAD_REQUEST, "P-005", "잘못된 값입니다."),
@@ -127,6 +128,12 @@ public enum ErrorCode {
 	TASK_CANNOT_BE_CANCELLED(HttpStatus.BAD_REQUEST, "AI-003", "이미 완료된 작업입니다."),
 	TASK_POST_MISMATCH(HttpStatus.BAD_REQUEST, "AI-004", "작업과 게시물이 일치하지 않습니다."),
 	CHAT_MODEL_NOT_FOUND(HttpStatus.NOT_FOUND, "AI-005", "Chat Model을 찾을 수 없습니다."),
+
+	/**
+	 * Mail Error (M-xxx)
+	 */
+	MAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "M-001", "메일 전송에 실패했습니다."),
+	MAIL_TEMPLATE_LOADING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "M-002", "메일 템플릿 로딩에 실패했습니다."),
 
 	/**
 	 * Terms Error (TR-xxx)
