@@ -58,7 +58,7 @@ public class MdcFilter implements Filter {
 			long executionTime = System.currentTimeMillis() - startTime;
 			MDC.put(EXECUTION_TIME_KEY, executionTime + "ms");
 			if (log.isInfoEnabled()) {
-				log.info("Request completed");
+				log.info("Request completed : {} ms", executionTime);
 			}
 			MDC.clear();
 		}
