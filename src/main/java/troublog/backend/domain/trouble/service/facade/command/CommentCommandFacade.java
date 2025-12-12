@@ -115,13 +115,18 @@ public class CommentCommandFacade {
 	public void hardDeleteComment(Long userId, long commentId) {
 		Comment comment = commentQueryService.findComment(commentId);
 		CommentFactory.validateAuthorized(userId, comment);
-		commentCommandService.delete(comment);
+		commentCommandService.hardDelete(comment);
 	}
 
-	public void softDeleteComment(Long userId, long commentId) {
+	public void deleteComment(Long userId, long commentId) {
 		Comment comment = commentQueryService.findComment(commentId);
 		CommentFactory.validateAuthorized(userId, comment);
-		comment.markAsDeleted();
+		// 대댓글이 있으면 softdelete
+		if (commentQueryService.hasActiveChildComments(commentId)) {
+			commentCommandService.softDelete(comment);
+			return;
+		}
+		// 대댓글이 없으면 harddelete
+		commentCommandService.hardDelete(comment);
 	}
 }
-

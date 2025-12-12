@@ -1,7 +1,6 @@
 package troublog.backend.domain.project.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,9 +29,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 		Pageable pageable
 	);
 
-	Page<Project> findAllByUserIdAndIsDeletedFalse(Long userId, Pageable pageable);
+	Page<Project> findAllByUserId(Long userId, Pageable pageable);
 
-	List<Project> findAllByUserAndIsDeletedFalse(User user);
+	List<Project> findAllByUser(User user);
 
-	Optional<Project> findByIdAndIsDeletedFalse(long id);
 }

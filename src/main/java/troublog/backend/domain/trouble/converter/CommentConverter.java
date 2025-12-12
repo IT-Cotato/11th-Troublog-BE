@@ -17,7 +17,6 @@ public class CommentConverter {
 	public Comment toEntity(CommentReqDto commentReqDto) {
 		return Comment.builder()
 			.content(commentReqDto.contents())
-			.isDeleted(false)
 			.build();
 	}
 

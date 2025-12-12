@@ -11,13 +11,13 @@ import troublog.backend.domain.user.entity.UserStatus;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	Optional<User> findByEmailAndIsDeletedFalse(String email);
+	Optional<User> findByEmail(String email);
 
-	boolean existsByNicknameAndIsDeletedFalse(String nickname);
+	boolean existsByNickname(String nickname);
 
-	List<User> findAllByIdInAndIsDeletedFalse(Set<Long> userIds);
+	List<User> findAllByIdIn(Set<Long> userIds);
 
-	Optional<User> findByEmailAndIsDeletedFalseAndStatus(String email, UserStatus userStatus);
+	Optional<User> findByEmailAndStatus(String email, UserStatus userStatus);
 
-	boolean existsByEmailAndIsDeletedFalse(String email);
+	boolean existsByEmail(String email);
 }

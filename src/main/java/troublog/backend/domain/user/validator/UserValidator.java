@@ -16,7 +16,7 @@ public class UserValidator {
 	private final PasswordEncoder passwordEncoder;
 
 	public static void validateUserDeleted(User user) {
-		if (Boolean.TRUE.equals(user.getIsDeleted())) {
+		if (user.isDeleted()) {
 			throw new UserException(ErrorCode.USER_DELETED);
 		}
 	}

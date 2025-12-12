@@ -118,7 +118,7 @@ public class AuthFacade {
 		jwtProvider.checkEnvType(clientEnvType);
 
 		// 유저 확인
-		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(loginReqDto.email());
+		User user = userQueryService.findUserByEmailAndStatusActive(loginReqDto.email());
 
 		// 비밀번호 검증
 		if (!passwordEncoder.matches(loginReqDto.password(), user.getPassword())) {
@@ -159,7 +159,7 @@ public class AuthFacade {
 		Long userId = jwtProvider.reissueAccessToken(request);
 
 		// 새로운 액세스토큰에 넣어 줄 유저 정보 조회
-		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
+		User user = userQueryService.findUserByIdAndStatusActive(userId);
 
 		//새로운 CustomAuthenticationToken 객체 생성
 		CustomAuthenticationToken authenticationToken =
@@ -328,7 +328,7 @@ public class AuthFacade {
 		}
 
 		// 이메일 존재여부 체크
-		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(passwordChangeReqDto.email());
+		User user = userQueryService.findUserByEmailAndStatusActive(passwordChangeReqDto.email());
 
 		// 비밀번호 재설정
 		user.updatePassword(passwordEncoder.encode(passwordChangeReqDto.password()));
@@ -362,7 +362,7 @@ public class AuthFacade {
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
 
-		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(
+		User user = userQueryService.findUserByEmailAndStatusActive(
 			integrationKakaoRegisterReqDto.email());
 
 		// 비밀번호 검증

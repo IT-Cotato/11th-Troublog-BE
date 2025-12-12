@@ -23,7 +23,6 @@ import troublog.backend.global.common.util.JsonConverter;
 public class PostConverter {
 	private static final int DEFAULT_COUNT = 0;
 	private static final boolean DEFAULT_SUMMARY_CREATED = false;
-	private static final boolean DEFAULT_DELETE_STATUS = false;
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
 	public Post createWritingPost(PostReqDto postReqDto) {
@@ -64,7 +63,6 @@ public class PostConverter {
 			.title(postReqDto.title())
 			.commentCount(DEFAULT_COUNT)
 			.likeCount(DEFAULT_COUNT)
-			.isDeleted(DEFAULT_DELETE_STATUS)
 			.templateType(postReqDto.templateType())
 			.checklistError(JsonConverter.toJson(postReqDto.checklistError()))
 			.checklistReason(JsonConverter.toJson(postReqDto.checklistReason()));

@@ -51,7 +51,7 @@ public class TermsValidator {
 	private void validateActiveTerms(Terms terms) {
 		if (Boolean.FALSE.equals(terms.getIsCurrent())) {
 			throw new TermsException(ErrorCode.TERMS_NOT_CURRENT);
-		} else if (Boolean.TRUE.equals(terms.getIsDeleted())) {
+		} else if (terms.isDeleted()) {
 			throw new TermsException(ErrorCode.TERMS_DELETED);
 		}
 	}

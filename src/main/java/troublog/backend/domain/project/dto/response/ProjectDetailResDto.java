@@ -1,5 +1,6 @@
 package troublog.backend.domain.project.dto.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,8 +25,7 @@ public record ProjectDetailResDto(
 	@Schema(description = "기술 태그들")
 	List<String> tags,
 
-	@Schema(description = "삭제 여부")
-	boolean isDeleted
+	@Schema(description = "삭제 일시")
+	LocalDateTime deletedAt
 ) {
 }
-

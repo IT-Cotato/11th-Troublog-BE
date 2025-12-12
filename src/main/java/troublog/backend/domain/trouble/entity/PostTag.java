@@ -1,5 +1,8 @@
 package troublog.backend.domain.trouble.entity;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,7 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import troublog.backend.global.common.entity.BaseEntity;
+import troublog.backend.global.common.entity.SoftDeleteEntity;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
 
@@ -24,17 +27,21 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "post_tags", indexes = {@Index(name = "idx_post_tags_post_id", columnList = "post_id"),
+@SQLDelete(sql = "UPDATE post_tags SET deleted_at = current_timestamp WHERE post_tag_id = ?")
+@SQLRestriction("deleted_at IS NULL")
+@Table(name = "post_tags", indexes = {
+	@Index(name = "idx_post_tags_post_id", columnList = "post_id"),
 	@Index(name = "idx_post_tags_tag_id", columnList = "tag_id"),
-	@Index(name = "idx_post_tags_composite", columnList = "post_id, tag_id", unique = true)})
-public class PostTag extends BaseEntity {
+	@Index(name = "idx_post_tags_composite", columnList = "post_id, tag_id, deleted_at", unique = true)
+})
+public class PostTag extends SoftDeleteEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "post_tag_id")
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "post_id")
 	private Post post;
 

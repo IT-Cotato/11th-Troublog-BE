@@ -39,7 +39,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		) ranked_posts
 		JOIN posts p ON p.post_id = ranked_posts.post_id
 		ORDER BY ranked_posts.total_score DESC, p.post_id DESC
-		
 		""", countQuery = """
 		SELECT COUNT(DISTINCT p.post_id)
 		FROM posts p
@@ -182,9 +181,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	List<Post> findAllByUser(User user);
 
 	@Modifying
-	@Query("""
-		    delete from Post p
-		    where p.id = :postId
-		""")
+	@Query(
+		value = "DELETE FROM posts WHERE post_id = :postId",
+		nativeQuery = true
+	)
 	void hardDeletePost(@Param("postId") Long postId);
 }

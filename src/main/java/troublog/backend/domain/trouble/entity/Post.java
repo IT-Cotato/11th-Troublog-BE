@@ -132,7 +132,7 @@ public class Post extends SoftDeleteEntity {
 	private List<Like> likes = new ArrayList<>();
 
 	@Builder.Default
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "post")
 	private List<Comment> comments = new ArrayList<>();
 
 	// 연관관계 편의 메서드들

@@ -3,6 +3,9 @@ package troublog.backend.domain.user.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +14,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +28,7 @@ import troublog.backend.domain.trouble.entity.Comment;
 import troublog.backend.domain.trouble.entity.Like;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
-import troublog.backend.global.common.entity.BaseEntity;
+import troublog.backend.global.common.entity.SoftDeleteEntity;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
 
@@ -33,8 +37,11 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @Getter
-@Table(name = "users")
-public class User extends BaseEntity {
+@SQLDelete(sql = "UPDATE users SET deleted_at = current_timestamp WHERE user_id = ?")
+@SQLRestriction("deleted_at IS NULL")
+@Table(name = "users", indexes = {
+	@Index(name = "idx_users_deleted_at", columnList = "deleted_at")})
+public class User extends SoftDeleteEntity {
 
 	@Builder.Default
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -46,7 +53,7 @@ public class User extends BaseEntity {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<Like> likes = new ArrayList<>();
 	@Builder.Default
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "user")
 	List<Comment> comments = new ArrayList<>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -78,10 +85,6 @@ public class User extends BaseEntity {
 
 	@Column(name = "social_id")
 	private String socialId;
-
-	@NotNull
-	@Column(name = "is_deleted")
-	private Boolean isDeleted;
 
 	@NotNull
 	@Builder.Default
@@ -143,10 +146,6 @@ public class User extends BaseEntity {
 		this.bio = userProfileUpdateReqDto.bio();
 		this.githubUrl = userProfileUpdateReqDto.githubUrl();
 		this.profileUrl = userProfileUpdateReqDto.profileUrl();
-	}
-
-	public void deleteUser() {
-		this.isDeleted = true;
 	}
 
 	public void updateOAuth2Info(String nickname, String field, String bio, String githubUrl) {

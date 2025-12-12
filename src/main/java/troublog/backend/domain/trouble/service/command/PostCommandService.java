@@ -26,7 +26,7 @@ public class PostCommandService {
 	}
 
 	public void deletePost(final Post post) {
-		log.info("[Post] 트러블슈팅 문서 삭제: postId={}, title={}", post.getId(), post.getTitle());
+		log.info("[Post] 트러블슈팅 문서 hard delete: postId={}, title={}", post.getId(), post.getTitle());
 		postRepository.hardDeletePost(post.getId());
 	}
 

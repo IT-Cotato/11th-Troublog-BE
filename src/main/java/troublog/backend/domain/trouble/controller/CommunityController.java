@@ -128,7 +128,7 @@ public class CommunityController {
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable long commentId
 	) {
-		commentCommandFacade.softDeleteComment(auth.getUserId(), commentId);
+		commentCommandFacade.deleteComment(auth.getUserId(), commentId);
 		return ResponseUtils.noContent();
 	}
 

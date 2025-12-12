@@ -26,17 +26,8 @@ public class CommentCommandService {
 		return commentRepository.save(comment);
 	}
 
-	public void delete(Comment comment) {
-		Long commentId = comment.getId();
-		Long postId = (comment.getPost() != null) ? comment.getPost().getId() : null;
-		Long userId = (comment.getUser() != null) ? comment.getUser().getId() : null;
-		log.info("[Comment] 댓글 하드 삭제: commentId={}, postId={}, userId={}", commentId, postId, userId);
-
-		if (commentRepository.existsByParentCommentId(comment.getId())) {
-			throw new PostException(ErrorCode.COMMENT_HAS_CHILDREN);
-		}
-		comment.getPost().removeComment(comment);
-		comment.getUser().removeComment(comment);
+	public void softDelete(Comment comment) {
+		log.info("[Comment] 댓글 soft delete: commentId={}, postId={}", comment.getId(), comment.getPost().getId());
 		commentRepository.delete(comment);
 	}
 
@@ -47,6 +38,25 @@ public class CommentCommandService {
 		}
 
 		log.info("[Comment] 댓글 soft delete all: commentList={}", commentList);
-		commentList.forEach(Comment::markAsDeleted);
+		commentList.forEach(Comment::markDeleted);
+	}
+
+	public void hardDelete(final Comment comment) {
+		Long commentId = comment.getId();
+		Long postId = (comment.getPost() != null) ? comment.getPost().getId() : null;
+		Long userId = (comment.getUser() != null) ? comment.getUser().getId() : null;
+		if (commentRepository.existsByParentCommentId(comment.getId())) {
+			throw new PostException(ErrorCode.COMMENT_HAS_CHILDREN);
+		}
+		log.info("[Comment] 댓글 하드 삭제: commentId={}, postId={}, userId={}", commentId, postId, userId);
+
+		comment.getPost().removeComment(comment);
+		comment.getUser().removeComment(comment);
+		commentRepository.deleteHardById(comment.getId());
+	}
+
+	public void hardDeleteAll(final List<Long> hardDeleteCommentIdList) {
+		log.info("[Comment] 댓글 하드 삭제: commentList={}", hardDeleteCommentIdList);
+		commentRepository.deleteHardAll(hardDeleteCommentIdList);
 	}
 }

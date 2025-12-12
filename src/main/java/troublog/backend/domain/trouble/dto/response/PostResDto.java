@@ -32,9 +32,6 @@ public record PostResDto(
 	@Schema(description = "요약 생성 여부", example = "false")
 	boolean isSummaryCreated,
 
-	@Schema(description = "삭제 여부", example = "false")
-	boolean isDeleted,
-
 	@Schema(description = "게시글 상태", example = "COMPLETED")
 	String postStatus,
 

@@ -30,14 +30,18 @@ public class CommentQueryService {
 	}
 
 	public Page<Comment> findAllComment(Long postId, Pageable pageable) {
-		Page<Comment> comments = commentRepository.findByPostIdAndIsDeletedFalseOrderByCreatedAtDesc(postId, pageable);
+		Page<Comment> comments = commentRepository.findByPostIdOrderByCreatedAtDesc(postId, pageable);
 		log.info("[Post] 전체 댓글 조회: postId={} size={}", postId, comments.getTotalElements());
 		return comments;
 	}
 
 	public List<Comment> findCommentListByUserId(User user) {
-		List<Comment> commentList = commentRepository.findAllByUserAndIsDeletedFalse(user);
+		List<Comment> commentList = commentRepository.findAllByUserWithChildren(user);
 		log.info("[User] 특정 사용자의 전체 댓글 조회: userId={}, size={}", user.getId(), commentList.size());
 		return commentList;
+	}
+
+	public boolean hasActiveChildComments(Long commentId) {
+		return commentRepository.existsByParentCommentId(commentId);
 	}
 }

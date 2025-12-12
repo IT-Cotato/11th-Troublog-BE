@@ -1,8 +1,10 @@
 package troublog.backend.domain.project.entity;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,6 +13,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -23,7 +26,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.user.entity.User;
-import troublog.backend.global.common.entity.BaseEntity;
+import troublog.backend.global.common.entity.SoftDeleteEntity;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.ProjectException;
 
@@ -32,8 +35,11 @@ import troublog.backend.global.common.error.exception.ProjectException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "projects")
-public class Project extends BaseEntity {
+@SQLDelete(sql = "UPDATE projects SET deleted_at = current_timestamp WHERE project_id = ?")
+@SQLRestriction("deleted_at IS NULL")
+@Table(name = "projects", indexes = {
+	@Index(name = "idx_projects_user_deleted", columnList = "user_id, deleted_at")})
+public class Project extends SoftDeleteEntity {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -55,13 +61,6 @@ public class Project extends BaseEntity {
 
 	@Column(name = "thumbnail_image_url")
 	private String thumbnailImageUrl;
-
-	@Builder.Default
-	@Column(name = "is_deleted", nullable = false)
-	private Boolean isDeleted = false;
-
-	@Column(name = "deleted_at")
-	private LocalDateTime deletedAt;
 
 	public void assignUser(User user) {
 		if (user == null) {
@@ -85,10 +84,5 @@ public class Project extends BaseEntity {
 		this.name = name;
 		this.description = description;
 		this.thumbnailImageUrl = thumbnailImageUrl;
-	}
-
-	public void softDelete() {
-		this.isDeleted = true;
-		this.deletedAt = LocalDateTime.now();
 	}
 }

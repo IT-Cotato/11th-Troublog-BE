@@ -19,10 +19,12 @@ public interface StatisticsRepository extends JpaRepository<Post, Long> {
 			SELECT p.post_id AS post_id, DATE(p.updated_at) AS date
 			FROM posts p
 			WHERE p.user_id = :userId AND p.updated_at BETWEEN :start AND :end
+			AND p.deleted_at is null
 			UNION
 			SELECT p.post_id AS post_id, DATE(p.completed_at) AS date
 			FROM posts p
 			WHERE p.user_id = :userId AND p.completed_at BETWEEN :start AND :end
+			AND p.deleted_at is null
 		) AS combined
 		GROUP BY date
 		ORDER BY date

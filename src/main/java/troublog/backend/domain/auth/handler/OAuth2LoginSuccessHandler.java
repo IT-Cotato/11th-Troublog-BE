@@ -113,7 +113,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 	}
 
 	private User findOrCreateUserByEmail(String nickname, String profileImageUrl, String socialId, String email) {
-		return userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActiveSocial(email)
+		return userQueryService.findUserByEmailAndStatusActiveSocial(email)
 			.orElseGet(() -> {
 				// 닉네임 중복 체크 및 처리
 				String uniqueNickname = generateUniqueNickname(nickname);
@@ -131,7 +131,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 						.loginType(LoginType.KAKAO.getValue())
 						.socialId(socialId)
 						.password(passwordEncoder.encode(UUID.randomUUID().toString()))
-						.isDeleted(false)
 						.isIntegrated(false)
 						// field, bio, githubUrl은 null로 두고 나중에 입력받음
 						.build()
@@ -238,4 +237,3 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 	private record Oauth2UserInfo(String socialId, String nickname, String profileImageUrl, String email) {
 	}
 }
-

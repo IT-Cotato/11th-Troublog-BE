@@ -33,8 +33,8 @@ public class ProjectCommandService {
 	}
 
 	public void softDelete(Project project) {
+		projectRepository.delete(project);
 		log.info("[Project] 프로젝트 soft delete: projectId={}", project.getId());
-		project.softDelete();
 	}
 
 	public void softDeleteAll(List<Project> projectList) {
@@ -44,6 +44,6 @@ public class ProjectCommandService {
 		}
 
 		log.info("[Project] 프로젝트 리스트 soft delete:  projectList={}", projectList);
-		projectList.forEach(Project::softDelete);
+		projectList.forEach(Project::markDeleted);
 	}
 }
