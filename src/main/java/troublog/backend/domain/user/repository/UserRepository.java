@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 		value = """
 			DELETE FROM users
 			WHERE deleted_at IS NOT NULL
-			  AND deleted_at <= :threshold
+				AND deleted_at <= :threshold
 			""",
 		nativeQuery = true
 	)

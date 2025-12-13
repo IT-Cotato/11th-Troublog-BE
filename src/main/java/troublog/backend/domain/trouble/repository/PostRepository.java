@@ -193,7 +193,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		value = """
 			DELETE FROM posts
 			WHERE deleted_at IS NOT NULL
-			  AND deleted_at <= :threshold
+				AND deleted_at <= :threshold
 			""",
 		nativeQuery = true
 	)

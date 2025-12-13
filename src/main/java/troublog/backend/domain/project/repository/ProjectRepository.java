@@ -40,7 +40,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 		value = """
 			DELETE FROM projects
 			WHERE deleted_at IS NOT NULL
-			  AND deleted_at <= :threshold
+				AND deleted_at <= :threshold
 			""",
 		nativeQuery = true
 	)

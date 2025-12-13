@@ -45,7 +45,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 		value = """
 			DELETE FROM comments
 			WHERE deleted_at IS NOT NULL
-			  AND deleted_at <= :threshold
+				AND deleted_at <= :threshold
 			""",
 		nativeQuery = true
 	)

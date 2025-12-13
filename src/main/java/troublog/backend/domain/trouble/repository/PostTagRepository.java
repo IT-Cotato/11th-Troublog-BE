@@ -23,7 +23,7 @@ public interface PostTagRepository extends JpaRepository<PostTag, Long> {
 		value = """
 			DELETE FROM post_tags
 			WHERE deleted_at IS NOT NULL
-			  AND deleted_at <= :threshold
+				AND deleted_at <= :threshold
 			""",
 		nativeQuery = true
 	)
