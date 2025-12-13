@@ -32,7 +32,7 @@ public class SoftDeleteCleanUp {
 	@Scheduled(cron = "0 0 1 * * *")
 	@Transactional
 	public void cleanUpSoftDeletedRows() {
-		LocalDateTime threshold = LocalDateTime.now().plusMonths(RETENTION_MONTHS);
+		LocalDateTime threshold = LocalDateTime.now().minusMonths(RETENTION_MONTHS);
 		log.info("[SoftDeleteCleanUp] 시작 - softDelete된지 한달이 넘은 데이터 모두 삭제={}", threshold);
 
 		int totalDeleted = 0;
