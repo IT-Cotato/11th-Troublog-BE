@@ -26,12 +26,6 @@ public class PostFactory {
 		}
 	}
 
-	// public static void validateIsDeleted(final Post foundPost) {
-	// 	if (Boolean.FALSE.equals(foundPost.getIsDeleted())) {
-	// 		throw new PostException(ErrorCode.POST_NOT_DELETED);
-	// 	}
-	// }
-
 	public Post createPostWithRequireRelations(final PostReqDto postReqDto) {
 		PostStatus status = PostStatus.from(postReqDto.postStatus());
 		return switch (status) {

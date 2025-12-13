@@ -49,14 +49,19 @@ public class CommentCommandService {
 			throw new PostException(ErrorCode.COMMENT_HAS_CHILDREN);
 		}
 		log.info("[Comment] 댓글 하드 삭제: commentId={}, postId={}, userId={}", commentId, postId, userId);
-
-		comment.getPost().removeComment(comment);
-		comment.getUser().removeComment(comment);
+		if (comment.getPost() != null) {
+			comment.getPost().removeComment(comment);
+		}
+		if (comment.getUser() != null) {
+			comment.getUser().removeComment(comment);
+		}
 		commentRepository.deleteHardById(comment.getId());
 	}
 
 	public void hardDeleteAll(final List<Long> hardDeleteCommentIdList) {
-		log.info("[Comment] 댓글 하드 삭제: commentList={}", hardDeleteCommentIdList);
-		commentRepository.deleteHardAll(hardDeleteCommentIdList);
+		if (!CollectionUtils.isEmpty(hardDeleteCommentIdList)) {
+			log.info("[Comment] 댓글 하드 삭제: commentList={}", hardDeleteCommentIdList);
+			commentRepository.deleteHardAll(hardDeleteCommentIdList);
+		}
 	}
 }

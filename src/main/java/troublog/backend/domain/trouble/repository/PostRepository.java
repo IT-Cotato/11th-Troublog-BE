@@ -198,4 +198,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		nativeQuery = true
 	)
 	int deleteAllSoftDeletedBefore(@Param("threshold") LocalDateTime threshold);
+
+	@Query(value = "SELECT * FROM posts WHERE deleted_at IS NOT NULL", nativeQuery = true)
+	List<Post> findAllNotDeletedPosts();
 }

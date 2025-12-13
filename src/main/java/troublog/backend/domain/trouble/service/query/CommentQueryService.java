@@ -41,7 +41,7 @@ public class CommentQueryService {
 		return commentList;
 	}
 
-	public boolean hasActiveChildComments(Long commentId) {
+	public boolean hasChildComments(Long commentId) {
 		return commentRepository.existsByParentCommentId(commentId);
 	}
 }

@@ -122,7 +122,7 @@ public class CommentCommandFacade {
 		Comment comment = commentQueryService.findComment(commentId);
 		CommentFactory.validateAuthorized(userId, comment);
 		// 대댓글이 있으면 softdelete
-		if (commentQueryService.hasActiveChildComments(commentId)) {
+		if (commentQueryService.hasChildComments(commentId)) {
 			commentCommandService.softDelete(comment);
 			return;
 		}

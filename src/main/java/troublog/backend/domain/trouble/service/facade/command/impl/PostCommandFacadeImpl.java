@@ -61,8 +61,6 @@ public class PostCommandFacadeImpl implements PostCommandFacade {
 	public PostResDto restorePost(Long userId, Long postId) {
 		Post foundPost = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
-		// PostFactory.validateIsDeleted(foundPost);
-		// foundPost.restoreFromDeleted();
 		return PostConverter.toResponse(foundPost);
 	}
 
