@@ -189,6 +189,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	void hardDeletePost(@Param("postId") Long postId);
 
 	@Modifying
-	@Query(value = "DELETE FROM posts WHERE deleted_at IS NOT NULL AND deleted_at <= :threshold", nativeQuery = true)
+	@Query(
+		value = """
+			DELETE FROM posts
+			WHERE deleted_at IS NOT NULL
+			  AND deleted_at <= :threshold
+			""",
+		nativeQuery = true
+	)
 	int deleteAllSoftDeletedBefore(@Param("threshold") LocalDateTime threshold);
 }

@@ -36,7 +36,14 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 	List<Project> findAllByUser(User user);
 
 	@Modifying
-	@Query(value = "DELETE FROM projects WHERE deleted_at IS NOT NULL AND deleted_at <= :threshold", nativeQuery = true)
+	@Query(
+		value = """
+			DELETE FROM projects
+			WHERE deleted_at IS NOT NULL
+			  AND deleted_at <= :threshold
+			""",
+		nativeQuery = true
+	)
 	int deleteAllSoftDeletedBefore(@Param("threshold") LocalDateTime threshold);
 
 }

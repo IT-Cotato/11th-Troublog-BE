@@ -41,6 +41,13 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 	void deleteHardAll(@Param("ids") List<Long> hardDeleteCommentIdList);
 
 	@Modifying
-	@Query(value = "DELETE FROM comments WHERE deleted_at IS NOT NULL AND deleted_at <= :threshold", nativeQuery = true)
+	@Query(
+		value = """
+			DELETE FROM comments
+			WHERE deleted_at IS NOT NULL
+			  AND deleted_at <= :threshold
+			""",
+		nativeQuery = true
+	)
 	int deleteAllSoftDeletedBefore(@Param("threshold") LocalDateTime threshold);
 }

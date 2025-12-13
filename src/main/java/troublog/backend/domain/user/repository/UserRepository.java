@@ -26,6 +26,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	boolean existsByEmail(String email);
 
 	@Modifying
-	@Query(value = "DELETE FROM users WHERE deleted_at IS NOT NULL AND deleted_at <= :threshold", nativeQuery = true)
+	@Query(
+		value = """
+			DELETE FROM users
+			WHERE deleted_at IS NOT NULL
+			  AND deleted_at <= :threshold
+			""",
+		nativeQuery = true
+	)
 	int deleteAllSoftDeletedBefore(@Param("threshold") LocalDateTime threshold);
 }
