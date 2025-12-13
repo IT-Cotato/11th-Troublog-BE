@@ -1,5 +1,6 @@
 package troublog.backend.domain.trouble.repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -186,4 +187,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		nativeQuery = true
 	)
 	void hardDeletePost(@Param("postId") Long postId);
+
+	@Modifying
+	@Query(value = "DELETE FROM posts WHERE deleted_at IS NOT NULL AND deleted_at <= :threshold", nativeQuery = true)
+	int deleteAllSoftDeletedBefore(@Param("threshold") LocalDateTime threshold);
 }

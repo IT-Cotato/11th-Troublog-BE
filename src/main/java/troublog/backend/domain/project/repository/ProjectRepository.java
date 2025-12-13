@@ -1,10 +1,12 @@
 package troublog.backend.domain.project.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -32,5 +34,9 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 	Page<Project> findAllByUserId(Long userId, Pageable pageable);
 
 	List<Project> findAllByUser(User user);
+
+	@Modifying
+	@Query(value = "DELETE FROM projects WHERE deleted_at IS NOT NULL AND deleted_at <= :threshold", nativeQuery = true)
+	int deleteAllSoftDeletedBefore(@Param("threshold") LocalDateTime threshold);
 
 }

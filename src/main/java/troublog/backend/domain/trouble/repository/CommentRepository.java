@@ -1,5 +1,6 @@
 package troublog.backend.domain.trouble.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -38,4 +39,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 		nativeQuery = true
 	)
 	void deleteHardAll(@Param("ids") List<Long> hardDeleteCommentIdList);
+
+	@Modifying
+	@Query(value = "DELETE FROM comments WHERE deleted_at IS NOT NULL AND deleted_at <= :threshold", nativeQuery = true)
+	int deleteAllSoftDeletedBefore(@Param("threshold") LocalDateTime threshold);
 }
