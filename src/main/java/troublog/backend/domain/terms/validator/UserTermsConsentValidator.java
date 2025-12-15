@@ -42,7 +42,7 @@ public class UserTermsConsentValidator {
 
 	private static void validateUser(UserTermsConsent userTermsConsent) {
 		if (Objects.isNull(userTermsConsent.getUser())) {
-			throw new TermsException(ErrorCode.USER_NOT_FOUND);
+			throw new UserException(ErrorCode.USER_NOT_FOUND);
 		}
 	}
 

@@ -26,7 +26,7 @@ import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
 import troublog.backend.global.common.entity.BaseEntity;
 import troublog.backend.global.common.error.ErrorCode;
-import troublog.backend.global.common.error.exception.PostException;
+import troublog.backend.global.common.error.exception.UserException;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -118,7 +118,7 @@ public class User extends BaseEntity {
 
 	public void addLikeRef(Like like) {
 		if (like == null) {
-			throw new PostException(ErrorCode.MISSING_LIKE);
+			throw new UserException(ErrorCode.USER_LIKE_NOT_FOUND);
 		}
 		if (!likes.contains(like)) {
 			likes.add(like);

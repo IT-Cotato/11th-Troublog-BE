@@ -69,6 +69,9 @@ dependencies {
 
     //문자열 처리 관련 라이브러리
     implementation 'com.google.guava:guava:33.5.0-jre'
+
+    //logback
+    implementation 'net.logstash.logback:logstash-logback-encoder:9.0'
 }
 
 dependencyManagement {

@@ -35,4 +35,9 @@ public class PostSummaryCompletionService {
 		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.COMPLETED);
 		return result;
 	}
+
+	public void handleFailure(SummaryTask summaryTask, Exception exception) {
+		log.error("AI 분석 작업 실패: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId(), exception);
+		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.FAILED);
+	}
 }

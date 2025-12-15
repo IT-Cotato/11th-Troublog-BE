@@ -55,20 +55,3 @@ management:
     tags:
       application: ${spring.application.name}
       environment: local
-
-# 로그 설정 (Local)
-logging:
-  level:
-    troublog.backend: DEBUG
-    org.springframework.web: DEBUG
-    org.hibernate: DEBUG
-  pattern:
-    file: "%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n"
-    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
-  file:
-    name: logs/troublog.log
-  logback:
-    rollingpolicy:
-      max-file-size: 50MB
-      max-history: 7
-      total-size-cap: 500MB

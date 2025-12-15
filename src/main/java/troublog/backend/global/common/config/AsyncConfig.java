@@ -1,17 +1,17 @@
 package troublog.backend.global.common.config;
 
+import java.util.Map;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
+import org.slf4j.MDC;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskDecorator;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -19,69 +19,49 @@ import lombok.extern.slf4j.Slf4j;
 @EnableAsync
 public class AsyncConfig implements AsyncConfigurer {
 
-	public static final String SUMMARY_PREFIX = "AI-Summary";
-	private static final String IMAGE_PREFIX = "Image";
+	private static final String SUMMARY_EXECUTOR_PREFIX = "AI-Summary";
+	private static final String IMAGE_EXECUTOR_PREFIX = "Image";
 
 	@Bean(name = "summaryExecutor")
 	public Executor summaryExecutor() {
-		return createVirtualThreadExecutor(SUMMARY_PREFIX);
+		return createVirtualThreadExecutor(SUMMARY_EXECUTOR_PREFIX);
 	}
 
 	@Bean(name = "imageExecutor")
 	public Executor imageExecutor() {
-		return createVirtualThreadExecutor(IMAGE_PREFIX);
+		return createVirtualThreadExecutor(IMAGE_EXECUTOR_PREFIX);
 	}
 
 	@Override
 	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
 		return (ex, method, params) ->
-			log.error("[Async] 비동기 작업중 예외 발생 - Method: {}, Params: {}",
-				method.getName(), params, ex);
+			log.error("[Async] 비동기 작업 중 예외 발생 - Method: {}, Params: {}", method.getName(), params, ex);
 	}
 
 	private Executor createVirtualThreadExecutor(String threadNamePrefix) {
-		Executor virtualExecutor = Executors.newVirtualThreadPerTaskExecutor();
-		Executor decoratedExecutor = new ContextAwareVirtualThreadExecutor(
-			virtualExecutor, threadNamePrefix);
+		SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor();
+		executor.setThreadNamePrefix(threadNamePrefix + "-");
+		executor.setVirtualThreads(true);
+		executor.setTaskDecorator(new MdcPropagatingTaskDecorator());
 
-		log.info("{} Virtual Thread Executor 초기화 완료", threadNamePrefix);
-		return decoratedExecutor;
+		log.info("[Async] {} Virtual Thread Executor 초기화 완료", threadNamePrefix);
+		return executor;
 	}
 
-	private record ContextAwareVirtualThreadExecutor(Executor delegate, String threadNamePrefix) implements Executor {
+	private static class MdcPropagatingTaskDecorator implements TaskDecorator {
 
 		@Override
-		public void execute(@NonNull Runnable command) {
-			Runnable contextAwareTask = decorateWithContext(command);
-			Runnable namedTask = decorateWithThreadName(contextAwareTask);
-			delegate.execute(namedTask);
-		}
+		public Runnable decorate(Runnable runnable) {
+			Map<String, String> contextMap = MDC.getCopyOfContextMap();
 
-		private Runnable decorateWithContext(Runnable task) {
-			try {
-				RequestAttributes context = RequestContextHolder.currentRequestAttributes();
-				return () -> {
-					try {
-						RequestContextHolder.setRequestAttributes(context);
-						task.run();
-					} finally {
-						RequestContextHolder.resetRequestAttributes();
-					}
-				};
-			} catch (IllegalStateException e) {
-				return task;
-			}
-		}
-
-		private Runnable decorateWithThreadName(Runnable task) {
 			return () -> {
-				Thread currentThread = Thread.currentThread();
-				String originalName = currentThread.getName();
 				try {
-					currentThread.setName(threadNamePrefix + "-" + currentThread.threadId());
-					task.run();
+					if (contextMap != null) {
+						MDC.setContextMap(contextMap);
+					}
+					runnable.run();
 				} finally {
-					currentThread.setName(originalName);
+					MDC.clear();
 				}
 			};
 		}
