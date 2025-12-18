@@ -63,7 +63,7 @@ public class PostQueryService {
 	}
 
 	public List<Post> findAllDeletedPosts() {
-		List<Post> posts = postRepository.findAllNotDeletedPosts();
+		List<Post> posts = postRepository.findAllDeletedPosts();
 		log.info("[Post] 삭제된 트러블슈팅 문서 조회: postCount={}", posts.size());
 		return posts;
 	}

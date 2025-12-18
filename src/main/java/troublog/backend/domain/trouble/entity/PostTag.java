@@ -41,7 +41,7 @@ public class PostTag extends SoftDeleteEntity {
 	@Column(name = "post_tag_id")
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id")
 	private Post post;
 

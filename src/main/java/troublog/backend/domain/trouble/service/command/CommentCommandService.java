@@ -27,7 +27,8 @@ public class CommentCommandService {
 	}
 
 	public void softDelete(Comment comment) {
-		log.info("[Comment] 댓글 soft delete: commentId={}, postId={}", comment.getId(), comment.getPost().getId());
+		Long postId = (comment.getPost() != null) ? comment.getPost().getId() : null;
+		log.info("[Comment] 댓글 soft delete: commentId={}, postId={}", comment.getId(), postId);
 		commentRepository.delete(comment);
 	}
 

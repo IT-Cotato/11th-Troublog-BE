@@ -29,7 +29,7 @@ public class SoftDeleteCleanUp {
 	private final UserRepository userRepository;
 
 	// 매일 오전 1시에 돌아가는 배치
-	@Scheduled(cron = "0 0 1 * * *")
+	@Scheduled(cron = "0 0 4 * * *")
 	@Transactional
 	public void cleanUpSoftDeletedRows() {
 		LocalDateTime threshold = LocalDateTime.now().minusMonths(RETENTION_MONTHS);
