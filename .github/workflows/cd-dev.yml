@@ -1,0 +1,97 @@
+name: CD (Development Server)
+
+on:
+  push:
+    branches: ["develop"]
+
+jobs:
+  build:
+    name: Prepare Deployment Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Create .env file
+        run: echo "${{ secrets.DEV_ENV_FILE }}" > .env
+        shell: bash
+
+      - name: Archive deployment files
+        run: |
+          mkdir deploy
+          mv .env deploy/
+          cp docker-compose-dev.yml deploy/docker-compose.yml
+          cp redis.conf deploy/
+          cp -r monitoring deploy/
+          cp -r nginx deploy/
+          tar -czvf deploy.tar.gz -C deploy .
+        shell: bash
+
+      - name: Upload deployment artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-files
+          path: deploy.tar.gz
+
+  deploy:
+    name: Deploy to DEV EC2
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download deployment files
+        uses: actions/download-artifact@v5
+        with:
+          name: deployment-files
+          path: .
+
+      - name: Extract deployment files
+        run: |
+          tar -xzvf deploy.tar.gz
+          ls -al
+
+      - name: Copy files to DEV server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USERNAME }}
+          key: ${{ secrets.DEV_SSH_KEY }}
+          port: 22
+          source: "docker-compose.yml,.env,redis.conf,monitoring,nginx"
+          target: "/home/ubuntu/troublog/"
+
+      - name: Deploy to DEV EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USERNAME }}
+          key: ${{ secrets.DEV_SSH_KEY }}
+          port: 22
+          command_timeout: 30m
+          script: |
+            cd /home/ubuntu/troublog
+            
+            # logs 디렉토리 생성
+            mkdir -p logs
+            
+            # Docker 로그인
+            sudo docker login -u ${{ secrets.DEV_DOCKER_USERNAME }} -p ${{ secrets.DEV_DOCKER_PASSWORD }}
+            
+            # 기존 컨테이너 종료
+            sudo docker-compose down || true
+            
+            # 새 이미지 받기
+            sudo docker-compose pull
+            
+            # 컨테이너 재시작
+            sudo docker-compose up -d
+            
+            # 사용하지 않는 이미지 정리
+            sudo docker image prune -f
+            
+            # 컨테이너 상태 확인
+            sudo docker-compose ps
+            
+            # 로그 확인 (최근 20줄)
+            sudo docker-compose logs --tail=20
