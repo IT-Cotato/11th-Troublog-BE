@@ -7,7 +7,7 @@ import troublog.backend.global.common.error.exception.AuthException;
 
 @Getter
 @RequiredArgsConstructor
-public enum Domain {
+public enum FrontDomain {
 
 	LOCAL("http://localhost:5173"),
 	DEV("https://troublog.com"),

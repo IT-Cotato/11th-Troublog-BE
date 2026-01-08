@@ -23,8 +23,8 @@ import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
-import troublog.backend.global.common.constant.Domain;
 import troublog.backend.global.common.constant.EnvType;
+import troublog.backend.global.common.constant.FrontDomain;
 import troublog.backend.global.common.util.AlertSseUtil;
 
 @Service
@@ -62,7 +62,7 @@ public class LikeFacade {
 
 		// 좋아요 알림 전송
 		String targetUrl =
-			Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + "/user/community/" + post.getId();
+			FrontDomain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + "/user/community/" + post.getId();
 
 		Alert alert = AlertConverter.postLikesAlert(post.getUser(), user.getNickname(), targetUrl);
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);

@@ -22,8 +22,8 @@ import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
-import troublog.backend.global.common.constant.Domain;
 import troublog.backend.global.common.constant.EnvType;
+import troublog.backend.global.common.constant.FrontDomain;
 import troublog.backend.global.common.util.AlertSseUtil;
 
 @Service
@@ -51,7 +51,7 @@ public class CommentCommandFacade {
 
 		// 알림 전송
 		String targetUrl =
-			Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + COMMUNITY_REDIRECT_URL + post.getId();
+			FrontDomain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + COMMUNITY_REDIRECT_URL + post.getId();
 
 		Alert alert = AlertConverter.postCommentAlert(post.getUser(), user.getNickname(), targetUrl);
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
@@ -87,7 +87,7 @@ public class CommentCommandFacade {
 
 		// 알림 전송
 		String targetUrl =
-			Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + COMMUNITY_REDIRECT_URL + post.getId();
+			FrontDomain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + COMMUNITY_REDIRECT_URL + post.getId();
 
 		Alert alert = AlertConverter.postChildCommentAlert(parentComment.getUser(), user.getNickname(), targetUrl);
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);

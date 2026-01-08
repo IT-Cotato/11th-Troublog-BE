@@ -8,7 +8,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import troublog.backend.global.common.constant.Domain;
+import troublog.backend.global.common.constant.FrontDomain;
 
 @Configuration
 public class CorsConfig {
@@ -16,9 +16,9 @@ public class CorsConfig {
 		"http://localhost:8080",
 		"https://troublog.shop",
 		"https://troublog.cloud",
-		Domain.LOCAL.getUrl(),
-		Domain.DEV.getUrl(),
-		Domain.PROD.getUrl()
+		FrontDomain.LOCAL.getUrl(),
+		FrontDomain.DEV.getUrl(),
+		FrontDomain.PROD.getUrl()
 	);
 
 	private static final List<String> ALLOWED_HEADERS = List.of(
