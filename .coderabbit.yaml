@@ -1,24 +1,43 @@
-language: "ko"        # 2글자 코드
+language: "ko"
 early_access: false
 
 reviews:
   profile: "chill"
   request_changes_workflow: false
-  high_level_summary: false
+  high_level_summary: true
+  high_level_summary_placeholder: |
+    ## 변경 내용 요약
+    [핵심 변경 사항을 간결히 요약]
+
+    ## 주요 검토 사항
+    - 버그 가능성: [발견된 문제점 또는 "없음"]
+    - 성능 이슈: [발견된 문제점 또는 "없음"]
+    - 보안 위험: [발견된 문제점 또는 "없음"]
+    - 구조 개선: [제안 사항 또는 "없음"]
   poem: false
   review_status: true
   collapse_walkthrough: false
   auto_review:
     enabled: true
-    drafts: false
 
   path_instructions:
     - path: "src/main/java/**/*.java"
-      instructions: "SOLID 원칙, 스프링 어노테이션, 의존성 주입 패턴, 예외 처리에 중점을 둔다"
+      instructions: |
+        버그 가능성, 성능 저하, 보안 위험을 우선 검토하고, SOLID 원칙 위반 여부를 확인한다.
+        논리적 오류, NPE 가능성, 동시성 문제, N+1 쿼리 문제를 비판적으로 검토한다.
+        매직 넘버/스트링, 과도한 매개변수, SRP 위반을 지적한다.
+        명명 규칙 위반, 가독성 저하 요인을 구체적으로 지적한다.
+
     - path: "src/test/**/*.java"
-      instructions: "테스트 커버리지, 스프링 테스트 어노테이션, mock 사용법, 네이밍 규칙을 확인한다"
+      instructions: |
+        실패/예외 케이스 누락, Assertion 부재를 지적한다.
+        Given-When-Then 구조 위반, 불명확한 테스트명을 지적한다.
+        과도한 모킹으로 인한 테스트 신뢰도 저하를 지적한다.
+
     - path: "**/*.{yml,yaml,properties}"
-      instructions: "스프링 설정, 보안 설정, DB 연결, 환경 설정을 검증한다"
+      instructions: |
+        민감 정보 평문 노출을 엄격히 검증한다.
+        명명 규칙 불일치, 구조적 비일관성을 지적한다.
 
   path_filters:
     - "!**/build/**"
@@ -30,12 +49,18 @@ reviews:
     - "!**/*.jar"
     - "!**/*.war"
     - "!**/node_modules/**"
+    - "!**/.idea/**"
+    - "!**/.vscode/**"
+    - "!**/test-results/**"
 
 chat:
   auto_reply: true
 
-tone_instructions: "버그·성능·SOLID·클린코드 관점에서 핵심 피드백과 변경 요약을 제공하며, 허구 정보 생성·추측을 금지합니다."
-
+tone_instructions: |
+  한국어로 답변. 버그·성능·보안·구조 문제를 우선 점검하고, SOLID/DRY 원칙에 따라 개선을 제안한다.
+  사실·근거 중심 피드백만 작성하며 추측을 금지한다. 판단 불가 시 명시한다.
+  이전 리뷰와 중복을 피하고 새로운 관점을 제시한다.
+  칭찬·감정 표현·배경 설명을 금지하고, 문제점·근거·개선 방향만 작성한다.
 
 knowledge_base:
   opt_out: false
