@@ -81,6 +81,8 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx-dev.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
     depends_on:
       - server
       - grafana
