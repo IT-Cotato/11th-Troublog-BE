@@ -10,7 +10,8 @@ import troublog.backend.global.common.error.exception.AuthException;
 public enum Domain {
 
 	LOCAL("http://localhost:5173"),
-	DEV("https://www.troublog.com");
+	DEV("https://troublog.com"),
+	PROD("https://troublog.com");
 
 	private final String url;
 
@@ -18,6 +19,7 @@ public enum Domain {
 		return switch (envType) {
 			case LOCAL -> LOCAL.getUrl();
 			case DEV -> DEV.getUrl();
+			case PROD -> PROD.getUrl();
 			default -> throw new AuthException(ErrorCode.WRONG_ENVIRONMENT);
 		};
 	}

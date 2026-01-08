@@ -13,11 +13,12 @@ import troublog.backend.global.common.constant.Domain;
 @Configuration
 public class CorsConfig {
 	private static final List<String> ALLOWED_ORIGINS = List.of(
-		"http://localhost:3000",
 		"http://localhost:8080",
-		Domain.LOCAL.getUrl(),
 		"https://troublog.shop",
-		Domain.DEV.getUrl()
+		"https://troublog.cloud",
+		Domain.LOCAL.getUrl(),
+		Domain.DEV.getUrl(),
+		Domain.PROD.getUrl()
 	);
 
 	private static final List<String> ALLOWED_HEADERS = List.of(

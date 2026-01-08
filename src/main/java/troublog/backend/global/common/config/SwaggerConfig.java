@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SwaggerConfig {
 
+	public static final String ENV_TYPE = "EnvType";
 	private final Environment env;
 
 	@Bean
@@ -45,24 +46,23 @@ public class SwaggerConfig {
 
 		SecurityScheme securitySchemeEnvType = new SecurityScheme()
 			.type(SecurityScheme.Type.APIKEY)
-			.in(SecurityScheme.In.HEADER).name("EnvType");
+			.in(SecurityScheme.In.HEADER).name(ENV_TYPE);
 
 		// Security Requirement 정의
 		SecurityRequirement securityRequirement = new SecurityRequirement()
 			.addList("accessTokenAuth")
 			.addList("refreshTokenAuth")
-			.addList("EnvType");
+			.addList(ENV_TYPE);
 
 		Server server = new Server();
 		switch (profile) {
-			// TODO : 추후 적용
-			// case "prod" -> {
-			// 	server.setUrl("http://3.37.163.222:8080");
-			// 	server.setDescription("운영 서버");
-			// }
-			case "dev" -> {
+			case "prod" -> {
 				server.setUrl("https://troublog.shop");
-				server.setDescription("개발 서버");
+				server.setDescription("프로덕션 서버 (Backend)");
+			}
+			case "dev" -> {
+				server.setUrl("https://troublog.cloud");
+				server.setDescription("개발 서버 (Backend)");
 			}
 			default -> {
 				server.setUrl("http://localhost:8080");
@@ -76,7 +76,7 @@ public class SwaggerConfig {
 				.version("v1.0"))
 			.components(new Components()
 				.addSecuritySchemes("accessTokenAuth", accessTokenAuth)
-				.addSecuritySchemes("EnvType", securitySchemeEnvType))
+				.addSecuritySchemes(ENV_TYPE, securitySchemeEnvType))
 			.security(Collections.singletonList(securityRequirement))
 			.servers(List.of(server));
 	}
