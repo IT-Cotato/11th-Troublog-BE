@@ -37,7 +37,6 @@ public class MdcFilter implements Filter {
 	private static final String REQUEST_URI_KEY = "requestUri";
 	private static final String HTTP_METHOD_KEY = "httpMethod";
 	private static final String EXECUTION_TIME_KEY = "executionTime";
-	public static final String ACTUATOR_URL_PREFIX = "/actuator";
 
 	private final JwtProvider jwtProvider;
 	private final SecureRandom secureRandom = new SecureRandom();
