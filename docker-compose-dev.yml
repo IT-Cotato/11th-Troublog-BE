@@ -9,7 +9,6 @@ services:
       - .env
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - JAVA_OPTS=-Xms256m -Xmx384m -XX:MaxMetaspaceSize=128m
       - AI_PROMPT_SYSTEM=file:/app/prompts/system.st
       - AI_PROMPT_RESUME=file:/app/prompts/resume.st
       - AI_PROMPT_INTERVIEW=file:/app/prompts/interview.st

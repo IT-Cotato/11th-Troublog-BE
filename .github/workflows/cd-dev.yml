@@ -76,7 +76,7 @@ jobs:
             mkdir -p logs
             
             # Docker 로그인
-            sudo docker login -u ${{ secrets.DEV_DOCKER_USERNAME }} -p ${{ secrets.DEV_DOCKER_PASSWORD }}
+            echo ${{ secrets.DEV_DOCKER_PASSWORD }} | sudo docker login -u ${{ secrets.DEV_DOCKER_USERNAME }} --password-stdin
             
             # 기존 컨테이너 종료
             sudo docker-compose down || true
