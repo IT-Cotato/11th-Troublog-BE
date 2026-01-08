@@ -70,7 +70,7 @@ services:
       driver: "json-file"
       options:
         max-size: "3m"
-        max-file: "1"
+        max-file: "2"
         compress: "true"
 
   nginx:
@@ -99,7 +99,7 @@ services:
       driver: "json-file"
       options:
         max-size: "3m"
-        max-file: "1"
+        max-file: "2"
         compress: "true"
     restart: unless-stopped
 
@@ -134,7 +134,7 @@ services:
       driver: "json-file"
       options:
         max-size: "3m"
-        max-file: "1"
+        max-file: "2"
         compress: "true"
 
   # Grafana - 시각화
@@ -173,7 +173,7 @@ services:
       driver: "json-file"
       options:
         max-size: "3m"
-        max-file: "1"
+        max-file: "2"
         compress: "true"
 
 networks:
