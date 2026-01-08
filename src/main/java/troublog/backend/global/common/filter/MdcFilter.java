@@ -49,11 +49,6 @@ public class MdcFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest)request;
 		HttpServletResponse httpResponse = (HttpServletResponse)response;
 
-		if (httpRequest.getRequestURI().startsWith(ACTUATOR_URL_PREFIX)) {
-			chain.doFilter(request, response);
-			return;
-		}
-
 		long startTime = System.currentTimeMillis();
 
 		try {
