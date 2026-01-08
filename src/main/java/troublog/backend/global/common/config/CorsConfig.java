@@ -8,15 +8,15 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import troublog.backend.global.common.constant.BackendDomain;
+import troublog.backend.global.common.constant.BackDomain;
 import troublog.backend.global.common.constant.FrontDomain;
 
 @Configuration
 public class CorsConfig {
 	private static final List<String> ALLOWED_ORIGINS = List.of(
-		BackendDomain.LOCAL.getUrl(),
-		BackendDomain.DEV.getUrl(),
-		BackendDomain.PROD.getUrl(),
+		BackDomain.LOCAL.getUrl(),
+		BackDomain.DEV.getUrl(),
+		BackDomain.PROD.getUrl(),
 		FrontDomain.LOCAL.getUrl(),
 		FrontDomain.DEV.getUrl(),
 		FrontDomain.PROD.getUrl()
