@@ -23,8 +23,8 @@ import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.entity.UserStatus;
 import troublog.backend.domain.user.service.command.UserCommandService;
 import troublog.backend.domain.user.service.query.UserQueryService;
-import troublog.backend.global.common.constant.Domain;
 import troublog.backend.global.common.constant.EnvType;
+import troublog.backend.global.common.constant.FrontDomain;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.util.JwtProvider;
 
@@ -169,7 +169,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		log.info("신규 카카오 유저 회원가입 완료: userId={}", user.getId());
 
 		// 프론트엔드 도메인 가져오기
-		String frontendDomain = Domain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
+		String frontendDomain = FrontDomain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
 
 		// 신규 유저 정보를 URL 파라미터로 전달
 		String redirectUrl = String.format("%s/auth/oauth-register?userId=%d&nickname=%s&loginType=%s&status=%s",
@@ -203,7 +203,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		jwtProvider.setOauthCookieRefreshToken(refreshToken, response);
 
 		// 프론트엔드 도메인 가져오기
-		String frontendDomain = Domain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
+		String frontendDomain = FrontDomain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
 
 		// 로그인 성공 시 토큰을 URL 파라미터로 전달하여 메인 페이지로 리다이렉트
 		String redirectUrl = String.format("%s/user/home?userId=%d&accessToken=%s",
@@ -223,7 +223,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		log.info("통합 되지 않은 유저: userId={}", user.getId());
 
 		// 프론트엔드 도메인 가져오기
-		String frontendDomain = Domain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
+		String frontendDomain = FrontDomain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
 
 		// 신규 유저 정보를 URL 파라미터로 전달
 		String redirectUrl = String.format("%s/auth/oauth-integration?userId=%d&socialId=%s&profileImgUrl=%s",

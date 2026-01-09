@@ -29,7 +29,7 @@ spring:
       client:
         registration:
           kakao:
-            redirect-uri: "https://troublog.shop/login/oauth2/code/kakao"
+            redirect-uri: "https://troublog.cloud/login/oauth2/code/kakao"
 
 # Prompt 설정 (Dev)
 ai:

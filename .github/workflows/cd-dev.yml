@@ -74,7 +74,10 @@ jobs:
             
             # logs 디렉토리 생성
             mkdir -p logs
-            
+
+            # Certbot webroot 디렉토리 생성 (HTTP-01 Challenge용)
+            mkdir -p certbot/www
+
             # Docker 로그인
             echo ${{ secrets.DEV_DOCKER_PASSWORD }} | sudo docker login -u ${{ secrets.DEV_DOCKER_USERNAME }} --password-stdin
             
