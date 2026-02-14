@@ -9,6 +9,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -67,7 +68,7 @@ public class Comment extends SoftDeleteEntity {
 	@JoinColumn(name = "parent_comment_id")
 	private Comment parentComment;
 
-	@OneToMany(mappedBy = "parentComment")
+	@OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore // 순환참조 방지
 	@Builder.Default
 	private List<Comment> childComments = new ArrayList<>();

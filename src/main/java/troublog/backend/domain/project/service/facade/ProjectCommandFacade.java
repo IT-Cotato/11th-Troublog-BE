@@ -40,12 +40,6 @@ public class ProjectCommandFacade {
 		return ProjectConverter.toResponse(project);
 	}
 
-	public void hardDeleteProject(Long userId, long projectId) {
-		Project project = projectQueryService.findById(projectId);
-		validateProjectAuthorized(userId, project);
-		projectCommandService.delete(project);
-	}
-
 	public void softDeleteProject(Long userId, long projectId) {
 		Project project = projectQueryService.findById(projectId);
 		validateProjectAuthorized(userId, project);

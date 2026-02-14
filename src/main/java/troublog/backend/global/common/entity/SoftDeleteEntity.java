@@ -16,8 +16,4 @@ public class SoftDeleteEntity extends BaseEntity {
 	public boolean isDeleted() {
 		return deletedAt != null;
 	}
-
-	public void markDeleted() {
-		this.deletedAt = LocalDateTime.now();
-	}
 }

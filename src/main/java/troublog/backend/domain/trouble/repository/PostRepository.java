@@ -26,7 +26,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 					IFNULL(MAX(MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)), 0)) AS total_score
 			FROM posts p
 			LEFT JOIN contents c ON p.post_id = c.post_id
+				AND c.deleted_at IS NULL
 			LEFT JOIN post_tags pt ON p.post_id = pt.post_id
+				AND pt.deleted_at IS NULL
 			LEFT JOIN tags t ON pt.tag_id = t.tag_id
 			WHERE p.user_id = :userId
 			AND p.deleted_at IS NULL
@@ -44,7 +46,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		SELECT COUNT(DISTINCT p.post_id)
 		FROM posts p
 		LEFT JOIN contents c ON p.post_id = c.post_id
+			AND c.deleted_at IS NULL
 		LEFT JOIN post_tags pt ON p.post_id = pt.post_id
+			AND pt.deleted_at IS NULL
 		LEFT JOIN tags t ON pt.tag_id = t.tag_id
 		WHERE p.user_id = :userId
 			AND p.deleted_at IS NULL
@@ -70,7 +74,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 					IFNULL(MAX(MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)), 0)) as total_score
 			FROM posts p
 			LEFT JOIN contents c ON p.post_id = c.post_id
+				AND c.deleted_at IS NULL
 			LEFT JOIN post_tags pt ON p.post_id = pt.post_id
+				AND pt.deleted_at IS NULL
 			LEFT JOIN tags t ON pt.tag_id = t.tag_id
 			WHERE p.deleted_at IS NULL
 				AND p.visible = true
@@ -88,7 +94,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		SELECT COUNT(DISTINCT p.post_id)
 		FROM posts p
 		LEFT JOIN contents c ON p.post_id = c.post_id
+			AND c.deleted_at IS NULL
 		LEFT JOIN post_tags pt ON p.post_id = pt.post_id
+			AND pt.deleted_at IS NULL
 		LEFT JOIN tags t ON pt.tag_id = t.tag_id
 		WHERE p.deleted_at IS NULL
 			AND p.visible = true

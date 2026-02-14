@@ -12,14 +12,8 @@ import org.springframework.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.project.service.command.ProjectCommandService;
-import troublog.backend.domain.project.service.query.ProjectQueryService;
-import troublog.backend.domain.trouble.entity.Comment;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.PostStatus;
-import troublog.backend.domain.trouble.service.command.CommentCommandService;
-import troublog.backend.domain.trouble.service.command.PostCommandService;
-import troublog.backend.domain.trouble.service.query.CommentQueryService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.FollowConverter;
 import troublog.backend.domain.user.converter.UserConverter;
@@ -50,11 +44,6 @@ public class UserFacade {
 	private final FollowCommandService followCommandService;
 	private final FollowQueryService followQueryService;
 	private final PostQueryService postQueryService;
-	private final CommentCommandService commentCommandService;
-	private final ProjectCommandService projectCommandService;
-	private final CommentQueryService commentQueryService;
-	private final ProjectQueryService projectQueryService;
-	private final PostCommandService postCommandService;
 
 	@Transactional
 	public void followUser(Long followerId, Long followingId) {
@@ -219,29 +208,16 @@ public class UserFacade {
 
 	@Transactional
 	public void deleteMyProfile(Long userId) {
-		// post, project는 저절로 삭제됨
 
 		// 사용자 (본인) 조회
 		User user = userQueryService.findUserByIdAndStatusActive(userId);
-
-		// 사용자 삭제 (soft delete)
-		userCommandService.softDeleteUser(user);
-
-		// 댓글 삭제 (soft delete)
-		List<Comment> commentList = commentQueryService.findCommentListByUserId(user);
-		List<Comment> softDeleteCommentList = commentList.stream()
-			.filter(comment -> !CollectionUtils.isEmpty(comment.getChildComments()))
-			.toList();
-		List<Long> hardDeleteCommentIdList = commentList.stream()
-			.filter(comment -> CollectionUtils.isEmpty(comment.getChildComments()))
-			.map(Comment::getId)
-			.toList();
-		commentCommandService.softDeleteAll(softDeleteCommentList);
-		commentCommandService.hardDeleteAll(hardDeleteCommentIdList);
 
 		// 팔로우 팔로잉 관계(내역) 삭제 (hard delete)
 		List<Follow> followList = followQueryService.findAllByFollowerOrFollowing(user);
 
 		followCommandService.deleteAll(followList);
+
+		// 사용자 삭제 (soft delete) -> project -> post -> contents, post_tags, comments, summaries (-> summary_contents) 순서로 cascade 전파
+		userCommandService.softDeleteUser(user);
 	}
 }
