@@ -32,7 +32,7 @@ import troublog.backend.global.common.error.exception.PostException;
 @Table(name = "post_tags", indexes = {
 	@Index(name = "idx_post_tags_post_id", columnList = "post_id"),
 	@Index(name = "idx_post_tags_tag_id", columnList = "tag_id"),
-	@Index(name = "idx_post_tags_composite", columnList = "post_id, tag_id, deleted_at", unique = true)
+	@Index(name = "ux_post_tag_active", columnList = "post_id, tag_id, active_yn", unique = true)
 })
 public class PostTag extends SoftDeleteEntity {
 
@@ -51,6 +51,9 @@ public class PostTag extends SoftDeleteEntity {
 
 	@Column(name = "post_tag_display_name", nullable = false, length = 100)
 	private String displayName;
+
+	@Column(name = "active_yn", insertable = false, updatable = false)
+	private Boolean activeYn;
 
 	// 연관관계 편의 메서드
 	public void assignPost(Post post) {

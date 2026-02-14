@@ -47,6 +47,7 @@ public class SoftDeleteCleanUp {
 			totalDeleted += clean("User", () -> userRepository.deleteAllSoftDeletedBefore(threshold));
 		} catch (Exception e) {
 			log.error("[SoftDeleteCleanUp] 참조 무결성에 어긋나는 데이터 존재: error={}", e.getMessage());
+			throw e;
 		}
 		log.info("[SoftDeleteCleanUp] 종료 - totalDeleted={}", totalDeleted);
 	}
