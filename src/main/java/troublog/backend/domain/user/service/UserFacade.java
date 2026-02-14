@@ -217,7 +217,10 @@ public class UserFacade {
 
 		followCommandService.deleteAll(followList);
 
-		// 사용자 삭제 (soft delete) -> project -> post -> contents, post_tags, comments, summaries (-> summary_contents) 순서로 cascade 전파
+		// 사용자 삭제 (soft delete)
+		// -> project
+		// -> post
+		// -> contents, post_tags, comments, summaries (-> summary_contents) 순서로 cascade 전파
 		userCommandService.softDeleteUser(user);
 	}
 }
