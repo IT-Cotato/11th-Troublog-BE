@@ -1,8 +1,10 @@
 package troublog.backend.domain.trouble.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,4 +17,15 @@ public interface PostTagRepository extends JpaRepository<PostTag, Long> {
 
 	@Query("SELECT DISTINCT t.name FROM PostTag pt JOIN pt.tag t WHERE pt.post.id = :postId ORDER BY t.name")
 	List<String> findTagNamesByPostId(@Param("postId") Long postId);
+
+	@Modifying
+	@Query(
+		value = """
+			DELETE FROM post_tags
+			WHERE deleted_at IS NOT NULL
+				AND deleted_at <= :threshold
+			""",
+		nativeQuery = true
+	)
+	int deleteAllSoftDeletedBefore(@Param("threshold") LocalDateTime threshold);
 }

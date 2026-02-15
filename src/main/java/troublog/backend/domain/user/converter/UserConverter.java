@@ -26,7 +26,6 @@ public class UserConverter {
 			.field(registerReqDto.field())
 			.bio(registerReqDto.bio())
 			.githubUrl(registerReqDto.githubUrl())
-			.isDeleted(false)
 			.status(UserStatus.ACTIVE)
 			.isIntegrated(false)
 			.loginType(LoginType.NORMAL.getValue())

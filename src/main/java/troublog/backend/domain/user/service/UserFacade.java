@@ -12,15 +12,8 @@ import org.springframework.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.project.entity.Project;
-import troublog.backend.domain.project.service.command.ProjectCommandService;
-import troublog.backend.domain.project.service.query.ProjectQueryService;
-import troublog.backend.domain.trouble.entity.Comment;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.PostStatus;
-import troublog.backend.domain.trouble.service.command.CommentCommandService;
-import troublog.backend.domain.trouble.service.command.PostCommandService;
-import troublog.backend.domain.trouble.service.query.CommentQueryService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.FollowConverter;
 import troublog.backend.domain.user.converter.UserConverter;
@@ -51,11 +44,6 @@ public class UserFacade {
 	private final FollowCommandService followCommandService;
 	private final FollowQueryService followQueryService;
 	private final PostQueryService postQueryService;
-	private final CommentCommandService commentCommandService;
-	private final ProjectCommandService projectCommandService;
-	private final CommentQueryService commentQueryService;
-	private final ProjectQueryService projectQueryService;
-	private final PostCommandService postCommandService;
 
 	@Transactional
 	public void followUser(Long followerId, Long followingId) {
@@ -64,8 +52,8 @@ public class UserFacade {
 		followValidator.validateNotSelfFollow(followerId, followingId);
 
 		// 유저 존재 확인
-		User follower = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(followerId);
-		User following = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(followingId);
+		User follower = userQueryService.findUserByIdAndStatusActive(followerId);
+		User following = userQueryService.findUserByIdAndStatusActive(followingId);
 
 		// 이미 존재하는 팔로우 관계인지 확인
 		followQueryService.existsByFollowerAndFollowing(follower, following);
@@ -83,8 +71,8 @@ public class UserFacade {
 		followValidator.validateNotSelfFollow(followerId, followingId);
 
 		// 유저 존재 확인
-		User follower = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(followerId);
-		User following = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(followingId);
+		User follower = userQueryService.findUserByIdAndStatusActive(followerId);
+		User following = userQueryService.findUserByIdAndStatusActive(followingId);
 
 		// 팔로우 관계인지 확인
 		Follow follow = followQueryService.findByFollowerAndFollowing(follower, following);
@@ -97,12 +85,12 @@ public class UserFacade {
 	public List<UserFollowsResDto> getFollowers(Long userId, Long targetUserId) {
 
 		// 사용자 (본인) 조회
-		User viewer = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
+		User viewer = userQueryService.findUserByIdAndStatusActive(userId);
 
 		// 커뮤니티 - 다른 사용자 조회 (본인 or 타인)
 		User targetUser = userId.equals(targetUserId)
 			? viewer
-			: userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(targetUserId);
+			: userQueryService.findUserByIdAndStatusActive(targetUserId);
 
 		// 다른 사용자의 팔로워 리스트 조회
 		List<User> followers = followQueryService.findFollowers(targetUser.getId());
@@ -120,12 +108,12 @@ public class UserFacade {
 	public List<UserFollowsResDto> getFollowings(Long userId, Long targetUserId) {
 
 		// 사용자 (본인) 조회
-		User viewer = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
+		User viewer = userQueryService.findUserByIdAndStatusActive(userId);
 
 		// 커뮤니티의 경우 - 다른 사용자 조회 (본인 or 타인)
 		User targetUser = userId.equals(targetUserId)
 			? viewer
-			: userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(targetUserId);
+			: userQueryService.findUserByIdAndStatusActive(targetUserId);
 
 		// 다른 사용자의 팔로잉 리스트 조회
 		List<User> followings = followQueryService.findFollowings(targetUser.getId());
@@ -143,10 +131,10 @@ public class UserFacade {
 	public UserInfoResDto getUserInfo(Long userId, Long myId) {
 
 		// 사용자 조회
-		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
+		User user = userQueryService.findUserByIdAndStatusActive(userId);
 
 		// (본인) 조회자 검증
-		User viewer = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(myId);
+		User viewer = userQueryService.findUserByIdAndStatusActive(myId);
 
 		// 사용자의 팔로잉 목록 조회
 		List<User> followingUserList = followQueryService.findFollowings(user.getId());
@@ -199,7 +187,7 @@ public class UserFacade {
 	public UserProfileResDto getMyProfile(Long userId) {
 
 		// 사용자 (본인) 조회
-		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
+		User user = userQueryService.findUserByIdAndStatusActive(userId);
 
 		// DTO 변환
 		return UserConverter.toUserProfileResDto(user);
@@ -212,7 +200,7 @@ public class UserFacade {
 		userValidator.validateProfileUpdateRequest(userId, userProfileUpdateReqDto.userId());
 
 		// 사용자 (본인) 조회
-		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
+		User user = userQueryService.findUserByIdAndStatusActive(userId);
 
 		// 프로필 수정
 		userCommandService.updateUserProfile(user, userProfileUpdateReqDto);
@@ -222,29 +210,17 @@ public class UserFacade {
 	public void deleteMyProfile(Long userId) {
 
 		// 사용자 (본인) 조회
-		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
-
-		// 사용자 삭제 (soft delete)
-		userCommandService.softDeleteUser(user);
-
-		// 댓글 삭제 (soft delete)
-		List<Comment> commentList = commentQueryService.findCommentListByUserId(user);
-
-		commentCommandService.softDeleteAll(commentList);
-
-		// 프로젝트 삭제 (soft delete)
-		List<Project> projectList = projectQueryService.getAllProjectsByUser(user);
-
-		projectCommandService.softDeleteAll(projectList);
-
-		// 게시글 삭제 (soft delete)
-		List<Post> postList = postQueryService.findAllNotDeletedPostsByUser(user);
-
-		postCommandService.softDeleteAll(postList);
+		User user = userQueryService.findUserByIdAndStatusActive(userId);
 
 		// 팔로우 팔로잉 관계(내역) 삭제 (hard delete)
 		List<Follow> followList = followQueryService.findAllByFollowerOrFollowing(user);
 
 		followCommandService.deleteAll(followList);
+
+		// 사용자 삭제 (soft delete)
+		// -> project
+		// -> post
+		// -> contents, post_tags, comments, summaries (-> summary_contents) 순서로 cascade 전파
+		userCommandService.softDeleteUser(user);
 	}
 }

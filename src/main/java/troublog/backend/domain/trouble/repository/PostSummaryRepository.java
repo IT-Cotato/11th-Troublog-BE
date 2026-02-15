@@ -19,8 +19,7 @@ public interface PostSummaryRepository extends JpaRepository<PostSummary, Long> 
 			select ps
 				from PostSummary ps
 			where ps.post.project.id = :projectId
-				and coalesce(ps.post.isDeleted, false) = false
-				and (:status is null or ps.post.status = :status)  
+				and (:status is null or ps.post.status = :status)
 				and (:summaryType is null or ps.summaryType = :summaryType)
 		""")
 	List<PostSummary> findByProjectSummarized(
@@ -35,7 +34,6 @@ public interface PostSummaryRepository extends JpaRepository<PostSummary, Long> 
 		select ps
 		from PostSummary ps
 		where ps.post.project.id = :projectId
-			and coalesce(ps.post.isDeleted, false) = false
 			and (:status is null or ps.post.status = :status)
 			and (:summaryType is null or ps.summaryType = :summaryType)
 		order by

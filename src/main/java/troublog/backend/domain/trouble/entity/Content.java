@@ -1,5 +1,8 @@
 package troublog.backend.domain.trouble.entity;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,7 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import troublog.backend.global.common.entity.BaseEntity;
+import troublog.backend.global.common.entity.SoftDeleteEntity;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
 
@@ -25,8 +28,10 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
+@SQLDelete(sql = "UPDATE contents SET deleted_at = current_timestamp WHERE content_id = ?")
+@SQLRestriction("deleted_at IS NULL")
 @Table(name = "contents", indexes = {@Index(name = "idx_contents_post_id", columnList = "post_id")})
-public class Content extends BaseEntity {
+public class Content extends SoftDeleteEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

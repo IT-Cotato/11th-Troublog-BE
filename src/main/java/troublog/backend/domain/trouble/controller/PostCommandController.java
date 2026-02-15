@@ -70,7 +70,6 @@ public class PostCommandController {
 		return ResponseUtils.ok(response);
 	}
 
-	@Deprecated(forRemoval = true)
 	@DeleteMapping("/{postId}/soft")
 	@Operation(summary = "트러블슈팅 문서 임시 삭제 API", description = "트러블슈팅 문서를 임시 삭제한다. (Deprecated)")
 	@ApiResponse(responseCode = "204", description = "No Content", content = @Content)

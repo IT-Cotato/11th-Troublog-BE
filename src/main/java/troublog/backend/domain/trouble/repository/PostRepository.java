@@ -1,12 +1,13 @@
 package troublog.backend.domain.trouble.repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,11 +16,6 @@ import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.user.entity.User;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-	Optional<Post> findByIdAndIsDeletedFalse(Long id);
-
-	List<Post> findByIsDeletedFalse();
-
-	List<Post> findByIsDeletedTrue();
 
 	@Query(value = """
 		SELECT p.*
@@ -30,10 +26,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 					IFNULL(MAX(MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)), 0)) AS total_score
 			FROM posts p
 			LEFT JOIN contents c ON p.post_id = c.post_id
+				AND c.deleted_at IS NULL
 			LEFT JOIN post_tags pt ON p.post_id = pt.post_id
+				AND pt.deleted_at IS NULL
 			LEFT JOIN tags t ON pt.tag_id = t.tag_id
 			WHERE p.user_id = :userId
-			AND p.is_deleted = false
+			AND p.deleted_at IS NULL
 			AND (
 				MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 				OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -44,15 +42,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		) ranked_posts
 		JOIN posts p ON p.post_id = ranked_posts.post_id
 		ORDER BY ranked_posts.total_score DESC, p.post_id DESC
-		
 		""", countQuery = """
 		SELECT COUNT(DISTINCT p.post_id)
 		FROM posts p
 		LEFT JOIN contents c ON p.post_id = c.post_id
+			AND c.deleted_at IS NULL
 		LEFT JOIN post_tags pt ON p.post_id = pt.post_id
+			AND pt.deleted_at IS NULL
 		LEFT JOIN tags t ON pt.tag_id = t.tag_id
 		WHERE p.user_id = :userId
-			AND p.is_deleted = false
+			AND p.deleted_at IS NULL
 			AND (
 			MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
 			OR MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -75,9 +74,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 					IFNULL(MAX(MATCH(c.body) AGAINST(:keyword IN NATURAL LANGUAGE MODE)), 0)) as total_score
 			FROM posts p
 			LEFT JOIN contents c ON p.post_id = c.post_id
+				AND c.deleted_at IS NULL
 			LEFT JOIN post_tags pt ON p.post_id = pt.post_id
+				AND pt.deleted_at IS NULL
 			LEFT JOIN tags t ON pt.tag_id = t.tag_id
-			WHERE p.is_deleted = false
+			WHERE p.deleted_at IS NULL
 				AND p.visible = true
 				AND (
 				MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -93,9 +94,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		SELECT COUNT(DISTINCT p.post_id)
 		FROM posts p
 		LEFT JOIN contents c ON p.post_id = c.post_id
+			AND c.deleted_at IS NULL
 		LEFT JOIN post_tags pt ON p.post_id = pt.post_id
+			AND pt.deleted_at IS NULL
 		LEFT JOIN tags t ON pt.tag_id = t.tag_id
-		WHERE p.is_deleted = false
+		WHERE p.deleted_at IS NULL
 			AND p.visible = true
 			AND (
 			MATCH(p.title) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
@@ -109,7 +112,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		SELECT p
 		FROM Post p
 		WHERE p.project.id = :projectId
-		AND p.isDeleted = FALSE
 		AND p.status IN :statuses
 		AND (:visible IS NULL OR p.isVisible = :visible)
 		ORDER BY COALESCE(p.completedAt, p.updatedAt) DESC, p.id DESC
@@ -124,7 +126,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			SELECT p
 				FROM Post p
 			WHERE p.project.id = :projectId
-				AND p.isDeleted = FALSE
 				AND p.status IN :statuses
 				AND (:visible IS NULL OR p.isVisible = :visible)
 			ORDER BY
@@ -144,11 +145,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		@Param("visible") Boolean visible
 	);
 
-	Page<Post> findAllByUser_IdAndIsDeletedFalse(Long userId, Pageable page);
+	Page<Post> findAllByUser_Id(Long userId, Pageable page);
 
 	@Query(value = """
 		SELECT p FROM Post p
-		WHERE p.user.id = :userId AND p.isDeleted = false
 		ORDER BY
 			CASE p.starRating
 				WHEN troublog.backend.domain.trouble.enums.StarRating.FIVE_STARS THEN 5
@@ -161,15 +161,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			p.id DESC
 		""", countQuery = """
 		SELECT count(p) FROM Post p
-		WHERE p.user.id = :userId AND p.isDeleted = false
 		""")
 	Page<Post> findTroublesByUserOrderByStarRating(@Param("userId") Long userId, Pageable pageable);
 
 	@Query("""
 			SELECT DISTINCT p
 			FROM Post p
-			WHERE p.isDeleted = FALSE
-			AND p.isVisible = TRUE
+			WHERE p.isVisible = TRUE
 			AND p.status IN (
 				troublog.backend.domain.trouble.enums.PostStatus.COMPLETED,
 				troublog.backend.domain.trouble.enums.PostStatus.SUMMARIZED
@@ -182,13 +180,33 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			FROM Post p
 			WHERE p.user.id = :userId
 			AND (:status is null or p.status = :status)
-			AND p.isDeleted = FALSE
 		""")
-	List<Post> findByUserIdAndStatusAndIsDeletedFalse(@Param("userId") Long userId, @Param("status") PostStatus status);
+	List<Post> findByUserIdAndStatus(@Param("userId") Long userId, @Param("status") PostStatus status);
 
-	List<Post> findByUserIdAndIsDeletedFalse(Long userId);
+	List<Post> findByUserId(Long userId);
 
 	List<Post> findByIdIn(Collection<Long> recentIds);
 
-	List<Post> findAllByUserAndIsDeletedFalse(User user);
+	List<Post> findAllByUser(User user);
+
+	@Modifying
+	@Query(
+		value = "DELETE FROM posts WHERE post_id = :postId",
+		nativeQuery = true
+	)
+	void hardDeletePost(@Param("postId") Long postId);
+
+	@Modifying
+	@Query(
+		value = """
+			DELETE FROM posts
+			WHERE deleted_at IS NOT NULL
+				AND deleted_at <= :threshold
+			""",
+		nativeQuery = true
+	)
+	int deleteAllSoftDeletedBefore(@Param("threshold") LocalDateTime threshold);
+
+	@Query(value = "SELECT * FROM posts WHERE deleted_at IS NOT NULL", nativeQuery = true)
+	List<Post> findAllDeletedPosts();
 }

@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -13,6 +16,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -26,6 +30,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import troublog.backend.domain.user.entity.User;
+import troublog.backend.global.common.entity.SoftDeleteEntity;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
 
@@ -34,8 +39,11 @@ import troublog.backend.global.common.error.exception.PostException;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "comments")
-public class Comment {
+@SQLDelete(sql = "UPDATE comments SET deleted_at = current_timestamp WHERE comment_id = ?")
+@SQLRestriction("deleted_at IS NULL")
+@Table(name = "comments", indexes = {
+	@Index(name = "idx_comments_deleted_at", columnList = "deleted_at")})
+public class Comment extends SoftDeleteEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "comment_id")
@@ -53,14 +61,6 @@ public class Comment {
 	private String content;
 
 	@NotNull
-	@Builder.Default
-	@Column(name = "is_deleted", nullable = false)
-	private Boolean isDeleted = Boolean.FALSE;
-
-	@Column(name = "deleted_at")
-	private LocalDateTime deletedAt;
-
-	@NotNull
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
 
@@ -76,9 +76,6 @@ public class Comment {
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();
-		if (this.isDeleted == null) {
-			this.isDeleted = Boolean.FALSE;
-		}
 	}
 
 	public void assignUser(User user) {
@@ -97,11 +94,6 @@ public class Comment {
 
 	public void updateContent(String content) {
 		this.content = content;
-	}
-
-	public void markAsDeleted() {
-		this.isDeleted = true;
-		this.deletedAt = LocalDateTime.now();
 	}
 
 	public void addChildComment(Comment child) {
