@@ -23,7 +23,6 @@ import troublog.backend.domain.common.repository.AuthCodeRepository;
 import troublog.backend.domain.common.repository.EmailRepository;
 import troublog.backend.global.common.event.EmailSendEvent;
 
-
 @Service
 @RequiredArgsConstructor
 public class MailUtil {
@@ -117,7 +116,9 @@ public class MailUtil {
 	private String loadHtmlTemplate(String path) {
 		try {
 			ClassPathResource resource = new ClassPathResource(path);
-			return new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+			try (var inputStream = resource.getInputStream()) {
+				return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+			}
 		} catch (IOException e) {
 			throw new MailParseException("메일 템플릿 로딩에 실패했습니다: " + path, e);
 		}

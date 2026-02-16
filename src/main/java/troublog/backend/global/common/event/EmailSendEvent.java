@@ -1,4 +1,4 @@
 package troublog.backend.global.common.event;
 
-public record EmailSendEvent(Long emailId) {
+public record EmailSendEvent(long emailId) {
 }

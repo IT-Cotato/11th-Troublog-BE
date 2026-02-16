@@ -43,8 +43,8 @@ public class EmailSendEventListener {
 			mailSender.send(message);
 			log.info("[Mail] 메일 전송 성공:: mailId={}", email.getEmailId());
 		} catch (Exception exception) {
-			log.error("메일 전송 실패 {}", email.getRcvrEmailAdr(), exception);
-			throw new MailSendException("메일 전송에 실패했습니다: " + email.getRcvrEmailAdr(), exception);
+			log.error("메일 전송 실패 {}", email.getEmailId(), exception);
+			throw new MailSendException("메일 전송에 실패했습니다: " + email.getEmailId(), exception);
 		}
 	}
 }

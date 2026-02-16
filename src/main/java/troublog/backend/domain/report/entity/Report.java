@@ -28,13 +28,13 @@ import troublog.backend.global.common.entity.BaseEntity;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
 @Table(
 	name = "reports",
 	indexes = {
-		@Index(name = "idx_target", columnList = "target_type, target_id")
+		@Index(name = "idx_reporter_target", columnList = "reporting_user_id, target_type, target_id")
 	}
 )
 public class Report extends BaseEntity {
