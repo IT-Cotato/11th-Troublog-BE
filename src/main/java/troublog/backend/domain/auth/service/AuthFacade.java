@@ -282,7 +282,7 @@ public class AuthFacade {
 		}
 
 		// 메일 전송
-		UUID randomString = mailUtil.sendMail(passwordEmailCheckReq.email());
+		UUID randomString = mailUtil.sendPasswordMail(passwordEmailCheckReq.email());
 
 		return PasswordEmailUuidResDto.builder()
 			.randomString(randomString)

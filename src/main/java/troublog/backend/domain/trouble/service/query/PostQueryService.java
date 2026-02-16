@@ -38,7 +38,7 @@ public class PostQueryService {
 	private final PostRepository postRepository;
 	private final PostSummaryRepository postSummaryRepository;
 
-	public Post findById(Long id) {
+	public Post findById(long id) {
 		log.info("[Post] 트러블슈팅 조회:: postId={}", id);
 		return postRepository.findById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));

@@ -23,7 +23,7 @@ public class UserQueryService {
 
 	private final UserRepository userRepository;
 
-	public User findUserById(Long userId) {
+	public User findUserById(long userId) {
 
 		return userRepository.findById(userId)
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));

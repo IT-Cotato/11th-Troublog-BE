@@ -110,6 +110,13 @@ public enum ErrorCode {
 	COMMENT_HAS_CHILDREN(HttpStatus.CONFLICT, "CM-004", "대댓글이 존재하는 댓글입니다."),
 
 	/**
+	 * Report Error (R-xxx)
+	 */
+	REPORT_ALREADY_EXISTS(HttpStatus.CONFLICT, "R-001", "이미 신고한 대상입니다."),
+	REPORT_REPORTER_MISMATCH(HttpStatus.FORBIDDEN, "R-002", "신고자 정보가 일치하지 않습니다."),
+	REPORT_TARGET_USER_MISMATCH(HttpStatus.BAD_REQUEST, "R-003", "신고 대상 사용자 정보가 일치하지 않습니다."),
+
+	/**
 	 * Like Error (L-xxx)
 	 */
 	MISSING_LIKE(HttpStatus.NOT_FOUND, "L-001", "좋아요가 생성되지 않았습니다."),

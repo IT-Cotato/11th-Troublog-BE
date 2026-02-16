@@ -21,6 +21,7 @@ public class AsyncConfig implements AsyncConfigurer {
 
 	private static final String SUMMARY_EXECUTOR_PREFIX = "AI-Summary";
 	private static final String IMAGE_EXECUTOR_PREFIX = "Image";
+	private static final String MAIL_EXECUTOR_PREFIX = "Mail";
 
 	@Bean(name = "summaryExecutor")
 	public Executor summaryExecutor() {
@@ -30,6 +31,11 @@ public class AsyncConfig implements AsyncConfigurer {
 	@Bean(name = "imageExecutor")
 	public Executor imageExecutor() {
 		return createVirtualThreadExecutor(IMAGE_EXECUTOR_PREFIX);
+	}
+
+	@Bean(name = "mailExecutor")
+	public Executor mailExecutor() {
+		return createVirtualThreadExecutor(MAIL_EXECUTOR_PREFIX);
 	}
 
 	@Override
