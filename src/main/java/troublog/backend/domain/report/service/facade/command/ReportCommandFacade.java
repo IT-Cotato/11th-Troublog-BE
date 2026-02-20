@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.common.entity.Email;
+import troublog.backend.domain.report.converter.ReportConverter;
 import troublog.backend.domain.report.dto.request.ReportReqDto;
 import troublog.backend.domain.report.dto.response.ReportResDto;
 import troublog.backend.domain.report.entity.Report;
@@ -58,17 +59,18 @@ public class ReportCommandFacade {
 			reportReqDto.reportType().getDescription()
 		);
 
-		Report report = Report.toEntity(
+		Report report = ReportConverter.toEntity(
 			reportingUser,
 			reportedUser,
 			email,
 			reportReqDto.targetType(),
 			reportReqDto.targetId(),
-			reportReqDto.reportType()
+			reportReqDto.reportType(),
+			reportReqDto.copyRightImgUrl()
 		);
 
 		Report savedReport = reportCommandService.save(report);
-		return ReportResDto.of(savedReport.getId());
+		return ReportConverter.toResponse(savedReport);
 	}
 
 	private User resolveReportedUser(ReportTargetType targetType, long targetId, long reportedUserId) {

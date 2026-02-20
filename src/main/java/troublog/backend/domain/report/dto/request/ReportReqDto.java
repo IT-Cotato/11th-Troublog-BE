@@ -29,6 +29,9 @@ public record ReportReqDto(
 	@Schema(description = "신고 유형", allowableValues = {
 		"SPAM", "INFO", "BLAME", "PRIVACY", "SUBJECT", "COPYRIGHT"
 	})
-	ReportType reportType
+	ReportType reportType,
+
+	@Schema(description = "저작권 위반 추가서류 image url, 신고 유형이 COPYRIGHT일 경우에만 입력")
+	String copyRightImgUrl
 ) {
 }

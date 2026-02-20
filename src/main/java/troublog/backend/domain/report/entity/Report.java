@@ -74,21 +74,6 @@ public class Report extends BaseEntity {
 	@Column(name = "report_type", nullable = false, length = 20)
 	private ReportType reportType;
 
-	public static Report toEntity(
-		User reportingUser,
-		User reportedUser,
-		Email email,
-		ReportTargetType targetType,
-		long targetId,
-		ReportType reportType
-	) {
-		return Report.builder()
-			.reportingUser(reportingUser)
-			.reportedUser(reportedUser)
-			.email(email)
-			.targetType(targetType)
-			.targetId(targetId)
-			.reportType(reportType)
-			.build();
-	}
+	@Column(name = "copyright_img_url", length = 255)
+	private String copyrightImgUrl;
 }

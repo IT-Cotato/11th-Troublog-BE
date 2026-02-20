@@ -9,9 +9,4 @@ public record ReportResDto(
 	@Schema(description = "신고 ID")
 	Long reportId
 ) {
-	public static ReportResDto of(Long reportId) {
-		return ReportResDto.builder()
-			.reportId(reportId)
-			.build();
-	}
 }
