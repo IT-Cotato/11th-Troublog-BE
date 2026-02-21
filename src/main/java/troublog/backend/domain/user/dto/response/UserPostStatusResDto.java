@@ -15,6 +15,9 @@ public record UserPostStatusResDto(
 	String postStatus,
 
 	@Schema(description = "게시글 ID 리스트")
-	List<Long> postIdList
+	List<Long> postIdList,
+
+	@Schema(description = "요약본 ID 리스트")
+	List<Long> postSummaryIdList
 ) {
 }

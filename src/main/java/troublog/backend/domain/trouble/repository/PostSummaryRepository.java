@@ -52,4 +52,6 @@ public interface PostSummaryRepository extends JpaRepository<PostSummary, Long> 
 		@Param("status") PostStatus status,               // null 허용
 		@Param("summaryType") SummaryType summaryType     // null 허용
 	);
+
+	List<PostSummary> findAllByPost_IdIn(List<Long> postIds);
 }

@@ -13,8 +13,10 @@ import org.springframework.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.trouble.entity.Post;
+import troublog.backend.domain.trouble.entity.PostSummary;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
+import troublog.backend.domain.trouble.service.query.PostSummaryQueryService;
 import troublog.backend.domain.user.converter.FollowConverter;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.dto.request.UserProfileUpdateReqDto;
@@ -44,6 +46,7 @@ public class UserFacade {
 	private final FollowCommandService followCommandService;
 	private final FollowQueryService followQueryService;
 	private final PostQueryService postQueryService;
+	private final PostSummaryQueryService postSummaryQueryService;
 
 	@Transactional
 	public void followUser(Long followerId, Long followingId) {
@@ -160,11 +163,21 @@ public class UserFacade {
 			.map(Post::getId)
 			.toList();
 
+		// 요약본이 필요할 경우, 게시글 ID에 맞는 요약본 가져오기
+		List<Long> postSummaryIdList = List.of();
+		if (postStatus == null || postStatus.equals(PostStatus.SUMMARIZED)) {
+			postSummaryIdList = postSummaryQueryService.findAllByPostIdList(postIdList)
+				.stream()
+				.map(PostSummary::getId)
+				.toList();
+		}
+
 		// DTO 변환
 		return UserConverter.toUserPostStatusResDto(
 			userId,
 			postStatus != null ? postStatus.name() : "ALL",
-			postIdList
+			postIdList,
+			postSummaryIdList
 		);
 	}
 

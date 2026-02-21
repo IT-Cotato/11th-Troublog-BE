@@ -1,5 +1,7 @@
 package troublog.backend.domain.trouble.service.query;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,5 +24,9 @@ public class PostSummaryQueryService {
 	public PostSummary findById(Long id) {
 		return postSummaryRepository.findById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_SUMMARY_NOT_FOUND));
+	}
+
+	public List<PostSummary> findAllByPostIdList(List<Long> postIdList) {
+		return postSummaryRepository.findAllByPost_IdIn(postIdList);
 	}
 }
