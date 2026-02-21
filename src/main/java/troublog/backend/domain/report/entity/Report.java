@@ -10,7 +10,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -34,10 +33,6 @@ import troublog.backend.global.common.entity.BaseEntity;
 @Getter
 @Table(
 	name = "reports",
-	indexes = {
-		@Index(name = "idx_reporter_target",
-			columnList = "reporting_user_id, target_type, target_id")
-	},
 	uniqueConstraints = {
 		@UniqueConstraint(
 			name = "uk_reporter_target",
