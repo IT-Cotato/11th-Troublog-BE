@@ -41,7 +41,7 @@ import troublog.backend.global.common.entity.BaseEntity;
 				"target_type",
 				"target_id"
 			}
-		)
+			)
 	}
 )
 public class Report extends BaseEntity {
