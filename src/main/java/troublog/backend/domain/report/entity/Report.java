@@ -35,12 +35,17 @@ import troublog.backend.global.common.entity.BaseEntity;
 @Table(
 	name = "reports",
 	indexes = {
-		@Index(name = "idx_reporter_target", columnList = "reporting_user_id, target_type, target_id")
+		@Index(name = "idx_reporter_target",
+			columnList = "reporting_user_id, target_type, target_id")
 	},
 	uniqueConstraints = {
 		@UniqueConstraint(
 			name = "uk_reporter_target",
-			columnNames = {"reporting_user_id", "target_type", "target_id"}
+			columnNames = {
+				"reporting_user_id",
+				"target_type",
+				"target_id"
+			}
 		)
 	}
 )
