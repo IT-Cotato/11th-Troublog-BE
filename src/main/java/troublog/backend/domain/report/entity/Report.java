@@ -14,6 +14,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,12 @@ import troublog.backend.global.common.entity.BaseEntity;
 	name = "reports",
 	indexes = {
 		@Index(name = "idx_reporter_target", columnList = "reporting_user_id, target_type, target_id")
+	},
+	uniqueConstraints = {
+		@UniqueConstraint(
+			name = "uk_reporter_target",
+			columnNames = {"reporting_user_id", "target_type", "target_id"}
+		)
 	}
 )
 public class Report extends BaseEntity {

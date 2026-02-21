@@ -113,7 +113,7 @@ public enum ErrorCode {
 	 * Report Error (R-xxx)
 	 */
 	REPORT_ALREADY_EXISTS(HttpStatus.CONFLICT, "R-001", "이미 신고한 대상입니다."),
-	REPORT_REPORTER_MISMATCH(HttpStatus.FORBIDDEN, "R-002", "신고자 정보가 일치하지 않습니다."),
+	REPORT_COPYRIGHT_IMG(HttpStatus.FORBIDDEN, "R-002", "저작권 침해 신고 시에만 서류첨부가 가능합니다."),
 	REPORT_TARGET_USER_MISMATCH(HttpStatus.BAD_REQUEST, "R-003", "신고 대상 사용자 정보가 일치하지 않습니다."),
 
 	/**

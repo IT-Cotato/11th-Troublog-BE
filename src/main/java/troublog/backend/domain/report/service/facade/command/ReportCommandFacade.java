@@ -38,21 +38,22 @@ public class ReportCommandFacade {
 	 * 신고 작성 (POST)
 	 */
 	public ReportResDto createReport(long authUserId, ReportReqDto reportReqDto) {
-		ReportValidator.validateReporterMatches(authUserId, reportReqDto.reportingUserId());
 
 		boolean alreadyReported = reportQueryService.existsByReporterAndTarget(
-			reportReqDto.reportingUserId(),
+			authUserId,
 			reportReqDto.targetType(),
 			reportReqDto.targetId()
 		);
 		ReportValidator.validateDuplicate(alreadyReported);
 
-		User reportingUser = userQueryService.findUserById(reportReqDto.reportingUserId());
+		ReportValidator.validateCopyrightImgUrl(reportReqDto.reportType(), reportReqDto.copyrightImgUrl());
+
+		User reportingUser = userQueryService.findUserById(authUserId);
 		User reportedUser = resolveReportedUser(reportReqDto.targetType(), reportReqDto.targetId(),
 			reportReqDto.reportedUserId());
 
 		Email email = mailUtil.sendReportMail(
-			reportReqDto.reportingUserId(),
+			authUserId,
 			reportReqDto.reportedUserId(),
 			reportReqDto.targetType().getDescription(),
 			reportReqDto.targetId(),
@@ -66,7 +67,7 @@ public class ReportCommandFacade {
 			reportReqDto.targetType(),
 			reportReqDto.targetId(),
 			reportReqDto.reportType(),
-			reportReqDto.copyRightImgUrl()
+			reportReqDto.copyrightImgUrl()
 		);
 
 		Report savedReport = reportCommandService.save(report);

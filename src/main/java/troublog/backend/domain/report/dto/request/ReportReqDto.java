@@ -9,9 +9,6 @@ import troublog.backend.domain.report.enums.ReportType;
 @Builder
 @Schema(description = "신고 요청 DTO")
 public record ReportReqDto(
-	@NotNull
-	@Schema(description = "신고자 ID")
-	Long reportingUserId,
 
 	@NotNull
 	@Schema(description = "피신고자 ID")
@@ -32,6 +29,6 @@ public record ReportReqDto(
 	ReportType reportType,
 
 	@Schema(description = "저작권 위반 추가서류 image url, 신고 유형이 COPYRIGHT일 경우에만 입력")
-	String copyRightImgUrl
+	String copyrightImgUrl
 ) {
 }
