@@ -26,6 +26,7 @@ import troublog.backend.global.common.error.exception.BusinessException;
 import troublog.backend.global.common.error.exception.ImageException;
 import troublog.backend.global.common.error.exception.PostException;
 import troublog.backend.global.common.error.exception.ProjectException;
+import troublog.backend.global.common.error.exception.ReportException;
 import troublog.backend.global.common.error.exception.TermsException;
 import troublog.backend.global.common.error.exception.UserException;
 import troublog.backend.global.common.response.BaseResponse;
@@ -230,6 +231,16 @@ public class GlobalExceptionHandler {
 		HttpServletRequest request
 	) {
 		LoggingUtil.logException("ProjectException 발생", ex, request);
+		ErrorResponse response = ErrorResponse.of(ex.getErrorCode(), request);
+		return ResponseEntity.status(ex.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
+	}
+
+	@ExceptionHandler(ReportException.class)
+	public ResponseEntity<BaseResponse<ErrorResponse>> handleReportException(
+		ReportException ex,
+		HttpServletRequest request
+	) {
+		LoggingUtil.logException("ReportException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ex.getErrorCode(), request);
 		return ResponseEntity.status(ex.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
