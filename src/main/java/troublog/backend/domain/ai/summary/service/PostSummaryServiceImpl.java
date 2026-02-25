@@ -53,11 +53,17 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 	@Override
 	@Async("summaryExecutor")
 	public CompletableFuture<SummarizedResDto> executeAsync(SummaryTask summaryTask, SummaryType summaryType) {
-		return CompletableFuture
-			.supplyAsync(() -> executeAiAnalysis(summaryTask, summaryType))
-			.thenApply(result -> processResult(summaryTask, result))
-			.thenApply(result -> completeTask(summaryTask, result))
-			.exceptionally(throwable -> handleFailure(summaryTask, throwable));
+		try {
+			SummarizedResDto result = execute(summaryTask, summaryType);
+			summaryTask.registerResult(result);
+			
+			return CompletableFuture.completedFuture(
+				completionService.completeTask(summaryTask, result)
+			);
+		} catch (Exception e) {
+			completionService.handleFailure(summaryTask, e);
+			throw new AiTaskException(ErrorCode.TASK_UPDATE_FAILED);
+		}
 	}
 
 	@Override
@@ -93,8 +99,10 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 		return response;
 	}
 
-	private SummarizedResDto convertAiResponse(String aiResponse,
-		BeanOutputConverter<SummarizedResDto> converter) {
+	private SummarizedResDto convertAiResponse(
+		String aiResponse,
+		BeanOutputConverter<SummarizedResDto> converter
+	) {
 		try {
 			return converter.convert(aiResponse);
 		} catch (Exception e) {
@@ -140,25 +148,4 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 			.toList();
 	}
 
-	private SummarizedResDto executeAiAnalysis(SummaryTask summaryTask, SummaryType summaryType) {
-		log.info("AI 분석 작업 시작: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId());
-		return execute(summaryTask, summaryType);
-	}
-
-	private SummarizedResDto processResult(SummaryTask summaryTask, SummarizedResDto result) {
-		summaryTask.registerResult(result);
-		log.info("AI 분석 결과 등록 완료: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId());
-		return result;
-	}
-
-	private SummarizedResDto completeTask(SummaryTask summaryTask, SummarizedResDto result) {
-		return completionService.completeTask(summaryTask, result);
-	}
-
-	private SummarizedResDto handleFailure(SummaryTask summaryTask, Throwable throwable) {
-		log.error("AI 분석 작업 실패: taskId={}, postId={}, error={}",
-			summaryTask.getId(), summaryTask.getPostId(), throwable.getMessage(), throwable);
-		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.FAILED);
-		throw new AiTaskException(ErrorCode.TASK_UPDATE_FAILED);
-	}
 }

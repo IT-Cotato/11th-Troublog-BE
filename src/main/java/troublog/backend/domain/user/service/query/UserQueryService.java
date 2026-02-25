@@ -6,11 +6,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.entity.UserStatus;
 import troublog.backend.domain.user.repository.UserRepository;
@@ -24,13 +23,13 @@ public class UserQueryService {
 
 	private final UserRepository userRepository;
 
-	public User findUserById(Long userId) {
+	public User findUserById(long userId) {
 
 		return userRepository.findById(userId)
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 	}
 
-	public User findUserByIdAndIsDeletedFalseAndStatusActive(Long userId) {
+	public User findUserByIdAndStatusActive(Long userId) {
 
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
@@ -41,9 +40,9 @@ public class UserQueryService {
 		return user;
 	}
 
-	public User findUserByEmailAndIsDeletedFalseAndStatusActive(String email) {
+	public User findUserByEmailAndStatusActive(String email) {
 
-		User user = userRepository.findByEmailAndIsDeletedFalse(email)
+		User user = userRepository.findByEmail(email)
 			.orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 
 		validateUserDeleted(user);
@@ -53,20 +52,20 @@ public class UserQueryService {
 	}
 
 	public List<User> findAllByIds(Set<Long> userIds) {
-		return userRepository.findAllByIdInAndIsDeletedFalse(userIds);
+		return userRepository.findAllByIdIn(userIds);
 	}
 
 	public boolean existsByEmail(String email) {
 
-		return userRepository.existsByEmailAndIsDeletedFalse(email);
+		return userRepository.existsByEmail(email);
 	}
 
 	public boolean existsByNickname(String nickname) {
 
-		return userRepository.existsByNicknameAndIsDeletedFalse(nickname);
+		return userRepository.existsByNickname(nickname);
 	}
 
-	public Optional<User> findUserByEmailAndIsDeletedFalseAndStatusActiveSocial(String email) {
-		return userRepository.findByEmailAndIsDeletedFalseAndStatus(email, UserStatus.ACTIVE);
+	public Optional<User> findUserByEmailAndStatusActiveSocial(String email) {
+		return userRepository.findByEmailAndStatus(email, UserStatus.ACTIVE);
 	}
 }

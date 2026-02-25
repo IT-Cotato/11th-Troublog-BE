@@ -2,9 +2,8 @@ package troublog.backend.domain.ai.summary.entity;
 
 import java.time.LocalDateTime;
 
-import org.springframework.data.redis.core.RedisHash;
-
 import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -30,8 +30,10 @@ public class ImageFacade {
 			.orTimeout(UPLOAD_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 	}
 
-	public CompletableFuture<List<String>> uploadMultipleImages(List<MultipartFile> images,
-		String dirName) {
+	public CompletableFuture<List<String>> uploadMultipleImages(
+		List<MultipartFile> images,
+		String dirName
+	) {
 		return s3Uploader.uploadMultipleImages(images, dirName)
 			.orTimeout(UPLOAD_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 	}

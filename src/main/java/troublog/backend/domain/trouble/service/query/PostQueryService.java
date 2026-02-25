@@ -38,7 +38,7 @@ public class PostQueryService {
 	private final PostRepository postRepository;
 	private final PostSummaryRepository postSummaryRepository;
 
-	public Post findById(Long id) {
+	public Post findById(long id) {
 		log.info("[Post] 트러블슈팅 조회:: postId={}", id);
 		return postRepository.findById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
@@ -46,24 +46,24 @@ public class PostQueryService {
 
 	public Post findNotDeletedPost(Long id) {
 		log.info("[Post] 삭제되지 않은 트러블슈팅 문서 조회: postId={}", id);
-		return postRepository.findByIdAndIsDeletedFalse(id)
+		return postRepository.findById(id)
 			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
 
 	public List<Post> findAllNotDeletedPosts() {
-		List<Post> posts = postRepository.findByIsDeletedFalse();
+		List<Post> posts = postRepository.findAll();
 		log.info("[Post] 삭제되지 않은 트러블슈팅 문서 조회: postCount={}", posts.size());
 		return posts;
 	}
 
 	public List<Post> findAllNotDeletedPostsByUser(User user) {
-		List<Post> postList = postRepository.findAllByUserAndIsDeletedFalse(user);
+		List<Post> postList = postRepository.findAllByUser(user);
 		log.info("[Post] 특정 유저의 삭제되지 않은 트러블슈팅 문서 조회");
 		return postList;
 	}
 
 	public List<Post> findAllDeletedPosts() {
-		List<Post> posts = postRepository.findByIsDeletedTrue();
+		List<Post> posts = postRepository.findAllDeletedPosts();
 		log.info("[Post] 삭제된 트러블슈팅 문서 조회: postCount={}", posts.size());
 		return posts;
 	}
@@ -83,15 +83,15 @@ public class PostQueryService {
 
 	public List<Post> findPostByStatusAndUserId(Long userId, PostStatus status) {
 		List<Post> posts = (status == null)
-			? postRepository.findByUserIdAndIsDeletedFalse(userId)
-			: postRepository.findByUserIdAndStatusAndIsDeletedFalse(userId, status);
+			? postRepository.findByUserId(userId)
+			: postRepository.findByUserIdAndStatus(userId, status);
 		log.info("[Post] 사용자 {} 상태 트러블슈팅 문서 개수 조회: userId={}, count={}",
 			(status == null ? "ALL" : status), userId, posts.size());
 		return posts;
 	}
 
 	public Page<Post> getAllTroubles(Long userId, Pageable pageable) {
-		Page<Post> page = postRepository.findAllByUser_IdAndIsDeletedFalse(userId, pageable);
+		Page<Post> page = postRepository.findAllByUser_Id(userId, pageable);
 		log.info("[Post] 전체 트러블 조회: userId={}, total={}, page={}, size={}, elementsInPage={}",
 			userId, page.getTotalElements(), page.getNumber(), page.getSize(), page.getNumberOfElements());
 		return page;
@@ -134,7 +134,7 @@ public class PostQueryService {
 		List<PostSummary> posts = (sort == SortType.IMPORTANT)
 			? postSummaryRepository.findByProjectSummarizedImportant(projectId, PostStatus.SUMMARIZED, filterType)
 			: postSummaryRepository.findByProjectSummarized(projectId, PostStatus.SUMMARIZED, filterType,
-			Sort.by(DESC, "created_at", "id"));
+			Sort.by(DESC, "createdAt", "id"));
 		log.info("[Post] 요약완료된 트러블슈팅 문서 조회: postCount={}, summaryType={}", posts.size(), summaryType);
 		return posts.stream()
 			.map(ListConverter::toAllSummerizedListResDto)

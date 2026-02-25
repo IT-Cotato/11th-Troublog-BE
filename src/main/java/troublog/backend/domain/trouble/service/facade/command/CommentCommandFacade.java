@@ -22,8 +22,8 @@ import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
-import troublog.backend.global.common.constant.Domain;
 import troublog.backend.global.common.constant.EnvType;
+import troublog.backend.global.common.constant.FrontDomain;
 import troublog.backend.global.common.util.AlertSseUtil;
 
 @Service
@@ -31,16 +31,14 @@ import troublog.backend.global.common.util.AlertSseUtil;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentCommandFacade {
 
+	public static final String COMMUNITY_REDIRECT_URL = "/user/community/";
 	private final PostQueryService postQueryService;
 	private final CommentCommandService commentCommandService;
 	private final CommentRelationFacade commentRelationFacade;
 	private final CommentQueryService commentQueryService;
 	private final UserQueryService userQueryService;
 	private final AlertCommandService alertCommandService;
-
 	private final AlertSseUtil alertSseUtil;
-
-	public static final String COMMUNITY_REDIRECT_URL = "/user/community/";
 
 	public CommentResDto createComment(Long userId, Long postId, CommentReqDto commentReqDto, String clientEnvType) {
 		Post post = postQueryService.findById(postId);
@@ -52,12 +50,13 @@ public class CommentCommandFacade {
 		Comment savedComment = commentCommandService.save(newComment);
 
 		// 알림 전송
-		String targetUrl = Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + COMMUNITY_REDIRECT_URL + post.getId();
+		String targetUrl =
+			FrontDomain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + COMMUNITY_REDIRECT_URL + post.getId();
 
 		Alert alert = AlertConverter.postCommentAlert(post.getUser(), user.getNickname(), targetUrl);
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
-		if(alertSseUtil.sendAlert(post.getUser().getId(), alertResDto)) {
+		if (alertSseUtil.sendAlert(post.getUser().getId(), alertResDto)) {
 			alert.markAsSent();
 		}
 
@@ -66,7 +65,13 @@ public class CommentCommandFacade {
 		return CommentConverter.toResponse(savedComment);
 	}
 
-	public CommentResDto createChildComment(Long userId, CommentReqDto commentReqDto, Long commentId, Long postId, String clientEnvType) {
+	public CommentResDto createChildComment(
+		Long userId,
+		CommentReqDto commentReqDto,
+		Long commentId,
+		Long postId,
+		String clientEnvType
+	) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
 		User user = userQueryService.findUserById(userId);
@@ -81,12 +86,13 @@ public class CommentCommandFacade {
 		Comment savedComment = commentCommandService.save(newChildComment);
 
 		// 알림 전송
-		String targetUrl = Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + COMMUNITY_REDIRECT_URL + post.getId();
+		String targetUrl =
+			FrontDomain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + COMMUNITY_REDIRECT_URL + post.getId();
 
 		Alert alert = AlertConverter.postChildCommentAlert(parentComment.getUser(), user.getNickname(), targetUrl);
 		AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
 
-		if(alertSseUtil.sendAlert(parentComment.getUser().getId(), alertResDto)) {
+		if (alertSseUtil.sendAlert(parentComment.getUser().getId(), alertResDto)) {
 			alert.markAsSent();
 		}
 
@@ -109,13 +115,18 @@ public class CommentCommandFacade {
 	public void hardDeleteComment(Long userId, long commentId) {
 		Comment comment = commentQueryService.findComment(commentId);
 		CommentFactory.validateAuthorized(userId, comment);
-		commentCommandService.delete(comment);
+		commentCommandService.hardDelete(comment);
 	}
 
-	public void softDeleteComment(Long userId, long commentId) {
+	public void deleteComment(Long userId, long commentId) {
 		Comment comment = commentQueryService.findComment(commentId);
 		CommentFactory.validateAuthorized(userId, comment);
-		comment.markAsDeleted();
+		// 대댓글이 있으면 softdelete
+		if (commentQueryService.hasChildComments(commentId)) {
+			commentCommandService.softDelete(comment);
+			return;
+		}
+		// 대댓글이 없으면 harddelete
+		commentCommandService.hardDelete(comment);
 	}
 }
-

@@ -100,19 +100,24 @@ public class CommunityController {
 
 	@PostMapping("/{postId}/comment")
 	@Operation(summary = "댓글 생성 API", description = "해당하는 post의 댓글을 생성한다.")
-	public ResponseEntity<BaseResponse<CommentResDto>> createComment(@PathVariable Long postId,
+	public ResponseEntity<BaseResponse<CommentResDto>> createComment(
+		@PathVariable Long postId,
 		@Authentication CustomAuthenticationToken auth,
-		@Valid @RequestBody CommentReqDto commentReqDto) {
-		CommentResDto response = commentCommandFacade.createComment(auth.getUserId(), postId, commentReqDto, auth.getEnvType());
+		@Valid @RequestBody CommentReqDto commentReqDto
+	) {
+		CommentResDto response = commentCommandFacade.createComment(auth.getUserId(), postId, commentReqDto,
+			auth.getEnvType());
 		return ResponseUtils.created(response);
 	}
 
 	@PutMapping("/{postId}/{commentId}")
 	@Operation(summary = "댓글 수정 API", description = "해당하는 post의 댓글 내용을 수정한다.")
-	public ResponseEntity<BaseResponse<CommentResDto>> updateComment(@PathVariable Long postId,
+	public ResponseEntity<BaseResponse<CommentResDto>> updateComment(
+		@PathVariable Long postId,
 		@PathVariable Long commentId,
 		@Authentication CustomAuthenticationToken auth,
-		@Valid @RequestBody CommentReqDto commentReqDto) {
+		@Valid @RequestBody CommentReqDto commentReqDto
+	) {
 		CommentResDto response = commentCommandFacade.updateComment(auth.getUserId(), commentReqDto, commentId, postId);
 		return ResponseUtils.ok(response);
 	}
@@ -123,7 +128,7 @@ public class CommunityController {
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable long commentId
 	) {
-		commentCommandFacade.softDeleteComment(auth.getUserId(), commentId);
+		commentCommandFacade.deleteComment(auth.getUserId(), commentId);
 		return ResponseUtils.noContent();
 	}
 
@@ -142,10 +147,12 @@ public class CommunityController {
 
 	@PostMapping("/{postId}/{commentId}")
 	@Operation(summary = "대댓글 생성 API", description = "해당하는 post의 댓글의 대댓글을 생성한다.")
-	public ResponseEntity<BaseResponse<CommentResDto>> createChildComment(@PathVariable Long commentId,
+	public ResponseEntity<BaseResponse<CommentResDto>> createChildComment(
+		@PathVariable Long commentId,
 		@PathVariable Long postId,
 		@Authentication CustomAuthenticationToken auth,
-		@Valid @RequestBody CommentReqDto commentReqDto) {
+		@Valid @RequestBody CommentReqDto commentReqDto
+	) {
 		CommentResDto response = commentCommandFacade.createChildComment(auth.getUserId(), commentReqDto,
 			commentId, postId, auth.getEnvType());
 		return ResponseUtils.created(response);
@@ -162,9 +169,12 @@ public class CommunityController {
 	}
 
 	@PostMapping("/{postId}/like")
-	@Operation(summary = "포스트 좋아요 API", description = "해당하는 포스트에 좋아요한다. 만약 좋아요가 눌러져 있을 시 자동으로 삭제된다. (like true 시 좋아요 눌러진 것/ false는 취소된 것")
-	public ResponseEntity<BaseResponse<LikeResDto>> postLike(@PathVariable Long postId,
-		@Authentication CustomAuthenticationToken auth) {
+	@Operation(summary = "포스트 좋아요 API",
+		description = "해당하는 포스트에 좋아요한다. 만약 좋아요가 눌러져 있을 시 자동으로 삭제된다. (like true 시 좋아요 눌러진 것/ false는 취소된 것")
+	public ResponseEntity<BaseResponse<LikeResDto>> postLike(
+		@PathVariable Long postId,
+		@Authentication CustomAuthenticationToken auth
+	) {
 		LikeResDto response = likeFacade.postLike(postId, auth.getUserId(), auth.getEnvType());
 		return ResponseUtils.created(response);
 	}
@@ -174,7 +184,8 @@ public class CommunityController {
 	public ResponseEntity<PageResponse<LikePostResDto>> getUserLikedPosts(
 		@Authentication CustomAuthenticationToken auth,
 		@RequestParam(defaultValue = "1") @Min(1) int page,
-		@RequestParam(defaultValue = "10") @Min(1) int size) {
+		@RequestParam(defaultValue = "10") @Min(1) int size
+	) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
 		Page<LikePostResDto> likedPosts = likeFacade.getLikedPostsByUser(auth.getUserId(), pageable);
 		return ResponseUtils.page(likedPosts);
@@ -185,7 +196,8 @@ public class CommunityController {
 	public ResponseEntity<PageResponse<PostResDto>> getRecentlyViewedPosts(
 		@Authentication CustomAuthenticationToken auth,
 		@RequestParam(defaultValue = "1") @Min(1) int page,
-		@RequestParam(defaultValue = "10") @Min(1) int size) {
+		@RequestParam(defaultValue = "10") @Min(1) int size
+	) {
 		Pageable pageable = postQueryFacade.getPageable(page, size);
 		Page<PostResDto> posts = postQueryFacade.getRecentlyViewedPosts(auth.getUserId(), pageable);
 		return ResponseUtils.page(posts);

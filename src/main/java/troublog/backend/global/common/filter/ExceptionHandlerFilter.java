@@ -23,12 +23,12 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 	private final HandlerExceptionResolver exceptionResolver;
 
 	public ExceptionHandlerFilter(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
-		this.exceptionResolver=resolver;
+		this.exceptionResolver = resolver;
 	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-	throws ServletException, IOException {
+		throws ServletException, IOException {
 		try {
 			filterChain.doFilter(request, response);
 		} catch (Exception e) {

@@ -10,9 +10,9 @@ import org.springframework.util.CollectionUtils;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.terms.entity.Terms;
-import troublog.backend.global.common.error.exception.TermsException;
 import troublog.backend.domain.terms.service.query.TermsQueryService;
 import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.TermsException;
 
 @UtilityClass
 public class TermsValidator {
@@ -51,7 +51,7 @@ public class TermsValidator {
 	private void validateActiveTerms(Terms terms) {
 		if (Boolean.FALSE.equals(terms.getIsCurrent())) {
 			throw new TermsException(ErrorCode.TERMS_NOT_CURRENT);
-		} else if (Boolean.TRUE.equals(terms.getIsDeleted())) {
+		} else if (terms.isDeleted()) {
 			throw new TermsException(ErrorCode.TERMS_DELETED);
 		}
 	}
@@ -90,13 +90,11 @@ public class TermsValidator {
 		}
 	}
 
-
 	public void validateActiveTermsExist(List<Terms> currentActiveTerms) {
 		if (CollectionUtils.isEmpty(currentActiveTerms)) {
 			throw new TermsException(ErrorCode.NO_ACTIVE_TERMS);
 		}
 	}
-
 
 	public void validateRequiredTermsAgreed(List<Terms> activeTerms, Map<Long, Boolean> agreements) {
 		List<Terms> missingRequired = activeTerms.stream()

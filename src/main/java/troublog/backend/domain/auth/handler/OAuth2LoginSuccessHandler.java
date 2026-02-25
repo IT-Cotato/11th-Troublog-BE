@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -19,36 +21,32 @@ import lombok.extern.slf4j.Slf4j;
 import troublog.backend.domain.auth.entity.LoginType;
 import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.entity.UserStatus;
-import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.domain.user.service.command.UserCommandService;
-import troublog.backend.global.common.constant.Domain;
+import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.global.common.constant.EnvType;
+import troublog.backend.global.common.constant.FrontDomain;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.util.JwtProvider;
-
-import org.springframework.beans.factory.annotation.Value;
-
-import java.util.UUID;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+	public static final String OAUTH2_KAKAO = "KAKAO_";
+	public static final String EMAIL_DOMAIN_TEMP = "_@social.temp";
 	private final UserQueryService userQueryService;
 	private final UserCommandService userCommandService;
 	private final JwtProvider jwtProvider;
 	private final PasswordEncoder passwordEncoder;
-
-	public static final String OAUTH2_KAKAO = "KAKAO_";
-	public static final String EMAIL_DOMAIN_TEMP = "_@social.temp";
-
 	@Value("${spring.profiles.active}")
 	private String profilesActive;
 
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-		Authentication authentication) throws
+	public void onAuthenticationSuccess(
+		HttpServletRequest request, HttpServletResponse response,
+		Authentication authentication
+	) throws
 		IOException {
 
 		log.info("OAuth2 Login 성공!");
@@ -101,9 +99,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		return new Oauth2UserInfo(socialId, nickname, profileImageUrl, email);
 	}
 
-	private record Oauth2UserInfo(String socialId, String nickname, String profileImageUrl, String email) {
-	}
-
 	private String extractEmail(Map<String, Object> kakaoAccount) {
 		if (kakaoAccount == null) {
 			return null;
@@ -118,7 +113,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 	}
 
 	private User findOrCreateUserByEmail(String nickname, String profileImageUrl, String socialId, String email) {
-		return userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActiveSocial(email)
+		return userQueryService.findUserByEmailAndStatusActiveSocial(email)
 			.orElseGet(() -> {
 				// 닉네임 중복 체크 및 처리
 				String uniqueNickname = generateUniqueNickname(nickname);
@@ -136,7 +131,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 						.loginType(LoginType.KAKAO.getValue())
 						.socialId(socialId)
 						.password(passwordEncoder.encode(UUID.randomUUID().toString()))
-						.isDeleted(false)
 						.isIntegrated(false)
 						// field, bio, githubUrl은 null로 두고 나중에 입력받음
 						.build()
@@ -174,7 +168,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		log.info("신규 카카오 유저 회원가입 완료: userId={}", user.getId());
 
 		// 프론트엔드 도메인 가져오기
-		String frontendDomain = Domain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
+		String frontendDomain = FrontDomain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
 
 		// 신규 유저 정보를 URL 파라미터로 전달
 		String redirectUrl = String.format("%s/auth/oauth-register?userId=%d&nickname=%s&loginType=%s&status=%s",
@@ -208,7 +202,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		jwtProvider.setOauthCookieRefreshToken(refreshToken, response);
 
 		// 프론트엔드 도메인 가져오기
-		String frontendDomain = Domain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
+		String frontendDomain = FrontDomain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
 
 		// 로그인 성공 시 토큰을 URL 파라미터로 전달하여 메인 페이지로 리다이렉트
 		String redirectUrl = String.format("%s/user/home?userId=%d&accessToken=%s",
@@ -219,14 +213,16 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		response.sendRedirect(redirectUrl);
 	}
 
-	private void handleNotIntegratedUserRedirect(HttpServletResponse response, User user, String socialId,
-		String profileImgUrl) throws
+	private void handleNotIntegratedUserRedirect(
+		HttpServletResponse response, User user, String socialId,
+		String profileImgUrl
+	) throws
 		IOException {
 
 		log.info("통합 되지 않은 유저: userId={}", user.getId());
 
 		// 프론트엔드 도메인 가져오기
-		String frontendDomain = Domain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
+		String frontendDomain = FrontDomain.fromEnvType(EnvType.valueOfEnvType(profilesActive));
 
 		// 신규 유저 정보를 URL 파라미터로 전달
 		String redirectUrl = String.format("%s/auth/oauth-integration?userId=%d&socialId=%s&profileImgUrl=%s",
@@ -237,5 +233,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 		);
 		response.sendRedirect(redirectUrl);
 	}
-}
 
+	private record Oauth2UserInfo(String socialId, String nickname, String profileImageUrl, String email) {
+	}
+}

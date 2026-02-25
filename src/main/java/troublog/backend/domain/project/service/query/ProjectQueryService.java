@@ -28,15 +28,9 @@ public class ProjectQueryService {
 
 	private final ProjectRepository projectRepository;
 
-	public Project findByIdAndIsDeletedFalse(long id) {
-		log.info("[Project] 프로젝트 조회: projectId={}", id);
-		return projectRepository.findByIdAndIsDeletedFalse(id)
-			.orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND));
-	}
-
 	public Project findById(long id) {
 		log.info("[Project] 프로젝트 조회: projectId={}", id);
-		return  projectRepository.findById(id)
+		return projectRepository.findById(id)
 			.orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND));
 	}
 
@@ -51,13 +45,13 @@ public class ProjectQueryService {
 	}
 
 	public Page<ProjectDetailResDto> getAllProjects(Long userId, Pageable pageable) {
-		Page<Project> page = projectRepository.findAllByUserIdAndIsDeletedFalse(userId, pageable);
+		Page<Project> page = projectRepository.findAllByUserId(userId, pageable);
 		log.info("[Project] 전체 프로젝트 조회: userId={}, projectCount={}", userId, page.getSize());
 		return page.map(this::getDetails);
 	}
 
 	public List<Project> getAllProjectsByUser(User user) {
-		List<Project> projectList = projectRepository.findAllByUserAndIsDeletedFalse(user);
+		List<Project> projectList = projectRepository.findAllByUser(user);
 		log.info("[Project] 특정 유저의 삭제되지 않은 프로젝트 조회: userId={}, projectCount={}", user.getId(), projectList.size());
 		return projectList;
 	}

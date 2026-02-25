@@ -23,7 +23,6 @@ import troublog.backend.global.common.util.JsonConverter;
 public class PostConverter {
 	private static final int DEFAULT_COUNT = 0;
 	private static final boolean DEFAULT_SUMMARY_CREATED = false;
-	private static final boolean DEFAULT_DELETE_STATUS = false;
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
 	public Post createWritingPost(PostReqDto postReqDto) {
@@ -64,7 +63,6 @@ public class PostConverter {
 			.title(postReqDto.title())
 			.commentCount(DEFAULT_COUNT)
 			.likeCount(DEFAULT_COUNT)
-			.isDeleted(DEFAULT_DELETE_STATUS)
 			.templateType(postReqDto.templateType())
 			.checklistError(JsonConverter.toJson(postReqDto.checklistError()))
 			.checklistReason(JsonConverter.toJson(postReqDto.checklistReason()));
@@ -85,8 +83,8 @@ public class PostConverter {
 			.templateType(post.getTemplateType() != null ? post.getTemplateType().name() : null)
 			.checklistError(JsonConverter.toList(post.getChecklistError()))
 			.checklistReason(JsonConverter.toList(post.getChecklistReason()))
-			.createdAt(post.getCreated_at())
-			.updatedAt(post.getUpdated_at())
+			.createdAt(post.getCreatedAt())
+			.updatedAt(post.getUpdatedAt())
 			.userInfo(UserConverter.toPostCardUserInfoResDto(post.getUser()))
 			.projectId(post.getProject().getId())
 			.errorTag(PostQueryFacade.findErrorTag(post))
@@ -117,8 +115,8 @@ public class PostConverter {
 			.errorTag(PostQueryFacade.findErrorTag(post))
 			.postTags(PostQueryFacade.findTechStackTags(post))
 			.contents(PostQueryFacade.findContents(post))
-			.createdAt(post.getCreated_at())
-			.updatedAt(post.getUpdated_at())
+			.createdAt(post.getCreatedAt())
+			.updatedAt(post.getUpdatedAt())
 			.completedAt(post.getCompletedAt() != null ? post.getCompletedAt().format(DATE_FORMATTER) : null)
 			.build();
 	}
@@ -143,7 +141,11 @@ public class PostConverter {
 			.toList();
 	}
 
-	public CommunityPostDetailsResDto toCommunityPostDetailsResponse(UserInfoResDto userInfoResDto, Post post, boolean liked) {
+	public CommunityPostDetailsResDto toCommunityPostDetailsResponse(
+		UserInfoResDto userInfoResDto,
+		Post post,
+		boolean liked
+	) {
 		return CommunityPostDetailsResDto.builder()
 			.userInfoResDto(userInfoResDto)
 			.postId(post.getId())
@@ -161,8 +163,8 @@ public class PostConverter {
 			.errorTag(PostQueryFacade.findErrorTag(post))
 			.postTags(PostQueryFacade.findTechStackTags(post))
 			.contents(PostQueryFacade.findContents(post))
-			.createdAt(post.getCreated_at())
-			.updatedAt(post.getUpdated_at())
+			.createdAt(post.getCreatedAt())
+			.updatedAt(post.getUpdatedAt())
 			.completedAt(post.getCompletedAt() != null ? post.getCompletedAt().format(DATE_FORMATTER) : null)
 			.build();
 	}

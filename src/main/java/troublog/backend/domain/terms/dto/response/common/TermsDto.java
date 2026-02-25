@@ -34,5 +34,5 @@ public record TermsDto(
 	)
 	Integer expirationPeriod
 
-	) {
+) {
 }

@@ -21,10 +21,10 @@ import troublog.backend.domain.auth.dto.IntegrationKakaoRegisterReqDto;
 import troublog.backend.domain.auth.dto.LoginReqDto;
 import troublog.backend.domain.auth.dto.LoginResDto;
 import troublog.backend.domain.auth.dto.OAuth2RegisterReqDto;
-import troublog.backend.domain.auth.dto.PasswordAuthCodeCheckReq;
-import troublog.backend.domain.auth.dto.PasswordChangeReq;
-import troublog.backend.domain.auth.dto.PasswordEmailCheckReq;
-import troublog.backend.domain.auth.dto.PasswordEmailUUIDRes;
+import troublog.backend.domain.auth.dto.PasswordAuthCodeCheckReqDto;
+import troublog.backend.domain.auth.dto.PasswordChangeReqDto;
+import troublog.backend.domain.auth.dto.PasswordEmailCheckReqDto;
+import troublog.backend.domain.auth.dto.PasswordEmailUuidResDto;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterResDto;
 import troublog.backend.domain.common.EmailQueryService;
@@ -37,12 +37,11 @@ import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.entity.User;
-import troublog.backend.domain.user.entity.UserStatus;
 import troublog.backend.domain.user.service.command.UserCommandService;
 import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.domain.user.validator.UserValidator;
-import troublog.backend.global.common.constant.Domain;
 import troublog.backend.global.common.constant.EnvType;
+import troublog.backend.global.common.constant.FrontDomain;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.AuthException;
@@ -119,7 +118,7 @@ public class AuthFacade {
 		jwtProvider.checkEnvType(clientEnvType);
 
 		// 유저 확인
-		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(loginReqDto.email());
+		User user = userQueryService.findUserByEmailAndStatusActive(loginReqDto.email());
 
 		// 비밀번호 검증
 		if (!passwordEncoder.matches(loginReqDto.password(), user.getPassword())) {
@@ -160,7 +159,7 @@ public class AuthFacade {
 		Long userId = jwtProvider.reissueAccessToken(request);
 
 		// 새로운 액세스토큰에 넣어 줄 유저 정보 조회
-		User user = userQueryService.findUserByIdAndIsDeletedFalseAndStatusActive(userId);
+		User user = userQueryService.findUserByIdAndStatusActive(userId);
 
 		//새로운 CustomAuthenticationToken 객체 생성
 		CustomAuthenticationToken authenticationToken =
@@ -180,7 +179,7 @@ public class AuthFacade {
 
 			// 환경에 맞게 url 세팅
 			// ex) dev 환경 -> https://troublog.vercel.app/user/mypage/2
-			String targetUrl = Domain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + "/user/mypage/2";
+			String targetUrl = FrontDomain.fromEnvType(EnvType.valueOfEnvType(clientEnvType)) + "/user/mypage/2";
 
 			Alert alert = AlertConverter.postTroubleshootingAlert(user, writingCount, targetUrl);
 			AlertResDto alertResDto = AlertConverter.convertToAlertResDto(alert);
@@ -225,7 +224,7 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public RegisterResDto oAuthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
+	public RegisterResDto oauthRegister(OAuth2RegisterReqDto oAuth2RegisterReqDto, HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
@@ -266,8 +265,10 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public PasswordEmailUUIDRes checkEmailForPassword(PasswordEmailCheckReq passwordEmailCheckReq,
-		HttpServletRequest request) {
+	public PasswordEmailUuidResDto checkEmailForPassword(
+		PasswordEmailCheckReqDto passwordEmailCheckReq,
+		HttpServletRequest request
+	) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
@@ -281,16 +282,18 @@ public class AuthFacade {
 		}
 
 		// 메일 전송
-		UUID randomString = mailUtil.sendMail(passwordEmailCheckReq.email());
+		UUID randomString = mailUtil.sendPasswordMail(passwordEmailCheckReq.email());
 
-		return PasswordEmailUUIDRes.builder()
+		return PasswordEmailUuidResDto.builder()
 			.randomString(randomString)
 			.build();
 	}
 
 	@Transactional
-	public void checkAuthCodePassword(PasswordAuthCodeCheckReq passwordAuthCodeCheckReq,
-		HttpServletRequest request) {
+	public void checkAuthCodePassword(
+		PasswordAuthCodeCheckReqDto passwordAuthCodeCheckReq,
+		HttpServletRequest request
+	) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
@@ -305,14 +308,14 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public void changePassword(PasswordChangeReq passwordChangeReq, HttpServletRequest request) {
+	public void changePassword(PasswordChangeReqDto passwordChangeReqDto, HttpServletRequest request) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		jwtProvider.checkEnvType(clientEnvType);
 
 		// 인증코드 확인
-		AuthCode authCode = emailQueryService.getAuthCodeWithoutAuth(passwordChangeReq.authCode());
+		AuthCode authCode = emailQueryService.getAuthCodeWithoutAuth(passwordChangeReqDto.authCode());
 
 		// 인증된 코드인지 확인
 		if (!authCode.isAuth()) {
@@ -320,15 +323,15 @@ public class AuthFacade {
 		}
 
 		// 가장 최근에 보낸 인증코드인지 확인
-		if (!authCode.getRandomString().equals(passwordChangeReq.randomString())) {
+		if (!authCode.getRandomString().equals(passwordChangeReqDto.randomString())) {
 			throw new AuthException(ErrorCode.AUTH_CODE_NOT_LATEST);
 		}
 
 		// 이메일 존재여부 체크
-		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(passwordChangeReq.email());
+		User user = userQueryService.findUserByEmailAndStatusActive(passwordChangeReqDto.email());
 
 		// 비밀번호 재설정
-		user.updatePassword(passwordEncoder.encode(passwordChangeReq.password()));
+		user.updatePassword(passwordEncoder.encode(passwordChangeReqDto.password()));
 	}
 
 	private AuthCode checkAuthCode(String inputAuthCode, UUID randomString) {
@@ -349,15 +352,17 @@ public class AuthFacade {
 	}
 
 	@Transactional
-	public void integrateKakaoUser(IntegrationKakaoRegisterReqDto integrationKakaoRegisterReqDto,
-		HttpServletRequest request) {
+	public void integrateKakaoUser(
+		IntegrationKakaoRegisterReqDto integrationKakaoRegisterReqDto,
+		HttpServletRequest request
+	) {
 
 		String clientEnvType = request.getHeader(ENV_TYPE_HEADER);
 
 		// 프론트 환경변수 체크
 		jwtProvider.checkEnvType(clientEnvType);
 
-		User user = userQueryService.findUserByEmailAndIsDeletedFalseAndStatusActive(
+		User user = userQueryService.findUserByEmailAndStatusActive(
 			integrationKakaoRegisterReqDto.email());
 
 		// 비밀번호 검증

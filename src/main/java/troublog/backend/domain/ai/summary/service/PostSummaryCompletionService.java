@@ -16,7 +16,6 @@ import troublog.backend.domain.trouble.service.facade.command.PostSummaryCommand
 import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.domain.trouble.service.facade.relation.PostRelationFacade;
 
-
 @Slf4j
 @Service
 @Transactional
@@ -35,5 +34,10 @@ public class PostSummaryCompletionService {
 		log.info("AI 분석 작업 완료: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId());
 		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.COMPLETED);
 		return result;
+	}
+
+	public void handleFailure(SummaryTask summaryTask, Exception exception) {
+		log.error("AI 분석 작업 실패: taskId={}, postId={}", summaryTask.getId(), summaryTask.getPostId(), exception);
+		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.FAILED);
 	}
 }

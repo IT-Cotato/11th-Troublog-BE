@@ -1,31 +1,28 @@
 package troublog.backend.global.common.filter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import static org.springframework.http.HttpHeaders.*;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import troublog.backend.global.common.util.DataUtil;
 import troublog.backend.global.common.util.JwtProvider;
-
-import java.io.IOException;
-import java.util.Arrays;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	private final JwtProvider jwtProvider;
 	private static final String ENV_TYPE = "EnvType";
-
 	private static final String[] EXCLUDE_PATHS = {
 		"/auth/register",
 		"/auth/login",
@@ -39,10 +36,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		"/v3/api-docs/**",
 		"/auth/integration/**"
 	};
+	private final JwtProvider jwtProvider;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-		FilterChain filterChain) throws
+	protected void doFilterInternal(
+		HttpServletRequest request, HttpServletResponse response,
+		FilterChain filterChain
+	) throws
 		ServletException, IOException {
 
 		String accessToken = DataUtil.getValueFromRequest(request, AUTHORIZATION);

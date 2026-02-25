@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.terms.entity.UserTermsConsent;
-import troublog.backend.global.common.error.exception.TermsException;
 import troublog.backend.global.common.error.ErrorCode;
+import troublog.backend.global.common.error.exception.TermsException;
 import troublog.backend.global.common.error.exception.UserException;
 
 @UtilityClass
@@ -42,7 +42,7 @@ public class UserTermsConsentValidator {
 
 	private static void validateUser(UserTermsConsent userTermsConsent) {
 		if (Objects.isNull(userTermsConsent.getUser())) {
-			throw new TermsException(ErrorCode.USER_NOT_FOUND);
+			throw new UserException(ErrorCode.USER_NOT_FOUND);
 		}
 	}
 

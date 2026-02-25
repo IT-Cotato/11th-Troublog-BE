@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 public enum SortType {
 	IMPORTANT("recommended", Sort.by(Sort.Direction.DESC, "likeCount", "id")),
 	LIKES("likes", Sort.by(Sort.Direction.DESC, "likeCount", "id")),
-	LATEST("latest", Sort.by(Sort.Direction.DESC, "created_at", "id"));
+	LATEST("latest", Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
 	private final String value;
 	private final Sort sort;

@@ -29,7 +29,7 @@ spring:
       client:
         registration:
           kakao:
-            redirect-uri: "https://troublog.shop/login/oauth2/code/kakao"
+            redirect-uri: "https://troublog.cloud/login/oauth2/code/kakao"
 
 # Prompt 설정 (Dev)
 ai:
@@ -64,20 +64,3 @@ management:
     tags:
       application: ${spring.application.name}
       environment: development
-
-# 로그 설정 (Dev)
-logging:
-  level:
-    troublog.backend: INFO
-    org.springframework.web: INFO
-    org.hibernate: INFO
-  pattern:
-    file: '{"timestamp":"%d{ISO8601}","level":"%level","thread":"%thread","logger":"%logger{36}","message":"%msg","exception":"%ex{full}"}%n'
-    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
-  file:
-    name: /app/logs/troublog.log  # Docker 컨테이너 내부 경로
-  logback:
-    rollingpolicy:
-      max-file-size: 100MB
-      max-history: 15
-      total-size-cap: 1GB

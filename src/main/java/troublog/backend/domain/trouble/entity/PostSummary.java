@@ -36,7 +36,7 @@ import troublog.backend.global.common.error.exception.PostException;
 	name = "post_summaries",
 	indexes = {
 		@Index(name = "idx_post_summary_post_type", columnList = "post_id, summary_type"),
-		@Index(name = "idx_post_summary_created", columnList = "created_at")
+		@Index(name = "idx_post_summary_created", columnList = "createdAt")
 	}
 )
 public class PostSummary extends BaseEntity {

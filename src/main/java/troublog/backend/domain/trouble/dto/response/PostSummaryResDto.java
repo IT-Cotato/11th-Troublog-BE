@@ -16,7 +16,7 @@ public record PostSummaryResDto(
 
 	@Schema(description = "트러블슈팅 원본 ID", example = "48")
 	Long postId,
-	
+
 	@Schema(description = "트러블슈팅 제목", example = "Spring Boot 환경설정 트러블슈팅")
 	String title,
 

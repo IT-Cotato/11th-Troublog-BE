@@ -16,7 +16,6 @@ public class ProjectConverter {
 			.name(reqDto.name())
 			.description(reqDto.description())
 			.thumbnailImageUrl(reqDto.thumbnailImageUrl())
-			.isDeleted(false)
 			.build();
 	}
 
@@ -36,7 +35,7 @@ public class ProjectConverter {
 			.description(project.getDescription())
 			.thumbnailImageUrl(project.getThumbnailImageUrl())
 			.tags(tags == null ? List.of() : List.copyOf(tags))
-			.isDeleted(project.getIsDeleted())
+			.deletedAt(project.getDeletedAt())
 			.build();
 	}
 }

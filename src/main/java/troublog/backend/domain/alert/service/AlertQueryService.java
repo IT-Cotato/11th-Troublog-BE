@@ -25,7 +25,7 @@ public class AlertQueryService {
 
 	public Alert getAlertById(Long alertId) {
 
-	return alertRepository.findById(alertId)
+		return alertRepository.findById(alertId)
 			.orElseThrow(() -> new AlertException(ErrorCode.ALERT_NOT_FOUND));
 	}
 }

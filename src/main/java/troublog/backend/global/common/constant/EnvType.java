@@ -38,4 +38,8 @@ public enum EnvType {
 	public boolean isDev() {
 		return this == DEV;
 	}
+
+	public boolean isProd() {
+		return this == PROD;
+	}
 }
