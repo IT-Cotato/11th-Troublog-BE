@@ -11,7 +11,7 @@ public enum FrontDomain {
 
 	LOCAL("http://localhost:5173"),
 	DEV("https://www.troublog.com"),
-	PROD("https:/www.troublog.com");
+	PROD("https://www.troublog.com");
 
 	private final String url;
 
