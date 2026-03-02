@@ -10,8 +10,8 @@ import troublog.backend.global.common.error.exception.AuthException;
 public enum FrontDomain {
 
 	LOCAL("http://localhost:5173"),
-	DEV("https://troublog.com"),
-	PROD("https://troublog.com");
+	DEV("https://www.troublog.com"),
+	PROD("https://www.troublog.com");
 
 	private final String url;
 
