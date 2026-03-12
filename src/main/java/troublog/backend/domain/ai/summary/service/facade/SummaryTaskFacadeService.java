@@ -1,4 +1,4 @@
-package troublog.backend.domain.ai.summary.facade;
+package troublog.backend.domain.ai.summary.service.facade;
 
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ import troublog.backend.global.common.error.exception.AiTaskException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SummaryTaskFacade {
+public class SummaryTaskFacadeService {
 
 	private final SummaryTaskCommandService summaryTaskCommandService;
 	private final SummaryTaskQueryService summaryTaskQueryService;
