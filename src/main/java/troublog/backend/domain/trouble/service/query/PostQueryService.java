@@ -110,7 +110,7 @@ public class PostQueryService {
 
 	public String findErrorTag(final Post post) {
 		if (post == null) {
-			throw new PostException(ErrorCode.MISSING_ERROR_TAG);
+			throw new PostException(ErrorCode.POST_NOT_FOUND);
 		}
 		return post.getPostTags().stream()
 			.filter(Objects::nonNull)

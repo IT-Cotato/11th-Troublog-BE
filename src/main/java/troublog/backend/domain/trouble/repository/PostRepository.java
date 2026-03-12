@@ -211,7 +211,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	@Query(value = "SELECT * FROM posts WHERE deleted_at IS NOT NULL", nativeQuery = true)
 	List<Post> findAllDeletedPosts();
 
-	@Query(value = "SELECT p FROM Post p WHERE p.id = :postId AND p.deletedAt IS NOT NULL")
+	@Query(value = "SELECT p FROM Post p WHERE p.id = :postId AND p.deletedAt IS NOT NULL" ,nativeQuery = true)
 	Optional<Post> findDeletedPostById(@Param("postId") Long postId);
 
 	@Modifying
