@@ -1,4 +1,4 @@
-package troublog.backend.domain.auth.service;
+package troublog.backend.domain.auth.service.facade;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -30,7 +30,7 @@ import troublog.backend.domain.auth.dto.RegisterResDto;
 import troublog.backend.domain.common.EmailQueryService;
 import troublog.backend.domain.common.entity.AuthCode;
 import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
-import troublog.backend.domain.terms.facade.command.TermsCommandFacade;
+import troublog.backend.domain.terms.service.facade.TermsCommandFacadeService;
 import troublog.backend.domain.terms.service.query.TermsQueryService;
 import troublog.backend.domain.terms.validator.TermsValidator;
 import troublog.backend.domain.trouble.enums.PostStatus;
@@ -52,13 +52,13 @@ import troublog.backend.global.common.util.MailUtil;
 
 @Service
 @RequiredArgsConstructor
-public class AuthFacade {
+public class AuthFacadeService {
 
-	public static final String ENV_TYPE_HEADER = "EnvType";
+	private static final String ENV_TYPE_HEADER = "EnvType";
 	private final UserQueryService userQueryService;
 	private final UserCommandService userCommandService;
 	private final PostQueryService postQueryService;
-	private final TermsCommandFacade termsCommandFacade;
+	private final TermsCommandFacadeService termsCommandFacadeService;
 	private final TermsQueryService termsQueryService;
 	private final UserValidator userValidator;
 	private final EmailQueryService emailQueryService;
@@ -98,7 +98,7 @@ public class AuthFacade {
 		User user = UserConverter.toEntity(registerReqDto, encodedPassword);
 		userCommandService.save(user);
 
-		TermsAgreementResDto termsAgreementResDto = termsCommandFacade.agreeToTerms(
+		TermsAgreementResDto termsAgreementResDto = termsCommandFacadeService.agreeToTerms(
 			registerReqDto.termsAgreements(),
 			user.getId()
 		);
@@ -253,7 +253,7 @@ public class AuthFacade {
 		user.updateOAuth2Info(oAuth2RegisterReqDto.nickname(), oAuth2RegisterReqDto.field(), oAuth2RegisterReqDto.bio(),
 			oAuth2RegisterReqDto.githubUrl());
 
-		TermsAgreementResDto termsAgreementResDto = termsCommandFacade.agreeToTerms(
+		TermsAgreementResDto termsAgreementResDto = termsCommandFacadeService.agreeToTerms(
 			oAuth2RegisterReqDto.termsAgreements(),
 			user.getId()
 		);
