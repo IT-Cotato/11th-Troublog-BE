@@ -2,6 +2,8 @@ package troublog.backend.domain.trouble.converter;
 
 import java.util.List;
 
+import org.springframework.util.CollectionUtils;
+
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.trouble.dto.response.PostSummaryResDto;
@@ -29,7 +31,7 @@ public class PostSummaryConverter {
 			.userId(postSummary.getPost().getUser().getId())
 			.projectId(postSummary.getPost().getProject().getId())
 			.errorTag(errorTag)
-			.postTags(postTags == null ? List.of() : postTags)
+			.postTags(CollectionUtils.isEmpty(postTags) ? List.of() : postTags)
 			.summaryId(postSummary.getId())
 			.summaryType(postSummary.getSummaryType().name())
 			.summaryCreatedAt(postSummary.getCreatedAt())
@@ -38,7 +40,7 @@ public class PostSummaryConverter {
 	}
 
 	private List<SummaryContentInfoDto> toSummaryContentResponses(final List<SummaryContent> summaryContents) {
-		if (summaryContents == null) {
+		if (CollectionUtils.isEmpty(summaryContents)) {
 			return List.of();
 		}
 		return SummaryContentConverter.toResponseList(summaryContents);

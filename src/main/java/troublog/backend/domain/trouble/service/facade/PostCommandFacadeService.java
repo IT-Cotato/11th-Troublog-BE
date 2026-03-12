@@ -20,7 +20,6 @@ import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
 
 @Service
-@Transactional
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostCommandFacadeService {
 
@@ -31,6 +30,7 @@ public class PostCommandFacadeService {
 	private final PostSummaryService postSummaryService;
 	private final SummaryTaskFacadeService summaryTaskFacadeService;
 
+	@Transactional
 	public PostResDto createPost(final Long userId, final PostReqDto postReqDto) {
 		Post newPost = postFactory.createPostWithRequireRelations(postReqDto);
 		postRelationFacadeService.establishRequireRelations(newPost, userId, postReqDto);
@@ -39,6 +39,7 @@ public class PostCommandFacadeService {
 		return toPostResponse(savedPost);
 	}
 
+	@Transactional
 	public PostResDto updatePost(final Long userId, final Long postId, final PostReqDto reqDto) {
 		Post foundPost = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
@@ -46,23 +47,31 @@ public class PostCommandFacadeService {
 		return toPostResponse(foundPost);
 	}
 
+	@Transactional
 	public void softDeletePost(final Long userId, final Long postId) {
 		Post foundPost = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
 		postCommandService.softDelete(foundPost);
 	}
 
+	@Transactional
 	public void hardDeletePost(final Long userId, final Long postId) {
 		Post foundPost = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
 		postCommandService.deletePost(foundPost);
 	}
 
+	@Transactional
 	public PostResDto restorePost(final Long userId, final Long postId) {
 		Post foundPost = postQueryService.findDeletedPostById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
 		postCommandService.restore(foundPost);
-		return toPostResponse(foundPost);
+		return findRestoredPost(postId);
+	}
+
+	private PostResDto findRestoredPost(final Long postId) {
+		Post restoredPost = postQueryService.findById(postId);
+		return toPostResponse(restoredPost);
 	}
 
 	public TaskStartResDto startSummary(final Long userId, final SummaryType summaryType, final Long postId) {

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.springframework.util.CollectionUtils;
+
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.response.CommunityPostDetailsResDto;
@@ -178,7 +180,7 @@ public class PostConverter {
 	}
 
 	private List<ContentInfoDto> toContentResponses(final List<Content> contents) {
-		if (contents == null) {
+		if (CollectionUtils.isEmpty(contents)) {
 			return List.of();
 		}
 		return ContentConverter.toResponseList(contents);
