@@ -23,8 +23,8 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.project.dto.request.ProjectReqDto;
 import troublog.backend.domain.project.dto.response.ProjectDetailResDto;
 import troublog.backend.domain.project.dto.response.ProjectResDto;
-import troublog.backend.domain.project.service.facade.ProjectCommandFacade;
-import troublog.backend.domain.project.service.facade.ProjectQueryFacade;
+import troublog.backend.domain.project.service.facade.ProjectCommandFacadeService;
+import troublog.backend.domain.project.service.facade.ProjectQueryFacadeService;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.enums.PostViewFilter;
 import troublog.backend.domain.trouble.enums.SortType;
@@ -42,8 +42,8 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "프로젝트", description = "프로젝트 관련 API")
 public class ProjectController {
 
-	private final ProjectCommandFacade projectCommandFacade;
-	private final ProjectQueryFacade projectQueryFacade;
+	private final ProjectCommandFacadeService projectCommandFacadeService;
+	private final ProjectQueryFacadeService projectQueryFacadeService;
 
 	@PostMapping
 	@Operation(summary = "프로젝트 생성 API", description = "프로젝트를 생성합니다.")
@@ -51,7 +51,7 @@ public class ProjectController {
 		@Authentication CustomAuthenticationToken auth,
 		@Valid @RequestBody ProjectReqDto reqDto
 	) {
-		ProjectResDto response = projectCommandFacade.createProject(auth.getUserId(), reqDto);
+		ProjectResDto response = projectCommandFacadeService.createProject(auth.getUserId(), reqDto);
 		return ResponseUtils.created(response);
 	}
 
@@ -62,7 +62,7 @@ public class ProjectController {
 		@PathVariable long projectId,
 		@Valid @RequestBody ProjectReqDto reqDto
 	) {
-		ProjectResDto response = projectCommandFacade.updateProject(auth.getUserId(), reqDto, projectId);
+		ProjectResDto response = projectCommandFacadeService.updateProject(auth.getUserId(), reqDto, projectId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -72,7 +72,7 @@ public class ProjectController {
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable long projectId
 	) {
-		projectCommandFacade.softDeleteProject(auth.getUserId(), projectId);
+		projectCommandFacadeService.softDeleteProject(auth.getUserId(), projectId);
 		return ResponseUtils.noContent();
 	}
 
@@ -82,7 +82,7 @@ public class ProjectController {
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable long projectId
 	) {
-		ProjectDetailResDto response = projectQueryFacade.getDetailsProject(auth.getUserId(), projectId);
+		ProjectDetailResDto response = projectQueryFacadeService.getDetailsProject(auth.getUserId(), projectId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -93,8 +93,8 @@ public class ProjectController {
 		@RequestParam(defaultValue = "1") @Min(1) int page,
 		@RequestParam(defaultValue = "10") @Min(1) int size
 	) {
-		Pageable pageable = projectQueryFacade.getPageable(page, size);
-		Page<ProjectDetailResDto> response = projectQueryFacade.getAllProjects(auth.getUserId(), pageable);
+		Pageable pageable = projectQueryFacadeService.getPageable(page, size);
+		Page<ProjectDetailResDto> response = projectQueryFacadeService.getAllProjects(auth.getUserId(), pageable);
 		return ResponseUtils.page(response);
 	}
 
@@ -110,8 +110,13 @@ public class ProjectController {
 		@RequestParam(defaultValue = "LATEST") SortType sort,
 		@RequestParam(defaultValue = "ALL", required = false) VisibilityType visibility
 	) {
-		List<TroubleListResDto> response = projectQueryFacade.getProjectTroubles(auth.getUserId(), projectId, status,
-			sort, visibility);
+		List<TroubleListResDto> response = projectQueryFacadeService.getProjectTroubles(
+			auth.getUserId(),
+			projectId,
+			status,
+			sort,
+			visibility
+		);
 		return ResponseUtils.ok(response);
 	}
 
@@ -123,8 +128,12 @@ public class ProjectController {
 		@RequestParam(defaultValue = "LATEST") SortType sort,
 		@RequestParam(defaultValue = "NONE") SummaryType summaryType
 	) {
-		List<TroubleListResDto> response = projectQueryFacade.getProjectTroubleSummaries(auth.getUserId(), projectId,
-			sort, summaryType);
+		List<TroubleListResDto> response = projectQueryFacadeService.getProjectTroubleSummaries(
+			auth.getUserId(),
+			projectId,
+			sort,
+			summaryType
+		);
 		return ResponseUtils.ok(response);
 	}
 }

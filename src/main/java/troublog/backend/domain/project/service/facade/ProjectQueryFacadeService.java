@@ -20,15 +20,15 @@ import troublog.backend.domain.trouble.enums.PostViewFilter;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.SummaryType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
-import troublog.backend.domain.trouble.service.query.PostQueryService;
+import troublog.backend.domain.trouble.service.facade.PostQueryFacadeService;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProjectQueryFacade {
+public class ProjectQueryFacadeService {
 
 	private final ProjectQueryService projectQueryService;
-	private final PostQueryService postQueryService;
+	private final PostQueryFacadeService postQueryFacadeService;
 
 	public ProjectDetailResDto getDetailsProject(final Long userId, final long projectId) {
 		Project project = projectQueryService.findById(projectId);
@@ -53,7 +53,7 @@ public class ProjectQueryFacade {
 	) {
 		Project project = projectQueryService.findById(projectId);
 		validateProjectAuthorized(userId, project);
-		return postQueryService.getProjectTroublesByStatus(projectId, sort, visibility, statusType);
+		return postQueryFacadeService.findProjectTroublesByStatus(projectId, sort, visibility, statusType);
 	}
 
 	public List<TroubleListResDto> getProjectTroubleSummaries(
@@ -64,7 +64,7 @@ public class ProjectQueryFacade {
 	) {
 		Project project = projectQueryService.findById(projectId);
 		validateProjectAuthorized(userId, project);
-		return postQueryService.getSummarizedTroubles(projectId, sort, summaryType);
+		return postQueryFacadeService.findProjectSummarizedTroubles(projectId, sort, summaryType);
 	}
 }
 

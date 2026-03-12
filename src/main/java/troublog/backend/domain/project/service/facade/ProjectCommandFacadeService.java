@@ -19,7 +19,7 @@ import troublog.backend.domain.user.service.query.UserQueryService;
 @Service
 @Transactional
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProjectCommandFacade {
+public class ProjectCommandFacadeService {
 
 	private final UserQueryService userQueryService;
 	private final ProjectCommandService projectCommandService;
