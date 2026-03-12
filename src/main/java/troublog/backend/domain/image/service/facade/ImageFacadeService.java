@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AccessLevel;
@@ -14,12 +12,11 @@ import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.image.service.s3.S3Uploader;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.ImageException;
-import troublog.backend.global.common.response.BaseResponse;
-import troublog.backend.global.common.util.ResponseUtils;
 
-@Component
+
+@Service
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class ImageFacade {
+public class ImageFacadeService {
 
 	private static final int UPLOAD_TIMEOUT_SECONDS = 30;
 
@@ -59,31 +56,5 @@ public class ImageFacade {
 
 	private Void handleImageDeletionFailure(Throwable throwable) {
 		throw new ImageException(ErrorCode.IMAGE_DELETE_FAILED);
-	}
-
-	private void handleUploadCompletion(
-		DeferredResult<ResponseEntity<BaseResponse<String>>> deferredResult,
-		String result,
-		Throwable throwable
-	) {
-
-		if (throwable != null) {
-			deferredResult.setErrorResult(throwable);
-		} else {
-			deferredResult.setResult(ResponseUtils.ok(result));
-		}
-	}
-
-	private void handleMultipleUploadCompletion(
-		DeferredResult<ResponseEntity<BaseResponse<List<String>>>> deferredResult,
-		List<String> result,
-		Throwable throwable
-	) {
-
-		if (throwable != null) {
-			deferredResult.setErrorResult(throwable);
-		} else {
-			deferredResult.setResult(ResponseUtils.ok(result));
-		}
 	}
 }
