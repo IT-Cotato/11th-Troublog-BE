@@ -1,16 +1,17 @@
-package troublog.backend.domain.terms.usecase;
+package troublog.backend.domain.terms.service.facade;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import troublog.backend.domain.terms.converter.TermsConverter;
+import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
 import troublog.backend.domain.terms.entity.Terms;
 import troublog.backend.domain.terms.entity.UserTermsConsent;
 import troublog.backend.domain.terms.factory.TermsFactory;
@@ -22,29 +23,30 @@ import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.TermsException;
 
-@Slf4j
-@Component
+@Service
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProcessTermsAgreementUseCase {
+public class TermsCommandFacadeService {
+
 	private final UserQueryService userQueryService;
 	private final TermsQueryService termsQueryService;
-	private final UserTermsConsentCommandService commandService;
+	private final UserTermsConsentCommandService userTermsConsentCommandService;
 	private final TermsFactory termsFactory;
 
 	@Transactional
-	public List<UserTermsConsent> processAgreement(Map<Long, Boolean> termsAgreements, Long userId) {
+	public TermsAgreementResDto agreeToTerms(final Map<Long, Boolean> termsAgreements, final Long userId) {
 		User user = userQueryService.findUserById(userId);
 		List<Terms> currentActiveTerms = termsQueryService.getCurrentActiveTerms();
 
 		TermsValidator.validateTermsAgreement(currentActiveTerms, termsAgreements);
 
-		return createUserTermsConsents(user, currentActiveTerms, termsAgreements);
+		List<UserTermsConsent> result = createUserTermsConsents(user, currentActiveTerms, termsAgreements);
+		return TermsConverter.toTermsAgreementResDto(result);
 	}
 
 	private List<UserTermsConsent> createUserTermsConsents(
-		User user,
-		List<Terms> activeTerms,
-		Map<Long, Boolean> agreements
+		final User user,
+		final List<Terms> activeTerms,
+		final Map<Long, Boolean> agreements
 	) {
 		Map<Long, Terms> termsById = activeTerms.stream()
 			.collect(Collectors.toMap(Terms::getId, terms -> terms));
@@ -59,6 +61,6 @@ public class ProcessTermsAgreementUseCase {
 			})
 			.toList();
 
-		return commandService.saveAll(consents);
+		return userTermsConsentCommandService.saveAll(consents);
 	}
 }

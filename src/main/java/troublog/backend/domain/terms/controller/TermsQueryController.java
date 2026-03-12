@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.terms.dto.response.LatestTermsResDto;
 import troublog.backend.domain.terms.dto.response.TermsAgreementResDto;
-import troublog.backend.domain.terms.facade.query.TermsQueryFacade;
+import troublog.backend.domain.terms.service.facade.TermsQueryFacadeService;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -25,7 +25,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "이용약관", description = "이용약관 조회 API")
 public class TermsQueryController {
 
-	private final TermsQueryFacade facade;
+	private final TermsQueryFacadeService facade;
 
 	@GetMapping("/latest")
 	@Operation(
