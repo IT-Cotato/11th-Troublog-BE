@@ -301,7 +301,7 @@ public class PostQueryFacadeService {
 	}
 
 	private TroubleListResDto toSummarizedTroubleListResponse(final PostSummary postSummary) {
-		return ListConverter.toAllSummerizedListResDto(
+		return ListConverter.toAllSummarizedListResDto(
 			postSummary,
 			postQueryService.findErrorTag(postSummary.getPost()),
 			postQueryService.findTopTechStackTags(postSummary.getPost())

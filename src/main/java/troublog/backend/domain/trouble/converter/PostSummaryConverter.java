@@ -29,7 +29,7 @@ public class PostSummaryConverter {
 			.userId(postSummary.getPost().getUser().getId())
 			.projectId(postSummary.getPost().getProject().getId())
 			.errorTag(errorTag)
-			.postTags(postTags)
+			.postTags(postTags == null ? List.of() : postTags)
 			.summaryId(postSummary.getId())
 			.summaryType(postSummary.getSummaryType().name())
 			.summaryCreatedAt(postSummary.getCreatedAt())

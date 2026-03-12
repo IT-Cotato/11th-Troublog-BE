@@ -31,4 +31,9 @@ public class PostCommandService {
 		log.info("[Post] 트러블슈팅 문서 soft delete: postId={}, title={}", post.getId(), post.getTitle());
 		postRepository.delete(post);
 	}
+
+	public void restore(final Post foundPost) {
+		log.info("[Post] 트러블슈팅 문서 복원: postId={}, title={}", foundPost.getId(), foundPost.getTitle());
+		postRepository.restorePost(foundPost.getId());
+	}
 }

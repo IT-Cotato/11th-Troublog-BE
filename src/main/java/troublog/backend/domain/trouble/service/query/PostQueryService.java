@@ -134,6 +134,10 @@ public class PostQueryService {
 	}
 
 	public List<String> findTopTechStackTags(final Post post) {
+		if (post == null) {
+			return List.of();
+		}
+
 		if (CollectionUtils.isEmpty(post.getPostTags())) {
 			return List.of();
 		}
@@ -197,5 +201,11 @@ public class PostQueryService {
 		List<Post> posts = postRepository.findByIdIn(postIds);
 		log.info("[Post] 최근 열람 DB 조회: requested={}, found={}", postIds.size(), posts.size());
 		return posts;
+	}
+
+	public Post findDeletedPostById(final Long postId) {
+		log.info("[Post] 삭제된 트러블슈팅 문서 조회: postId={}", postId);
+		return postRepository.findDeletedPostById(postId)
+			.orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 	}
 }

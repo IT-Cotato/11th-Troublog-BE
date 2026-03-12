@@ -59,8 +59,9 @@ public class PostCommandFacadeService {
 	}
 
 	public PostResDto restorePost(final Long userId, final Long postId) {
-		Post foundPost = postQueryService.findById(postId);
+		Post foundPost = postQueryService.findDeletedPostById(postId);
 		PostFactory.validateAuthorized(userId, foundPost);
+		postCommandService.restore(foundPost);
 		return toPostResponse(foundPost);
 	}
 

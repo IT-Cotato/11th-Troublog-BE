@@ -3,6 +3,7 @@ package troublog.backend.domain.trouble.repository;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -209,4 +210,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	@Query(value = "SELECT * FROM posts WHERE deleted_at IS NOT NULL", nativeQuery = true)
 	List<Post> findAllDeletedPosts();
+
+	@Query(value = "SELECT p FROM Post p WHERE p.id = :postId AND p.deletedAt IS NOT NULL")
+	Optional<Post> findDeletedPostById(@Param("postId") Long postId);
+
+	@Modifying
+	@Query(value = "UPDATE posts SET deleted_at = NULL WHERE post_id = :postId", nativeQuery = true)
+	void restorePost(@Param("postId") Long postId);
 }

@@ -36,7 +36,7 @@ public class ListConverter {
 			.build();
 	}
 
-	public static TroubleListResDto toAllSummerizedListResDto(
+	public static TroubleListResDto toAllSummarizedListResDto(
 		final PostSummary postSummary,
 		final String errorTag,
 		final List<String> techs
