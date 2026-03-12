@@ -16,7 +16,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.report.dto.request.ReportReqDto;
 import troublog.backend.domain.report.dto.response.ReportResDto;
-import troublog.backend.domain.report.service.facade.command.ReportCommandFacade;
+import troublog.backend.domain.report.service.facade.ReportCommandFacadeService;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -28,7 +28,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "신고", description = "신고 관련 API")
 public class ReportController {
 
-	private final ReportCommandFacade reportCommandFacade;
+	private final ReportCommandFacadeService reportCommandFacadeService;
 
 	@PostMapping
 	@Operation(summary = "신고 생성 API", description = "게시글/댓글 신고를 접수합니다.")
@@ -41,7 +41,7 @@ public class ReportController {
 		@Authentication CustomAuthenticationToken auth,
 		@Valid @RequestBody ReportReqDto reportReqDto
 	) {
-		ReportResDto response = reportCommandFacade.createReport(auth.getUserId(), reportReqDto);
+		ReportResDto response = reportCommandFacadeService.createReport(auth.getUserId(), reportReqDto);
 		return ResponseUtils.created(response);
 	}
 }

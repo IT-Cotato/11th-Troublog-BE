@@ -1,4 +1,4 @@
-package troublog.backend.domain.report.service.facade.command;
+package troublog.backend.domain.report.service.facade;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ import troublog.backend.global.common.util.MailUtil;
 @Service
 @Transactional
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReportCommandFacade {
+public class ReportCommandFacadeService {
 
 	private final ReportCommandService reportCommandService;
 	private final ReportQueryService reportQueryService;
