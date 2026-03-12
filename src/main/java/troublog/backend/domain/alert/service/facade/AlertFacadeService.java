@@ -1,4 +1,4 @@
-package troublog.backend.domain.alert.service;
+package troublog.backend.domain.alert.service.facade;
 
 import java.util.List;
 
@@ -12,12 +12,14 @@ import troublog.backend.domain.alert.converter.AlertConverter;
 import troublog.backend.domain.alert.dto.response.AlertResDto;
 import troublog.backend.domain.alert.entity.Alert;
 import troublog.backend.domain.alert.entity.AlertType;
+import troublog.backend.domain.alert.service.AlertCommandService;
+import troublog.backend.domain.alert.service.AlertQueryService;
 import troublog.backend.domain.alert.validator.AlertValidator;
 import troublog.backend.global.common.util.AlertSseUtil;
 
 @Service
 @RequiredArgsConstructor
-public class AlertFacade {
+public class AlertFacadeService {
 
 	private final AlertQueryService alertQueryService;
 	private final AlertCommandService alertCommandService;
