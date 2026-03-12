@@ -1,4 +1,4 @@
-package troublog.backend.domain.user.service;
+package troublog.backend.domain.user.service.facade;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +37,7 @@ import troublog.backend.domain.user.validator.UserValidator;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserFacade {
+public class UserFacadeService {
 
 	private final UserValidator userValidator;
 	private final FollowValidator followValidator;

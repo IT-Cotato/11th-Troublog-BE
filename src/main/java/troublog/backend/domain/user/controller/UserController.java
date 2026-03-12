@@ -28,7 +28,7 @@ import troublog.backend.domain.user.dto.response.UserFollowsResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserPostStatusResDto;
 import troublog.backend.domain.user.dto.response.UserProfileResDto;
-import troublog.backend.domain.user.service.UserFacade;
+import troublog.backend.domain.user.service.facade.UserFacadeService;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -41,7 +41,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "유저", description = "회원 정보 및 팔로잉/팔로워")
 public class UserController {
 
-	private final UserFacade userFacade;
+	private final UserFacadeService userFacadeService;
 
 	@PostMapping("/follow")
 	@Operation(summary = "팔로우 걸기 API", description = "단방향 팔로우 걸기")
@@ -49,7 +49,7 @@ public class UserController {
 		@RequestParam Long targetUserId,
 		@Authentication CustomAuthenticationToken auth
 	) {
-		userFacade.followUser(targetUserId, auth.getUserId());
+		userFacadeService.followUser(targetUserId, auth.getUserId());
 		return ResponseUtils.noContent();
 	}
 
@@ -59,7 +59,7 @@ public class UserController {
 		@RequestParam Long targetUserId,
 		@Authentication CustomAuthenticationToken auth
 	) {
-		userFacade.unfollowUser(targetUserId, auth.getUserId());
+		userFacadeService.unfollowUser(targetUserId, auth.getUserId());
 		return ResponseUtils.noContent();
 	}
 
@@ -71,7 +71,7 @@ public class UserController {
 		@Authentication CustomAuthenticationToken auth,
 		@RequestParam Long targetUserId
 	) {
-		return ResponseUtils.ok(userFacade.getFollowers(auth.getUserId(), targetUserId));
+		return ResponseUtils.ok(userFacadeService.getFollowers(auth.getUserId(), targetUserId));
 	}
 
 	@GetMapping("/followings")
@@ -82,7 +82,7 @@ public class UserController {
 		@Authentication CustomAuthenticationToken auth,
 		@RequestParam Long targetUserId
 	) {
-		return ResponseUtils.ok(userFacade.getFollowings(auth.getUserId(), targetUserId));
+		return ResponseUtils.ok(userFacadeService.getFollowings(auth.getUserId(), targetUserId));
 	}
 
 	@GetMapping("/{userId}")
@@ -91,7 +91,7 @@ public class UserController {
 		content = @Content(schema = @Schema(implementation = UserInfoResDto.class)))
 	public ResponseEntity<BaseResponse<UserInfoResDto>> getUserInfo(
 		@PathVariable Long userId, @Authentication CustomAuthenticationToken auth) {
-		return ResponseUtils.ok(userFacade.getUserInfo(userId, auth.getUserId()));
+		return ResponseUtils.ok(userFacadeService.getUserInfo(userId, auth.getUserId()));
 	}
 
 	@GetMapping
@@ -101,7 +101,7 @@ public class UserController {
 	public ResponseEntity<BaseResponse<UserProfileResDto>> getMyProfile(
 		@Authentication CustomAuthenticationToken auth
 	) {
-		return ResponseUtils.ok(userFacade.getMyProfile(auth.getUserId()));
+		return ResponseUtils.ok(userFacadeService.getMyProfile(auth.getUserId()));
 	}
 
 	@GetMapping("/troubles")
@@ -113,7 +113,7 @@ public class UserController {
 		@RequestParam(required = false) PostStatus postStatus,
 		@Authentication CustomAuthenticationToken auth
 	) {
-		return ResponseUtils.ok(userFacade.getMyPostStatus(postStatus, auth.getUserId()));
+		return ResponseUtils.ok(userFacadeService.getMyPostStatus(postStatus, auth.getUserId()));
 	}
 
 	@PatchMapping
@@ -122,7 +122,7 @@ public class UserController {
 		@Valid @RequestBody UserProfileUpdateReqDto userProfileUpdateReqDto,
 		@Authentication CustomAuthenticationToken auth
 	) {
-		userFacade.updateMyProfile(auth.getUserId(), userProfileUpdateReqDto);
+		userFacadeService.updateMyProfile(auth.getUserId(), userProfileUpdateReqDto);
 		return ResponseUtils.noContent();
 	}
 
@@ -131,7 +131,7 @@ public class UserController {
 	public ResponseEntity<BaseResponse<Void>> deleteMyProfile(
 		@Authentication CustomAuthenticationToken auth
 	) {
-		userFacade.deleteMyProfile(auth.getUserId());
+		userFacadeService.deleteMyProfile(auth.getUserId());
 		return ResponseUtils.noContent();
 	}
 }
