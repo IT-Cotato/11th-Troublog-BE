@@ -25,8 +25,8 @@ import troublog.backend.domain.trouble.dto.response.PostCardResDto;
 import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostSummaryResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
-import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
-import troublog.backend.domain.trouble.service.facade.query.PostSummaryQueryFacade;
+import troublog.backend.domain.trouble.service.facade.PostQueryFacadeService;
+import troublog.backend.domain.trouble.service.facade.PostSummaryQueryFacadeService;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -39,8 +39,8 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "트러블슈팅", description = "트러블슈팅 문서 관련 엔드포인트")
 public class PostQueryController {
 
-	private final PostQueryFacade postQueryFacade;
-	private final PostSummaryQueryFacade postSummaryQueryFacade;
+	private final PostQueryFacadeService postQueryFacadeService;
+	private final PostSummaryQueryFacadeService postSummaryQueryFacadeService;
 
 	@GetMapping("/summary/{summaryId}")
 	@Operation(summary = "AI 요약본 상세 조회 API", description = "ID 값 기반 트러블 슈팅 AI 요약본 상세 조회")
@@ -50,7 +50,7 @@ public class PostQueryController {
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long summaryId
 	) {
-		PostSummaryResDto response = postSummaryQueryFacade.findPostSummaryById(token.getUserId(), summaryId);
+		PostSummaryResDto response = postSummaryQueryFacadeService.findPostSummaryById(token.getUserId(), summaryId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -62,7 +62,7 @@ public class PostQueryController {
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
-		PostDetailsResDto response = postQueryFacade.findPostById(postId, token.getUserId());
+		PostDetailsResDto response = postQueryFacadeService.findPostById(postId, token.getUserId());
 		return ResponseUtils.ok(response);
 	}
 
@@ -75,7 +75,11 @@ public class PostQueryController {
 		@PathVariable Long postId,
 		@PathVariable Long summaryId
 	) {
-		CombineResDto response = postQueryFacade.findPostDetailsWithSummaryById(token.getUserId(), postId, summaryId);
+		CombineResDto response = postQueryFacadeService.findPostDetailsWithSummaryById(
+			token.getUserId(),
+			postId,
+			summaryId
+		);
 		return ResponseUtils.ok(response);
 	}
 
@@ -86,7 +90,7 @@ public class PostQueryController {
 	public ResponseEntity<BaseResponse<List<String>>> findPostTagsByName(
 		@RequestParam String tagName
 	) {
-		List<String> response = postQueryFacade.findPostTagsByName(tagName);
+		List<String> response = postQueryFacadeService.findPostTagsByName(tagName);
 		return ResponseUtils.ok(response);
 	}
 
@@ -101,8 +105,12 @@ public class PostQueryController {
 		@RequestParam(defaultValue = "1") @Min(1) int page,
 		@RequestParam(defaultValue = "10") @Min(1) int size
 	) {
-		Pageable pageable = postQueryFacade.getPageable(page, size);
-		Page<PostCardResDto> response = postQueryFacade.searchUserPostByKeyword(token.getUserId(), keyword, pageable);
+		Pageable pageable = postQueryFacadeService.getPageable(page, size);
+		Page<PostCardResDto> response = postQueryFacadeService.searchUserPostByKeyword(
+			token.getUserId(),
+			keyword,
+			pageable
+		);
 		return ResponseUtils.page(response);
 	}
 
@@ -122,8 +130,8 @@ public class PostQueryController {
 		)
 		@RequestParam(defaultValue = "latest") String sortBy
 	) {
-		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
-		Page<TroubleListResDto> response = postQueryFacade.getAllTroubles(auth.getUserId(), pageable);
+		Pageable pageable = postQueryFacadeService.getPageableWithSorting(page, size, sortBy);
+		Page<TroubleListResDto> response = postQueryFacadeService.getAllTroubles(auth.getUserId(), pageable);
 		return ResponseUtils.page(response);
 	}
 
@@ -138,8 +146,8 @@ public class PostQueryController {
 		@RequestParam(defaultValue = "1") @Min(1) int page,
 		@RequestParam(defaultValue = "10") @Min(1) int size
 	) {
-		Pageable pageable = postQueryFacade.getPageable(page, size);
-		Page<PostCardResDto> response = postQueryFacade.searchUserPostByKeyword(userId, keyword, pageable);
+		Pageable pageable = postQueryFacadeService.getPageable(page, size);
+		Page<PostCardResDto> response = postQueryFacadeService.searchUserPostByKeyword(userId, keyword, pageable);
 		return ResponseUtils.page(response);
 	}
 
@@ -159,8 +167,8 @@ public class PostQueryController {
 		)
 		@RequestParam(defaultValue = "latest") String sortBy
 	) {
-		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
-		Page<TroubleListResDto> response = postQueryFacade.getAllTroubles(userId, pageable);
+		Pageable pageable = postQueryFacadeService.getPageableWithSorting(page, size, sortBy);
+		Page<TroubleListResDto> response = postQueryFacadeService.getAllTroubles(userId, pageable);
 		return ResponseUtils.page(response);
 	}
 }

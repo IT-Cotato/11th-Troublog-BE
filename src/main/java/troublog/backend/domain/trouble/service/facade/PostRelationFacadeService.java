@@ -1,11 +1,11 @@
-package troublog.backend.domain.trouble.service.facade.relation.impl;
+package troublog.backend.domain.trouble.service.facade;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -28,7 +28,6 @@ import troublog.backend.domain.trouble.enums.TemplateType;
 import troublog.backend.domain.trouble.service.command.ContentCommandService;
 import troublog.backend.domain.trouble.service.command.PostTagCommandService;
 import troublog.backend.domain.trouble.service.command.TagCommandService;
-import troublog.backend.domain.trouble.service.facade.relation.PostRelationFacade;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.PostTagQueryService;
 import troublog.backend.domain.trouble.service.query.TagQueryService;
@@ -36,10 +35,10 @@ import troublog.backend.domain.user.entity.User;
 import troublog.backend.domain.user.service.query.UserQueryService;
 import troublog.backend.global.common.util.TagNameFormatter;
 
-@Component
+@Service
 @Transactional
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostRelationFacadeImpl implements PostRelationFacade {
+public class PostRelationFacadeService {
 
 	private final PostFactory postFactory;
 

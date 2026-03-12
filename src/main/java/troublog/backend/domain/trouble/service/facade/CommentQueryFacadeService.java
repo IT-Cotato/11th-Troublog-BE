@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.service.facade.query;
+package troublog.backend.domain.trouble.service.facade;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +19,7 @@ import troublog.backend.domain.trouble.validator.PostValidator;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommentQueryFacade {
+public class CommentQueryFacadeService {
 
 	private final PostQueryService postQueryService;
 	private final CommentQueryService commentQueryService;

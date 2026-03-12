@@ -31,10 +31,10 @@ import troublog.backend.domain.trouble.dto.response.LikePostResDto;
 import troublog.backend.domain.trouble.dto.response.LikeResDto;
 import troublog.backend.domain.trouble.dto.response.PostCardResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
-import troublog.backend.domain.trouble.service.facade.command.CommentCommandFacade;
-import troublog.backend.domain.trouble.service.facade.command.LikeFacade;
-import troublog.backend.domain.trouble.service.facade.query.CommentQueryFacade;
-import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
+import troublog.backend.domain.trouble.service.facade.CommentCommandFacadeService;
+import troublog.backend.domain.trouble.service.facade.CommentQueryFacadeService;
+import troublog.backend.domain.trouble.service.facade.LikeFacadeService;
+import troublog.backend.domain.trouble.service.facade.PostQueryFacadeService;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -47,10 +47,10 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "커뮤니티", description = "커뮤니티 관련 API")
 public class CommunityController {
 
-	private final CommentCommandFacade commentCommandFacade;
-	private final CommentQueryFacade commentQueryFacade;
-	private final LikeFacade likeFacade;
-	private final PostQueryFacade postQueryFacade;
+	private final CommentCommandFacadeService commentCommandFacadeService;
+	private final CommentQueryFacadeService commentQueryFacadeService;
+	private final LikeFacadeService likeFacadeService;
+	private final PostQueryFacadeService postQueryFacadeService;
 
 	@GetMapping("/{postId}")
 	@Operation(summary = "트러블슈팅 게시글 상세 조회 API", description =
@@ -61,7 +61,10 @@ public class CommunityController {
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
-		CommunityPostDetailsResDto response = postQueryFacade.findCommunityPostDetailsById(token.getUserId(), postId);
+		CommunityPostDetailsResDto response = postQueryFacadeService.findCommunityPostDetailsById(
+			token.getUserId(),
+			postId
+		);
 		return ResponseUtils.ok(response);
 	}
 
@@ -79,8 +82,8 @@ public class CommunityController {
 		)
 		@RequestParam(defaultValue = "latest") String sortBy
 	) {
-		Pageable pageable = postQueryFacade.getPageableWithSorting(page, size, sortBy);
-		Page<PostCardResDto> response = postQueryFacade.getCommunityPosts(pageable);
+		Pageable pageable = postQueryFacadeService.getPageableWithSorting(page, size, sortBy);
+		Page<PostCardResDto> response = postQueryFacadeService.getCommunityPosts(pageable);
 		return ResponseUtils.page(response);
 	}
 
@@ -93,8 +96,8 @@ public class CommunityController {
 		@RequestParam(defaultValue = "1") @Min(1) int page,
 		@RequestParam(defaultValue = "10") @Min(1) int size
 	) {
-		Pageable pageable = postQueryFacade.getPageable(page, size);
-		Page<PostResDto> response = postQueryFacade.searchPostByKeyword(keyword, pageable);
+		Pageable pageable = postQueryFacadeService.getPageable(page, size);
+		Page<PostResDto> response = postQueryFacadeService.searchPostByKeyword(keyword, pageable);
 		return ResponseUtils.page(response);
 	}
 
@@ -105,7 +108,7 @@ public class CommunityController {
 		@Authentication CustomAuthenticationToken auth,
 		@Valid @RequestBody CommentReqDto commentReqDto
 	) {
-		CommentResDto response = commentCommandFacade.createComment(auth.getUserId(), postId, commentReqDto,
+		CommentResDto response = commentCommandFacadeService.createComment(auth.getUserId(), postId, commentReqDto,
 			auth.getEnvType());
 		return ResponseUtils.created(response);
 	}
@@ -118,7 +121,12 @@ public class CommunityController {
 		@Authentication CustomAuthenticationToken auth,
 		@Valid @RequestBody CommentReqDto commentReqDto
 	) {
-		CommentResDto response = commentCommandFacade.updateComment(auth.getUserId(), commentReqDto, commentId, postId);
+		CommentResDto response = commentCommandFacadeService.updateComment(
+			auth.getUserId(),
+			commentReqDto,
+			commentId,
+			postId
+		);
 		return ResponseUtils.ok(response);
 	}
 
@@ -128,7 +136,7 @@ public class CommunityController {
 		@Authentication CustomAuthenticationToken auth,
 		@PathVariable long commentId
 	) {
-		commentCommandFacade.deleteComment(auth.getUserId(), commentId);
+		commentCommandFacadeService.deleteComment(auth.getUserId(), commentId);
 		return ResponseUtils.noContent();
 	}
 
@@ -140,8 +148,8 @@ public class CommunityController {
 		@RequestParam(defaultValue = "10") @Min(1) int size
 
 	) {
-		Pageable pageable = postQueryFacade.getPageable(page, size);
-		Page<CommentResDto> comments = commentQueryFacade.getComments(postId, pageable);
+		Pageable pageable = postQueryFacadeService.getPageable(page, size);
+		Page<CommentResDto> comments = commentQueryFacadeService.getComments(postId, pageable);
 		return ResponseUtils.page(comments);
 	}
 
@@ -153,7 +161,7 @@ public class CommunityController {
 		@Authentication CustomAuthenticationToken auth,
 		@Valid @RequestBody CommentReqDto commentReqDto
 	) {
-		CommentResDto response = commentCommandFacade.createChildComment(auth.getUserId(), commentReqDto,
+		CommentResDto response = commentCommandFacadeService.createChildComment(auth.getUserId(), commentReqDto,
 			commentId, postId, auth.getEnvType());
 		return ResponseUtils.created(response);
 	}
@@ -164,7 +172,7 @@ public class CommunityController {
 		@PathVariable Long commentId,
 		@PathVariable Long postId
 	) {
-		CommentDetailResDto response = commentQueryFacade.getDetailComment(commentId, postId);
+		CommentDetailResDto response = commentQueryFacadeService.getDetailComment(commentId, postId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -175,7 +183,7 @@ public class CommunityController {
 		@PathVariable Long postId,
 		@Authentication CustomAuthenticationToken auth
 	) {
-		LikeResDto response = likeFacade.postLike(postId, auth.getUserId(), auth.getEnvType());
+		LikeResDto response = likeFacadeService.postLike(postId, auth.getUserId(), auth.getEnvType());
 		return ResponseUtils.created(response);
 	}
 
@@ -186,8 +194,8 @@ public class CommunityController {
 		@RequestParam(defaultValue = "1") @Min(1) int page,
 		@RequestParam(defaultValue = "10") @Min(1) int size
 	) {
-		Pageable pageable = postQueryFacade.getPageable(page, size);
-		Page<LikePostResDto> likedPosts = likeFacade.getLikedPostsByUser(auth.getUserId(), pageable);
+		Pageable pageable = postQueryFacadeService.getPageable(page, size);
+		Page<LikePostResDto> likedPosts = likeFacadeService.getLikedPostsByUser(auth.getUserId(), pageable);
 		return ResponseUtils.page(likedPosts);
 	}
 
@@ -198,8 +206,8 @@ public class CommunityController {
 		@RequestParam(defaultValue = "1") @Min(1) int page,
 		@RequestParam(defaultValue = "10") @Min(1) int size
 	) {
-		Pageable pageable = postQueryFacade.getPageable(page, size);
-		Page<PostResDto> posts = postQueryFacade.getRecentlyViewedPosts(auth.getUserId(), pageable);
+		Pageable pageable = postQueryFacadeService.getPageable(page, size);
+		Page<PostResDto> posts = postQueryFacadeService.getRecentlyViewedPosts(auth.getUserId(), pageable);
 		return ResponseUtils.page(posts);
 	}
 

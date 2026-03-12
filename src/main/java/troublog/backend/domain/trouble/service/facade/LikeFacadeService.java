@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.service.facade.command;
+package troublog.backend.domain.trouble.service.facade;
 
 import java.util.Optional;
 
@@ -29,7 +29,7 @@ import troublog.backend.global.common.util.AlertSseUtil;
 
 @Service
 @RequiredArgsConstructor
-public class LikeFacade {
+public class LikeFacadeService {
 	private final PostQueryService postQueryService;
 	private final UserQueryService userQueryService;
 	private final LikeQueryService likeQueryService;
@@ -54,7 +54,7 @@ public class LikeFacade {
 
 		if (existing.isPresent()) {
 			// 좋아요 취소
-			deleteLike(existing.get());
+			likeCommandService.deleteLike(existing.get());
 			int likeCount = likeQueryService.countByPostId(postId);
 			return LikeConverter.toResponse(post, likeCount, false);
 		}

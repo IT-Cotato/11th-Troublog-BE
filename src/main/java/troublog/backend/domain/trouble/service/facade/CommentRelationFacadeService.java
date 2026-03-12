@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.service.facade.relation;
+package troublog.backend.domain.trouble.service.facade;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +12,7 @@ import troublog.backend.domain.user.entity.User;
 @Service
 @Transactional
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommentRelationFacade {
+public class CommentRelationFacadeService {
 
 	public void establishRelations(Comment createdComment, User user, Post post) {
 		setUserRelations(createdComment, user);

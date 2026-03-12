@@ -3,6 +3,9 @@ package troublog.backend.domain.trouble.service.query;
 import static org.springframework.data.domain.Sort.Direction.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,14 +17,15 @@ import org.springframework.util.CollectionUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.trouble.converter.ListConverter;
-import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostSummary;
+import troublog.backend.domain.trouble.entity.PostTag;
+import troublog.backend.domain.trouble.entity.Tag;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.PostViewFilter;
 import troublog.backend.domain.trouble.enums.SortType;
 import troublog.backend.domain.trouble.enums.SummaryType;
+import troublog.backend.domain.trouble.enums.TagType;
 import troublog.backend.domain.trouble.enums.VisibilityType;
 import troublog.backend.domain.trouble.repository.PostRepository;
 import troublog.backend.domain.trouble.repository.PostSummaryRepository;
@@ -104,7 +108,48 @@ public class PostQueryService {
 		return page;
 	}
 
-	public List<TroubleListResDto> getProjectTroublesByStatus(
+	public String findErrorTag(final Post post) {
+		if (post == null) {
+			throw new PostException(ErrorCode.MISSING_ERROR_TAG);
+		}
+		return post.getPostTags().stream()
+			.filter(Objects::nonNull)
+			.filter(postTag -> postTag.getTag() != null)
+			.filter(postTag -> postTag.getTag().getTagType() == TagType.ERROR)
+			.map(PostTag::getDisplayName)
+			.findFirst()
+			.orElseThrow(() -> new PostException(ErrorCode.MISSING_ERROR_TAG));
+	}
+
+	public List<String> findTechStackTags(final Post post) {
+		if (post == null) {
+			return List.of();
+		}
+		return post.getPostTags().stream()
+			.filter(Objects::nonNull)
+			.filter(postTag -> postTag.getTag() != null)
+			.filter(postTag -> postTag.getTag().getTagType() == TagType.TECH_STACK)
+			.map(PostTag::getDisplayName)
+			.toList();
+	}
+
+	public List<String> findTopTechStackTags(final Post post) {
+		if (CollectionUtils.isEmpty(post.getPostTags())) {
+			return List.of();
+		}
+		return post.getPostTags().stream()
+			.map(PostTag::getTag)
+			.filter(Objects::nonNull)
+			.filter(tag -> tag.isSameType(TagType.TECH_STACK))
+			.collect(Collectors.groupingBy(Tag::getName, Collectors.counting()))
+			.entrySet().stream()
+			.sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+			.limit(3)
+			.map(Map.Entry::getKey)
+			.toList();
+	}
+
+	public List<Post> getProjectTroublesByStatus(
 		final Long projectId,
 		final SortType sort,
 		final VisibilityType type,
@@ -118,12 +163,10 @@ public class PostQueryService {
 			: postRepository.findByProjectWithStatuses(projectId, statuses, visible);
 
 		log.info("[Post] {} 트러블슈팅 문서 조회: projectId={}, postCount={}", statusType.getMessage(), projectId, posts.size());
-		return posts.stream()
-			.map(ListConverter::toAllTroubleListResDto)
-			.toList();
+		return posts;
 	}
 
-	public List<TroubleListResDto> getSummarizedTroubles(
+	public List<PostSummary> getSummarizedTroubles(
 		final Long projectId,
 		final SortType sort,
 		final SummaryType summaryType
@@ -136,9 +179,7 @@ public class PostQueryService {
 			: postSummaryRepository.findByProjectSummarized(projectId, PostStatus.SUMMARIZED, filterType,
 			Sort.by(DESC, "createdAt", "id"));
 		log.info("[Post] 요약완료된 트러블슈팅 문서 조회: postCount={}, summaryType={}", posts.size(), summaryType);
-		return posts.stream()
-			.map(ListConverter::toAllSummerizedListResDto)
-			.toList();
+		return posts;
 	}
 
 	public Page<Post> getCommunityPosts(final Pageable pageable) {

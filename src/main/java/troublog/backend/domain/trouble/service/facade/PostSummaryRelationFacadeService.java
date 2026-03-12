@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.service.facade.relation;
+package troublog.backend.domain.trouble.service.facade;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import troublog.backend.domain.trouble.entity.SummaryContent;
 @Service
 @Transactional
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostSummaryRelationFacade {
+public class PostSummaryRelationFacadeService {
 
 	public void setRelation(PostSummary postSummary, List<SummaryContent> summaryContents) {
 		if (!CollectionUtils.isEmpty(summaryContents)) {

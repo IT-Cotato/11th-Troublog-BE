@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.service.facade.command;
+package troublog.backend.domain.trouble.service.facade;
 
 import java.time.Duration;
 
@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class RecentPostCommandFacade {
+public class RecentPostCommandFacadeService {
 
 	private static final Duration TTL = Duration.ofDays(7);
 	private final RedisTemplate<String, Object> redisTemplate;

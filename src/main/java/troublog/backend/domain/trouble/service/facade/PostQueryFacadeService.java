@@ -1,4 +1,4 @@
-package troublog.backend.domain.trouble.service.facade.query;
+package troublog.backend.domain.trouble.service.facade;
 
 import java.util.List;
 import java.util.Map;
@@ -13,11 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import troublog.backend.domain.trouble.converter.ContentConverter;
 import troublog.backend.domain.trouble.converter.ListConverter;
 import troublog.backend.domain.trouble.converter.PostConverter;
 import troublog.backend.domain.trouble.converter.PostSummaryConverter;
@@ -26,14 +24,16 @@ import troublog.backend.domain.trouble.dto.response.CommunityPostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostCardResDto;
 import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
+import troublog.backend.domain.trouble.dto.response.PostSummaryResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
-import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostSummary;
-import troublog.backend.domain.trouble.entity.PostTag;
 import troublog.backend.domain.trouble.entity.Tag;
-import troublog.backend.domain.trouble.enums.TagType;
-import troublog.backend.domain.trouble.service.facade.command.RecentPostCommandFacade;
+import troublog.backend.domain.trouble.enums.PostStatus;
+import troublog.backend.domain.trouble.enums.PostViewFilter;
+import troublog.backend.domain.trouble.enums.SortType;
+import troublog.backend.domain.trouble.enums.SummaryType;
+import troublog.backend.domain.trouble.enums.VisibilityType;
 import troublog.backend.domain.trouble.service.factory.PostFactory;
 import troublog.backend.domain.trouble.service.query.LikeQueryService;
 import troublog.backend.domain.trouble.service.query.PostQueryService;
@@ -43,70 +43,22 @@ import troublog.backend.domain.trouble.service.query.TagQueryService;
 import troublog.backend.domain.trouble.validator.PostValidator;
 import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
-import troublog.backend.domain.user.service.UserFacade;
+import troublog.backend.domain.user.service.facade.UserFacadeService;
 import troublog.backend.global.common.error.ErrorCode;
 import troublog.backend.global.common.error.exception.PostException;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostQueryFacade {
+public class PostQueryFacadeService {
 
 	private final PostQueryService postQueryService;
 	private final TagQueryService tagQueryService;
-	private final UserFacade userFacade;
+	private final UserFacadeService userFacadeService;
 	private final LikeQueryService likeQueryService;
-	private final RecentPostCommandFacade recentPostCommandFacade;
+	private final RecentPostCommandFacadeService recentPostCommandFacadeService;
 	private final RecentPostQueryService recentPostQueryService;
 	private final PostSummaryQueryService postSummaryQueryService;
-
-	public static List<ContentInfoDto> findContents(final Post post) {
-		if (CollectionUtils.isEmpty(post.getContents())) {
-			return List.of();
-		}
-		return ContentConverter.toResponseList(post.getContents());
-	}
-
-	public static String findErrorTag(final Post post) {
-		if (post == null) {
-			throw new PostException(ErrorCode.MISSING_ERROR_TAG);
-		}
-		return post.getPostTags().stream()
-			.filter(Objects::nonNull)
-			.filter(postTag -> postTag.getTag() != null)
-			.filter(postTag -> postTag.getTag().getTagType() == TagType.ERROR)
-			.map(PostTag::getDisplayName)
-			.findFirst()
-			.orElseThrow(() -> new PostException(ErrorCode.MISSING_ERROR_TAG));
-	}
-
-	public static List<String> findTechStackTags(final Post post) {
-		if (post == null) {
-			return List.of();
-		}
-		return post.getPostTags().stream()
-			.filter(Objects::nonNull)
-			.filter(postTag -> postTag.getTag() != null)
-			.filter(postTag -> postTag.getTag().getTagType() == TagType.TECH_STACK)
-			.map(PostTag::getDisplayName)
-			.toList();
-	}
-
-	public static List<String> findTopTechStackTags(final Post post) {
-		if (CollectionUtils.isEmpty(post.getPostTags())) {
-			return List.of();
-		}
-		return post.getPostTags().stream()
-			.map(PostTag::getTag)
-			.filter(Objects::nonNull)
-			.filter(tag -> tag.isSameType(TagType.TECH_STACK))
-			.collect(Collectors.groupingBy(Tag::getName, Collectors.counting()))
-			.entrySet().stream()
-			.sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-			.limit(3)
-			.map(Map.Entry::getKey)
-			.toList();
-	}
 
 	public Post findPostEntityById(final Long postId, final Long userId) {
 		Post post = postQueryService.findById(postId);
@@ -117,9 +69,9 @@ public class PostQueryFacade {
 	public PostDetailsResDto findPostById(final Long postId, final Long userId) {
 		Post post = postQueryService.findById(postId);
 		PostFactory.validateAuthorized(userId, post);
-		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId(), userId);
+		UserInfoResDto userInfo = userFacadeService.getUserInfo(post.getUser().getId(), userId);
 		boolean liked = likeQueryService.findByUserAndPost(userId, post.getId()).isPresent();
-		return PostConverter.toPostDetailsResponse(userInfo, post, liked);
+		return toPostDetailsResponse(userInfo, post, liked);
 	}
 
 	public CombineResDto findPostDetailsWithSummaryById(final Long userId, final Long postId, final Long summaryId) {
@@ -134,19 +86,23 @@ public class PostQueryFacade {
 		}
 
 		return CombineResDto.builder()
-			.postResDto(PostConverter.toResponse(post))
-			.postSummaryResDto(PostSummaryConverter.toResponse(postSummary))
+			.postResDto(toPostResponse(post))
+			.postSummaryResDto(toPostSummaryResponse(postSummary))
 			.build();
 	}
 
 	public List<PostResDto> findAllNotDeletedPosts() {
 		List<Post> posts = postQueryService.findAllNotDeletedPosts();
-		return PostConverter.toResponseList(posts);
+		return posts.stream()
+			.map(this::toPostResponse)
+			.toList();
 	}
 
 	public List<PostResDto> findDeletedPosts() {
 		List<Post> posts = postQueryService.findAllDeletedPosts();
-		return PostConverter.toResponseList(posts);
+		return posts.stream()
+			.map(this::toPostResponse)
+			.toList();
 	}
 
 	public List<String> findPostTagsByName(final String keyword) {
@@ -158,23 +114,46 @@ public class PostQueryFacade {
 
 	public Page<PostResDto> searchPostByKeyword(final String keyword, final Pageable pageable) {
 		Page<Post> posts = postQueryService.searchPostByKeyword(keyword, pageable);
-		return posts.map(PostConverter::toResponse);
+		return posts.map(this::toPostResponse);
 	}
 
 	public Page<TroubleListResDto> getAllTroubles(final Long userId, final Pageable pageable) {
 		Page<Post> posts = isSortByStarRating(pageable)
 			? postQueryService.getAllTroublesOrderByStarRating(userId, pageable)
 			: postQueryService.getAllTroubles(userId, pageable);
-		return posts.map(ListConverter::toAllTroubleListResDto);
+		return posts.map(this::toTroubleListResponse);
+	}
+
+	public List<TroubleListResDto> findProjectTroublesByStatus(
+		final Long projectId,
+		final SortType sort,
+		final VisibilityType visibility,
+		final PostViewFilter statusType
+	) {
+		List<Post> posts = postQueryService.getProjectTroublesByStatus(projectId, sort, visibility, statusType);
+		return posts.stream()
+			.map(this::toTroubleListResponse)
+			.toList();
+	}
+
+	public List<TroubleListResDto> findProjectSummarizedTroubles(
+		final Long projectId,
+		final SortType sort,
+		final SummaryType summaryType
+	) {
+		List<PostSummary> postSummaries = postQueryService.getSummarizedTroubles(projectId, sort, summaryType);
+		return postSummaries.stream()
+			.map(this::toSummarizedTroubleListResponse)
+			.toList();
 	}
 
 	public CommunityPostDetailsResDto findCommunityPostDetailsById(final Long userId, final Long postId) {
 		Post post = postQueryService.findById(postId);
 		PostValidator.validateVisibility(post);
-		UserInfoResDto userInfo = userFacade.getUserInfo(post.getUser().getId(), userId);
+		UserInfoResDto userInfo = userFacadeService.getUserInfo(post.getUser().getId(), userId);
 		boolean liked = likeQueryService.findByUserAndPost(userId, postId).isPresent();
-		recentPostCommandFacade.recordPostView(userId, postId);
-		return PostConverter.toCommunityPostDetailsResponse(userInfo, post, liked);
+		recentPostCommandFacadeService.recordPostView(userId, postId);
+		return toCommunityPostDetailsResponse(userInfo, post, liked);
 	}
 
 	public Page<PostCardResDto> searchUserPostByKeyword(
@@ -199,11 +178,11 @@ public class PostQueryFacade {
 	}
 
 	private Page<PostCardResDto> convertToPostCardsWithUserInfo(final Set<Long> userIds, final Page<Post> posts) {
-		Map<Long, PostCardUserInfoResDto> userInfoMap = userFacade.getUserInfoMap(userIds);
+		Map<Long, PostCardUserInfoResDto> userInfoMap = userFacadeService.getUserInfoMap(userIds);
 
 		return posts.map(post -> {
 			PostCardUserInfoResDto userInfo = userInfoMap.get(post.getUser().getId());
-			return PostConverter.toCommunityListResponse(userInfo, post);
+			return toCommunityListResponse(userInfo, post);
 		});
 	}
 
@@ -246,7 +225,7 @@ public class PostQueryFacade {
 		List<PostResDto> content = recentIds.stream()
 			.map(postMap::get)
 			.filter(Objects::nonNull)
-			.map(PostConverter::toResponse)
+			.map(this::toPostResponse)
 			.toList();
 
 		return new PageImpl<>(content, pageable, total);
@@ -254,5 +233,86 @@ public class PostQueryFacade {
 
 	private boolean isSortByStarRating(final Pageable pageable) {
 		return pageable.getSort().getOrderFor("starRating") != null;
+	}
+
+	private PostResDto toPostResponse(final Post post) {
+		return PostConverter.toResponse(
+			post,
+			postQueryService.findErrorTag(post),
+			postQueryService.findTechStackTags(post)
+		);
+	}
+
+	private PostDetailsResDto toPostDetailsResponse(
+		final UserInfoResDto userInfoResDto,
+		final Post post,
+		final boolean liked
+	) {
+		return PostConverter.toPostDetailsResponse(
+			userInfoResDto,
+			post,
+			liked,
+			postQueryService.findErrorTag(post),
+			postQueryService.findTechStackTags(post)
+		);
+	}
+
+	private CommunityPostDetailsResDto toCommunityPostDetailsResponse(
+		final UserInfoResDto userInfoResDto,
+		final Post post,
+		final boolean liked
+	) {
+		return PostConverter.toCommunityPostDetailsResponse(
+			userInfoResDto,
+			post,
+			liked,
+			postQueryService.findErrorTag(post),
+			postQueryService.findTechStackTags(post)
+		);
+	}
+
+	private PostCardResDto toCommunityListResponse(
+		final PostCardUserInfoResDto postCardUserInfoResDto,
+		final Post post
+	) {
+		return PostConverter.toCommunityListResponse(
+			postCardUserInfoResDto,
+			post,
+			postQueryService.findErrorTag(post),
+			postQueryService.findTopTechStackTags(post)
+		);
+	}
+
+	private TroubleListResDto toTroubleListResponse(final Post post) {
+		List<PostSummaryResDto> summaries = List.of();
+
+		if (post.getStatus() == PostStatus.SUMMARIZED) {
+			summaries = post.getPostSummaries().stream()
+				.map(this::toPostSummaryResponse)
+				.toList();
+		}
+
+		return ListConverter.toAllTroubleListResDto(
+			post,
+			postQueryService.findErrorTag(post),
+			postQueryService.findTopTechStackTags(post),
+			summaries
+		);
+	}
+
+	private TroubleListResDto toSummarizedTroubleListResponse(final PostSummary postSummary) {
+		return ListConverter.toAllSummerizedListResDto(
+			postSummary,
+			postQueryService.findErrorTag(postSummary.getPost()),
+			postQueryService.findTopTechStackTags(postSummary.getPost())
+		);
+	}
+
+	private PostSummaryResDto toPostSummaryResponse(final PostSummary postSummary) {
+		return PostSummaryConverter.toResponse(
+			postSummary,
+			postQueryService.findErrorTag(postSummary.getPost()),
+			postQueryService.findTechStackTags(postSummary.getPost())
+		);
 	}
 }

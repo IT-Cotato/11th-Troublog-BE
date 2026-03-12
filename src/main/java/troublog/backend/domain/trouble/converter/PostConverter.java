@@ -10,10 +10,11 @@ import troublog.backend.domain.trouble.dto.response.CommunityPostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostCardResDto;
 import troublog.backend.domain.trouble.dto.response.PostDetailsResDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
+import troublog.backend.domain.trouble.dto.response.common.ContentInfoDto;
+import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.PostStatus;
 import troublog.backend.domain.trouble.enums.StarRating;
-import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 import troublog.backend.domain.user.converter.UserConverter;
 import troublog.backend.domain.user.dto.response.PostCardUserInfoResDto;
 import troublog.backend.domain.user.dto.response.UserInfoResDto;
@@ -68,7 +69,7 @@ public class PostConverter {
 			.checklistReason(JsonConverter.toJson(postReqDto.checklistReason()));
 	}
 
-	public PostResDto toResponse(final Post post) {
+	public PostResDto toResponse(final Post post, final String errorTag, final List<String> postTags) {
 		return PostResDto.builder()
 			.id(post.getId())
 			.title(post.getTitle())
@@ -87,14 +88,20 @@ public class PostConverter {
 			.updatedAt(post.getUpdatedAt())
 			.userInfo(UserConverter.toPostCardUserInfoResDto(post.getUser()))
 			.projectId(post.getProject().getId())
-			.errorTag(PostQueryFacade.findErrorTag(post))
-			.postTags(PostQueryFacade.findTechStackTags(post))
-			.contents(PostQueryFacade.findContents(post))
+			.errorTag(errorTag)
+			.postTags(postTags)
+			.contents(toContentResponses(post.getContents()))
 			.thumbnailUrl(post.getThumbnailUrl())
 			.build();
 	}
 
-	public PostDetailsResDto toPostDetailsResponse(UserInfoResDto userInfoResDto, Post post, boolean liked) {
+	public PostDetailsResDto toPostDetailsResponse(
+		final UserInfoResDto userInfoResDto,
+		final Post post,
+		final boolean liked,
+		final String errorTag,
+		final List<String> postTags
+	) {
 		return PostDetailsResDto.builder()
 			.userInfoResDto(userInfoResDto)
 			.postId(post.getId())
@@ -112,39 +119,40 @@ public class PostConverter {
 			.templateType(post.getTemplateType() != null ? post.getTemplateType().toString() : null)
 			.checklistError(JsonConverter.toList(post.getChecklistError()))
 			.checklistReason(JsonConverter.toList(post.getChecklistReason()))
-			.errorTag(PostQueryFacade.findErrorTag(post))
-			.postTags(PostQueryFacade.findTechStackTags(post))
-			.contents(PostQueryFacade.findContents(post))
+			.errorTag(errorTag)
+			.postTags(postTags)
+			.contents(toContentResponses(post.getContents()))
 			.createdAt(post.getCreatedAt())
 			.updatedAt(post.getUpdatedAt())
 			.completedAt(post.getCompletedAt() != null ? post.getCompletedAt().format(DATE_FORMATTER) : null)
 			.build();
 	}
 
-	public PostCardResDto toCommunityListResponse(PostCardUserInfoResDto postCardUserInfoResDto, Post post) {
+	public PostCardResDto toCommunityListResponse(
+		final PostCardUserInfoResDto postCardUserInfoResDto,
+		final Post post,
+		final String errorTag,
+		final List<String> postTags
+	) {
 		return PostCardResDto.builder()
 			.postCardUserInfoResDto(postCardUserInfoResDto)
 			.id(post.getId())
 			.title(post.getTitle())
 			.thumbnailUrl(post.getThumbnailUrl())
-			.errorTag(PostQueryFacade.findErrorTag(post))
-			.postTags(PostQueryFacade.findTopTechStackTags(post))
+			.errorTag(errorTag)
+			.postTags(postTags)
 			.likeCount(post.getLikeCount())
 			.commentCount(post.getCommentCount())
 			.completedAt(post.getCompletedAt() == null ? null : post.getCompletedAt().format(DATE_FORMATTER))
 			.build();
 	}
 
-	public List<PostResDto> toResponseList(List<Post> posts) {
-		return posts.stream()
-			.map(PostConverter::toResponse)
-			.toList();
-	}
-
 	public CommunityPostDetailsResDto toCommunityPostDetailsResponse(
-		UserInfoResDto userInfoResDto,
-		Post post,
-		boolean liked
+		final UserInfoResDto userInfoResDto,
+		final Post post,
+		final boolean liked,
+		final String errorTag,
+		final List<String> postTags
 	) {
 		return CommunityPostDetailsResDto.builder()
 			.userInfoResDto(userInfoResDto)
@@ -160,12 +168,19 @@ public class PostConverter {
 			.templateType(post.getTemplateType() != null ? post.getTemplateType().toString() : null)
 			.checklistError(JsonConverter.toList(post.getChecklistError()))
 			.checklistReason(JsonConverter.toList(post.getChecklistReason()))
-			.errorTag(PostQueryFacade.findErrorTag(post))
-			.postTags(PostQueryFacade.findTechStackTags(post))
-			.contents(PostQueryFacade.findContents(post))
+			.errorTag(errorTag)
+			.postTags(postTags)
+			.contents(toContentResponses(post.getContents()))
 			.createdAt(post.getCreatedAt())
 			.updatedAt(post.getUpdatedAt())
 			.completedAt(post.getCompletedAt() != null ? post.getCompletedAt().format(DATE_FORMATTER) : null)
 			.build();
+	}
+
+	private List<ContentInfoDto> toContentResponses(final List<Content> contents) {
+		if (contents == null) {
+			return List.of();
+		}
+		return ContentConverter.toResponseList(contents);
 	}
 }

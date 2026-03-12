@@ -7,21 +7,16 @@ import troublog.backend.domain.trouble.dto.response.PostSummaryResDto;
 import troublog.backend.domain.trouble.dto.response.TroubleListResDto;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.entity.PostSummary;
-import troublog.backend.domain.trouble.enums.PostStatus;
-import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
 
 @UtilityClass
 public class ListConverter {
 
-	public TroubleListResDto toAllTroubleListResDto(Post post) {
-		List<PostSummaryResDto> summaries = List.of();
-
-		if (post.getStatus() == PostStatus.SUMMARIZED) {
-			summaries = post.getPostSummaries().stream()
-				.map(PostSummaryConverter::toResponse)
-				.toList();
-		}
-
+	public TroubleListResDto toAllTroubleListResDto(
+		final Post post,
+		final String errorTag,
+		final List<String> techs,
+		final List<PostSummaryResDto> summaries
+	) {
 		return TroubleListResDto.builder()
 			.id(post.getId())
 			.projectId(post.getProject().getId())
@@ -32,8 +27,8 @@ public class ListConverter {
 			.likeCount(post.getLikeCount())
 			.commentCount(post.getCommentCount())
 			.imageUrl(post.getThumbnailUrl())
-			.error(PostQueryFacade.findErrorTag(post))
-			.techs(PostQueryFacade.findTopTechStackTags(post))
+			.error(errorTag)
+			.techs(techs)
 			.isVisible(post.getIsVisible())
 			.starRating(
 				post.getStarRating() != null ? post.getStarRating().getValue() : null)
@@ -41,7 +36,11 @@ public class ListConverter {
 			.build();
 	}
 
-	public static TroubleListResDto toAllSummerizedListResDto(PostSummary postSummary) {
+	public static TroubleListResDto toAllSummerizedListResDto(
+		final PostSummary postSummary,
+		final String errorTag,
+		final List<String> techs
+	) {
 		return TroubleListResDto.builder()
 			.id(postSummary.getPost().getId())
 			.postSummaryId(postSummary.getId())
@@ -52,8 +51,8 @@ public class ListConverter {
 			.starRating(
 				postSummary.getPost().getStarRating() != null ? postSummary.getPost().getStarRating().getValue() : null)
 			.imageUrl(postSummary.getPost().getThumbnailUrl())
-			.error(PostQueryFacade.findErrorTag(postSummary.getPost()))
-			.techs(PostQueryFacade.findTopTechStackTags(postSummary.getPost()))
+			.error(errorTag)
+			.techs(techs)
 			.isVisible(postSummary.getPost().getIsVisible())
 			.summaryType(postSummary.getSummaryType().name())
 			.build();
