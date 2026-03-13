@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.alert.dto.response.AlertResDto;
-import troublog.backend.domain.alert.service.AlertFacade;
+import troublog.backend.domain.alert.service.facade.AlertFacadeService;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -31,7 +31,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "알림", description = "알림 관련 API")
 public class AlertController {
 
-	private final AlertFacade alertFacade;
+	private final AlertFacadeService alertFacadeService;
 
 	@GetMapping("/list")
 	@Operation(summary = "알림 조회 API", description = """
@@ -44,7 +44,7 @@ public class AlertController {
 		@Authentication CustomAuthenticationToken auth,
 		@RequestParam(required = false) String alertType
 	) {
-		return ResponseUtils.ok(alertFacade.getAlerts(auth.getUserId(), alertType));
+		return ResponseUtils.ok(alertFacadeService.getAlerts(auth.getUserId(), alertType));
 	}
 
 	@DeleteMapping
@@ -53,7 +53,7 @@ public class AlertController {
 		@RequestParam Long alertId,
 		@Authentication CustomAuthenticationToken auth
 	) {
-		alertFacade.deleteAlert(alertId, auth.getUserId());
+		alertFacadeService.deleteAlert(alertId, auth.getUserId());
 		return ResponseUtils.noContent();
 	}
 
@@ -61,6 +61,6 @@ public class AlertController {
 	@Operation(summary = "SSE 연결 API", description = "실시간 알림을 위한 SSE 연결")
 	public SseEmitter connectSse(@Authentication CustomAuthenticationToken auth) {
 		Long userId = auth.getUserId();
-		return alertFacade.connect(userId);
+		return alertFacadeService.connect(userId);
 	}
 }

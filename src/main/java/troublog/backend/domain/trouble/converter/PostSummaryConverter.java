@@ -1,11 +1,15 @@
 package troublog.backend.domain.trouble.converter;
 
+import java.util.List;
+
+import org.springframework.util.CollectionUtils;
+
 import lombok.experimental.UtilityClass;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.trouble.dto.response.PostSummaryResDto;
+import troublog.backend.domain.trouble.dto.response.common.SummaryContentInfoDto;
 import troublog.backend.domain.trouble.entity.PostSummary;
-import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
-import troublog.backend.domain.trouble.service.facade.query.PostSummaryQueryFacade;
+import troublog.backend.domain.trouble.entity.SummaryContent;
 
 @UtilityClass
 public class PostSummaryConverter {
@@ -16,19 +20,29 @@ public class PostSummaryConverter {
 			.build();
 	}
 
-	public PostSummaryResDto toResponse(PostSummary postSummary) {
+	public PostSummaryResDto toResponse(
+		final PostSummary postSummary,
+		final String errorTag,
+		final List<String> postTags
+	) {
 		return PostSummaryResDto.builder()
 			.postId(postSummary.getPost().getId())
 			.title(postSummary.getPost().getTitle())
 			.userId(postSummary.getPost().getUser().getId())
 			.projectId(postSummary.getPost().getProject().getId())
-			.errorTag(PostQueryFacade.findErrorTag(postSummary.getPost()))
-			.postTags(PostQueryFacade.findTechStackTags(postSummary.getPost()))
+			.errorTag(errorTag)
+			.postTags(CollectionUtils.isEmpty(postTags) ? List.of() : postTags)
 			.summaryId(postSummary.getId())
 			.summaryType(postSummary.getSummaryType().name())
 			.summaryCreatedAt(postSummary.getCreatedAt())
-			.summaryContents(PostSummaryQueryFacade.findSummaryContents(postSummary))
+			.summaryContents(toSummaryContentResponses(postSummary.getSummaryContents()))
 			.build();
 	}
 
+	private List<SummaryContentInfoDto> toSummaryContentResponses(final List<SummaryContent> summaryContents) {
+		if (CollectionUtils.isEmpty(summaryContents)) {
+			return List.of();
+		}
+		return SummaryContentConverter.toResponseList(summaryContents);
+	}
 }

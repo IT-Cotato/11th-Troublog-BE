@@ -1,6 +1,5 @@
 package troublog.backend.domain.trouble.controller;
 
-import javax.validation.Valid;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +18,17 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import troublog.backend.domain.ai.summary.dto.response.TaskStartResDto;
 import troublog.backend.domain.ai.summary.dto.response.TaskStatusResDto;
-import troublog.backend.domain.ai.summary.facade.SummaryTaskFacade;
+import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacadeService;
 import troublog.backend.domain.trouble.dto.request.PostReqDto;
 import troublog.backend.domain.trouble.dto.response.PostResDto;
 import troublog.backend.domain.trouble.enums.SummaryType;
-import troublog.backend.domain.trouble.service.facade.command.PostCommandFacade;
-import troublog.backend.domain.trouble.service.facade.command.PostSummaryCommandFacade;
+import troublog.backend.domain.trouble.service.facade.PostCommandFacadeService;
+import troublog.backend.domain.trouble.service.facade.PostSummaryCommandFacadeService;
 import troublog.backend.global.common.annotation.Authentication;
 import troublog.backend.global.common.custom.CustomAuthenticationToken;
 import troublog.backend.global.common.response.BaseResponse;
@@ -40,9 +40,9 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "트러블슈팅", description = "트러블슈팅 문서 관련 엔드포인트")
 public class PostCommandController {
 
-	private final PostCommandFacade postCommandFacade;
-	private final PostSummaryCommandFacade postSummaryCommandFacade;
-	private final SummaryTaskFacade summaryTaskFacade;
+	private final PostCommandFacadeService postCommandFacadeService;
+	private final PostSummaryCommandFacadeService postSummaryCommandFacadeService;
+	private final SummaryTaskFacadeService summaryTaskFacadeService;
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "트러블슈팅 문서 생성 API", description = "트러블슈팅 문서를 새롭게 생성한다.")
@@ -52,7 +52,7 @@ public class PostCommandController {
 		@Authentication CustomAuthenticationToken token,
 		@Valid @RequestBody PostReqDto postReqDto
 	) {
-		PostResDto response = postCommandFacade.createPost(token.getUserId(), postReqDto);
+		PostResDto response = postCommandFacadeService.createPost(token.getUserId(), postReqDto);
 		return ResponseUtils.created(response);
 	}
 
@@ -66,7 +66,7 @@ public class PostCommandController {
 		@PathVariable Long postId,
 		@Valid @RequestBody PostReqDto postReqDto
 	) {
-		PostResDto response = postCommandFacade.updatePost(token.getUserId(), postId, postReqDto);
+		PostResDto response = postCommandFacadeService.updatePost(token.getUserId(), postId, postReqDto);
 		return ResponseUtils.ok(response);
 	}
 
@@ -77,7 +77,7 @@ public class PostCommandController {
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
-		postCommandFacade.softDeletePost(token.getUserId(), postId);
+		postCommandFacadeService.softDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
 	}
 
@@ -88,7 +88,7 @@ public class PostCommandController {
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
-		postCommandFacade.hardDeletePost(token.getUserId(), postId);
+		postCommandFacadeService.hardDeletePost(token.getUserId(), postId);
 		return ResponseUtils.noContent();
 	}
 
@@ -101,7 +101,7 @@ public class PostCommandController {
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long postId
 	) {
-		PostResDto response = postCommandFacade.restorePost(token.getUserId(), postId);
+		PostResDto response = postCommandFacadeService.restorePost(token.getUserId(), postId);
 		return ResponseUtils.ok(response);
 	}
 
@@ -112,7 +112,7 @@ public class PostCommandController {
 		@Authentication CustomAuthenticationToken token,
 		@PathVariable Long summaryId
 	) {
-		postSummaryCommandFacade.hardDeletePostSummary(token.getUserId(), summaryId);
+		postSummaryCommandFacadeService.hardDeletePostSummary(token.getUserId(), summaryId);
 		return ResponseUtils.noContent();
 	}
 
@@ -125,7 +125,7 @@ public class PostCommandController {
 		@PathVariable Long postId,
 		@RequestParam SummaryType summaryType
 	) {
-		return ResponseUtils.ok(postCommandFacade.startSummary(token.getUserId(), summaryType, postId));
+		return ResponseUtils.ok(postCommandFacadeService.startSummary(token.getUserId(), summaryType, postId));
 	}
 
 	@GetMapping("/{postId}/summary/{taskId}")
@@ -138,7 +138,7 @@ public class PostCommandController {
 		@PathVariable String taskId,
 		@PathVariable Long postId
 	) {
-		return ResponseUtils.ok(summaryTaskFacade.findTask(taskId, token.getUserId(), postId));
+		return ResponseUtils.ok(summaryTaskFacadeService.findTask(taskId, token.getUserId(), postId));
 	}
 
 	@DeleteMapping("/{postId}/summary/{taskId}")
@@ -148,7 +148,7 @@ public class PostCommandController {
 		@PathVariable String taskId,
 		@PathVariable Long postId
 	) {
-		summaryTaskFacade.cancelTask(taskId, postId);
+		summaryTaskFacadeService.cancelTask(taskId, postId);
 		return ResponseUtils.noContent();
 	}
 }

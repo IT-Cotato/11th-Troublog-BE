@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import troublog.backend.domain.image.service.facade.ImageFacade;
+import troublog.backend.domain.image.service.facade.ImageFacadeService;
 import troublog.backend.global.common.response.BaseResponse;
 import troublog.backend.global.common.util.ResponseUtils;
 
@@ -29,7 +29,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "이미지 관리", description = "S3 이미지 업로드/삭제 API")
 public class ImageController {
 
-	private final ImageFacade imageFacade;
+	private final ImageFacadeService imageFacadeService;
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "단일 이미지 업로드", description = "단일 이미지를 S3에 업로드한다.")
@@ -45,7 +45,7 @@ public class ImageController {
 		)
 		@RequestParam(required = false) String dirName
 	) {
-		String response = imageFacade.uploadSingleImageAsync(image, dirName);
+		String response = imageFacadeService.uploadSingleImageAsync(image, dirName);
 		return ResponseUtils.ok(response);
 	}
 
@@ -64,21 +64,21 @@ public class ImageController {
 		)
 		@RequestParam(required = false) String dirName
 	) {
-		List<String> response = imageFacade.uploadMultipleImagesAsync(images, dirName);
+		List<String> response = imageFacadeService.uploadMultipleImagesAsync(images, dirName);
 		return ResponseUtils.ok(response);
 	}
 
 	@DeleteMapping
 	@Operation(summary = "단일 이미지 삭제", description = "S3에 저장된 단일 이미지를 URL 값을 기반으로 삭제한다.")
 	public ResponseEntity<BaseResponse<Void>> deleteSingleImage(@RequestParam String imageUrl) {
-		imageFacade.deleteSingleImage(imageUrl).join();
+		imageFacadeService.deleteSingleImage(imageUrl).join();
 		return ResponseUtils.noContent();
 	}
 
 	@DeleteMapping("/multi")
 	@Operation(summary = "다중 이미지 삭제", description = "S3에 저장된 다중 이미지를 URL 값을 기반으로 삭제한다.")
 	public ResponseEntity<BaseResponse<Void>> deleteMultipleImages(@RequestParam List<String> imageUrls) {
-		imageFacade.deleteMultipleImages(imageUrls).join();
+		imageFacadeService.deleteMultipleImages(imageUrls).join();
 		return ResponseUtils.noContent();
 	}
 

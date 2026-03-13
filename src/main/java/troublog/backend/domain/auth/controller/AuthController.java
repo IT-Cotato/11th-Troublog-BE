@@ -27,7 +27,7 @@ import troublog.backend.domain.auth.dto.PasswordEmailCheckReqDto;
 import troublog.backend.domain.auth.dto.PasswordEmailUuidResDto;
 import troublog.backend.domain.auth.dto.RegisterReqDto;
 import troublog.backend.domain.auth.dto.RegisterResDto;
-import troublog.backend.domain.auth.service.AuthFacade;
+import troublog.backend.domain.auth.service.facade.AuthFacadeService;
 import troublog.backend.global.common.response.BaseResponse;
 import troublog.backend.global.common.util.ResponseUtils;
 
@@ -38,7 +38,7 @@ import troublog.backend.global.common.util.ResponseUtils;
 @Tag(name = "인증", description = "회원가입 및 로그인 API")
 public class AuthController {
 
-	private final AuthFacade authFacade;
+	private final AuthFacadeService authFacadeService;
 
 	@PostMapping("/register")
 	@Operation(summary = "회원가입 API", description = "깃헙 주소는 선택, 나머지는 필수입력")
@@ -48,7 +48,7 @@ public class AuthController {
 		@Valid @RequestBody RegisterReqDto registerReqDto,
 		HttpServletRequest request
 	) {
-		RegisterResDto registerResDto = authFacade.register(registerReqDto, request);
+		RegisterResDto registerResDto = authFacadeService.register(registerReqDto, request);
 		return ResponseUtils.created(registerResDto);
 	}
 
@@ -63,7 +63,7 @@ public class AuthController {
 		@RequestParam String email,
 		HttpServletRequest request
 	) {
-		authFacade.checkDuplicateEmail(email, request);
+		authFacadeService.checkDuplicateEmail(email, request);
 		return ResponseUtils.noContent();
 	}
 
@@ -71,7 +71,7 @@ public class AuthController {
 	@Operation(summary = "통합 회원가입 카카오 연동하기 API", description = "일반 회원가입을 먼저 한 사람이 카카오 로그인 시 redirect되는 페이지에서 호출하는 api")
 	public ResponseEntity<BaseResponse<Void>> userIntegrateKakao(
 		@Valid @RequestBody IntegrationKakaoRegisterReqDto integrationKakaoRegisterReqDto, HttpServletRequest request) {
-		authFacade.integrateKakaoUser(integrationKakaoRegisterReqDto, request);
+		authFacadeService.integrateKakaoUser(integrationKakaoRegisterReqDto, request);
 		return ResponseUtils.noContent();
 	}
 
@@ -84,7 +84,7 @@ public class AuthController {
 		HttpServletRequest request,
 		HttpServletResponse response
 	) {
-		LoginResDto loginResDto = authFacade.login(loginReqDto, request, response);
+		LoginResDto loginResDto = authFacadeService.login(loginReqDto, request, response);
 		return ResponseUtils.ok(loginResDto);
 	}
 
@@ -94,7 +94,7 @@ public class AuthController {
 		content = @Content(schema = @Schema(implementation = String.class)))
 	@PostMapping("/refresh")
 	public ResponseEntity<BaseResponse<String>> reissueAccessToken(HttpServletRequest request) {
-		String accessToken = authFacade.reissueAccessToken(request);
+		String accessToken = authFacadeService.reissueAccessToken(request);
 		return ResponseUtils.ok(accessToken);
 	}
 
@@ -102,7 +102,7 @@ public class AuthController {
 		+ ", 개발단계에서 refreshToken은 임시로 header에 담아 전달")
 	@PostMapping("/logout")
 	public ResponseEntity<BaseResponse<Void>> logout(HttpServletRequest request, HttpServletResponse response) {
-		authFacade.logout(request, response);
+		authFacadeService.logout(request, response);
 		return ResponseUtils.noContent();
 	}
 
@@ -114,7 +114,7 @@ public class AuthController {
 		@Valid @RequestBody OAuth2RegisterReqDto oAuth2RegisterReqDto,
 		HttpServletRequest request
 	) {
-		RegisterResDto response = authFacade.oauthRegister(oAuth2RegisterReqDto, request);
+		RegisterResDto response = authFacadeService.oauthRegister(oAuth2RegisterReqDto, request);
 		return ResponseUtils.created(response);
 	}
 
@@ -124,7 +124,10 @@ public class AuthController {
 		content = @Content(schema = @Schema(implementation = PasswordEmailUuidResDto.class)))
 	public ResponseEntity<BaseResponse<PasswordEmailUuidResDto>> findPassword(
 		@Valid @RequestBody PasswordEmailCheckReqDto passwordEmailCheckReq, HttpServletRequest request) {
-		PasswordEmailUuidResDto passwordEmailUuidRes = authFacade.checkEmailForPassword(passwordEmailCheckReq, request);
+		PasswordEmailUuidResDto passwordEmailUuidRes = authFacadeService.checkEmailForPassword(
+			passwordEmailCheckReq,
+			request
+		);
 		return ResponseUtils.ok(passwordEmailUuidRes);
 	}
 
@@ -133,7 +136,7 @@ public class AuthController {
 		+ "부터 받은 가장 최신의 UUID를 입력")
 	public ResponseEntity<BaseResponse<Void>> checkAuthCode(
 		@Valid @RequestBody PasswordAuthCodeCheckReqDto passwordAuthCodeCheckReq, HttpServletRequest request) {
-		authFacade.checkAuthCodePassword(passwordAuthCodeCheckReq, request);
+		authFacadeService.checkAuthCodePassword(passwordAuthCodeCheckReq, request);
 		return ResponseUtils.noContent();
 	}
 
@@ -141,7 +144,7 @@ public class AuthController {
 	@Operation(summary = "비밀번호 재설정")
 	public ResponseEntity<BaseResponse<Void>> changePassword(
 		@Valid @RequestBody PasswordChangeReqDto passwordChangeReq, HttpServletRequest request) {
-		authFacade.changePassword(passwordChangeReq, request);
+		authFacadeService.changePassword(passwordChangeReq, request);
 		return ResponseUtils.noContent();
 	}
 }

@@ -16,12 +16,12 @@ import troublog.backend.domain.ai.summary.dto.common.ExtractedContentDto;
 import troublog.backend.domain.ai.summary.dto.response.SummarizedResDto;
 import troublog.backend.domain.ai.summary.entity.SummaryTask;
 import troublog.backend.domain.ai.summary.enums.SummaryStatus;
-import troublog.backend.domain.ai.summary.facade.SummaryTaskFacade;
+import troublog.backend.domain.ai.summary.service.facade.SummaryTaskFacadeService;
 import troublog.backend.domain.trouble.converter.ContentConverter;
 import troublog.backend.domain.trouble.entity.Content;
 import troublog.backend.domain.trouble.entity.Post;
 import troublog.backend.domain.trouble.enums.SummaryType;
-import troublog.backend.domain.trouble.service.facade.query.PostQueryFacade;
+import troublog.backend.domain.trouble.service.facade.PostQueryFacadeService;
 import troublog.backend.domain.trouble.service.query.ContentQueryService;
 import troublog.backend.domain.trouble.service.query.PostTagQueryService;
 import troublog.backend.global.common.config.PromptProperties;
@@ -37,9 +37,9 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 	private final ChatClient chatClient;
 	private final PromptProperties promptProperties;
 	private final PostTagQueryService postTagQueryService;
-	private final PostQueryFacade postQueryFacade;
+	private final PostQueryFacadeService postQueryFacadeService;
 	private final ContentQueryService contentQueryService;
-	private final SummaryTaskFacade summaryTaskFacade;
+	private final SummaryTaskFacadeService summaryTaskFacadeService;
 	private final PostSummaryCompletionService completionService;
 
 	@Override
@@ -72,11 +72,11 @@ public class PostSummaryServiceImpl implements PostSummaryService {
 	}
 
 	private SummarizedResDto performAiAnalysis(SummaryTask summaryTask, SummaryType summaryType) {
-		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.PREPROCESSING);
+		summaryTaskFacadeService.updateTask(summaryTask, SummaryStatus.PREPROCESSING);
 		BeanOutputConverter<SummarizedResDto> converter = new BeanOutputConverter<>(SummarizedResDto.class);
-		Post post = postQueryFacade.findPostEntityById(summaryTask.getPostId(), summaryTask.getUserId());
+		Post post = postQueryFacadeService.findPostEntityById(summaryTask.getPostId(), summaryTask.getUserId());
 		PromptTemplate promptTemplate = generatePromptTemplate(post, summaryType);
-		summaryTaskFacade.updateTask(summaryTask, SummaryStatus.ANALYZING);
+		summaryTaskFacadeService.updateTask(summaryTask, SummaryStatus.ANALYZING);
 		String aiResponse = callAiService(promptTemplate, converter);
 		return convertAiResponse(aiResponse, converter);
 	}
