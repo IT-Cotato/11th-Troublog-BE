@@ -7,6 +7,9 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
   ai:
     openai:
       api-key: ${OPEN_AI_API_KEY}
