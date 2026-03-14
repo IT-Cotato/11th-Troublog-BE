@@ -2,6 +2,8 @@
 spring:
   config:
     import: optional:file:.env[.properties]
+  flyway:
+    baseline-on-migrate: true
   datasource:
     url: ${PROD_DB_URL}
     username: ${PROD_DB_USERNAME}

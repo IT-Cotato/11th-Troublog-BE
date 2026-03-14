@@ -36,6 +36,7 @@ jobs:
           mv .env deploy/
           cp docker-compose.yml deploy/
           cp redis.conf deploy/       # Redis 설정 파일 포함
+          cp -r src/main/resources/db deploy/
           cp -r monitoring deploy/    # 모니터링 설정 파일 포함
           tar -czvf deploy.tar.gz -C deploy .
         shell: bash
@@ -110,6 +111,16 @@ jobs:
           source: "redis.conf"
           target: "/home/ubuntu/troublog/"
 
+      - name: Copy migration SQL to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: "db"
+          target: "/home/ubuntu/troublog/"
+
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
@@ -126,6 +137,26 @@ jobs:
 
             # Docker 로그인
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+            # Flyway 마이그레이션 선행 실행
+            DB_URL="$(grep '^PROD_DB_URL=' .env | cut -d= -f2-)"
+            DB_USER="$(grep '^PROD_DB_USERNAME=' .env | cut -d= -f2-)"
+            DB_PASSWORD="$(grep '^PROD_DB_PASSWORD=' .env | cut -d= -f2-)"
+
+            if [ -z "$DB_URL" ] || [ -z "$DB_USER" ] || [ -z "$DB_PASSWORD" ]; then
+              echo "Missing PROD DB credentials in .env"
+              exit 1
+            fi
+
+            sudo docker run --rm \
+              -v /home/ubuntu/troublog/db/migration:/flyway/sql:ro \
+              flyway/flyway:11 \
+              -url="$DB_URL" \
+              -user="$DB_USER" \
+              -password="$DB_PASSWORD" \
+              -locations=filesystem:/flyway/sql \
+              -baselineOnMigrate=true \
+              migrate
 
             # 기존 컨테이너 종료
             sudo docker-compose down || true

@@ -23,6 +23,7 @@ jobs:
           mv .env deploy/
           cp docker-compose-dev.yml deploy/docker-compose.yml
           cp redis.conf deploy/
+          cp -r src/main/resources/db deploy/
           cp -r monitoring deploy/
           cp -r nginx deploy/
           tar -czvf deploy.tar.gz -C deploy .
@@ -58,7 +59,7 @@ jobs:
           username: ${{ secrets.DEV_SSH_USERNAME }}
           key: ${{ secrets.DEV_SSH_KEY }}
           port: 22
-          source: "docker-compose.yml,.env,redis.conf,monitoring,nginx"
+          source: "docker-compose.yml,.env,redis.conf,db,monitoring,nginx"
           target: "/home/ubuntu/troublog/"
 
       - name: Deploy to DEV EC2
@@ -80,6 +81,26 @@ jobs:
 
             # Docker 로그인
             echo ${{ secrets.DEV_DOCKER_PASSWORD }} | sudo docker login -u ${{ secrets.DEV_DOCKER_USERNAME }} --password-stdin
+
+            # Flyway 마이그레이션 선행 실행
+            DB_URL="$(grep '^DEV_DB_URL=' .env | cut -d= -f2-)"
+            DB_USER="$(grep '^DEV_DB_USERNAME=' .env | cut -d= -f2-)"
+            DB_PASSWORD="$(grep '^DEV_DB_PASSWORD=' .env | cut -d= -f2-)"
+
+            if [ -z "$DB_URL" ] || [ -z "$DB_USER" ] || [ -z "$DB_PASSWORD" ]; then
+              echo "Missing DEV DB credentials in .env"
+              exit 1
+            fi
+
+            sudo docker run --rm \
+              -v /home/ubuntu/troublog/db/migration:/flyway/sql:ro \
+              flyway/flyway:11 \
+              -url="$DB_URL" \
+              -user="$DB_USER" \
+              -password="$DB_PASSWORD" \
+              -locations=filesystem:/flyway/sql \
+              -baselineOnMigrate=true \
+              migrate
             
             # 기존 컨테이너 종료
             sudo docker-compose down || true

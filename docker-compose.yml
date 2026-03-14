@@ -9,6 +9,7 @@ services:
       - .env
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}
+      - SPRING_FLYWAY_ENABLED=false
       - AI_PROMPT_SYSTEM=file:/app/prompts/system.st
       - AI_PROMPT_RESUME=file:/app/prompts/resume.st
       - AI_PROMPT_INTERVIEW=file:/app/prompts/interview.st
