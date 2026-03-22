@@ -52,6 +52,17 @@ jobs:
           tar -xzvf deploy.tar.gz
           ls -al
 
+      - name: Reset remote migration directory on DEV server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USERNAME }}
+          key: ${{ secrets.DEV_SSH_KEY }}
+          port: 22
+          script: |
+            mkdir -p /home/ubuntu/troublog
+            rm -rf /home/ubuntu/troublog/db
+
       - name: Copy files to DEV server
         uses: appleboy/scp-action@master
         with:
@@ -82,10 +93,18 @@ jobs:
             # Docker 로그인
             echo ${{ secrets.DEV_DOCKER_PASSWORD }} | sudo docker login -u ${{ secrets.DEV_DOCKER_USERNAME }} --password-stdin
 
+            # 다운타임 최소화를 위해 새 이미지는 먼저 받아둠
+            sudo docker-compose pull
+
+            # 기존 애플리케이션이 새 스키마를 보지 않도록 먼저 종료
+            sudo docker-compose down || true
+            
             # Flyway 마이그레이션 선행 실행
             DB_URL="$(grep '^DEV_DB_URL=' .env | cut -d= -f2-)"
             DB_USER="$(grep '^DEV_DB_USERNAME=' .env | cut -d= -f2-)"
             DB_PASSWORD="$(grep '^DEV_DB_PASSWORD=' .env | cut -d= -f2-)"
+            BASELINE_ON_MIGRATE="$(grep '^FLYWAY_BASELINE_ON_MIGRATE=' .env | cut -d= -f2-)"
+            BASELINE_ON_MIGRATE="${BASELINE_ON_MIGRATE:-false}"
 
             if [ -z "$DB_URL" ] || [ -z "$DB_USER" ] || [ -z "$DB_PASSWORD" ]; then
               echo "Missing DEV DB credentials in .env"
@@ -98,15 +117,9 @@ jobs:
               -url="$DB_URL" \
               -user="$DB_USER" \
               -password="$DB_PASSWORD" \
+              -baselineOnMigrate="$BASELINE_ON_MIGRATE" \
               -locations=filesystem:/flyway/sql \
-              -baselineOnMigrate=true \
               migrate
-            
-            # 기존 컨테이너 종료
-            sudo docker-compose down || true
-            
-            # 새 이미지 받기
-            sudo docker-compose pull
             
             # 컨테이너 재시작
             sudo docker-compose up -d
