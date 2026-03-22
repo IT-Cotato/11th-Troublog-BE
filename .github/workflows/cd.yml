@@ -36,6 +36,7 @@ jobs:
           mv .env deploy/
           cp docker-compose.yml deploy/
           cp redis.conf deploy/       # Redis 설정 파일 포함
+          cp -r src/main/resources/db deploy/
           cp -r monitoring deploy/    # 모니터링 설정 파일 포함
           tar -czvf deploy.tar.gz -C deploy .
         shell: bash
@@ -110,6 +111,27 @@ jobs:
           source: "redis.conf"
           target: "/home/ubuntu/troublog/"
 
+      - name: Reset remote migration directory on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            mkdir -p /home/ubuntu/troublog
+            rm -rf /home/ubuntu/troublog/db
+
+      - name: Copy migration SQL to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: "db"
+          target: "/home/ubuntu/troublog/"
+
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
@@ -127,11 +149,33 @@ jobs:
             # Docker 로그인
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-            # 기존 컨테이너 종료
+            # 다운타임 최소화를 위해 새 이미지는 먼저 받아둠
+            sudo docker-compose pull
+
+            # 기존 애플리케이션이 새 스키마를 보지 않도록 먼저 종료
             sudo docker-compose down || true
 
-            # 새 이미지 받기
-            sudo docker-compose pull
+            # Flyway 마이그레이션 선행 실행
+            DB_URL="$(grep '^PROD_DB_URL=' .env | cut -d= -f2-)"
+            DB_USER="$(grep '^PROD_DB_USERNAME=' .env | cut -d= -f2-)"
+            DB_PASSWORD="$(grep '^PROD_DB_PASSWORD=' .env | cut -d= -f2-)"
+            BASELINE_ON_MIGRATE="$(grep '^FLYWAY_BASELINE_ON_MIGRATE=' .env | cut -d= -f2-)"
+            BASELINE_ON_MIGRATE="${BASELINE_ON_MIGRATE:-false}"
+
+            if [ -z "$DB_URL" ] || [ -z "$DB_USER" ] || [ -z "$DB_PASSWORD" ]; then
+              echo "Missing PROD DB credentials in .env"
+              exit 1
+            fi
+
+            sudo docker run --rm \
+              -v /home/ubuntu/troublog/db/migration:/flyway/sql:ro \
+              flyway/flyway:11 \
+              -url="$DB_URL" \
+              -user="$DB_USER" \
+              -password="$DB_PASSWORD" \
+              -baselineOnMigrate="$BASELINE_ON_MIGRATE" \
+              -locations=filesystem:/flyway/sql \
+              migrate
 
             # 모니터링 포함하여 전체 스택 재실행
             sudo docker-compose up -d
