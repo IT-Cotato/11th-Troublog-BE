@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.5.0'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'checkstyle'
+    id "io.sentry.jvm.gradle" version "6.3.0"
 }
 
 group = 'troublog'
@@ -26,10 +27,21 @@ repositories {
 
 ext {
     set('springAiVersion', "1.1.0")
+    sentryVersion = "8.37.1"
 }
+
+sentry {
+    includeSourceContext = true
+    org = "troublog"
+    projectName = "java-spring-boot"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
+    autoInstallation.enabled.set(false)
+}
+
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -73,11 +85,14 @@ dependencies {
 
     //logback
     implementation 'net.logstash.logback:logstash-logback-encoder:9.0'
+
+    implementation 'io.sentry:sentry-spring-boot-starter-jakarta'
 }
 
 dependencyManagement {
     imports {
         mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+        mavenBom "io.sentry:sentry-bom:$sentryVersion"
     }
 }
 
