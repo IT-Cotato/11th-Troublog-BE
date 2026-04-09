@@ -56,10 +56,8 @@ public class AsyncConfig implements AsyncConfigurer {
 
 	@Override
 	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-		return (ex, method, params) -> {
-			Sentry.captureException(ex);
-			log.error("[Async] 비동기 작업 중 예외 발생 - Method: {}, Params: {}", method.getName(), params, ex);
-		};
+		return (ex, method, params) -> log.error("[Async] 비동기 작업 중 예외 발생 - Method: {}, Params: {}", method.getName(),
+			params, ex);
 	}
 
 	private Executor createVirtualThreadExecutor(String threadNamePrefix) {
