@@ -31,7 +31,7 @@ ext {
 }
 
 sentry {
-    includeSourceContext = true
+    includeSourceContext = System.getenv("SENTRY_AUTH_TOKEN") != null
     org = "troublog"
     projectName = "java-spring-boot"
     authToken = System.getenv("SENTRY_AUTH_TOKEN")
