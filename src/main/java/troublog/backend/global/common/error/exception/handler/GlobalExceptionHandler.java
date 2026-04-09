@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
 		BusinessException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("BusinessException 발생", ex, request);
+		LoggingUtil.logWarn("BusinessException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ex.getErrorCode(), request);
 		return ResponseEntity.status(ex.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
 		ConstraintViolationException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("ConstraintViolationException 발생", ex, request);
+		LoggingUtil.logWarn("ConstraintViolationException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT, request);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseResponse.fail(response));
 	}
@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
 		HttpMessageNotReadableException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("HttpMessageNotReadableException 발생", ex, request);
+		LoggingUtil.logWarn("HttpMessageNotReadableException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT, request);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseResponse.fail(response));
 	}
@@ -79,7 +79,7 @@ public class GlobalExceptionHandler {
 		MissingServletRequestParameterException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("MissingServletRequestParameterException 발생", ex, request);
+		LoggingUtil.logWarn("MissingServletRequestParameterException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT, request);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseResponse.fail(response));
 	}
@@ -89,7 +89,7 @@ public class GlobalExceptionHandler {
 		MethodArgumentTypeMismatchException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("MethodArgumentTypeMismatchException 발생", ex, request);
+		LoggingUtil.logWarn("MethodArgumentTypeMismatchException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT, request);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseResponse.fail(response));
 	}
@@ -99,7 +99,7 @@ public class GlobalExceptionHandler {
 		HttpRequestMethodNotSupportedException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("HttpRequestMethodNotSupportedException 발생", ex, request);
+		LoggingUtil.logWarn("HttpRequestMethodNotSupportedException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ErrorCode.METHOD_NOT_ALLOWED, request);
 		return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(BaseResponse.fail(response));
 	}
@@ -109,7 +109,7 @@ public class GlobalExceptionHandler {
 		HttpMediaTypeNotSupportedException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("HttpMediaTypeNotSupportedException 발생", ex, request);
+		LoggingUtil.logWarn("HttpMediaTypeNotSupportedException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ErrorCode.UNSUPPORTED_MEDIA_TYPE, request);
 		return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(BaseResponse.fail(response));
 	}
@@ -119,7 +119,7 @@ public class GlobalExceptionHandler {
 		DataIntegrityViolationException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("DataIntegrityViolationException 발생", ex, request);
+		LoggingUtil.logWarn("DataIntegrityViolationException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ErrorCode.DATA_INTEGRITY_VIOLATION, request);
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(BaseResponse.fail(response));
 	}
@@ -139,7 +139,7 @@ public class GlobalExceptionHandler {
 		AccessDeniedException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("AccessDeniedException 발생", ex, request);
+		LoggingUtil.logWarn("AccessDeniedException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ErrorCode.ACCESS_DENIED, request);
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseResponse.fail(response));
 	}
@@ -154,13 +154,12 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseResponse.fail(response));
 	}
 
-
 	@ExceptionHandler(AuthException.class)
 	public ResponseEntity<BaseResponse<ErrorResponse>> handleAuthException(
 		AuthException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("AuthException 발생", ex, request);
+		LoggingUtil.logWarn("AuthException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ex.getErrorCode(), request);
 		return ResponseEntity.status(ex.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
@@ -170,7 +169,7 @@ public class GlobalExceptionHandler {
 		UserException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("UserException 발생", ex, request);
+		LoggingUtil.logWarn("UserException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ex.getErrorCode(), request);
 		return ResponseEntity.status(ex.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
@@ -180,7 +179,7 @@ public class GlobalExceptionHandler {
 		AlertException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("AlertException 발생", ex, request);
+		LoggingUtil.logWarn("AlertException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ex.getErrorCode(), request);
 		return ResponseEntity.status(ex.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
@@ -190,7 +189,7 @@ public class GlobalExceptionHandler {
 		PostException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("PostException 발생", ex, request);
+		LoggingUtil.logWarn("PostException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ex.getErrorCode(), request);
 		return ResponseEntity.status(ex.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
@@ -200,7 +199,7 @@ public class GlobalExceptionHandler {
 		AiTaskException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("AiTaskException 발생", ex, request);
+		LoggingUtil.logWarn("AiTaskException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ex.getErrorCode(), request);
 		return ResponseEntity.status(ex.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
@@ -210,7 +209,7 @@ public class GlobalExceptionHandler {
 		TermsException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("TermsException 발생", ex, request);
+		LoggingUtil.logWarn("TermsException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ex.getErrorCode(), request);
 		return ResponseEntity.status(ex.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
@@ -220,7 +219,7 @@ public class GlobalExceptionHandler {
 		ImageException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("ImageException 발생", ex, request);
+		LoggingUtil.logWarn("ImageException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ex.getErrorCode(), request);
 		return ResponseEntity.status(ex.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
@@ -230,7 +229,7 @@ public class GlobalExceptionHandler {
 		ProjectException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("ProjectException 발생", ex, request);
+		LoggingUtil.logWarn("ProjectException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ex.getErrorCode(), request);
 		return ResponseEntity.status(ex.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
@@ -240,7 +239,7 @@ public class GlobalExceptionHandler {
 		ReportException ex,
 		HttpServletRequest request
 	) {
-		LoggingUtil.logException("ReportException 발생", ex, request);
+		LoggingUtil.logWarn("ReportException 발생", ex, request);
 		ErrorResponse response = ErrorResponse.of(ex.getErrorCode(), request);
 		return ResponseEntity.status(ex.getErrorCode().getHttpStatus()).body(BaseResponse.fail(response));
 	}
