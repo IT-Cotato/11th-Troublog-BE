@@ -29,6 +29,14 @@ public class LoggingUtil {
 			ex);
 	}
 
+	public void logWarn(final String prefix, final Exception ex, final HttpServletRequest request) {
+		log.warn("{}: {} | 예외 발생 지점 [{} {}]",
+			prefix,
+			ex.getMessage(),
+			request.getMethod(),
+			request.getRequestURI());
+	}
+
 	/**
 	 * 유효성 검사 예외를 로깅합니다. 실패한 필드와 메시지를 출력합니다.
 	 *
@@ -40,11 +48,10 @@ public class LoggingUtil {
 			.map(LoggingUtil::formatFieldError)
 			.collect(Collectors.joining(", "));
 
-		log.error("유효성 검사 실패 | 예외 발생 지점 [{} {}] | 실패 필드: {}",
+		log.warn("유효성 검사 실패 | 예외 발생 지점 [{} {}] | 실패 필드: {}",
 			request.getMethod(),
 			request.getRequestURI(),
-			errorFields,
-			ex);
+			errorFields);
 	}
 
 	private String formatFieldError(final FieldError error) {

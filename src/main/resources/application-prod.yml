@@ -67,3 +67,13 @@ management:
     tags:
       application: ${spring.application.name}
       environment: production
+
+sentry:
+  dsn: ${SENTRY_DSN}
+  send-default-pii: true
+  traces-sample-rate: 1.0
+  logging:
+    enabled: true
+    minimum-event-level: error
+    minimum-breadcrumb-level: info
+    mdc-tags: traceId,userId,requestUri,httpMethod
